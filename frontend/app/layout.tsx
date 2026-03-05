@@ -45,7 +45,8 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark text-medium ${orbitron.variable} ${rajdhani.variable} ${jetbrainsMono.variable}`}
+      className={`${orbitron.variable} ${rajdhani.variable} ${jetbrainsMono.variable}`}
+      suppressHydrationWarning
     >
       <head>
         {/* Anti-flash: apply saved theme class before first paint */}

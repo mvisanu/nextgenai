@@ -426,9 +426,10 @@ export default function GraphViewer() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{ x: number; y: number } | null>(null);
 
-  // Use real query graph if available, otherwise fall back to domain mock graph
-  const graphPath = runData?.graph_path ?? (isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH);
-  const isMockGraph = !runData?.graph_path;
+  // Use real query graph if available (non-empty), otherwise fall back to domain mock graph
+  const hasRealGraph = (runData?.graph_path?.nodes?.length ?? 0) > 0;
+  const graphPath = hasRealGraph ? runData!.graph_path : (isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH);
+  const isMockGraph = !hasRealGraph;
   const prevPathRef = React.useRef<typeof graphPath>(undefined);
 
   React.useEffect(() => {

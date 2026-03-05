@@ -24,7 +24,7 @@ from backend.app.agent.verifier import verify_claims
 from backend.app.db.session import get_sync_session
 from backend.app.graph.expander import expand_graph
 from backend.app.graph.scorer import rank_evidence
-from backend.app.llm.client import LLMClient, get_llm_client
+from backend.app.llm.client import LLMClient, get_llm_client, get_fast_llm_client
 from backend.app.observability.logging import get_logger
 from backend.app.tools.compute_tool import PythonComputeTool
 from backend.app.tools.sql_tool import SQLQueryTool
@@ -125,7 +125,8 @@ class AgentOrchestrator:
         max_steps: int = MAX_STEPS,
         tool_timeout_seconds: int = TOOL_TIMEOUT_SECONDS,
     ) -> None:
-        self.llm = llm or get_llm_client()
+        self.llm = llm or get_llm_client()          # Sonnet — synthesis only
+        self._fast_llm = get_fast_llm_client()       # Haiku — classify, plan, verify
         self.max_steps = max_steps
         self.tool_timeout_seconds = tool_timeout_seconds
 
@@ -157,11 +158,11 @@ class AgentOrchestrator:
 
         # ------------------------------------------------------------------ CLASSIFY
         logger.info("State: CLASSIFY", extra={"run_id": run_id})
-        intent = classify_intent(query, self.llm)
+        intent = classify_intent(query, self._fast_llm)
 
         # ------------------------------------------------------------------ PLAN
         logger.info("State: PLAN", extra={"run_id": run_id, "intent": intent})
-        plan = generate_plan(query, intent, self.llm, domain=domain)
+        plan = generate_plan(query, intent, self._fast_llm, domain=domain)
         plan_steps = plan.get("steps", [])
         plan_text = plan.get("plan_text", "")
 
@@ -353,7 +354,7 @@ class AgentOrchestrator:
 
         # ------------------------------------------------------------------ VERIFY
         logger.info("State: VERIFY", extra={"run_id": run_id})
-        verified_claims = verify_claims(raw_claims, all_evidence, self.llm)
+        verified_claims = verify_claims(raw_claims, all_evidence, self._fast_llm)
 
         # ------------------------------------------------------------------ SAVE
         logger.info("State: SAVE", extra={"run_id": run_id})
