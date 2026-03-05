@@ -109,6 +109,8 @@ def vector_search(
         LIMIT :top_k
     """)
 
+    # Increase IVFFlat probes for better recall (default is 1, very low)
+    session.execute(text("SET ivfflat.probes = 10"))
     result = session.execute(sql, params)
     rows = result.fetchall()
 

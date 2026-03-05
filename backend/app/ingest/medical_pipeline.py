@@ -189,6 +189,55 @@ _SYNTH_CASES = [
             "treatment": ["methotrexate and hydroxychloroquine", "colchicine and allopurinol", "total knee replacement", "hydroxychloroquine and low-dose prednisolone"],
         },
     },
+    {
+        "system": "Dermatology",
+        "entities": ["Sign_symptom", "Disease_disorder", "Diagnostic_procedure"],
+        "narrative_template": (
+            "A {age}-year-old {gender} was referred to the dermatology clinic following {referral_reason}. "
+            "The patient reported a {duration}-month history of {symptom1}. "
+            "Examination revealed {lesion_description} on the {location}. "
+            "Dermoscopy demonstrated {dermoscopy_finding}. "
+            "Skin biopsy showed {biopsy_result}. "
+            "Relevant history included {history}. "
+            "Diagnosis: {diagnosis}. {treatment} was recommended."
+        ),
+        "slots": {
+            "referral_reason": ["a suspicious pigmented lesion noted by GP", "routine dermatology screening", "a rapidly changing mole", "a non-healing ulcerated lesion"],
+            "symptom1": ["a changing skin lesion", "pruritic rash", "a new pigmented lesion", "skin thickening with scaling"],
+            "lesion_description": ["an asymmetric pigmented lesion with irregular border and colour variation", "a pearly nodule with telangiectasia", "an erythematous plaque with silvery scaling", "a corrosion-pattern lesion with irregular border and satellite nodules"],
+            "location": ["left forearm", "upper back", "face and scalp", "lower leg"],
+            "dermoscopy_finding": ["atypical pigment network with regression structures", "arborising vessels and blue-grey ovoid nests", "Munro microabscesses pattern", "irregular vascular pattern with white streaks"],
+            "biopsy_result": ["malignant melanoma with Breslow thickness 1.2 mm", "nodular basal cell carcinoma", "psoriasis with acanthosis and parakeratosis", "squamous cell carcinoma in situ"],
+            "history": ["prolonged sun exposure", "family history of melanoma", "immunosuppression post-renal transplant", "prior basal cell carcinoma"],
+            "diagnosis": ["malignant melanoma stage IB", "nodular basal cell carcinoma", "plaque psoriasis", "Bowen's disease (SCC in situ)"],
+            "treatment": ["wide local excision with 1 cm margins and sentinel lymph node biopsy", "surgical excision with 4 mm margins", "topical corticosteroids and phototherapy", "topical 5-fluorouracil cream"],
+        },
+    },
+    {
+        "system": "Paediatric",
+        "entities": ["Sign_symptom", "Disease_disorder", "Diagnostic_procedure"],
+        "narrative_template": (
+            "A {age}-year-old {gender} was brought to the paediatric emergency department by parents with a {duration}-day history of {symptom1} and {symptom2}. "
+            "On examination the child was {examination_finding}. "
+            "Oxygen saturation was {sats}. "
+            "Chest auscultation revealed {auscultation}. "
+            "CXR showed {cxr}. Blood cultures {cultures}. "
+            "History included {history}. "
+            "Diagnosis: {diagnosis}. {treatment} was initiated."
+        ),
+        "slots": {
+            "symptom1": ["fever", "respiratory distress", "stridor", "wheeze"],
+            "symptom2": ["reduced oral intake", "barking cough", "sudden onset unilateral wheeze", "increased work of breathing"],
+            "examination_finding": ["tachycardic and tachypnoeic with subcostal recession", "febrile at 38.9°C with inspiratory stridor", "afebrile with unilateral reduced air entry and wheeze", "pale and lethargic with intercostal recession"],
+            "sats": ["91% on room air", "94% on room air", "88% requiring supplemental oxygen", "96% on room air"],
+            "auscultation": ["bilateral coarse crackles", "unilateral reduced breath sounds with wheeze consistent with foreign body aspiration", "expiratory wheeze bilaterally", "tubular breathing at right base"],
+            "cxr": ["right lower lobe consolidation", "air trapping on expiratory film suggesting bronchial foreign body", "hyperinflation bilaterally", "left-sided pneumothorax"],
+            "cultures": ["grew Streptococcus pneumoniae", "were negative", "grew Staphylococcus aureus", "were pending at time of treatment"],
+            "history": ["no prior hospital admissions", "recent choking episode on food", "recurrent wheeze since infancy", "premature birth at 32 weeks"],
+            "diagnosis": ["community-acquired pneumonia", "suspected foreign body aspiration", "viral-induced wheeze", "croup (laryngotracheobronchitis)"],
+            "treatment": ["IV amoxicillin-clavulanate", "urgent rigid bronchoscopy under general anaesthesia", "salbutamol nebulisers and oral prednisolone", "nebulised adrenaline and oral dexamethasone"],
+        },
+    },
 ]
 
 _AGES = list(range(18, 85))

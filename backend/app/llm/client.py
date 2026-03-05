@@ -115,6 +115,14 @@ class ClaudeClient(LLMClient):
         text = response.content[0].text if response.content else ""
 
         if json_mode:
+            # Strip markdown code fences if present (some models wrap JSON in ```json...```)
+            stripped = text.strip()
+            if stripped.startswith("```"):
+                lines = stripped.split("\n")
+                # Remove first line (```json or ```) and last line (```)
+                inner = "\n".join(lines[1:] if lines[-1].strip() == "```" else lines[1:])
+                inner = inner.rstrip("` \n")
+                text = inner
             # Attempt validation; if it fails, return raw — caller handles
             try:
                 json.loads(text)

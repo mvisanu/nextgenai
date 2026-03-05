@@ -194,7 +194,7 @@ class AgentOrchestrator:
                     query_text = tool_inputs.get("query_text", query)
                     filters = tool_inputs.get("filters", {})
                     top_k = tool_inputs.get("top_k", 8)
-                    output = self._vector_tool.run(query_text, filters=filters, top_k=top_k, domain=domain)
+                    output = self._vector_tool.run(query_text, filters=filters, top_k=top_k, domain=domain, similarity_threshold=0.20)
                     hits = output.get("results", [])
                     vector_hits.extend(hits)
                     tool_output_summary = f"Found {len(hits)} similar chunks"

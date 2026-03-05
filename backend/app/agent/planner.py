@@ -57,6 +57,10 @@ Given a user query and a routing intent, generate a numbered step-by-step plan.
 Available tools:
 - VectorSearchTool: semantic similarity search over clinical case narratives
   inputs: {"query_text": "...", "filters": {}, "top_k": 8}
+  IMPORTANT: The query_text MUST use standard clinical/medical terminology only.
+  Strip any non-medical jargon, patient IDs, or manufacturing language.
+  Rephrase into the key clinical findings: symptoms, signs, body system, and suspected diagnosis.
+  Example: "corrosion-pattern skin lesion irregular border dermatology screening" → "pigmented skin lesion with irregular border referred for dermatology evaluation suspected melanoma"
 - SQLQueryTool: read-only SQL queries for structured clinical data
   IMPORTANT: Always use named_query instead of raw sql to avoid schema errors.
   Available named queries (use EXACTLY these names):
