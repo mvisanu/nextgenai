@@ -198,6 +198,26 @@ function DashboardHeader() {
           REVIEW
         </Link>
 
+        <Link
+          href="/examples"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            color: "hsl(var(--text-secondary))",
+            textDecoration: "none",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.08em",
+            transition: "color 0.15s",
+          }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-green))"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
+        >
+          <FlaskConical size={13} />
+          EXAMPLES
+        </Link>
+
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
         <FontSizeControl />
