@@ -10,7 +10,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Database, ExternalLink, ChevronDown, ChevronUp,
-  Activity, Layers, BarChart2, GitMerge, Copy, Check,
+  Activity, Layers, BarChart2, GitMerge, Copy, Check, Stethoscope,
 } from "lucide-react";
 import { ThemeToggle, FontSizeControl } from "../lib/theme";
 
@@ -203,6 +203,111 @@ print("Path to dataset files:", path)`,
       "Yield rate trend by machine and material grade",
       "Graph link: process parameter → defect type → corrective action (DS-01)",
       "Eval benchmark: agent defect-count answers vs. ground truth labels",
+    ],
+  },
+
+  // ── MEDICAL DOMAIN ────────────────────────────────────────────────────────
+
+  {
+    id: "maccrobat",
+    index: "DS-04",
+    title: "MACCROBAT — Clinical NER Case Reports",
+    author: "Nicola Popovic et al. (GitHub)",
+    kaggleSlug: "nicpopovic/maccrobat",
+    kaggleUrl: "https://github.com/nicpopovic/MACCROBAT",
+    downloadSnippet: `# Clone the MACCROBAT repository directly
+git clone https://github.com/nicpopovic/MACCROBAT.git
+
+# Or load via the medical ingest pipeline (auto-fallback to synthetic)
+# Synthetic pipeline generates 200 cases across 5 specialties if CSV absent
+
+from backend.app.ingest.medical_pipeline import run_medical_ingest_pipeline
+result = run_medical_ingest_pipeline()
+print(f"Ingest complete: {result}")`,
+    accentVar: "--col-cyan",
+    toolBadges: [
+      { label: "VECTOR", color: "--col-cyan",   icon: Layers },
+      { label: "GRAPH",  color: "--col-purple", icon: GitMerge },
+    ],
+    summary:
+      "MACCROBAT (Medical Annotated Clinical Case Reports for Biomedical NER) is a curated corpus of de-identified clinical case reports annotated with named entities — diagnoses, symptoms, procedures, medications, and anatomical sites. It serves as the primary narrative text source for the medical domain's vector search layer.",
+    recordsEst: "~200 cases / ~800 chunks",
+    columnsCount: 8,
+    schema: [
+      { name: "case_id",           type: "TEXT",    description: "Unique clinical case identifier (e.g. CASE-001)" },
+      { name: "system",            type: "TEXT",    description: "Body system / specialty (Cardiac, Respiratory, Neurological, GI, Musculoskeletal)" },
+      { name: "sub_system",        type: "TEXT",    description: "Sub-specialty or organ system within the primary system" },
+      { name: "event_date",        type: "DATE",    description: "Case report or admission date" },
+      { name: "severity",          type: "TEXT",    description: "Clinical severity classification (Critical / High / Medium / Low)" },
+      { name: "narrative",         type: "TEXT",    description: "Full clinical case narrative — chunked and embedded for vector search" },
+      { name: "corrective_action", type: "TEXT",    description: "Treatment or clinical intervention applied" },
+      { name: "entities",          type: "TEXT",    description: "JSON array of extracted NER entity types (DIAGNOSIS, SYMPTOM, PROCEDURE…)" },
+    ],
+    whyUseful: [
+      "The narrative column is chunked (~300 tokens, 50-token overlap) and embedded with all-MiniLM-L6-v2 into the medical_embeddings table — the medical equivalent of incident_reports for the aircraft domain.",
+      "IVFFlat cosine index (lists=100) on medical_embeddings enables sub-millisecond approximate nearest-neighbour retrieval over ~800 clinical chunks.",
+      "Named entity annotations (DIAGNOSIS, SYMPTOM, MEDICATION) populate the knowledge graph nodes — enabling GraphRAG traversal: 'what other cases share troponin elevation and ST-elevation findings?'",
+      "If the MACCROBAT CSV is absent at ingest time, the medical pipeline generates 200 synthetic cases across 5 specialties (Cardiac, Respiratory, Neurological, Gastrointestinal, Musculoskeletal) with realistic NER distributions — ensuring the demo always has data.",
+      "Clinical case narratives test the vector model's ability to handle medical terminology, abbreviations, and multi-symptom co-occurrence queries — a harder retrieval task than manufacturing incident text.",
+    ],
+    useCases: [
+      "Semantic search: 'cases with palpitations, dyspnea and holosystolic murmur'",
+      "Specialty-filtered retrieval: top-5 similar Cardiac cases",
+      "Graph traversal: symptom node → case nodes → co-occurring diagnoses",
+      "NER entity extraction: biomarker mentions across cases (troponin, BNP, D-dimer)",
+    ],
+  },
+  {
+    id: "disease-symptoms",
+    index: "DS-05",
+    title: "Disease Symptoms & Patient Profile Dataset",
+    author: "Kaggle Community (synthetic)",
+    kaggleSlug: "uom190346a/disease-symptoms-and-patient-profile-dataset",
+    kaggleUrl: "https://www.kaggle.com/datasets/uom190346a/disease-symptoms-and-patient-profile-dataset",
+    downloadSnippet: `import kagglehub
+
+# Download latest version
+path = kagglehub.dataset_download(
+    "uom190346a/disease-symptoms-and-patient-profile-dataset"
+)
+
+print("Path to dataset files:", path)`,
+    accentVar: "--col-cyan",
+    toolBadges: [
+      { label: "SQL",    color: "--col-green",  icon: Database },
+      { label: "VECTOR", color: "--col-cyan",   icon: Layers },
+    ],
+    summary:
+      "A structured dataset of patient profiles with symptom flags, demographic attributes, vital sign categories, disease labels, and clinical outcomes. Each row represents a patient encounter — enabling SQL aggregation over disease prevalence, symptom co-occurrence, and outcome distributions. The medical domain's equivalent of manufacturing_defects.",
+    recordsEst: "~300 rows",
+    columnsCount: 13,
+    schema: [
+      { name: "record_id",           type: "TEXT",    description: "Unique patient encounter identifier" },
+      { name: "disease",             type: "TEXT",    description: "Primary disease or diagnosis label" },
+      { name: "fever",               type: "BOOLEAN", description: "Symptom present: fever (True/False)" },
+      { name: "cough",               type: "BOOLEAN", description: "Symptom present: cough (True/False)" },
+      { name: "fatigue",             type: "BOOLEAN", description: "Symptom present: fatigue (True/False)" },
+      { name: "difficulty_breathing",type: "BOOLEAN", description: "Symptom present: difficulty breathing (True/False)" },
+      { name: "age",                 type: "INTEGER", description: "Patient age in years" },
+      { name: "gender",              type: "TEXT",    description: "Patient gender (Male / Female)" },
+      { name: "blood_pressure",      type: "TEXT",    description: "Blood pressure category (Normal / High / Low)" },
+      { name: "cholesterol_level",   type: "TEXT",    description: "Cholesterol category (Normal / High)" },
+      { name: "outcome",             type: "TEXT",    description: "Clinical outcome (Positive = disease confirmed / Negative)" },
+      { name: "severity",            type: "TEXT",    description: "Severity classification (Critical / High / Medium / Low)" },
+      { name: "specialty",           type: "TEXT",    description: "Medical specialty (Cardiac, Respiratory, Neurological, GI, Musculoskeletal)" },
+    ],
+    whyUseful: [
+      "Boolean symptom flags (fever, cough, fatigue, difficulty_breathing) enable direct SQL aggregation queries: 'how many Cardiac cases presented with fatigue and elevated cholesterol?' — the medical equivalent of defect-count-by-type queries.",
+      "The disease and specialty columns group records for the Disease Analytics dashboard tab — bar charts, outcome distributions, and symptom co-occurrence heat maps.",
+      "Demographic columns (age, gender) support cohort stratification queries: 'compare blood pressure profiles between Cardiac and Respiratory specialty patients over 60.'",
+      "outcome (Positive/Negative) provides a ground-truth label for evaluating the agent's SQL responses — the medical precision benchmark equivalent of DS-03's defect_occurred flag.",
+      "Paired with DS-04 narrative cases, this dataset gives the medical agent both a semantic retrieval layer (MACCROBAT narratives) and a structured aggregation layer (disease records) — completing the dual-modality design.",
+    ],
+    useCases: [
+      "Aggregation: disease prevalence by specialty and outcome",
+      "Symptom co-occurrence: % of Respiratory cases with fever + difficulty_breathing",
+      "Demographic cohort: age distribution by disease and severity",
+      "Eval benchmark: agent disease-count answers vs. ground truth outcome labels",
     ],
   },
 ];
@@ -691,7 +796,7 @@ function DataHeader() {
       <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <Activity size={12} style={{ color: "hsl(var(--col-green))" }} />
         <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--text-secondary))", letterSpacing: "0.08em" }}>
-          3 DATASETS // MVP
+          5 DATASETS // DUAL-DOMAIN MVP
         </span>
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
         <FontSizeControl />
@@ -705,10 +810,10 @@ function DataHeader() {
 
 function Hero() {
   const stats = [
-    { label: "DATASETS",     value: "3",       color: "--col-green" },
-    { label: "EST. RECORDS", value: "~90 K",   color: "--col-cyan" },
-    { label: "TOOL ROUTES",  value: "3",       color: "--col-purple" },
-    { label: "DOMAIN",       value: "MFG + AERO", color: "--col-amber" },
+    { label: "DATASETS",     value: "5",              color: "--col-green" },
+    { label: "EST. RECORDS", value: "~90 K + 1 K",   color: "--col-cyan" },
+    { label: "TOOL ROUTES",  value: "3",              color: "--col-purple" },
+    { label: "DOMAINS",      value: "AERO + MEDICAL", color: "--col-amber" },
   ];
 
   return (
@@ -723,9 +828,10 @@ function Hero() {
             <span style={{ color: "hsl(var(--col-cyan))" }}>MANIFEST</span>
           </h1>
           <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.82rem", color: "hsl(var(--text-secondary))", maxWidth: "540px", lineHeight: "1.65" }}>
-            Three open Kaggle datasets forming the data foundation of the NextAgentAI MVP.
-            Each feeds a distinct query tool — SQL, vector search, or knowledge graph — to
-            power multi-modal agentic reasoning over manufacturing and maintenance intelligence.
+            Five open datasets forming the dual-domain data foundation of the NextAgentAI MVP.
+            DS-01 through DS-03 power the <span style={{ color: "hsl(var(--col-amber))" }}>aircraft / manufacturing</span> domain.
+            DS-04 and DS-05 power the <span style={{ color: "hsl(var(--col-cyan))" }}>medical / clinical</span> domain.
+            Each feeds SQL, vector search, or knowledge graph tools via the same agentic orchestrator.
           </p>
         </div>
 
@@ -798,8 +904,32 @@ export default function DataPage() {
         <Hero />
 
         <div style={{ display: "flex", flexDirection: "column", gap: "12px", padding: "16px 20px 32px" }}>
-          {DATASETS.map((ds, i) => (
+          {/* Aircraft / Manufacturing domain */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "6px 0 2px" }}>
+            <div style={{ width: 3, height: 14, backgroundColor: "hsl(var(--col-amber))", borderRadius: "1px", flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.18em", color: "hsl(var(--col-amber))" }}>
+              AIRCRAFT // MANUFACTURING DOMAIN
+            </span>
+            <div style={{ flex: 1, height: 1, backgroundColor: "hsl(var(--col-amber) / 0.2)" }} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em" }}>DS-01 · DS-02 · DS-03</span>
+          </div>
+
+          {DATASETS.slice(0, 3).map((ds, i) => (
             <DatasetCard key={ds.id} ds={ds} animDelay={i * 0.08} />
+          ))}
+
+          {/* Medical / Clinical domain */}
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", padding: "12px 0 2px" }}>
+            <div style={{ width: 3, height: 14, backgroundColor: "hsl(var(--col-cyan))", borderRadius: "1px", flexShrink: 0 }} />
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "0.58rem", fontWeight: 700, letterSpacing: "0.18em", color: "hsl(var(--col-cyan))" }}>
+              MEDICAL // CLINICAL DOMAIN
+            </span>
+            <div style={{ flex: 1, height: 1, backgroundColor: "hsl(var(--col-cyan) / 0.2)" }} />
+            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em" }}>DS-04 · DS-05</span>
+          </div>
+
+          {DATASETS.slice(3).map((ds, i) => (
+            <DatasetCard key={ds.id} ds={ds} animDelay={(i + 3) * 0.08} />
           ))}
         </div>
 
@@ -818,7 +948,7 @@ export default function DataPage() {
           </span>
           <div style={{ width: 1, height: 12, backgroundColor: "hsl(var(--border-strong))" }} />
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "hsl(var(--text-dim))" }}>
-            All datasets sourced from Kaggle under their respective licenses.
+            DS-01 to DS-03: Kaggle (respective licenses). DS-04: MACCROBAT (GitHub, research use). DS-05: Kaggle (CC0).
           </span>
         </div>
       </div>

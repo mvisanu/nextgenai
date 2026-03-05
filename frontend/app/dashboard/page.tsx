@@ -7,10 +7,19 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   MessageSquare, Layers, BarChart2, TrendingUp, FlaskConical,
-  ArrowLeft, Activity, HelpCircle, Database, GraduationCap, GitBranch, Stethoscope,
+  ArrowLeft, Activity, HelpCircle, Database, GraduationCap, GitBranch, Stethoscope, ChevronDown,
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuLabel,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import Tab1AgentQuery        from "./components/Tab1AgentQuery";
 import Tab2IncidentExplorer  from "./components/Tab2IncidentExplorer";
@@ -116,6 +125,67 @@ function DomainSwitcher() {
   );
 }
 
+const DASH_NAV_ITEMS = [
+  { href: "/",                 label: "MAIN APP",   icon: ArrowLeft,      accent: "--col-green"  },
+  { href: "/data",             label: "DATA",        icon: Database,       accent: "--col-amber"  },
+  { href: "/review",           label: "REVIEW",      icon: GraduationCap,  accent: "--col-purple" },
+  { href: "/examples",         label: "EXAMPLES",    icon: FlaskConical,   accent: "--col-green"  },
+  { href: "/medical-examples", label: "MED-EX",      icon: Stethoscope,    accent: "--col-cyan"   },
+  { href: "/diagram",          label: "DIAGRAM",     icon: GitBranch,      accent: "--col-cyan"   },
+  { href: "/faq",              label: "FAQ",          icon: HelpCircle,     accent: "--col-cyan"   },
+] as const;
+
+function DashNavDropdown() {
+  const router = useRouter();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          style={{
+            display: "flex", alignItems: "center", gap: "4px",
+            padding: "3px 8px",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.1em",
+            color: "hsl(var(--text-secondary))",
+            backgroundColor: "transparent",
+            border: "1px solid hsl(var(--border-base))",
+            borderRadius: "2px", cursor: "pointer", transition: "all 0.15s",
+          }}
+          onMouseEnter={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.color = "hsl(var(--col-cyan))"; el.style.borderColor = "hsl(var(--col-cyan))"; }}
+          onMouseLeave={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.color = "hsl(var(--text-secondary))"; el.style.borderColor = "hsl(var(--border-base))"; }}
+        >
+          NAVIGATE <ChevronDown size={10} />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent
+        align="end" sideOffset={6}
+        style={{
+          backgroundColor: "hsl(var(--bg-surface))",
+          border: "1px solid hsl(var(--border-base))",
+          borderRadius: "2px", padding: "4px", minWidth: "160px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
+        }}
+      >
+        <DropdownMenuLabel style={{ fontFamily: "var(--font-mono)", fontSize: "0.55rem", letterSpacing: "0.14em", color: "hsl(var(--text-dim))", padding: "4px 8px 6px" }}>
+          // PAGES
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator style={{ backgroundColor: "hsl(var(--border-base))", margin: "0 0 4px" }} />
+        {DASH_NAV_ITEMS.map(({ href, label, icon: Icon, accent }) => (
+          <DropdownMenuItem
+            key={href}
+            onSelect={() => router.push(href)}
+            style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.08em", color: "hsl(var(--text-secondary))", padding: "5px 8px", borderRadius: "1px", cursor: "pointer", gap: "7px" }}
+            className="nav-dropdown-item"
+          >
+            <Icon size={11} style={{ color: `hsl(var(${accent}))`, flexShrink: 0 }} />
+            {label}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+}
+
 function DashboardHeader() {
   return (
     <header
@@ -211,134 +281,15 @@ function DashboardHeader() {
           }} />
         </div>
 
-        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 
-        {/* FAQ link */}
-        <Link
-          href="/faq"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <HelpCircle size={13} />
-          <span className="nav-link-text">FAQ</span>
-        </Link>
+        <DashNavDropdown />
 
-        <Link
-          href="/data"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-amber))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <Database size={13} />
-          <span className="nav-link-text">DATA</span>
-        </Link>
-
-        <Link
-          href="/review"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-purple))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <GraduationCap size={13} />
-          <span className="nav-link-text">REVIEW</span>
-        </Link>
-
-        <Link
-          href="/examples"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-green))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <FlaskConical size={13} />
-          <span className="nav-link-text">EXAMPLES</span>
-        </Link>
-
-        <Link
-          href="/diagram"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <GitBranch size={13} />
-          <span className="nav-link-text">DIAGRAM</span>
-        </Link>
-
-        <Link
-          href="/medical-examples"
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "5px",
-            color: "hsl(var(--text-secondary))",
-            textDecoration: "none",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.65rem",
-            letterSpacing: "0.08em",
-            transition: "color 0.15s",
-          }}
-          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
-          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
-        >
-          <Stethoscope size={13} />
-          <span className="nav-link-text">MED-EX</span>
-        </Link>
-
-        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 
         <DomainSwitcher />
 
-        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 
         <div className="header-font-control"><FontSizeControl /></div>
         <ThemeToggle />

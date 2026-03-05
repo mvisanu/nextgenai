@@ -12,7 +12,7 @@ import Link from "next/link";
 import {
   ArrowLeft, BookOpen, ChevronDown, ChevronUp,
   CheckCircle2, Circle, Activity, Brain, Layers,
-  Database, GitMerge, Shield, Rocket, Monitor, BarChart2,
+  Database, GitMerge, Shield, Rocket, Monitor, BarChart2, Stethoscope,
 } from "lucide-react";
 import { ThemeToggle, FontSizeControl } from "../lib/theme";
 
@@ -921,6 +921,124 @@ const CATEGORIES: Category[] = [
       },
     ],
   },
+
+  // ─────────────────────────────────────────────────────────
+  // CATEGORY 11 — Medical Domain Extension
+  // ─────────────────────────────────────────────────────────
+  {
+    id: "medical",
+    label: "Medical Domain Extension",
+    shortLabel: "MEDICAL",
+    accentVar: "--col-cyan",
+    icon: Stethoscope,
+    description: "Why and how the system extends from aircraft/manufacturing to clinical case intelligence — dual-domain architecture, medical pipeline, ethics, and evaluation.",
+    questions: [
+      {
+        id: "q11-1",
+        question: "Why extend the system to the medical domain and what research value does that add?",
+        claim: "Extending to clinical case intelligence demonstrates that the multi-modal agentic RAG architecture is domain-agnostic — the same vector, SQL, and graph tool chain applies to any domain where unstructured narratives, structured records, and temporal patterns co-exist.",
+        evidence: [
+          "Clinical case management shares the identical trimodal structure: case narratives (vector search), disease/symptom records (SQL aggregation), and longitudinal patient cohort trends (time-series analysis) — directly parallel to the aircraft domain's three silos.",
+          "The dual-domain pivot from the single paper 'AI for quality engineering' to 'generalised agentic RAG for safety-critical multi-modal data' significantly broadens the research contribution and publication scope.",
+          "Medical AI is a high-stakes domain where LLM transparency and hallucination mitigation are not optional — validating the system there strengthens the trust arguments made for the manufacturing domain.",
+          "The MACCROBAT clinical NER dataset and a synthetic fallback pipeline (200 cases across 5 specialties) provide a structured evaluation corpus without requiring access to protected health information.",
+        ],
+        limitations: [
+          "The medical pipeline uses synthetic clinical case narratives — not real patient records. Generalisability to production EHR data is unproven and would require IRB approval and HIPAA-compliant infrastructure.",
+          "Clinical NLP is a specialised field; the all-MiniLM-L6-v2 embedding model is not fine-tuned on medical terminology (ICD codes, SNOMED CT, clinical abbreviations). A domain-adapted model (BioBERT, ClinicalBERT) would substantially improve retrieval quality.",
+        ],
+        futureWork: "Evaluate BioBERT vs. all-MiniLM-L6-v2 retrieval precision@k on the clinical case corpus. Partner with a hospital informatics team for IRB-approved pilot on de-identified discharge summaries.",
+        tags: ["medical", "motivation", "domain-transfer"],
+      },
+      {
+        id: "q11-2",
+        question: "How does the medical data pipeline work and how is it different from the aircraft pipeline?",
+        claim: "The medical pipeline generates 200 synthetic clinical case narratives across 5 specialties using template-based NLP, embeds them with IVFFlat indexing, and populates both a medical_cases narrative table and a disease_records structured table — a direct parallel to aircraft incident_reports and manufacturing_defects.",
+        evidence: [
+          "Pipeline structure: (1) MACCROBAT CSV loader attempts real clinical NER data; (2) synthetic fallback generates cases across Cardiac, Respiratory, Neurological, Gastrointestinal, and Musculoskeletal specialties with realistic symptom distributions; (3) narrative chunks are embedded and stored in medical_embeddings; (4) structured symptom/outcome data is written to disease_records.",
+          "The disease_records table includes boolean symptom flags (fever, cough, fatigue, difficulty_breathing), demographic fields (age, gender), vitals (blood_pressure, cholesterol_level), and outcome (Positive/Negative) — enabling structured SQL aggregation analogous to manufacturing_defects GROUP BY queries.",
+          "Medical embeddings use IVFFlat indexing (lists=100) rather than HNSW — IVFFlat builds faster and is appropriate for the smaller corpus size (~800 chunks), while HNSW provides better recall at scale for the larger aircraft corpus.",
+          "The entrypoint.sh seeds aircraft and medical data as independent steps — each checks its own table row count, so neither pipeline blocks the other and both are idempotent on repeated container restarts.",
+        ],
+        limitations: [
+          "Template-based synthesis produces structurally realistic but clinically limited cases. Real clinical narratives have far greater linguistic diversity, abbreviation density, and cross-referential complexity.",
+          "IVFFlat requires the index to be trained on representative data; with 800 chunks and lists=100, the index is effectively brute-force — HNSW would be more appropriate if the corpus grew beyond ~5,000 chunks.",
+        ],
+        futureWork: "Replace synthetic generation with MIMIC-III or i2b2 de-identified clinical notes (requires data access agreement). Evaluate ClinicalBERT embeddings vs. all-MiniLM-L6-v2 on case retrieval tasks.",
+        tags: ["medical", "pipeline", "architecture", "embedding"],
+      },
+      {
+        id: "q11-3",
+        question: "What are the ethical and regulatory considerations unique to deploying AI in the medical domain?",
+        claim: "Medical AI carries substantially higher ethical and regulatory obligations than manufacturing AI — FDA Software as a Medical Device (SaMD) classification, HIPAA data governance, clinical liability, and automation bias in life-critical decisions require explicit architectural and policy responses.",
+        evidence: [
+          "FDA SaMD guidance (2021) classifies clinical decision support software by risk level. A tool that retrieves similar cases and generates treatment hypotheses may qualify as a Class II or III medical device requiring 510(k) clearance or PMA — a legal threshold that must be assessed before any clinical deployment.",
+          "HIPAA requires that patient data used for AI training and retrieval is de-identified under Safe Harbor or Expert Determination standards. The current system's synthetic data avoids this, but any production deployment requires a formal data governance review.",
+          "Automation bias in medical AI is particularly dangerous: a clinician who over-trusts an AI case match may anchor to an incorrect diagnosis. The UI must communicate 'this is a decision-support tool only' with stronger regulatory-grade disclaimers than the manufacturing equivalent.",
+          "The dual-domain design explicitly labels all medical outputs as 'AI-generated hypotheses — consult a qualified clinician.' The confidence tier system (HIGH/MEDIUM/LOW) and full tool-call trace are mitigations, not guarantees.",
+          "Unlike quality engineering, medical errors can be fatal. The human-in-the-loop requirement is non-negotiable and must be enforced by product design, not just documented in fine print.",
+        ],
+        limitations: [
+          "The current implementation is a research prototype. It does not have FDA clearance, HIPAA-compliant infrastructure, audit logging, or the access control mechanisms required for clinical deployment.",
+          "Bias in the synthetic training corpus (e.g., demographic skew in synthetic patient generation) propagates to retrieval — cases for underrepresented demographic groups may have lower retrieval recall.",
+        ],
+        futureWork: "Conduct a bias audit across demographic dimensions (age, gender, condition prevalence). Design a regulatory compliance roadmap identifying the FDA SaMD pathway and HIPAA controls required for a clinical pilot.",
+        tags: ["medical", "ethics", "regulation", "hipaa", "fda"],
+      },
+      {
+        id: "q11-4",
+        question: "How do you evaluate clinical case retrieval quality and what metrics are appropriate?",
+        claim: "Clinical case retrieval uses the same precision@k framework as the aircraft domain, but requires specialty-stratified evaluation to detect whether retrieval degrades for underrepresented conditions — a medical-specific concern absent in the manufacturing domain.",
+        evidence: [
+          "Precision@k protocol for medical: define 30 test queries across 5 specialties (6 per specialty); retrieve top-k=5 cases per query; a clinical annotator (or proxy using MACCROBAT gold labels) judges each result as clinically relevant or not; precision@5 is computed per specialty and aggregated.",
+          "Specialty stratification is critical: a model that achieves 0.80 mean precision@5 may achieve 0.95 for Cardiac (most cases) and 0.50 for Musculoskeletal (fewest cases). Mean precision hides this performance gap.",
+          "Additional medical metric: symptom co-occurrence recall — for a query like 'patients with chest pain and elevated troponin,' verify that retrieved cases share both symptoms (not just one). Standard precision@k does not capture multi-symptom query satisfaction.",
+          "Negative example relevance: retrieved cases for 'cardiac arrest presenting with ST-elevation' should NOT include hypertensive urgency cases even if both are Cardiac domain. False positive specialty contamination must be explicitly measured.",
+        ],
+        limitations: [
+          "Clinical relevance is highly context-dependent — two cardiologists may disagree on whether a retrieved case is 'relevant' to a query. Inter-annotator agreement (Cohen's kappa) must be measured to establish annotation reliability.",
+          "Without real clinical cases, precision@k is validated on synthetic data generated from the same templates used to build the corpus — creating a circularity risk where the model retrieves syntactically similar templates rather than semantically similar clinical presentations.",
+        ],
+        futureWork: "Develop a medical query test set in collaboration with a clinician; annotate relevance with two independent reviewers; compute inter-annotator kappa; report precision@5 and recall@10 stratified by specialty.",
+        tags: ["medical", "evaluation", "precision", "metrics"],
+      },
+      {
+        id: "q11-5",
+        question: "What architectural changes were required to support the medical domain and what stayed the same?",
+        claim: "The dual-domain extension required zero changes to the agent orchestrator, zero changes to the tool interfaces, and zero changes to the frontend rendering pipeline — demonstrating genuine architectural domain-agnosticism. Only three layers changed: the data schema, the ingest pipeline, and the API routing.",
+        evidence: [
+          "Unchanged: agent orchestrator (intent classification, tool sequencing, synthesis), vector_tool (embedding query + cosine retrieval), sql_tool (SELECT-only guardrailed execution), GraphViewer (ReactFlow rendering), ChatPanel, AgentTimeline, CitationsDrawer.",
+          "Schema additions: three new Alembic-migrated tables (medical_cases, medical_embeddings with IVFFlat index, disease_records). The migration is additive — no existing aircraft tables were modified, ensuring backwards compatibility.",
+          "API additions: POST /query/medical and POST /ingest/medical routes added to the FastAPI router. The medical query endpoint follows the identical request/response schema as /query — the frontend requires no branching logic.",
+          "Frontend domain switch: the DomainContext provider (domain-context.tsx) toggles API target, chat placeholder text, disclaimer label, graph mock data, and dashboard tab labels — all via a single domain state variable with zero conditional render trees.",
+          "This architectural proof-of-concept strengthens the research claim: the system is a generalised multi-modal agentic RAG framework, not an aircraft-specific tool. The paper title can expand from 'quality engineering' to 'safety-critical multi-modal AI.'",
+        ],
+        limitations: [
+          "The medical and aircraft graph views use static mock data — the live graph traversal for clinical entity relationships (symptom → diagnosis → treatment) has not yet been implemented in GraphRAG.",
+          "SQL tool queries are domain-specific: the aircraft SQL templates (GROUP BY product, defect_type) differ from medical templates (GROUP BY specialty, disease, outcome). These are pre-defined — the agent cannot yet auto-generate domain-appropriate SQL.",
+        ],
+        futureWork: "Implement dynamic SQL template selection: given the active domain, the agent selects from a domain-appropriate SQL tool registry rather than a shared static set.",
+        tags: ["medical", "architecture", "domain-transfer", "design"],
+      },
+      {
+        id: "q11-6",
+        question: "Why is a medical AI system particularly well-suited to demonstrate the 'transparency-first' design principle?",
+        claim: "Medical AI is the strongest possible test case for transparency-first design because the consequences of unexplained AI recommendations are most severe — clinicians cannot act on black-box outputs, and regulatory bodies increasingly require auditability as a condition of clinical AI deployment.",
+        evidence: [
+          "FDA's AI/ML-based SaMD Action Plan (2021) and the EU AI Act's Article 13 both require high-risk AI systems (including clinical decision support) to provide 'sufficient transparency' for users to interpret and override outputs. NextAgentAI's tool-call trace, confidence tiers, and citation drawers are direct implementations of these requirements.",
+          "The AgentTimeline component surfaces every tool invocation, latency, and output in the medical domain — a clinician can trace exactly which retrieved cases influenced the LLM's differential diagnosis suggestion before acting on it.",
+          "Clinical AI trust literature (Cai et al., 2019; Rajpurkar et al., 2022) consistently finds that clinicians require explanation, not just accuracy, before incorporating AI recommendations into practice. Precision@90% with no explanation is less clinically useful than precision@80% with case-level citations.",
+          "The dual-domain system demonstrates that the same transparency framework (tool traces + citations + confidence tags) applies equally to manufacturing and clinical contexts — strengthening the universality of the design contribution.",
+        ],
+        limitations: [
+          "Tool-call traces show process transparency (what the agent did) but not mechanistic transparency (why the LLM generated a particular synthesis from the retrieved evidence). A saliency-map or faithfulness-score approach would be required for the latter.",
+          "Clinicians under time pressure may skip the tool trace panel entirely, defaulting to the synthesised answer — the same automation bias risk the transparency design was intended to mitigate.",
+        ],
+        futureWork: "Add a faithfulness checker: for each sentence in the medical synthesis, run an NLI model to verify it is entailed by at least one retrieved case chunk. Display sentence-level entailment scores inline in the answer panel.",
+        tags: ["medical", "transparency", "trust", "regulation", "ethics"],
+      },
+    ],
+  },
 ];
 
 // ── Quick reference table ──────────────────────────────────────────────────
@@ -942,6 +1060,12 @@ const QUICK_REF = [
   { claim: "TF-IDF use?",             defense: "GraphRAG node labelling: identifies discriminative terms per incident cluster. Also retrieval baseline." },
   { claim: "Core pain point?",         defense: "40–60% of investigation time wasted correlating 3 disconnected silos. Agent collapses this to seconds." },
   { claim: "Who is the user?",         defense: "Quality/reliability engineer: deep domain expertise, limited SQL/data-science skill. 3+ tool silos today." },
+  { claim: "Why medical domain?",      defense: "Proves domain-agnosticism — same vector+SQL+graph agent serves clinical cases with zero orchestrator changes." },
+  { claim: "IVFFlat vs HNSW?",        defense: "IVFFlat builds faster for small corpora (~800 chunks); HNSW gives better recall at scale. Medical uses IVFFlat (lists=100)." },
+  { claim: "Medical ethics?",         defense: "FDA SaMD classification, HIPAA data governance, automation bias — medical requires stricter disclaimers and human-in-the-loop than manufacturing." },
+  { claim: "BioBERT vs MiniLM?",      defense: "all-MiniLM-L6-v2 is not tuned on clinical text; BioBERT/ClinicalBERT would improve precision@k on medical NER-rich queries." },
+  { claim: "Medical eval metric?",    defense: "Precision@k stratified by specialty — mean P@k hides recall collapse for underrepresented conditions (e.g., Musculoskeletal)." },
+  { claim: "What changed for medical?", defense: "Only 3 layers: DB schema (+3 tables), ingest pipeline, API routes. Orchestrator, tools, frontend rendering — zero changes." },
 ];
 
 // ── Presentation tips ──────────────────────────────────────────────────────
@@ -953,6 +1077,8 @@ const TIPS = [
   { title: "System vs algorithm novelty",   body: "You are not claiming a new algorithm. You claim a novel system design, evaluation framework, and transparency pattern. Know which one you're defending." },
   { title: "Use the tool trace as your ace",body: "When asked about trust and accountability, demo the transparency panel. It answers 'how do you know the AI isn't making things up?' visually." },
   { title: "Precision@k is your anchor",    body: "When asked about evaluation, immediately go to precision@k. Define it clearly, acknowledge its limitations, then mention NDCG as the Phase 2 upgrade." },
+  { title: "Lead with domain-agnosticism",  body: "When asked why you added medical, say: 'The strongest evidence that an architecture is generalised is that it works in a second unrelated domain with zero changes to the core agent.' Then show what changed (3 layers) and what didn't (everything else)." },
+  { title: "Medical ethics is a strength",  body: "Don't be defensive about medical AI risks — use them. Say: 'Medical is the hardest test case for transparency-first design. If the tool-trace and confidence tiers are sufficient for a clinician, they are more than sufficient for a quality engineer.'" },
 ];
 
 // ── QA Card component ──────────────────────────────────────────────────────
