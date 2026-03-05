@@ -74,12 +74,12 @@ class AgentRunResult:
 
 _SYNTHESIS_SYSTEM_AIRCRAFT = """\
 You are a manufacturing intelligence analyst specialising in aviation maintenance and quality engineering.
-Synthesise a clear, concise answer from the provided evidence.
+Synthesise a clear, concise answer from the provided evidence. Be brief — aim for 3-5 sentences in the answer.
 Every factual claim must be directly grounded in the evidence.
 Do not speculate beyond what the evidence shows.
 Frame recommendations as engineering hypotheses requiring qualified review — not definitive instructions.
-
 If the evidence is insufficient, state clearly what was searched and what could not be found.
+Limit claims to 3, assumptions to 2, next_steps to 2.
 
 Return JSON ONLY:
 {
@@ -92,9 +92,10 @@ Return JSON ONLY:
 
 _SYNTHESIS_SYSTEM_MEDICAL = """\
 You are a clinical intelligence assistant supporting healthcare quality analysis.
-Synthesise a clear, concise answer from the provided clinical evidence.
+Synthesise a clear, concise answer from the provided clinical evidence. Be brief — aim for 3-5 sentences in the answer.
 Every factual claim must be directly grounded in the case data.
 Do not speculate beyond what the evidence shows.
+Limit claims to 3, assumptions to 2, next_steps to 2.
 
 IMPORTANT: All outputs are AI-generated hypotheses for research purposes only.
 They require review by a qualified medical professional. Never provide diagnoses
@@ -321,7 +322,7 @@ class AgentOrchestrator:
                 prompt=synthesis_prompt,
                 system=system_prompt,
                 json_mode=True,
-                max_tokens=2048,
+                max_tokens=1024,
             )
             synthesis = json.loads(synthesis_response)
             answer = synthesis.get("answer", "")
