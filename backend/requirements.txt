@@ -1,0 +1,52 @@
+# ============================================================
+# NextAgentAI Backend — Python 3.11+ dependencies
+# Pin minor versions for reproducibility.
+# Install: pip install -r requirements.txt
+# ============================================================
+
+# Web framework
+fastapi==0.115.6
+uvicorn[standard]==0.32.1
+python-multipart==0.0.20
+
+# Database
+sqlalchemy==2.0.36
+alembic==1.14.0
+psycopg2-binary==2.9.10
+pgvector==0.3.6
+asyncpg==0.30.0
+
+# Settings & validation
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-dotenv==1.0.1
+pyyaml==6.0.2
+
+# LLM
+anthropic==0.40.0
+
+# Embeddings
+sentence-transformers==3.3.1
+torch==2.5.1
+transformers==4.47.1
+numpy==1.26.4
+
+# NLP / entity extraction
+spacy==3.8.3
+
+# Chunking / tokenization
+tiktoken==0.8.0
+
+# Data loading & processing
+pandas==2.2.3
+kagglehub==0.3.6
+
+# HTTP client (for tests)
+httpx==0.28.1
+
+# Testing
+pytest==8.3.4
+pytest-asyncio==0.24.0
+
+# Observability
+python-json-logger==3.2.1

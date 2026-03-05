@@ -1,0 +1,40 @@
+database:
+  dsn: "${PG_DSN}"
+
+llm:
+  provider: anthropic
+  model: claude-sonnet-4-6
+  max_tokens: 4096
+
+embeddings:
+  model: sentence-transformers/all-MiniLM-L6-v2
+  dim: 384
+  chunk_size_tokens: 400
+  chunk_overlap_tokens: 75
+
+vector_search:
+  top_k: 8
+  similarity_threshold: 0.75
+
+graph:
+  k_hop: 2
+  edge_similarity_threshold: 0.80
+
+agent:
+  max_steps: 10
+  tool_timeout_seconds: 30
+
+datasets:
+  incidents:
+    synthetic: true
+    synthetic_rows: 10000
+    csv_path: data/synthetic/incidents_synth.csv
+  defects:
+    kaggle_slug: fahmidachowdhury/manufacturing-defects
+    csv_path: data/kaggle/manufacturing_defects.csv
+  defects_supplemental:
+    kaggle_slug: rabieelkharoua/predicting-manufacturing-defects-dataset
+    csv_path: data/kaggle/defects_prediction.csv
+  maintenance:
+    kaggle_slug: merishnasuwal/aircraft-historical-maintenance-dataset
+    csv_path: data/kaggle/aircraft_maintenance.csv

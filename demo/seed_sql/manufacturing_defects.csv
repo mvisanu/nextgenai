@@ -1,0 +1,56 @@
+defect_id,product,defect_type,severity,inspection_date,plant,lot_number,action_taken,source
+DEF-SEED001,Hydraulic Pump Assembly,crack,critical,2024-01-15,Plant A,LOT-1001,Replaced assembly and conducted pressure test,seed
+DEF-SEED002,Control Valve Body,corrosion,high,2024-01-20,Plant A,LOT-1002,Cleaned treated and re-inspected,seed
+DEF-SEED003,Actuator Rod,wear,medium,2024-01-25,Plant B,LOT-1003,Replaced worn component within tolerance,seed
+DEF-SEED004,Electrical Connector,contamination,high,2024-02-01,Plant B,LOT-1004,Cleaned with IPA and re-seated,seed
+DEF-SEED005,Bracket Assembly,misalignment,low,2024-02-05,Plant C,LOT-1005,Realigned to specification and retorqued,seed
+DEF-SEED006,Filter Housing,fatigue,critical,2024-02-10,Plant A,LOT-1006,Replaced housing submitted for metallurgical analysis,seed
+DEF-SEED007,Sensor Module,short circuit,high,2024-02-15,Plant C,LOT-1007,Replaced sensor calibrated replacement,seed
+DEF-SEED008,Manifold Block,leakage,high,2024-02-20,Plant B,LOT-1008,Replaced seals pressure-tested to 150% working pressure,seed
+DEF-SEED009,Bearing Assembly,vibration,medium,2024-02-25,Plant A,LOT-1009,Replaced bearing balanced assembly,seed
+DEF-SEED010,Piston Rod,delamination,critical,2024-03-01,Plant B,LOT-1010,Condemned part raised NCR engineering review,seed
+DEF-SEED011,Compressor Housing,erosion,medium,2024-03-05,Plant C,LOT-1011,Applied protective coating increased inspection interval,seed
+DEF-SEED012,Relay Module,overheating,high,2024-03-10,Plant A,LOT-1012,Replaced relay verified cooling airflow,seed
+DEF-SEED013,Seal Assembly,leakage,high,2024-03-15,Plant B,LOT-1013,Replaced all seals in assembly,seed
+DEF-SEED014,Hydraulic Cylinder,crack,critical,2024-03-20,Plant C,LOT-1014,NDE confirmed crack depth replaced cylinder,seed
+DEF-SEED015,Wiring Harness,contamination,medium,2024-03-25,Plant A,LOT-1015,Cleaned replaced affected segments,seed
+DEF-SEED016,Pump Impeller,wear,high,2024-04-01,Plant B,LOT-1016,Replaced impeller measured clearances,seed
+DEF-SEED017,Avionics Box,short circuit,critical,2024-04-05,Plant C,LOT-1017,Replaced unit returned to OEM for analysis,seed
+DEF-SEED018,Frame Bracket,fatigue,medium,2024-04-10,Plant A,LOT-1018,Replaced bracket added inspection interval,seed
+DEF-SEED019,Fuel Valve,corrosion,high,2024-04-15,Plant B,LOT-1019,Overhauled valve bench-tested to specification,seed
+DEF-SEED020,Landing Gear Actuator,misalignment,low,2024-04-20,Plant C,LOT-1020,Realigned rigged per AMM and operational tested,seed
+DEF-SEED021,Engine Mount,crack,critical,2024-04-25,Plant A,LOT-1021,Replaced mount borescope inspection of adjacent structure,seed
+DEF-SEED022,Control Surface Hinge,wear,medium,2024-05-01,Plant B,LOT-1022,Replaced hinge pins and bushings,seed
+DEF-SEED023,Oxygen Regulator,leakage,high,2024-05-05,Plant C,LOT-1023,Overhauled regulator flow-tested at altitude simulation,seed
+DEF-SEED024,Brake Assembly,contamination,medium,2024-05-10,Plant A,LOT-1024,Cleaned brake assembly replaced pads,seed
+DEF-SEED025,Structural Rib,fatigue,high,2024-05-15,Plant B,LOT-1025,Stop-drilled crack repaired per SRM,seed
+DEF-SEED026,Hydraulic Pump Assembly,wear,high,2024-05-20,Plant C,LOT-1026,Replaced pump assembly and retested,seed
+DEF-SEED027,Control Valve Body,leakage,medium,2024-05-25,Plant A,LOT-1027,Replaced valve body O-rings and pressure-tested,seed
+DEF-SEED028,Actuator Rod,crack,critical,2024-06-01,Plant B,LOT-1028,Condemned rod raised NCR and replaced,seed
+DEF-SEED029,Electrical Connector,corrosion,high,2024-06-05,Plant C,LOT-1029,Replaced connector cleaned mating surface,seed
+DEF-SEED030,Bracket Assembly,fatigue,medium,2024-06-10,Plant A,LOT-1030,Replaced bracket updated inspection interval,seed
+DEF-SEED031,Filter Housing,contamination,low,2024-06-15,Plant B,LOT-1031,Replaced filter and flushed housing,seed
+DEF-SEED032,Sensor Module,vibration,medium,2024-06-20,Plant C,LOT-1032,Replaced vibration isolators recalibrated,seed
+DEF-SEED033,Manifold Block,crack,high,2024-06-25,Plant A,LOT-1033,NDE inspection replaced manifold,seed
+DEF-SEED034,Bearing Assembly,overheating,critical,2024-07-01,Plant B,LOT-1034,Replaced bearing checked lubrication system,seed
+DEF-SEED035,Piston Rod,wear,medium,2024-07-05,Plant C,LOT-1035,Replaced rod assembly measured bore clearance,seed
+DEF-SEED036,Compressor Housing,crack,high,2024-07-10,Plant A,LOT-1036,Borescope inspection replaced housing,seed
+DEF-SEED037,Relay Module,short circuit,critical,2024-07-15,Plant B,LOT-1037,Replaced relay isolated circuit fault,seed
+DEF-SEED038,Seal Assembly,contamination,medium,2024-07-20,Plant C,LOT-1038,Replaced seals flushed system,seed
+DEF-SEED039,Hydraulic Cylinder,corrosion,high,2024-07-25,Plant A,LOT-1039,Treated corrosion replaced cylinder liner,seed
+DEF-SEED040,Wiring Harness,fatigue,high,2024-08-01,Plant B,LOT-1040,Replaced harness with updated routing,seed
+DEF-SEED041,Pump Impeller,delamination,critical,2024-08-05,Plant C,LOT-1041,Condemned impeller raised fleet action,seed
+DEF-SEED042,Avionics Box,contamination,medium,2024-08-10,Plant A,LOT-1042,Cleaned interior replaced seals,seed
+DEF-SEED043,Frame Bracket,corrosion,low,2024-08-15,Plant B,LOT-1043,Applied corrosion treatment and recoated,seed
+DEF-SEED044,Fuel Valve,wear,medium,2024-08-20,Plant C,LOT-1044,Replaced valve seat and lapping,seed
+DEF-SEED045,Landing Gear Actuator,leakage,high,2024-08-25,Plant A,LOT-1045,Replaced actuator seals and retested,seed
+DEF-SEED046,Engine Mount,fatigue,critical,2024-09-01,Plant B,LOT-1046,Replaced mount issued fleet inspection directive,seed
+DEF-SEED047,Control Surface Hinge,corrosion,medium,2024-09-05,Plant C,LOT-1047,Treated and recoated hinge assembly,seed
+DEF-SEED048,Oxygen Regulator,contamination,low,2024-09-10,Plant A,LOT-1048,Replaced regulator filter and flow-tested,seed
+DEF-SEED049,Brake Assembly,crack,high,2024-09-15,Plant B,LOT-1049,Replaced brake disc assembly,seed
+DEF-SEED050,Structural Rib,corrosion,medium,2024-09-20,Plant C,LOT-1050,Treated corrosion stop-drilled repaired per SRM,seed
+DEF-SEED051,Hydraulic Pump Assembly,delamination,high,2024-09-25,Plant A,LOT-1051,Condemned pump raised engineering review,seed
+DEF-SEED052,Control Valve Body,overheating,critical,2024-10-01,Plant B,LOT-1052,Replaced valve body investigated thermal cause,seed
+DEF-SEED053,Actuator Rod,contamination,medium,2024-10-05,Plant C,LOT-1053,Flushed system replaced rod seals,seed
+DEF-SEED054,Electrical Connector,short circuit,high,2024-10-10,Plant A,LOT-1054,Replaced connector arc-damaged circuit isolated,seed
+DEF-SEED055,Bracket Assembly,vibration,low,2024-10-15,Plant B,LOT-1055,Added damping pads retorqued fasteners,seed

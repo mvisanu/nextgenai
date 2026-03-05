@@ -1,0 +1,53 @@
+defect_id,product,defect_type,severity,inspection_date,plant,lot_number,action_taken,source
+DEF-SUP001,Widget Type A,dimensional nonconformance,medium,2024-01-10,Plant D,LOT-2001,Rework to within tolerance,seed
+DEF-SUP002,Widget Type B,surface damage,low,2024-01-12,Plant D,LOT-2002,Minor blend repair,seed
+DEF-SUP003,Widget Type A,contamination,high,2024-01-15,Plant E,LOT-2003,Cleaned quarantined batch,seed
+DEF-SUP004,Component X,crack,critical,2024-01-18,Plant E,LOT-2004,Scrapped component raised NCR,seed
+DEF-SUP005,Component Y,wear,medium,2024-01-22,Plant D,LOT-2005,Replaced to specification,seed
+DEF-SUP006,Assembly Z,misalignment,low,2024-01-25,Plant F,LOT-2006,Realigned within SPC limits,seed
+DEF-SUP007,Widget Type B,corrosion,high,2024-01-28,Plant F,LOT-2007,Stripped treated re-coated,seed
+DEF-SUP008,Component X,fatigue,high,2024-02-02,Plant D,LOT-2008,Destructive inspection raised fleet action,seed
+DEF-SUP009,Assembly Z,leakage,medium,2024-02-05,Plant E,LOT-2009,Replaced seals pressure-tested,seed
+DEF-SUP010,Widget Type A,short circuit,critical,2024-02-08,Plant F,LOT-2010,Replaced PCB assembly,seed
+DEF-SUP011,Component Y,erosion,low,2024-02-12,Plant D,LOT-2011,Applied coating acceptable for service,seed
+DEF-SUP012,Widget Type B,vibration,medium,2024-02-15,Plant E,LOT-2012,Balanced dynamic assembly,seed
+DEF-SUP013,Assembly Z,overheating,high,2024-02-18,Plant F,LOT-2013,Checked cooling replaced thermal pad,seed
+DEF-SUP014,Component X,contamination,medium,2024-02-22,Plant D,LOT-2014,Flushed system replaced filter,seed
+DEF-SUP015,Widget Type A,wear,high,2024-02-25,Plant E,LOT-2015,Replaced worn components,seed
+DEF-SUP016,Component Y,crack,medium,2024-03-01,Plant F,LOT-2016,Stop-drilled crack within limits,seed
+DEF-SUP017,Assembly Z,delamination,high,2024-03-05,Plant D,LOT-2017,Condemned delaminated panels,seed
+DEF-SUP018,Widget Type B,surface damage,low,2024-03-08,Plant E,LOT-2018,Cosmetic blend repair,seed
+DEF-SUP019,Component X,leakage,medium,2024-03-12,Plant F,LOT-2019,Replaced O-rings tested,seed
+DEF-SUP020,Widget Type A,fatigue,critical,2024-03-15,Plant D,LOT-2020,Grounded pending fleet inspection,seed
+DEF-SUP021,Component Y,misalignment,low,2024-03-18,Plant E,LOT-2021,Realigned to drawing specification,seed
+DEF-SUP022,Assembly Z,contamination,high,2024-03-22,Plant F,LOT-2022,Full decontamination cycle,seed
+DEF-SUP023,Widget Type B,corrosion,medium,2024-03-25,Plant D,LOT-2023,Treated and sealed,seed
+DEF-SUP024,Component X,vibration,high,2024-03-28,Plant E,LOT-2024,Replaced vibration isolators,seed
+DEF-SUP025,Widget Type A,overheating,critical,2024-04-01,Plant F,LOT-2025,Root cause thermal runaway replaced assembly,seed
+DEF-SUP026,Precision Gear,crack,high,2024-04-05,Plant D,LOT-2026,Replaced gear set raised NCR,seed
+DEF-SUP027,Precision Gear,wear,medium,2024-04-10,Plant E,LOT-2027,Replaced gear measured backlash,seed
+DEF-SUP028,Motor Housing,corrosion,low,2024-04-15,Plant F,LOT-2028,Treated and recoated housing,seed
+DEF-SUP029,Motor Housing,overheating,high,2024-04-20,Plant D,LOT-2029,Replaced motor checked cooling fins,seed
+DEF-SUP030,Precision Gear,contamination,medium,2024-04-25,Plant E,LOT-2030,Flushed gearbox replaced seals,seed
+DEF-SUP031,Widget Type B,fatigue,high,2024-05-01,Plant F,LOT-2031,Replaced component issued inspection notice,seed
+DEF-SUP032,Component Y,short circuit,critical,2024-05-05,Plant D,LOT-2032,Replaced PCB isolated fault,seed
+DEF-SUP033,Assembly Z,crack,high,2024-05-10,Plant E,LOT-2033,NDE inspection repaired assembly,seed
+DEF-SUP034,Motor Housing,leakage,medium,2024-05-15,Plant F,LOT-2034,Replaced gasket and tested,seed
+DEF-SUP035,Widget Type A,surface damage,low,2024-05-20,Plant D,LOT-2035,Blend repaired within limits,seed
+DEF-SUP036,Precision Gear,delamination,critical,2024-05-25,Plant E,LOT-2036,Condemned gear set raised fleet action,seed
+DEF-SUP037,Component X,overheating,high,2024-06-01,Plant F,LOT-2037,Replaced thermal fuse checked circuit,seed
+DEF-SUP038,Widget Type B,dimensional nonconformance,medium,2024-06-05,Plant D,LOT-2038,Reworked to tolerance submitted measurement report,seed
+DEF-SUP039,Component Y,leakage,low,2024-06-10,Plant E,LOT-2039,Replaced O-ring retested,seed
+DEF-SUP040,Assembly Z,vibration,medium,2024-06-15,Plant F,LOT-2040,Balanced assembly replaced isolators,seed
+DEF-SUP041,Motor Housing,crack,critical,2024-06-20,Plant D,LOT-2041,Condemned housing replaced assembly,seed
+DEF-SUP042,Precision Gear,corrosion,medium,2024-06-25,Plant E,LOT-2042,Treated corrosion recoated gear,seed
+DEF-SUP043,Widget Type A,wear,high,2024-07-01,Plant F,LOT-2043,Replaced worn parts updated BOM,seed
+DEF-SUP044,Component X,misalignment,low,2024-07-05,Plant D,LOT-2044,Realigned assembly verified with CMM,seed
+DEF-SUP045,Widget Type B,contamination,medium,2024-07-10,Plant E,LOT-2045,Cleaned quarantined lot,seed
+DEF-SUP046,Assembly Z,fatigue,high,2024-07-15,Plant F,LOT-2046,Replaced fatigued components inspection interval reduced,seed
+DEF-SUP047,Motor Housing,vibration,medium,2024-07-20,Plant D,LOT-2047,Added damping pads retorqued mounts,seed
+DEF-SUP048,Precision Gear,short circuit,critical,2024-07-25,Plant E,LOT-2048,Replaced embedded sensor assembly,seed
+DEF-SUP049,Component Y,surface damage,low,2024-07-30,Plant F,LOT-2049,Cosmetic blend repair accepted,seed
+DEF-SUP050,Widget Type A,delamination,high,2024-08-05,Plant D,LOT-2050,Condemned panels raised engineering review,seed
+DEF-SUP051,Component X,erosion,medium,2024-08-10,Plant E,LOT-2051,Applied protective coating,seed
+DEF-SUP052,Widget Type B,crack,critical,2024-08-15,Plant F,LOT-2052,Replaced component issued SB,seed
