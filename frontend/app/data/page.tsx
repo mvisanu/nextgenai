@@ -784,9 +784,9 @@ export default function DataPage() {
     <div
       className="grid-bg"
       style={{
-        height: "100vh",
-        width: "100vw",
-        overflow: "hidden",
+        minHeight: "100svh",
+        width: "100%",
+        overflowX: "hidden",
         display: "flex",
         flexDirection: "column",
         backgroundColor: "hsl(var(--bg-void))",

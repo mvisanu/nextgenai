@@ -136,8 +136,13 @@
     font-size: 1rem;
     line-height: 1.7;       /* senior-friendly: min 1.5, recommended 1.7 */
     font-weight: 500;       /* slightly heavier for legibility */
-    overflow: hidden;
+    overflow-x: hidden;    /* prevent horizontal scroll; vertical allowed per-page */
   }
+
+/* Panel pages (main / dashboard) lock scroll via .app-shell — not body */
+.app-shell {
+  overflow: hidden;
+}
 
   /* ── Custom scrollbar ── */
   ::-webkit-scrollbar { width: 4px; height: 4px; }
@@ -407,9 +412,7 @@ mark.citation-highlight {
 /* ── Mobile: full responsive overhaul ── */
 @media (max-width: 640px) {
 
-  /* Allow the page shell to scroll vertically */
-  body { overflow-y: auto !important; }
-
+  /* On mobile the panel shell becomes a scrollable column */
   .app-shell {
     height: auto !important;
     min-height: 100svh;

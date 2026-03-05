@@ -1151,7 +1151,7 @@ export default function ReviewPage() {
   return (
     <div
       className="grid-bg"
-      style={{ height: "100vh", width: "100vw", overflow: "hidden", display: "flex", flexDirection: "column", backgroundColor: "hsl(var(--bg-void))" }}
+      style={{ minHeight: "100svh", width: "100%", overflowX: "hidden", display: "flex", flexDirection: "column", backgroundColor: "hsl(var(--bg-void))" }}
     >
       {/* Header */}
       <header
