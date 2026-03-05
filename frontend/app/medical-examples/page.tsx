@@ -12,7 +12,7 @@ import {
   ArrowLeft, ChevronDown, ChevronUp, Activity,
   DollarSign, Clock, TrendingDown, AlertTriangle,
   Heart, Brain, Wind, Stethoscope, Microscope,
-  FlaskConical, BookOpen, GitBranch,
+  FlaskConical, BookOpen, GitBranch, Copy, Check,
 } from "lucide-react";
 import { ThemeToggle, FontSizeControl } from "../lib/theme";
 
@@ -444,7 +444,15 @@ const INTENT_LABELS: Record<string, string> = {
 function ExampleCard({ ex }: { ex: MedExample }) {
   const [open, setOpen] = useState(false);
   const [phdOpen, setPhdOpen] = useState(false);
+  const [copied, setCopied] = useState(false);
   const accent = INTENT_COLORS[ex.intent];
+
+  const handleCopy = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    await navigator.clipboard.writeText(ex.query);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
   return (
     <div style={{
@@ -455,93 +463,125 @@ function ExampleCard({ ex }: { ex: MedExample }) {
       transition: "all 0.15s",
       overflow: "hidden",
     }}>
-      {/* Header row */}
-      <button
-        onClick={() => setOpen(v => !v)}
-        style={{
-          width: "100%",
-          display: "flex",
-          alignItems: "flex-start",
-          gap: "14px",
-          padding: "16px 18px",
-          background: "none",
-          border: "none",
-          cursor: "pointer",
-          textAlign: "left",
-        }}
-      >
-        {/* Number badge */}
-        <div style={{
-          flexShrink: 0,
-          width: "36px",
-          height: "36px",
-          border: `1.5px solid hsl(var(${accent}))`,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          fontFamily: "var(--font-display)",
-          fontSize: "0.75rem",
-          fontWeight: 700,
-          color: `hsl(var(${accent}))`,
-          marginTop: "2px",
-        }}>
-          {String(ex.number).padStart(2, "0")}
-        </div>
-
-        <div style={{ flex: 1 }}>
-          {/* Intent + specialty badges */}
-          <div style={{ display: "flex", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
-            <span style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.62rem",
-              fontWeight: 700,
-              letterSpacing: "0.1em",
-              color: `hsl(var(${accent}))`,
-              backgroundColor: `hsl(var(${accent}) / 0.12)`,
-              padding: "2px 8px",
-              borderRadius: "2px",
-            }}>
-              {INTENT_LABELS[ex.intent]}
-            </span>
-            <span style={{
-              fontFamily: "var(--font-mono)",
-              fontSize: "0.58rem",
-              color: "hsl(var(--col-cyan))",
-              backgroundColor: "hsl(var(--col-cyan) / 0.08)",
-              border: "1px solid hsl(var(--col-cyan) / 0.2)",
-              padding: "2px 8px",
-              borderRadius: "2px",
-            }}>
-              {ex.specialty}
-            </span>
-          </div>
-
-          {/* Query text */}
-          <p style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.88rem",
-            color: "hsl(var(--text-primary))",
-            lineHeight: 1.55,
-            fontStyle: "italic",
+      {/* Header row — expand button + copy button as flex siblings */}
+      <div style={{ display: "flex", alignItems: "stretch" }}>
+        <button
+          onClick={() => setOpen(v => !v)}
+          style={{
+            flex: 1,
+            display: "flex",
+            alignItems: "flex-start",
+            gap: "14px",
+            padding: "16px 18px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            textAlign: "left",
+          }}
+        >
+          {/* Number badge */}
+          <div style={{
+            flexShrink: 0,
+            width: "36px",
+            height: "36px",
+            border: `1.5px solid hsl(var(${accent}))`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "var(--font-display)",
+            fontSize: "0.75rem",
+            fontWeight: 700,
+            color: `hsl(var(${accent}))`,
+            marginTop: "2px",
           }}>
-            "{ex.query}"
-          </p>
-
-          {/* Quick metrics */}
-          <div style={{ display: "flex", gap: "20px", marginTop: "10px", flexWrap: "wrap" }}>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--col-green))" }}>
-              {ex.timeSaved.split("→")[0].trim()} saved
-            </span>
-            <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--col-amber))" }}>
-              {ex.impact.slice(0, 60)}{ex.impact.length > 60 ? "..." : ""}
-            </span>
+            {String(ex.number).padStart(2, "0")}
           </div>
-        </div>
 
-        {open
-          ? <ChevronUp size={16} style={{ color: "hsl(var(--text-dim))", flexShrink: 0, marginTop: "10px" }} />
-          : <ChevronDown size={16} style={{ color: "hsl(var(--text-dim))", flexShrink: 0, marginTop: "10px" }} />}
-      </button>
+          <div style={{ flex: 1 }}>
+            {/* Intent + specialty badges */}
+            <div style={{ display: "flex", gap: "8px", marginBottom: "8px", flexWrap: "wrap" }}>
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.62rem",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                color: `hsl(var(${accent}))`,
+                backgroundColor: `hsl(var(${accent}) / 0.12)`,
+                padding: "2px 8px",
+                borderRadius: "2px",
+              }}>
+                {INTENT_LABELS[ex.intent]}
+              </span>
+              <span style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.58rem",
+                color: "hsl(var(--col-cyan))",
+                backgroundColor: "hsl(var(--col-cyan) / 0.08)",
+                border: "1px solid hsl(var(--col-cyan) / 0.2)",
+                padding: "2px 8px",
+                borderRadius: "2px",
+              }}>
+                {ex.specialty}
+              </span>
+            </div>
+
+            {/* Query text */}
+            <p style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.88rem",
+              color: "hsl(var(--text-primary))",
+              lineHeight: 1.55,
+              fontStyle: "italic",
+            }}>
+              "{ex.query}"
+            </p>
+
+            {/* Quick metrics */}
+            <div style={{ display: "flex", gap: "20px", marginTop: "10px", flexWrap: "wrap" }}>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--col-green))" }}>
+                {ex.timeSaved.split("→")[0].trim()} saved
+              </span>
+              <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--col-amber))" }}>
+                {ex.impact.slice(0, 60)}{ex.impact.length > 60 ? "..." : ""}
+              </span>
+            </div>
+          </div>
+
+          {open
+            ? <ChevronUp size={16} style={{ color: "hsl(var(--text-dim))", flexShrink: 0, marginTop: "10px" }} />
+            : <ChevronDown size={16} style={{ color: "hsl(var(--text-dim))", flexShrink: 0, marginTop: "10px" }} />}
+        </button>
+
+        {/* Copy button */}
+        <button
+          onClick={handleCopy}
+          title="Copy query to clipboard"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "4px",
+            padding: "0 14px",
+            background: "none",
+            border: "none",
+            borderLeft: `1px solid hsl(var(${accent}) / 0.15)`,
+            cursor: "pointer",
+            color: copied ? `hsl(var(--col-green))` : `hsl(var(--text-dim))`,
+            transition: "color 0.15s, background 0.15s",
+            minWidth: "52px",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = `hsl(var(${accent}) / 0.06)`; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+        >
+          {copied
+            ? <Check size={13} />
+            : <Copy size={13} />}
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.52rem", letterSpacing: "0.08em" }}>
+            {copied ? "COPIED" : "COPY"}
+          </span>
+        </button>
+      </div>
 
       {/* Expanded body */}
       {open && (
