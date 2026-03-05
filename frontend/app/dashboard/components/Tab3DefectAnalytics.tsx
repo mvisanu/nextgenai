@@ -9,7 +9,9 @@ import { AlertOctagon, TrendingDown, Tag } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DEFECT_BY_TYPE, SEVERITY_BY_SYSTEM, DEFECT_TREND, INCIDENT_THEMES,
+  DISEASE_BY_TYPE, SEVERITY_BY_SPECIALTY, DISEASE_TREND, CLINICAL_THEMES,
 } from "../mock-data";
+import { useDomain } from "../../lib/domain-context";
 
 // ── Palette ──────────────────────────────────────────────────────────────────
 
@@ -142,42 +144,50 @@ function ChartLegend({ items }: { items: { label: string; color: string }[] }) {
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function Tab3DefectAnalytics() {
+  const { domain, config } = useDomain();
+  const isMedical = domain === "medical";
+
+  const byTypeData     = isMedical ? DISEASE_BY_TYPE       : DEFECT_BY_TYPE;
+  const bySysData      = isMedical ? SEVERITY_BY_SPECIALTY : SEVERITY_BY_SYSTEM;
+  const trendData      = isMedical ? DISEASE_TREND         : DEFECT_TREND;
+  const themesData     = isMedical ? CLINICAL_THEMES       : INCIDENT_THEMES;
+
+  const kpi1 = isMedical
+    ? { label: "TOTAL CASES (YTD)",    value: "183", sub: "across 5 specialties · 15 weeks", color: "var(--col-cyan)" }
+    : { label: "TOTAL DEFECTS (YTD)",  value: "168", sub: "across 5 systems · 15 weeks",     color: "var(--col-cyan)" };
+  const kpi2 = isMedical
+    ? { label: "CRITICAL SEVERITY",    value: "19",  sub: "10.4% of total · ↑ 4 from prev. period", color: "var(--col-red)" }
+    : { label: "CRITICAL DEFECTS",     value: "15",  sub: "8.9% of total · ↑ 2 from prev. period",  color: "var(--col-red)" };
+  const kpi3 = isMedical
+    ? { label: "TOP CONDITION",        value: "CV",  sub: "Cardiovascular · 38 cases · 20.8%",       color: "var(--col-amber)" }
+    : { label: "TOP DEFECT TYPE",      value: "Seal",sub: "Seal Failure · 34 occurrences · 20.2%",   color: "var(--col-amber)" };
+
+  const chart1Title = isMedical ? "CASES BY CONDITION TYPE"              : "DEFECTS BY TYPE";
+  const chart2Title = isMedical ? "SEVERITY DISTRIBUTION BY SPECIALTY"   : "SEVERITY DISTRIBUTION BY SYSTEM";
+  const chart3Title = isMedical ? "CASE INCIDENCE TREND BY WEEK"         : "DEFECT TREND BY WEEK";
+  const chart4Title = isMedical ? "CLINICAL NLP THEMES (TF-IDF)"         : "INCIDENT THEMES (TF-IDF KEYWORDS)";
+  const chart3Series = isMedical ? "Cases" : "Defects";
+  const chart4Series = isMedical ? "Frequency" : "Frequency";
+  const sysDataKey   = "system"; // both datasets share this key
+
   return (
     <ScrollArea className="h-full">
       <div style={{ padding: "8px 10px 12px", display: "flex", flexDirection: "column", gap: "10px" }}>
 
         {/* KPI row */}
         <div style={{ display: "flex", gap: "8px" }}>
-          <KpiCard
-            label="TOTAL DEFECTS (YTD)"
-            value="168"
-            sub="across 5 systems · 15 weeks"
-            color="var(--col-cyan)"
-            icon={Tag}
-          />
-          <KpiCard
-            label="CRITICAL DEFECTS"
-            value="15"
-            sub="8.9% of total · ↑ 2 from prev. period"
-            color="var(--col-red)"
-            icon={AlertOctagon}
-          />
-          <KpiCard
-            label="TOP DEFECT TYPE"
-            value="Seal"
-            sub="Seal Failure · 34 occurrences · 20.2%"
-            color="var(--col-amber)"
-            icon={TrendingDown}
-          />
+          <KpiCard label={kpi1.label} value={kpi1.value} sub={kpi1.sub} color={kpi1.color} icon={Tag} />
+          <KpiCard label={kpi2.label} value={kpi2.value} sub={kpi2.sub} color={kpi2.color} icon={AlertOctagon} />
+          <KpiCard label={kpi3.label} value={kpi3.value} sub={kpi3.sub} color={kpi3.color} icon={TrendingDown} />
         </div>
 
         {/* Chart grid 2×2 */}
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
 
-          {/* 1. Defects by Type — vertical bar */}
-          <ChartPanel title="DEFECTS BY TYPE" accentVar="--col-green">
+          {/* 1. By type — vertical bar */}
+          <ChartPanel title={chart1Title} accentVar={isMedical ? "--col-cyan" : "--col-green"}>
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={DEFECT_BY_TYPE} margin={{ top: 4, right: 8, bottom: 30, left: 0 }}>
+              <BarChart data={byTypeData} margin={{ top: 4, right: 8, bottom: 30, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={C.grid} strokeDasharray="2 4" />
                 <XAxis
                   dataKey="type"
@@ -190,17 +200,17 @@ export default function Tab3DefectAnalytics() {
                 />
                 <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
                 <Tooltip content={<DarkTooltip />} />
-                <Bar dataKey="count" name="Count" fill={C.green} radius={[2, 2, 0, 0]} />
+                <Bar dataKey="count" name="Count" fill={isMedical ? C.cyan : C.green} radius={[2, 2, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartPanel>
 
           {/* 2. Severity distribution — stacked bar */}
-          <ChartPanel title="SEVERITY DISTRIBUTION BY SYSTEM" accentVar="--col-red">
+          <ChartPanel title={chart2Title} accentVar="--col-red">
             <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={SEVERITY_BY_SYSTEM} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
+              <BarChart data={bySysData} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
                 <CartesianGrid vertical={false} stroke={C.grid} strokeDasharray="2 4" />
-                <XAxis dataKey="system" tick={{ ...axisFont }} axisLine={{ stroke: C.grid }} tickLine={false} />
+                <XAxis dataKey={sysDataKey} tick={{ ...axisFont }} axisLine={{ stroke: C.grid }} tickLine={false} />
                 <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
                 <Tooltip content={<DarkTooltip />} />
                 <Bar dataKey="Critical" name="Critical" stackId="a" fill={C.red}    />
@@ -217,10 +227,10 @@ export default function Tab3DefectAnalytics() {
             ]} />
           </ChartPanel>
 
-          {/* 3. Defect trend by week — line */}
-          <ChartPanel title="DEFECT TREND BY WEEK" accentVar="--col-cyan">
+          {/* 3. Trend by week — line */}
+          <ChartPanel title={chart3Title} accentVar="--col-cyan">
             <ResponsiveContainer width="100%" height={200}>
-              <LineChart data={DEFECT_TREND} margin={{ top: 4, right: 12, bottom: 4, left: 0 }}>
+              <LineChart data={trendData} margin={{ top: 4, right: 12, bottom: 4, left: 0 }}>
                 <CartesianGrid stroke={C.grid} strokeDasharray="2 4" />
                 <XAxis dataKey="week" tick={{ ...axisFont }} axisLine={{ stroke: C.grid }} tickLine={false} />
                 <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
@@ -228,7 +238,7 @@ export default function Tab3DefectAnalytics() {
                 <Line
                   type="monotone"
                   dataKey="count"
-                  name="Defects"
+                  name={chart3Series}
                   stroke={C.cyan}
                   strokeWidth={2}
                   dot={{ fill: C.cyan, r: 3, strokeWidth: 0 }}
@@ -238,11 +248,11 @@ export default function Tab3DefectAnalytics() {
             </ResponsiveContainer>
           </ChartPanel>
 
-          {/* 4. Incident themes — horizontal bar */}
-          <ChartPanel title="INCIDENT THEMES (TF-IDF KEYWORDS)" accentVar="--col-purple">
+          {/* 4. NLP themes — horizontal bar */}
+          <ChartPanel title={chart4Title} accentVar="--col-purple">
             <ResponsiveContainer width="100%" height={200}>
               <BarChart
-                data={INCIDENT_THEMES}
+                data={themesData}
                 layout="vertical"
                 margin={{ top: 4, right: 24, bottom: 4, left: 70 }}
               >
@@ -257,7 +267,7 @@ export default function Tab3DefectAnalytics() {
                   width={68}
                 />
                 <Tooltip content={<DarkTooltip />} />
-                <Bar dataKey="count" name="Frequency" fill={C.purple} radius={[0, 2, 2, 0]} />
+                <Bar dataKey="count" name={chart4Series} fill={C.purple} radius={[0, 2, 2, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </ChartPanel>

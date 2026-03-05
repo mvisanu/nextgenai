@@ -52,8 +52,8 @@ cd /workspace/backend
 alembic upgrade head
 echo "[entrypoint] Migrations complete."
 
-# --- Seed data (only on first run if tables are empty) ---
-echo "[entrypoint] Checking if seed data is needed..."
+# --- Seed aircraft data (only on first run if tables are empty) ---
+echo "[entrypoint] Checking if aircraft seed data is needed..."
 python -c "
 import os, sys
 try:
@@ -73,9 +73,38 @@ try:
 except Exception as e:
     print(f'Could not check row count: {e}')
 " | grep -q "SEED_NEEDED" && {
-    echo "[entrypoint] No data found — triggering ingest pipeline..."
+    echo "[entrypoint] No aircraft data found — triggering ingest pipeline..."
     cd /workspace && python -m backend.src.cli ingest --config backend/config.yaml || echo "[entrypoint] Ingest warning (non-fatal): check logs"
-} || echo "[entrypoint] Existing data found — skipping auto-ingest."
+} || echo "[entrypoint] Existing aircraft data found — skipping auto-ingest."
+
+# --- Seed medical data (only on first run if medical_cases is empty) ---
+echo "[entrypoint] Checking if medical seed data is needed..."
+python -c "
+import os, sys
+try:
+    import psycopg2
+    url = os.environ.get('PG_DSN') or os.environ.get('DATABASE_URL', '')
+    url = url.replace('postgresql+asyncpg://', 'postgresql://')
+    url = url.replace('postgres://', 'postgresql://')
+    conn = psycopg2.connect(url)
+    cur = conn.cursor()
+    cur.execute('SELECT COUNT(*) FROM medical_cases')
+    count = cur.fetchone()[0]
+    conn.close()
+    if count == 0:
+        print('MEDICAL_SEED_NEEDED')
+    else:
+        print(f'Medical data exists ({count} cases). Skipping auto-seed.')
+except Exception as e:
+    print(f'Could not check medical row count: {e}')
+" | grep -q "MEDICAL_SEED_NEEDED" && {
+    echo "[entrypoint] No medical data found — triggering medical ingest pipeline..."
+    cd /workspace && python -c "
+from backend.app.ingest.medical_pipeline import run_medical_ingest_pipeline
+result = run_medical_ingest_pipeline()
+print(f'Medical ingest complete: {result}')
+" || echo "[entrypoint] Medical ingest warning (non-fatal): check logs"
+} || echo "[entrypoint] Existing medical data found — skipping medical auto-ingest."
 
 # --- Start FastAPI ---
 echo "[entrypoint] Starting uvicorn on port 8000..."

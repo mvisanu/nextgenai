@@ -88,6 +88,7 @@ export interface RunSummary {
 
 export interface QueryRequest {
   query: string;
+  domain?: "aircraft" | "medical";
   filters?: {
     system?: string;
     severity?: string;
@@ -202,9 +203,10 @@ async function apiFetch<T>(
  */
 export async function postQuery(
   query: string,
+  domain: "aircraft" | "medical" = "aircraft",
   filters?: QueryRequest["filters"]
 ): Promise<QueryResponse> {
-  const body: QueryRequest = { query, filters: filters ?? null };
+  const body: QueryRequest = { query, domain, filters: filters ?? null };
   return apiFetch<QueryResponse>("/query", {
     method: "POST",
     body: JSON.stringify(body),

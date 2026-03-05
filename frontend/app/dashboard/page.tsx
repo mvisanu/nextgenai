@@ -9,7 +9,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   MessageSquare, Layers, BarChart2, TrendingUp, FlaskConical,
-  ArrowLeft, Activity, HelpCircle, Database, GraduationCap, GitBranch,
+  ArrowLeft, Activity, HelpCircle, Database, GraduationCap, GitBranch, Stethoscope,
 } from "lucide-react";
 
 import Tab1AgentQuery        from "./components/Tab1AgentQuery";
@@ -18,6 +18,7 @@ import Tab3DefectAnalytics   from "./components/Tab3DefectAnalytics";
 import Tab4MaintenanceTrends from "./components/Tab4MaintenanceTrends";
 import Tab5DataEval          from "./components/Tab5DataEval";
 import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -32,15 +33,88 @@ interface Tab {
   component: React.ComponentType;
 }
 
-const TABS: Tab[] = [
-  { id: "agent",       label: "ASK THE AGENT",       shortLabel: "AGENT",    icon: MessageSquare, accentVar: "--col-green",  component: Tab1AgentQuery       },
-  { id: "explorer",    label: "INCIDENT EXPLORER",    shortLabel: "INCIDENTS",icon: Layers,        accentVar: "--col-cyan",   component: Tab2IncidentExplorer },
-  { id: "defects",     label: "DEFECT ANALYTICS",     shortLabel: "DEFECTS",  icon: BarChart2,     accentVar: "--col-red",    component: Tab3DefectAnalytics  },
-  { id: "maintenance", label: "MAINTENANCE TRENDS",   shortLabel: "MAINT.",   icon: TrendingUp,    accentVar: "--col-amber",  component: Tab4MaintenanceTrends},
-  { id: "eval",        label: "DATA & EVALUATION",    shortLabel: "EVAL",     icon: FlaskConical,  accentVar: "--col-purple", component: Tab5DataEval         },
-];
+function useTabs(isMedical: boolean): Tab[] {
+  return [
+    {
+      id: "agent",
+      label: isMedical ? "CLINICAL QUERY"      : "ASK THE AGENT",
+      shortLabel: "AGENT",
+      icon: MessageSquare,
+      accentVar: "--col-green",
+      component: Tab1AgentQuery,
+    },
+    {
+      id: "explorer",
+      label: isMedical ? "CASE EXPLORER"        : "INCIDENT EXPLORER",
+      shortLabel: isMedical ? "CASES"    : "INCIDENTS",
+      icon: Layers,
+      accentVar: "--col-cyan",
+      component: Tab2IncidentExplorer,
+    },
+    {
+      id: "defects",
+      label: isMedical ? "DISEASE ANALYTICS"   : "DEFECT ANALYTICS",
+      shortLabel: isMedical ? "DISEASE"  : "DEFECTS",
+      icon: BarChart2,
+      accentVar: "--col-red",
+      component: Tab3DefectAnalytics,
+    },
+    {
+      id: "maintenance",
+      label: isMedical ? "COHORT TRENDS"        : "MAINTENANCE TRENDS",
+      shortLabel: isMedical ? "COHORT"   : "MAINT.",
+      icon: TrendingUp,
+      accentVar: "--col-amber",
+      component: Tab4MaintenanceTrends,
+    },
+    {
+      id: "eval",
+      label: isMedical ? "CLINICAL EVALUATION"  : "DATA & EVALUATION",
+      shortLabel: "EVAL",
+      icon: FlaskConical,
+      accentVar: "--col-purple",
+      component: Tab5DataEval,
+    },
+  ];
+}
 
 // ── Dashboard header ───────────────────────────────────────────────────────────
+
+function DomainSwitcher() {
+  const { domain, setDomain } = useDomain();
+  return (
+    <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+      {(["aircraft", "medical"] as Domain[]).map((d) => {
+        const cfg = DOMAIN_CONFIGS[d];
+        const isActive = domain === d;
+        return (
+          <button
+            key={d}
+            onClick={() => setDomain(d)}
+            style={{
+              display: "flex", alignItems: "center", gap: "4px",
+              padding: "3px 9px",
+              fontFamily: "var(--font-display)",
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              border: `1px solid ${isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--border-base))"}`,
+              borderRadius: "2px",
+              backgroundColor: isActive ? `hsl(var(${cfg.accentVar}) / 0.12)` : "transparent",
+              color: isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--text-dim))",
+              cursor: "pointer",
+              transition: "all 0.15s",
+              boxShadow: isActive ? `0 0 8px hsl(var(${cfg.accentVar}) / 0.2)` : "none",
+            }}
+          >
+            <span>{cfg.icon}</span>
+            <span className="nav-link-text">{cfg.shortLabel}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 function DashboardHeader() {
   return (
@@ -240,6 +314,30 @@ function DashboardHeader() {
           <span className="nav-link-text">DIAGRAM</span>
         </Link>
 
+        <Link
+          href="/medical-examples"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            color: "hsl(var(--text-secondary))",
+            textDecoration: "none",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.08em",
+            transition: "color 0.15s",
+          }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
+        >
+          <Stethoscope size={13} />
+          <span className="nav-link-text">MED-EX</span>
+        </Link>
+
+        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+
+        <DomainSwitcher />
+
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
         <div className="header-font-control"><FontSizeControl /></div>
@@ -249,9 +347,80 @@ function DashboardHeader() {
   );
 }
 
+// ── Domain banner ──────────────────────────────────────────────────────────────
+
+function DomainBanner() {
+  const { domain, config } = useDomain();
+  const accent = config.accentVar;
+  const isMedical = domain === "medical";
+
+  return (
+    <div
+      style={{
+        height: "28px",
+        display: "flex",
+        alignItems: "center",
+        gap: "12px",
+        padding: "0 16px",
+        backgroundColor: `hsl(var(${accent}) / 0.06)`,
+        borderBottom: `1px solid hsl(var(${accent}) / 0.25)`,
+        flexShrink: 0,
+        position: "relative",
+        overflow: "hidden",
+      }}
+    >
+      {/* Animated scan line */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: `linear-gradient(90deg, transparent 0%, hsl(var(${accent}) / 0.08) 50%, transparent 100%)`,
+        animation: "scan-h 4s linear infinite",
+        pointerEvents: "none",
+      }} />
+
+      <span style={{ fontSize: "0.48rem", fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.16em", color: `hsl(var(${accent}))` }}>
+        {config.icon}
+      </span>
+      <span style={{ fontSize: "0.52rem", fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.18em", color: `hsl(var(${accent}))` }}>
+        {isMedical ? "CLINICAL INTELLIGENCE MODE" : "MANUFACTURING INTELLIGENCE MODE"}
+      </span>
+
+      <div style={{ width: 4, height: 4, borderRadius: "50%", backgroundColor: `hsl(var(${accent}))`, boxShadow: `0 0 5px hsl(var(${accent}))`, animation: "dot-pulse 2.4s ease-in-out infinite" }} />
+
+      <span style={{ fontSize: "0.48rem", fontFamily: "var(--font-mono)", color: `hsl(var(${accent}) / 0.6)`, letterSpacing: "0.1em" }}>
+        {isMedical
+          ? "5 specialties · 15 cohorts · patient outcome analytics"
+          : "5 systems · 50 assets · quality defect analytics"}
+      </span>
+
+      <div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "8px" }}>
+        <span style={{ fontSize: "0.44rem", fontFamily: "var(--font-display)", fontWeight: 700, letterSpacing: "0.12em", color: `hsl(var(${accent}) / 0.5)` }}>
+          DOMAIN
+        </span>
+        <span style={{
+          fontSize: "0.52rem",
+          fontFamily: "var(--font-mono)",
+          fontWeight: 600,
+          color: `hsl(var(${accent}))`,
+          padding: "1px 7px",
+          border: `1px solid hsl(var(${accent}) / 0.35)`,
+          borderRadius: "2px",
+          backgroundColor: `hsl(var(${accent}) / 0.08)`,
+          letterSpacing: "0.1em",
+        }}>
+          {domain.toUpperCase()}
+        </span>
+      </div>
+    </div>
+  );
+}
+
 // ── Tab navigation bar ─────────────────────────────────────────────────────────
 
 function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
+  const { domain } = useDomain();
+  const tabs = useTabs(domain === "medical");
+
   return (
     <nav
       className="tab-nav-scroll"
@@ -266,7 +435,7 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
         flexShrink: 0,
       }}
     >
-      {TABS.map((tab) => {
+      {tabs.map((tab) => {
         const isActive = tab.id === active;
         const Icon = tab.icon;
         return (
@@ -324,7 +493,7 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
               color: "hsl(var(--text-dim))",
               opacity: isActive ? 0.8 : 0.5,
             }}>
-              0{TABS.indexOf(tab) + 1}
+              0{tabs.indexOf(tab) + 1}
             </span>
           </button>
         );
@@ -339,7 +508,7 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
           color: "hsl(var(--text-dim))",
           padding: "0 10px",
         }}>
-          {TABS.find((t) => t.id === active)?.label}
+          {tabs.find((t) => t.id === active)?.label}
         </span>
       </div>
     </nav>
@@ -350,8 +519,10 @@ function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => 
 
 export default function DashboardPage() {
   const [activeTab, setActiveTab] = useState<TabId>("agent");
-  const ActiveComponent = TABS.find((t) => t.id === activeTab)?.component ?? Tab1AgentQuery;
-  const activeAccent = TABS.find((t) => t.id === activeTab)?.accentVar ?? "--col-green";
+  const { domain } = useDomain();
+  const tabs = useTabs(domain === "medical");
+  const ActiveComponent = tabs.find((t) => t.id === activeTab)?.component ?? Tab1AgentQuery;
+  const activeAccent = tabs.find((t) => t.id === activeTab)?.accentVar ?? "--col-green";
 
   return (
     <div
@@ -366,6 +537,7 @@ export default function DashboardPage() {
       }}
     >
       <DashboardHeader />
+      <DomainBanner />
       <TabNav active={activeTab} onChange={setActiveTab} />
 
       <div

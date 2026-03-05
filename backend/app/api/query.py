@@ -44,7 +44,7 @@ async def run_query(body: QueryRequest) -> QueryResponse:
 
     try:
         orchestrator = _get_orchestrator()
-        result = orchestrator.run(body.query)
+        result = orchestrator.run(body.query, domain=body.domain)
         result_dict = result.to_dict()
 
         # Convert to response schema

@@ -91,6 +91,65 @@ _NAMED_QUERIES: dict[str, str] = {
         ORDER BY ir.event_date DESC
         LIMIT 50
     """,
+
+    # ── Medical domain named queries ────────────────────────────────────────
+
+    # Disease counts by specialty and disease name
+    "disease_counts_by_specialty": """
+        SELECT
+            specialty,
+            disease,
+            COUNT(*) AS case_count
+        FROM disease_records
+        WHERE inspection_date >= CURRENT_DATE - INTERVAL ':days days'
+        GROUP BY specialty, disease
+        ORDER BY case_count DESC
+        LIMIT 50
+    """,
+
+    # Severity/outcome distribution for medical records
+    "disease_severity_distribution": """
+        SELECT
+            severity,
+            outcome,
+            COUNT(*) AS count,
+            ROUND(COUNT(*) * 100.0 / SUM(COUNT(*)) OVER (), 2) AS percentage
+        FROM disease_records
+        WHERE severity IS NOT NULL
+        GROUP BY severity, outcome
+        ORDER BY count DESC
+    """,
+
+    # Symptom profile for a given disease
+    "disease_symptom_profile": """
+        SELECT
+            disease,
+            COUNT(*) AS total_cases,
+            ROUND(AVG(CASE WHEN fever THEN 1 ELSE 0 END) * 100, 1)                AS fever_pct,
+            ROUND(AVG(CASE WHEN cough THEN 1 ELSE 0 END) * 100, 1)                AS cough_pct,
+            ROUND(AVG(CASE WHEN fatigue THEN 1 ELSE 0 END) * 100, 1)              AS fatigue_pct,
+            ROUND(AVG(CASE WHEN difficulty_breathing THEN 1 ELSE 0 END) * 100, 1) AS dyspnea_pct,
+            ROUND(AVG(age), 1)                                                     AS avg_age,
+            ROUND(AVG(CASE WHEN outcome = 'Positive' THEN 1 ELSE 0 END) * 100, 1) AS positive_outcome_pct
+        FROM disease_records
+        GROUP BY disease
+        ORDER BY total_cases DESC
+        LIMIT 20
+    """,
+
+    # Medical case body-system severity summary
+    "medical_system_summary": """
+        SELECT
+            system,
+            COUNT(*) AS total_cases,
+            SUM(CASE WHEN severity = 'Critical' THEN 1 ELSE 0 END) AS critical_count,
+            SUM(CASE WHEN severity = 'High' THEN 1 ELSE 0 END)     AS high_count,
+            SUM(CASE WHEN severity = 'Medium' THEN 1 ELSE 0 END)   AS medium_count,
+            SUM(CASE WHEN severity = 'Low' THEN 1 ELSE 0 END)      AS low_count
+        FROM medical_cases
+        GROUP BY system
+        ORDER BY total_cases DESC
+    """,
 }
 
 

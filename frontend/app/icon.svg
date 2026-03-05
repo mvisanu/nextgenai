@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.2" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Dark background -->
+  <rect width="32" height="32" fill="#0a0f0a"/>
+
+  <!-- Outer diamond: rotated square, stroke only -->
+  <rect
+    x="6" y="6" width="20" height="20"
+    rx="1"
+    fill="none"
+    stroke="#00ff88"
+    stroke-width="1.5"
+    transform="rotate(45 16 16)"
+  />
+
+  <!-- Inner diamond: filled, with glow -->
+  <rect
+    x="12" y="12" width="8" height="8"
+    fill="#00ff88"
+    filter="url(#glow)"
+    transform="rotate(45 16 16)"
+  />
+</svg>

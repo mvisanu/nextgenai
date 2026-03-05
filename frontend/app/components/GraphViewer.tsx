@@ -35,7 +35,8 @@ import {
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 import { useRunContext } from "../lib/context";
-import type { GraphNode, GraphEdge, VectorHit } from "../lib/api";
+import { useDomain } from "../lib/domain-context";
+import type { GraphNode, GraphEdge, GraphPath, VectorHit } from "../lib/api";
 
 // ---------------------------------------------------------------------------
 // Node colours — neon industrial palette
@@ -53,6 +54,60 @@ const EDGE_COLOURS: Record<GraphEdge["type"], string> = {
   mentions:      "#4f93f4",
   similarity:    "#0dce84",
   co_occurrence: "#9b55d4",
+};
+
+// ---------------------------------------------------------------------------
+// Static mock graphs — shown before any real query is submitted
+// ---------------------------------------------------------------------------
+
+const AIRCRAFT_GRAPH: GraphPath = {
+  nodes: [
+    { id: "e:hydraulic",    type: "entity", label: "Hydraulic System",  properties: { category: "System",  risk: "High"   } },
+    { id: "e:avionics",     type: "entity", label: "Avionics",          properties: { category: "System",  risk: "Medium" } },
+    { id: "e:seal-fail",    type: "entity", label: "Seal Failure",      properties: { category: "Defect",  occurrences: 34 } },
+    { id: "e:corrosion",    type: "entity", label: "Corrosion",         properties: { category: "Defect",  occurrences: 21 } },
+    { id: "e:avx-short",   type: "entity", label: "Short Circuit",     properties: { category: "Defect",  occurrences: 18 } },
+    { id: "chunk:INC-2847", type: "chunk",  label: "INC-2847: Hydraulic leak near actuator; seal degradation confirmed",           properties: { severity: "High",     date: "2024-11-14" } },
+    { id: "chunk:INC-3012", type: "chunk",  label: "INC-3012: Intermittent short in avionics harness; chafing observed",           properties: { severity: "Critical", date: "2024-12-01" } },
+    { id: "chunk:INC-2901", type: "chunk",  label: "INC-2901: Corrosion on fastener around skin panel; lot quarantined",           properties: { severity: "Medium",   date: "2024-11-22" } },
+    { id: "chunk:INC-3156", type: "chunk",  label: "INC-3156: Seal replaced on actuator; pressure restored to nominal spec",       properties: { severity: "Low",      date: "2025-01-08" } },
+  ],
+  edges: [
+    { id: "ae1", from_node: "e:hydraulic",    to_node: "chunk:INC-2847", type: "mentions",      weight: 0.92 },
+    { id: "ae2", from_node: "e:avionics",     to_node: "chunk:INC-3012", type: "mentions",      weight: 0.88 },
+    { id: "ae3", from_node: "e:corrosion",    to_node: "chunk:INC-2901", type: "mentions",      weight: 0.85 },
+    { id: "ae4", from_node: "e:seal-fail",    to_node: "chunk:INC-2847", type: "mentions",      weight: 0.95 },
+    { id: "ae5", from_node: "e:seal-fail",    to_node: "chunk:INC-3156", type: "similarity",    weight: 0.78 },
+    { id: "ae6", from_node: "chunk:INC-2847", to_node: "chunk:INC-3156", type: "similarity",    weight: 0.81 },
+    { id: "ae7", from_node: "e:hydraulic",    to_node: "e:seal-fail",    type: "co_occurrence", weight: 0.90 },
+    { id: "ae8", from_node: "e:avx-short",   to_node: "chunk:INC-3012", type: "mentions",      weight: 0.93 },
+  ],
+};
+
+const MEDICAL_GRAPH: GraphPath = {
+  nodes: [
+    { id: "e:cardiology",   type: "entity", label: "Cardiology",         properties: { specialty: "Cardiac",    cases: 38 } },
+    { id: "e:neurology",    type: "entity", label: "Neurology",          properties: { specialty: "Neuro",      cases: 22 } },
+    { id: "e:troponin",     type: "entity", label: "Troponin Elevation", properties: { category: "Biomarker",  sensitivity: "High"   } },
+    { id: "e:st-elev",      type: "entity", label: "ST-Elevation",       properties: { category: "ECG Finding", urgency: "Critical" } },
+    { id: "e:bnp",          type: "entity", label: "Elevated BNP",       properties: { category: "Biomarker",  threshold: ">400 pg/mL" } },
+    { id: "chunk:CASE-001", type: "chunk",  label: "CASE-001: Chest pain, ST-elevation, troponin positive — STEMI protocol initiated",          properties: { severity: "Critical", specialty: "Cardiology" } },
+    { id: "chunk:CASE-002", type: "chunk",  label: "CASE-002: Dyspnoea, bilateral crackles, elevated BNP — acute decompensated heart failure",   properties: { severity: "High",     specialty: "Cardiology" } },
+    { id: "chunk:CASE-003", type: "chunk",  label: "CASE-003: Sudden severe headache, neck stiffness, photophobia — subarachnoid haemorrhage",   properties: { severity: "Critical", specialty: "Neurology"  } },
+    { id: "chunk:CASE-004", type: "chunk",  label: "CASE-004: Post-op bradycardia, pacing threshold elevated — pacemaker review initiated",      properties: { severity: "High",     specialty: "Cardiology" } },
+  ],
+  edges: [
+    { id: "me1", from_node: "e:cardiology",   to_node: "chunk:CASE-001", type: "mentions",      weight: 0.96 },
+    { id: "me2", from_node: "e:troponin",     to_node: "chunk:CASE-001", type: "mentions",      weight: 0.94 },
+    { id: "me3", from_node: "e:st-elev",      to_node: "chunk:CASE-001", type: "mentions",      weight: 0.97 },
+    { id: "me4", from_node: "e:bnp",          to_node: "chunk:CASE-002", type: "mentions",      weight: 0.89 },
+    { id: "me5", from_node: "e:cardiology",   to_node: "chunk:CASE-002", type: "mentions",      weight: 0.91 },
+    { id: "me6", from_node: "e:cardiology",   to_node: "chunk:CASE-004", type: "mentions",      weight: 0.82 },
+    { id: "me7", from_node: "e:neurology",    to_node: "chunk:CASE-003", type: "mentions",      weight: 0.95 },
+    { id: "me8", from_node: "chunk:CASE-001", to_node: "chunk:CASE-002", type: "similarity",    weight: 0.74 },
+    { id: "me9", from_node: "e:troponin",     to_node: "e:st-elev",      type: "co_occurrence", weight: 0.88 },
+    { id: "me10",from_node: "e:bnp",          to_node: "e:cardiology",   type: "co_occurrence", weight: 0.93 },
+  ],
 };
 
 // ---------------------------------------------------------------------------
@@ -360,6 +415,8 @@ function NodeDetailPopover({
 
 export default function GraphViewer() {
   const { runData } = useRunContext();
+  const { domain } = useDomain();
+  const isMedical = domain === "medical";
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -369,7 +426,9 @@ export default function GraphViewer() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{ x: number; y: number } | null>(null);
 
-  const graphPath = runData?.graph_path;
+  // Use real query graph if available, otherwise fall back to domain mock graph
+  const graphPath = runData?.graph_path ?? (isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH);
+  const isMockGraph = !runData?.graph_path;
   const prevPathRef = React.useRef<typeof graphPath>(undefined);
 
   React.useEffect(() => {
@@ -392,80 +451,14 @@ export default function GraphViewer() {
 
   const handleNodeClick = useCallback(
     (event: React.MouseEvent, rfNode: Node) => {
-      if (!runData) return;
-      const nodeData = runData.graph_path.nodes.find((n) => n.id === rfNode.id);
+      const nodeData = graphPath.nodes.find((n) => n.id === rfNode.id);
       if (!nodeData) return;
       setSelectedNode(nodeData);
       setPopoverAnchor({ x: event.clientX, y: event.clientY });
       setPopoverOpen(true);
     },
-    [runData]
+    [graphPath]
   );
-
-  if (!runData || !runData.graph_path.nodes.length) {
-    return (
-      <div
-        className="flex flex-col items-center justify-center h-full"
-        style={{ gap: "10px", textAlign: "center", padding: "16px" }}
-      >
-        {/* Decorative node cluster hint */}
-        <div style={{ position: "relative", width: 64, height: 44 }}>
-          <div
-            style={{
-              position: "absolute",
-              top: 0,
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 24,
-              height: 24,
-              borderRadius: "50%",
-              border: `1.5px solid ${ENTITY_BORDER}66`,
-              backgroundColor: `${ENTITY_BG}`,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              left: 0,
-              width: 28,
-              height: 18,
-              borderRadius: "2px",
-              border: `1px solid ${CHUNK_BORDER}55`,
-              backgroundColor: `${CHUNK_BG}`,
-            }}
-          />
-          <div
-            style={{
-              position: "absolute",
-              bottom: 0,
-              right: 0,
-              width: 28,
-              height: 18,
-              borderRadius: "2px",
-              border: `1px solid ${CHUNK_BORDER}55`,
-              backgroundColor: `${CHUNK_BG}`,
-            }}
-          />
-        </div>
-
-        <p
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.78rem",
-            color: "hsl(var(--text-dim))",
-            letterSpacing: "0.12em",
-          }}
-        >
-          GRAPH AWAITING DATA
-          <br />
-          <span style={{ fontSize: "0.68rem", opacity: 0.6 }}>
-            submit a query to populate
-          </span>
-        </p>
-      </div>
-    );
-  }
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
@@ -494,6 +487,45 @@ export default function GraphViewer() {
         />
       </ReactFlow>
 
+      {/* Domain / data source badge */}
+      <div style={{
+        position: "absolute",
+        top: 8,
+        left: 8,
+        zIndex: 10,
+        display: "flex",
+        gap: "5px",
+        alignItems: "center",
+        pointerEvents: "none",
+      }}>
+        <span style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "0.44rem",
+          fontWeight: 700,
+          letterSpacing: "0.16em",
+          padding: "2px 7px",
+          borderRadius: "2px",
+          border: `1px solid ${isMedical ? CHUNK_BORDER + "88" : "#0dce8488"}`,
+          backgroundColor: isMedical ? CHUNK_BG : "#051a0e",
+          color: isMedical ? CHUNK_TEXT : "#0dce84",
+        }}>
+          {isMedical ? "⚕ CLINICAL GRAPH" : "⚙ AIRCRAFT GRAPH"}
+        </span>
+        <span style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "0.44rem",
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          padding: "2px 7px",
+          borderRadius: "2px",
+          border: `1px solid ${isMockGraph ? "#9b55d488" : "#0dce8488"}`,
+          backgroundColor: isMockGraph ? "#1a0a2e" : "#051a0e",
+          color: isMockGraph ? "#c084fc" : "#0dce84",
+        }}>
+          {isMockGraph ? "SAMPLE DATA" : "LIVE QUERY"}
+        </span>
+      </div>
+
       {/* Node detail popover */}
       {popoverOpen && selectedNode && popoverAnchor && (
         <div
@@ -521,7 +553,7 @@ export default function GraphViewer() {
             >
               <NodeDetailPopover
                 node={selectedNode}
-                vectorHits={runData.evidence.vector_hits}
+                vectorHits={runData?.evidence.vector_hits ?? []}
               />
             </PopoverContent>
           </Popover>

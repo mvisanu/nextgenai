@@ -9,8 +9,10 @@ import { Settings2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   ASSETS, ASSET_METRICS, ASSET_METRIC_LABELS,
+  PATIENTS, PATIENT_METRICS, PATIENT_METRIC_LABELS,
   type MaintenancePoint,
 } from "../mock-data";
+import { useDomain } from "../../lib/domain-context";
 
 // ── Palette ────────────────────────────────────────────────────────────────
 
@@ -80,10 +82,22 @@ function ChartPanel({ title, accentVar, children }: {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function Tab4MaintenanceTrends() {
-  const [assetId, setAssetId] = useState("ASSET-001");
+  const { domain, config } = useDomain();
+  const isMedical = domain === "medical";
+  const accent = config.accentVar;
 
-  const data: MaintenancePoint[] = ASSET_METRICS[assetId] ?? [];
-  const metricLabel = ASSET_METRIC_LABELS[assetId] ?? "Metric Value";
+  const selectOptions  = isMedical ? PATIENTS    : ASSETS;
+  const metricsMap     = isMedical ? PATIENT_METRICS    : ASSET_METRICS;
+  const metricLabelMap = isMedical ? PATIENT_METRIC_LABELS : ASSET_METRIC_LABELS;
+  const defaultId      = isMedical ? "COHORT-CARDIAC" : "ASSET-001";
+
+  const [assetId, setAssetId] = useState(defaultId);
+
+  // Reset when domain changes
+  React.useEffect(() => { setAssetId(isMedical ? "COHORT-CARDIAC" : "ASSET-001"); }, [isMedical]);
+
+  const data: MaintenancePoint[] = metricsMap[assetId] ?? [];
+  const metricLabel = metricLabelMap[assetId] ?? "Metric Value";
   const eventPoint = data.find((d) => d.event);
 
   // Stats
@@ -110,7 +124,7 @@ export default function Tab4MaintenanceTrends() {
         }}>
           <Settings2 size={13} style={{ color: "hsl(var(--col-cyan))", flexShrink: 0 }} />
           <span style={{ ...DISP, fontSize: "0.52rem", fontWeight: 700, letterSpacing: "0.16em", color: "hsl(var(--text-secondary))" }}>
-            ASSET SELECT
+            {isMedical ? "COHORT SELECT" : "ASSET SELECT"}
           </span>
           <select
             value={assetId}
@@ -119,16 +133,16 @@ export default function Tab4MaintenanceTrends() {
               ...MONO,
               fontSize: "0.72rem",
               backgroundColor: "hsl(var(--bg-input))",
-              border: "1px solid hsl(var(--col-cyan) / 0.4)",
+              border: `1px solid hsl(var(${accent}) / 0.4)`,
               borderRadius: "2px",
-              color: "hsl(var(--col-cyan))",
+              color: `hsl(var(${accent}))`,
               padding: "4px 10px",
               outline: "none",
               cursor: "pointer",
-              boxShadow: "0 0 8px hsl(var(--col-cyan) / 0.12)",
+              boxShadow: `0 0 8px hsl(var(${accent}) / 0.12)`,
             }}
           >
-            {ASSETS.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+            {selectOptions.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
           </select>
 
           {/* Stat chips */}
@@ -198,7 +212,7 @@ export default function Tab4MaintenanceTrends() {
                   strokeWidth={1.5}
                 >
                   <Label
-                    value="ACTION"
+                    value={isMedical ? "PROTOCOL" : "ACTION"}
                     position="insideTopRight"
                     style={{ ...DISP, fontSize: "0.44rem", fontWeight: 700, fill: C.amber, letterSpacing: "0.12em" }}
                   />
@@ -209,7 +223,7 @@ export default function Tab4MaintenanceTrends() {
         </ChartPanel>
 
         {/* Chart 2 — Before / after corrective action */}
-        <ChartPanel title="BEFORE / AFTER CORRECTIVE ACTION COMPARISON" accentVar="--col-amber">
+        <ChartPanel title={isMedical ? "BEFORE / AFTER PROTOCOL CHANGE COMPARISON" : "BEFORE / AFTER CORRECTIVE ACTION COMPARISON"} accentVar="--col-amber">
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px", height: "220px" }}>
 
             {/* Before */}
@@ -283,10 +297,12 @@ export default function Tab4MaintenanceTrends() {
               alignItems: "center",
             }}>
               <span style={{ ...DISP, fontSize: "0.5rem", fontWeight: 700, letterSpacing: "0.14em", color: `hsl(${improved ? "var(--col-green)" : "var(--col-red)"})` }}>
-                {improved ? "IMPROVEMENT CONFIRMED" : "DEGRADATION DETECTED"}
+                {improved
+                  ? (isMedical ? "CLINICAL IMPROVEMENT CONFIRMED" : "IMPROVEMENT CONFIRMED")
+                  : (isMedical ? "CLINICAL DEGRADATION DETECTED" : "DEGRADATION DETECTED")}
               </span>
               <span style={{ ...MONO, fontSize: "0.68rem", color: "hsl(var(--text-secondary))" }}>
-                Corrective action at {eventPoint.ts} · avg Δ {improved ? "↓" : "↑"}{Math.abs(parseFloat(delta))}%
+                {isMedical ? "Protocol change" : "Corrective action"} at {eventPoint.ts} · avg Δ {improved ? "↓" : "↑"}{Math.abs(parseFloat(delta))}%
                 · pre-avg: {preAvg.toFixed(2)} → post-avg: {postAvg.toFixed(2)} {metricLabel.split(" ")[0]}
               </span>
             </div>

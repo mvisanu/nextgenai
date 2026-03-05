@@ -204,3 +204,83 @@ class AgentRun(Base):
     query: str | None = Column(Text, nullable=True)
     result: dict[str, Any] = Column(JSONB, nullable=True)   # Full AgentRunResult schema
     created_at: datetime = Column(DateTime, nullable=False, server_default=func.now())
+
+
+# ── Medical domain models ──────────────────────────────────────────────────────
+
+
+class MedicalCase(Base):
+    """
+    Clinical case report narratives (MACCROBAT dataset or synthetic).
+    Primary source for medical vector embeddings and graph construction.
+    """
+    __tablename__ = "medical_cases"
+
+    case_id: str = Column(Text, primary_key=True, default=lambda: str(uuid.uuid4()))
+    system: str | None = Column(Text, nullable=True)           # body system: Cardiac, Respiratory, etc.
+    sub_system: str | None = Column(Text, nullable=True)
+    event_date: date | None = Column(Date, nullable=True, index=True)
+    severity: str | None = Column(Text, nullable=True)
+    narrative: str | None = Column(Text, nullable=True)        # full clinical case text
+    corrective_action: str | None = Column(Text, nullable=True)# extracted treatment sentences
+    entities: str | None = Column(Text, nullable=True)         # JSON array of NER entity types
+    source: str = Column(Text, nullable=False, default="maccrobat")
+
+    embeddings: list["MedicalEmbedding"] = relationship(
+        "MedicalEmbedding",
+        back_populates="case",
+        cascade="all, delete-orphan",
+        lazy="selectin",
+    )
+
+
+class DiseaseRecord(Base):
+    """
+    Structured disease/symptom records from the Disease Symptoms & Patient Profile dataset.
+    Used for SQL aggregation queries in the medical domain.
+    """
+    __tablename__ = "disease_records"
+
+    record_id: str = Column(Text, primary_key=True, default=lambda: str(uuid.uuid4()))
+    disease: str | None = Column(Text, nullable=True)
+    fever: bool | None = Column(Boolean, nullable=True)
+    cough: bool | None = Column(Boolean, nullable=True)
+    fatigue: bool | None = Column(Boolean, nullable=True)
+    difficulty_breathing: bool | None = Column(Boolean, nullable=True)
+    age: int | None = Column(Integer, nullable=True)
+    gender: str | None = Column(Text, nullable=True)
+    blood_pressure: str | None = Column(Text, nullable=True)
+    cholesterol_level: str | None = Column(Text, nullable=True)
+    outcome: str | None = Column(Text, nullable=True)          # Positive | Negative
+    severity: str | None = Column(Text, nullable=True)
+    specialty: str | None = Column(Text, nullable=True)        # Cardiology, Neurology, etc.
+    inspection_date: date | None = Column(Date, nullable=True)
+    source: str = Column(Text, nullable=False, default="kaggle")
+
+
+class MedicalEmbedding(Base):
+    """
+    Chunk-level embeddings for medical case narratives.
+    384-dimensional vectors from all-MiniLM-L6-v2, searched via IVFFlat cosine index.
+    """
+    __tablename__ = "medical_embeddings"
+
+    embed_id: str = Column(Text, primary_key=True, default=lambda: str(uuid.uuid4()))
+    case_id: str = Column(
+        Text,
+        ForeignKey("medical_cases.case_id", ondelete="CASCADE"),
+        nullable=False,
+        index=True,
+    )
+    chunk_index: int = Column(Integer, nullable=False)
+    chunk_text: str = Column(Text, nullable=False)
+    embedding: list[float] = Column(Vector(384), nullable=True)
+    char_start: int = Column(Integer, nullable=True)
+    char_end: int = Column(Integer, nullable=True)
+    created_at: datetime = Column(DateTime, nullable=False, server_default=func.now())
+
+    case: "MedicalCase" = relationship(
+        "MedicalCase",
+        back_populates="embeddings",
+        lazy="selectin",
+    )

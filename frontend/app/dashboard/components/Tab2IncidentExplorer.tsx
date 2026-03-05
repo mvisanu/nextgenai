@@ -3,7 +3,8 @@
 import React, { useState, useMemo } from "react";
 import { Search, FileText, X } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { INCIDENTS, type Incident, type Severity, type System } from "../mock-data";
+import { INCIDENTS, MEDICAL_CASES, type Incident, type MedCase, type Severity, type System, type Specialty } from "../mock-data";
+import { useDomain } from "../../lib/domain-context";
 
 // ── Constants ────────────────────────────────────────────────────────────────
 
@@ -18,6 +19,7 @@ const SEV_COLOR: Record<Severity, string> = {
 };
 
 const SYSTEMS: System[] = ["Hydraulic", "Avionics", "Structural", "Propulsion", "Electronics"];
+const SPECIALTIES: Specialty[] = ["Cardiology", "Neurology", "Respiratory", "Gastroenterology", "Musculoskeletal"];
 const SEVERITIES: Severity[] = ["Critical", "High", "Medium", "Low"];
 
 // ── Input styles ─────────────────────────────────────────────────────────────
@@ -64,7 +66,7 @@ function SevBadge({ severity }: { severity: Severity }) {
 
 // ── Similarity score bar (mock) ────────────────────────────────────────────────
 
-function SimilarityBar({ incident }: { incident: Incident }) {
+function SimilarityBar({ incident }: { incident: Incident | MedCase }) {
   // Mock similarity based on severity + recency
   const base = { Critical: 0.91, High: 0.83, Medium: 0.74, Low: 0.65 }[incident.severity];
   const score = Math.max(0.55, Math.min(0.99, base - Math.random() * 0.06));
@@ -84,7 +86,10 @@ function SimilarityBar({ incident }: { incident: Incident }) {
 
 // ── Detail panel ───────────────────────────────────────────────────────────────
 
-function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: () => void }) {
+function IncidentDetail({ incident, onClose, narrativeLabel, systemLabel, accentVar }: {
+  incident: Incident | MedCase; onClose: () => void;
+  narrativeLabel: string; systemLabel: string; accentVar: string;
+}) {
   const sev = SEV_COLOR[incident.severity];
 
   function MetaItem({ label, value }: { label: string; value: string }) {
@@ -118,8 +123,8 @@ function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: ()
             <SevBadge severity={incident.severity} />
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: "3px" }}>
-            <MetaItem label="SYSTEM"   value={incident.system} />
-            <MetaItem label="ASSET"    value={incident.assetId} />
+            <MetaItem label={systemLabel.toUpperCase()}  value={incident.system} />
+            <MetaItem label="RECORD ID" value={incident.assetId} />
             <MetaItem label="DATE"     value={incident.date} />
           </div>
         </div>
@@ -143,7 +148,7 @@ function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: ()
           {/* Narrative */}
           <div>
             <span style={{ ...DISP, fontSize: "0.48rem", fontWeight: 700, letterSpacing: "0.16em", color: "hsl(var(--text-dim))", display: "block", marginBottom: "5px" }}>
-              INCIDENT NARRATIVE
+              {narrativeLabel.toUpperCase()} NARRATIVE
             </span>
             <div style={{
               ...MONO, fontSize: "0.72rem", color: "hsl(var(--text-secondary))", lineHeight: "1.7",
@@ -166,7 +171,7 @@ function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: ()
               ...MONO, fontSize: "0.72rem", color: "hsl(var(--text-secondary))", lineHeight: "1.7",
               padding: "9px 11px",
               border: "1px solid hsl(var(--border-base))",
-              borderLeft: "2px solid hsl(var(--col-green))",
+              borderLeft: `2px solid hsl(var(${accentVar}))`,
               borderRadius: "2px",
               backgroundColor: "hsl(var(--bg-void))",
             }}>
@@ -177,8 +182,8 @@ function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: ()
           {/* Related records */}
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
             {[
-              { label: "RELATED DEFECTS", items: incident.relatedDefects, color: "var(--col-red)" },
-              { label: "MAINTENANCE LOGS", items: incident.relatedMaintenance, color: "var(--col-cyan)" },
+              { label: narrativeLabel === "Clinical Case" ? "RELATED DIAGNOSES" : "RELATED DEFECTS", items: incident.relatedDefects, color: "var(--col-red)" },
+              { label: narrativeLabel === "Clinical Case" ? "RELATED PROCEDURES" : "MAINTENANCE LOGS", items: incident.relatedMaintenance, color: "var(--col-cyan)" },
             ].map(({ label, items, color }) => (
               <div
                 key={label}
@@ -215,15 +220,25 @@ function IncidentDetail({ incident, onClose }: { incident: Incident; onClose: ()
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function Tab2IncidentExplorer() {
+  const { domain, config } = useDomain();
+  const allRecords: (Incident | MedCase)[] = domain === "medical" ? MEDICAL_CASES : INCIDENTS;
+  const systemOptions = domain === "medical" ? SPECIALTIES : SYSTEMS;
+  const systemLabel = config.systemLabel;
+  const narrativeLabel = config.narrativeLabel;
+  const accent = config.accentVar;
+
   const [search, setSearch] = useState("");
   const [filterSystem, setFilterSystem] = useState("");
   const [filterSev, setFilterSev] = useState("");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
-  const [selected, setSelected] = useState<Incident | null>(null);
+  const [selected, setSelected] = useState<Incident | MedCase | null>(null);
+
+  // Reset selection when domain switches
+  React.useEffect(() => { setSelected(null); setFilterSystem(""); }, [domain]);
 
   const filtered = useMemo(() => {
-    return INCIDENTS.filter((inc) => {
+    return allRecords.filter((inc) => {
       if (filterSystem && inc.system !== filterSystem) return false;
       if (filterSev && inc.severity !== filterSev) return false;
       if (dateFrom && inc.date < dateFrom) return false;
@@ -270,10 +285,10 @@ export default function Tab2IncidentExplorer() {
             />
           </div>
 
-          {/* System filter */}
-          <select value={filterSystem} onChange={(e) => setFilterSystem(e.target.value)} style={{ ...selectStyle, flex: "0 0 120px" }}>
-            <option value="">All Systems</option>
-            {SYSTEMS.map((s) => <option key={s} value={s}>{s}</option>)}
+          {/* System/Specialty filter */}
+          <select value={filterSystem} onChange={(e) => setFilterSystem(e.target.value)} style={{ ...selectStyle, flex: "0 0 130px" }}>
+            <option value="">All {systemLabel}s</option>
+            {systemOptions.map((s) => <option key={s} value={s}>{s}</option>)}
           </select>
 
           {/* Severity filter */}
@@ -292,12 +307,12 @@ export default function Tab2IncidentExplorer() {
           </span>
         </div>
 
-        {/* Incident list */}
+        {/* Record list */}
         <ScrollArea style={{ flex: 1 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: "4px", paddingRight: "4px" }}>
             {filtered.length === 0 && (
               <p style={{ ...MONO, fontSize: "0.65rem", color: "hsl(var(--text-dim))", padding: "16px", textAlign: "center" }}>
-                NO MATCHING INCIDENTS
+                NO MATCHING {narrativeLabel.toUpperCase()}S
               </p>
             )}
             {filtered.map((inc, i) => {
@@ -348,7 +363,7 @@ export default function Tab2IncidentExplorer() {
         <div style={{
           flex: 1,
           border: "1px solid hsl(var(--border-base))",
-          borderTop: "2px solid hsl(var(--col-cyan))",
+          borderTop: `2px solid hsl(var(${accent}))`,
           borderRadius: "2px",
           backgroundColor: "hsl(var(--bg-panel))",
           overflow: "hidden",
@@ -356,7 +371,7 @@ export default function Tab2IncidentExplorer() {
           flexDirection: "column",
           animation: "msg-in 0.2s ease forwards",
         }}>
-          <IncidentDetail incident={selected} onClose={() => setSelected(null)} />
+          <IncidentDetail incident={selected} onClose={() => setSelected(null)} narrativeLabel={narrativeLabel} systemLabel={systemLabel} accentVar={accent} />
         </div>
       )}
     </div>

@@ -6,7 +6,8 @@ import {
   AlertTriangle, Info, Search, Zap,
 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { MOCK_AGENT_RESPONSE, type Severity } from "../mock-data";
+import { MOCK_AGENT_RESPONSE, MOCK_MEDICAL_RESPONSE, type Severity } from "../mock-data";
+import { useDomain } from "../../lib/domain-context";
 
 // ── Shared styles ───────────────────────────────────────────────────────────
 
@@ -91,20 +92,29 @@ function SectionLabel({ icon: Icon, label, color = "var(--text-secondary)" }: {
 
 // ── Suggested queries ─────────────────────────────────────────────────────────
 
-const SUGGESTIONS = [
+const SUGGESTIONS_AIRCRAFT = [
   "Hydraulic leak near actuator; suspected seal degradation",
   "Intermittent short circuit in avionics harness; chafing observed",
   "Corrosion on fastener around skin panel; lot quarantined",
 ];
 
+const SUGGESTIONS_MEDICAL = [
+  "Chest pain with ST-elevation, troponin positive, diaphoresis",
+  "Sudden severe headache, photophobia, neck stiffness",
+  "Dyspnoea with bilateral crackles, elevated BNP, known heart failure",
+];
+
 // ── Main component ────────────────────────────────────────────────────────────
 
 export default function Tab1AgentQuery() {
+  const { domain, config } = useDomain();
   const [query, setQuery] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [showToolCalls, setShowToolCalls] = useState(false);
-  const data = MOCK_AGENT_RESPONSE;
+  const data = domain === "medical" ? MOCK_MEDICAL_RESPONSE : MOCK_AGENT_RESPONSE;
+  const accent = config.accentVar;
+  const SUGGESTIONS = domain === "medical" ? SUGGESTIONS_MEDICAL : SUGGESTIONS_AIRCRAFT;
 
   function handleSubmit() {
     if (!query.trim() || loading) return;
@@ -131,13 +141,13 @@ export default function Tab1AgentQuery() {
     <div style={{ height: "100%", display: "flex", flexDirection: "column", gap: "8px", padding: "8px 10px 10px" }}>
       {/* ── Input section ── */}
       <div style={panelStyle}>
-        <SectionLabel icon={Search} label="QUERY INPUT" color="var(--col-green)" />
+        <SectionLabel icon={Search} label="QUERY INPUT" color={`var(${accent})`} />
 
         <textarea
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); handleSubmit(); } }}
-          placeholder="Describe the issue or ask about defect patterns, maintenance trends, or incident similarity…"
+          placeholder={config.queryPlaceholder}
           rows={3}
           className="industrial-textarea"
           style={{ width: "100%", padding: "8px 10px", marginBottom: "8px" }}
@@ -161,8 +171,8 @@ export default function Tab1AgentQuery() {
                 transition: "all 0.15s",
               }}
               onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--col-green))";
-                (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--col-green) / 0.4)";
+                (e.currentTarget as HTMLButtonElement).style.color = `hsl(var(${accent}))`;
+                (e.currentTarget as HTMLButtonElement).style.borderColor = `hsl(var(${accent}) / 0.4)`;
               }}
               onMouseLeave={(e) => {
                 (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--text-dim))";
@@ -181,12 +191,12 @@ export default function Tab1AgentQuery() {
             style={{
               display: "flex", alignItems: "center", gap: "6px",
               padding: "6px 16px",
-              backgroundColor: (!query.trim() || loading) ? "hsl(var(--bg-panel))" : "hsl(var(--col-green) / 0.12)",
-              border: `1px solid ${(!query.trim() || loading) ? "hsl(var(--border-base))" : "hsl(var(--col-green) / 0.6)"}`,
+              backgroundColor: (!query.trim() || loading) ? "hsl(var(--bg-panel))" : `hsl(var(${accent}) / 0.12)`,
+              border: `1px solid ${(!query.trim() || loading) ? "hsl(var(--border-base))" : `hsl(var(${accent}) / 0.6)`}`,
               borderRadius: "2px",
-              color: (!query.trim() || loading) ? "hsl(var(--text-dim))" : "hsl(var(--col-green))",
+              color: (!query.trim() || loading) ? "hsl(var(--text-dim))" : `hsl(var(${accent}))`,
               cursor: (!query.trim() || loading) ? "not-allowed" : "pointer",
-              boxShadow: (!query.trim() || loading) ? "none" : "0 0 12px hsl(var(--col-green) / 0.2)",
+              boxShadow: (!query.trim() || loading) ? "none" : `0 0 12px hsl(var(${accent}) / 0.2)`,
               transition: "all 0.15s",
             }}
           >
@@ -216,7 +226,7 @@ export default function Tab1AgentQuery() {
 
             {/* Similar incidents */}
             <div style={panelStyle}>
-              <SectionLabel icon={Search} label="TOP SIMILAR INCIDENTS" color="var(--col-cyan)" />
+              <SectionLabel icon={Search} label={`TOP SIMILAR ${config.narrativeLabel.toUpperCase()}S`} color="var(--col-cyan)" />
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {data.similarIncidents.map((inc, i) => (
                   <div
@@ -265,7 +275,7 @@ export default function Tab1AgentQuery() {
 
             {/* Recommended actions */}
             <div style={panelStyle}>
-              <SectionLabel icon={CheckCircle2} label="RECOMMENDED ACTIONS" color="var(--col-green)" />
+              <SectionLabel icon={CheckCircle2} label="RECOMMENDED ACTIONS" color={`var(${accent})`} />
               <div style={{ display: "flex", flexDirection: "column", gap: "7px" }}>
                 {data.recommendations.map((rec, i) => (
                   <div

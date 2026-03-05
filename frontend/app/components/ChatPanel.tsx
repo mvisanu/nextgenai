@@ -7,11 +7,12 @@
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-import { SendHorizontal, AlertCircle, Terminal } from "lucide-react";
+import { SendHorizontal, AlertCircle, Terminal, Loader2, WifiOff } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { postQuery } from "../lib/api";
+import { postQuery, getHealth } from "../lib/api";
 import type { QueryResponse, Claim } from "../lib/api";
 import { useRunContext } from "../lib/context";
+import { useDomain } from "../lib/domain-context";
 import CitationsDrawer from "./CitationsDrawer";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -144,13 +145,40 @@ function TypingIndicator() {
 
 export default function ChatPanel() {
   const { setRunData } = useRunContext();
+  const { domain, config } = useDomain();
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [activeCitation, setActiveCitation] = useState<ActiveCitationState | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "cold">("checking");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Wake up Render free-tier backend on mount.
+  // A GET /healthz has no preflight, so it works even while the service
+  // is spinning up (unlike POST /query which needs a CORS preflight).
+  useEffect(() => {
+    let cancelled = false;
+    let retryCount = 0;
+    let timer: ReturnType<typeof setTimeout>;
+
+    const ping = async () => {
+      try {
+        await getHealth();
+        if (!cancelled) setApiStatus("ready");
+      } catch {
+        if (!cancelled) {
+          retryCount++;
+          setApiStatus("cold");
+          if (retryCount < 15) timer = setTimeout(ping, 8_000);
+        }
+      }
+    };
+
+    ping();
+    return () => { cancelled = true; clearTimeout(timer); };
+  }, []);
 
   useEffect(() => {
     if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
@@ -164,7 +192,7 @@ export default function ChatPanel() {
     setIsLoading(true);
     setError(null);
     try {
-      const response = await postQuery(query);
+      const response = await postQuery(query, domain);
       setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: response.answer, response }]);
       setRunData(response);
     } catch (err) {
@@ -194,16 +222,21 @@ export default function ChatPanel() {
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px", paddingTop: "28px", gap: "10px" }}>
               <div style={{
                 width: 36, height: 36,
-                border: "1px solid hsl(var(--col-green) / 0.35)",
+                border: `1px solid hsl(var(${config.accentVar}) / 0.35)`,
                 borderRadius: "2px",
                 display: "flex", alignItems: "center", justifyContent: "center",
               }}>
-                <Terminal size={16} style={{ color: "hsl(var(--col-green) / 0.45)" }} />
+                <Terminal size={16} style={{ color: `hsl(var(${config.accentVar}) / 0.45)` }} />
               </div>
               <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em", textAlign: "center", lineHeight: "1.7" }}>
                 AWAITING QUERY INPUT<br />
-                <span style={{ fontSize: "0.72rem", opacity: 0.7 }}>vector search · sql · graphrag</span>
+                <span style={{ fontSize: "0.72rem", opacity: 0.7 }}>vector search · sql · graphrag · {config.label.toLowerCase()}</span>
               </p>
+              {config.disclaimer && (
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "hsl(var(--col-amber))", textAlign: "center", maxWidth: "340px", lineHeight: "1.5", border: "1px solid hsl(var(--col-amber) / 0.3)", borderRadius: "2px", padding: "6px 10px" }}>
+                  ⚠ {config.disclaimer}
+                </p>
+              )}
             </div>
           )}
 
@@ -292,13 +325,34 @@ export default function ChatPanel() {
         </div>
       )}
 
+      {/* ── API status banner ── */}
+      {apiStatus !== "ready" && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: "8px", padding: "7px 12px",
+          border: `1px solid hsl(var(${apiStatus === "checking" ? "--col-cyan" : "--col-amber"}) / 0.4)`,
+          borderLeft: `2px solid hsl(var(${apiStatus === "checking" ? "--col-cyan" : "--col-amber"}))`,
+          backgroundColor: `hsl(var(${apiStatus === "checking" ? "--col-cyan" : "--col-amber"}) / 0.05)`,
+          borderRadius: "2px", flexShrink: 0,
+        }}>
+          {apiStatus === "checking"
+            ? <Loader2 size={12} style={{ color: "hsl(var(--col-cyan))", animation: "spin 1s linear infinite", flexShrink: 0 }} />
+            : <WifiOff size={12} style={{ color: "hsl(var(--col-amber))", flexShrink: 0 }} />
+          }
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: `hsl(var(${apiStatus === "checking" ? "--col-cyan" : "--col-amber"}))`, letterSpacing: "0.08em" }}>
+            {apiStatus === "checking"
+              ? "CONNECTING TO BACKEND…"
+              : "BACKEND WARMING UP — Render free-tier cold start (~60s). Your query will work once it's ready."}
+          </span>
+        </div>
+      )}
+
       {/* ── Input row ── */}
       <div style={{ display: "flex", gap: "8px", alignItems: "flex-end", flexShrink: 0 }}>
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Enter query… (Enter to submit, Shift+Enter for newline)"
+          placeholder={config.queryPlaceholder}
           disabled={isLoading}
           rows={2}
           className="industrial-textarea flex-1"

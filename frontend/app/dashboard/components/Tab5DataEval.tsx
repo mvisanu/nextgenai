@@ -2,7 +2,8 @@
 
 import React from "react";
 import { Database, FlaskConical, CheckCircle2, AlertCircle } from "lucide-react";
-import { DATASET_HEALTH, EVAL_METRICS } from "../mock-data";
+import { DATASET_HEALTH, EVAL_METRICS, MEDICAL_DATASET_HEALTH, MEDICAL_EVAL_METRICS } from "../mock-data";
+import { useDomain } from "../../lib/domain-context";
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -140,9 +141,9 @@ function TableHeader({ cols }: { cols: string[] }) {
 
 // ── Status summary bar ────────────────────────────────────────────────────────
 
-function EvalSummary() {
-  const pass = EVAL_METRICS.filter((m) => m.status === "PASS").length;
-  const total = EVAL_METRICS.length;
+function EvalSummary({ metrics }: { metrics: typeof EVAL_METRICS }) {
+  const pass = metrics.filter((m) => m.status === "PASS").length;
+  const total = metrics.length;
   const pct = Math.round((pass / total) * 100);
 
   return (
@@ -177,25 +178,38 @@ function EvalSummary() {
 // ── Main component ─────────────────────────────────────────────────────────────
 
 export default function Tab5DataEval() {
+  const { domain } = useDomain();
+  const isMedical = domain === "medical";
+  const datasetHealth = isMedical ? MEDICAL_DATASET_HEALTH : DATASET_HEALTH;
+  const evalMetrics   = isMedical ? MEDICAL_EVAL_METRICS   : EVAL_METRICS;
+
   return (
     <div style={{ height: "100%", display: "flex", gap: "8px", padding: "8px 10px 10px", overflow: "hidden" }}>
 
       {/* Dataset Health */}
-      <Section title="DATASET HEALTH" accentVar="--col-cyan" icon={Database}>
+      <Section
+        title={isMedical ? "CLINICAL DATA HEALTH" : "DATASET HEALTH"}
+        accentVar="--col-cyan"
+        icon={Database}
+      >
         <TableHeader cols={["METRIC", "VALUE"]} />
         <div>
-          {DATASET_HEALTH.map((row, i) => (
+          {datasetHealth.map((row, i) => (
             <TableRow key={row.metric} metric={row.metric} value={row.value} index={i} />
           ))}
         </div>
       </Section>
 
       {/* Offline Evaluation */}
-      <Section title="OFFLINE EVALUATION METRICS" accentVar="--col-green" icon={FlaskConical}>
-        <EvalSummary />
+      <Section
+        title={isMedical ? "CLINICAL EVALUATION METRICS" : "OFFLINE EVALUATION METRICS"}
+        accentVar={isMedical ? "--col-cyan" : "--col-green"}
+        icon={FlaskConical}
+      >
+        <EvalSummary metrics={evalMetrics} />
         <TableHeader cols={["METRIC", "VALUE", "TARGET", "STATUS"]} />
         <div>
-          {EVAL_METRICS.map((row, i) => (
+          {evalMetrics.map((row, i) => (
             <EvalRow
               key={row.metric}
               metric={row.metric}

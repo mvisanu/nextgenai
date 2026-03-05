@@ -65,6 +65,7 @@ class VectorSearchTool:
         filters: dict[str, Any] | None = None,
         top_k: int = 8,
         similarity_threshold: float = 0.0,
+        domain: str = "aircraft",
     ) -> dict[str, Any]:
         """
         Embed query_text and retrieve top-k similar incident chunks.
@@ -100,6 +101,7 @@ class VectorSearchTool:
                         top_k=top_k,
                         filters=filters,
                         similarity_threshold=similarity_threshold,
+                        domain=domain,
                     )
 
         except ToolTimeoutError:

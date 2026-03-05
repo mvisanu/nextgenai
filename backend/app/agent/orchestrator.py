@@ -72,12 +72,33 @@ class AgentRunResult:
         }
 
 
-_SYNTHESIS_SYSTEM = """\
-You are a manufacturing intelligence analyst. Synthesise a clear, concise answer
-from the provided evidence. Every factual claim must be directly grounded in the evidence.
+_SYNTHESIS_SYSTEM_AIRCRAFT = """\
+You are a manufacturing intelligence analyst specialising in aviation maintenance and quality engineering.
+Synthesise a clear, concise answer from the provided evidence.
+Every factual claim must be directly grounded in the evidence.
 Do not speculate beyond what the evidence shows.
+Frame recommendations as engineering hypotheses requiring qualified review — not definitive instructions.
 
 If the evidence is insufficient, state clearly what was searched and what could not be found.
+
+Return JSON ONLY:
+{
+  "answer": "...",
+  "claims": [{"text": "..."}],
+  "assumptions": ["..."],
+  "next_steps": ["..."]
+}
+"""
+
+_SYNTHESIS_SYSTEM_MEDICAL = """\
+You are a clinical intelligence assistant supporting healthcare quality analysis.
+Synthesise a clear, concise answer from the provided clinical evidence.
+Every factual claim must be directly grounded in the case data.
+Do not speculate beyond what the evidence shows.
+
+IMPORTANT: All outputs are AI-generated hypotheses for research purposes only.
+They require review by a qualified medical professional. Never provide diagnoses
+or treatment recommendations as clinical advice.
 
 Return JSON ONLY:
 {
@@ -112,7 +133,7 @@ class AgentOrchestrator:
         self._sql_tool = SQLQueryTool()
         self._compute_tool = PythonComputeTool()
 
-    def run(self, query: str) -> AgentRunResult:
+    def run(self, query: str, domain: str = "aircraft") -> AgentRunResult:
         """
         Execute the full agentic loop for a user query.
 
@@ -125,7 +146,7 @@ class AgentOrchestrator:
         run_id = str(uuid.uuid4())
         t_run_start = time.perf_counter()
 
-        logger.info("Agent run started", extra={"run_id": run_id, "query": query[:200]})
+        logger.info("Agent run started", extra={"run_id": run_id, "query": query[:200], "domain": domain})
 
         steps: list[StepLog] = []
         vector_hits: list[dict[str, Any]] = []
@@ -171,7 +192,7 @@ class AgentOrchestrator:
                     query_text = tool_inputs.get("query_text", query)
                     filters = tool_inputs.get("filters", {})
                     top_k = tool_inputs.get("top_k", 8)
-                    output = self._vector_tool.run(query_text, filters=filters, top_k=top_k)
+                    output = self._vector_tool.run(query_text, filters=filters, top_k=top_k, domain=domain)
                     hits = output.get("results", [])
                     vector_hits.extend(hits)
                     tool_output_summary = f"Found {len(hits)} similar chunks"
@@ -279,10 +300,12 @@ class AgentOrchestrator:
             f"Synthesise a comprehensive answer."
         )
 
+        system_prompt = _SYNTHESIS_SYSTEM_MEDICAL if domain == "medical" else _SYNTHESIS_SYSTEM_AIRCRAFT
+
         try:
             synthesis_response = self.llm.complete(
                 prompt=synthesis_prompt,
-                system=_SYNTHESIS_SYSTEM,
+                system=system_prompt,
                 json_mode=True,
                 max_tokens=2048,
             )

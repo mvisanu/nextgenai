@@ -9,8 +9,9 @@ import ChatPanel from "./components/ChatPanel";
 import AgentTimeline from "./components/AgentTimeline";
 import GraphViewer from "./components/GraphViewer";
 import { ThemeToggle, FontSizeControl } from "./lib/theme";
+import { useDomain, DOMAIN_CONFIGS, type Domain } from "./lib/domain-context";
 import Link from "next/link";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope } from "lucide-react";
 
 // ── Shared label font sizes (rem values at 16px base) ──────────────────────
 // Header labels  : 0.7rem  = 11.2px
@@ -20,6 +21,42 @@ import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, Git
 // ---------------------------------------------------------------------------
 // App header
 // ---------------------------------------------------------------------------
+
+function DomainSwitcher() {
+  const { domain, setDomain } = useDomain();
+  return (
+    <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
+      {(["aircraft", "medical"] as Domain[]).map((d) => {
+        const cfg = DOMAIN_CONFIGS[d];
+        const isActive = domain === d;
+        return (
+          <button
+            key={d}
+            onClick={() => setDomain(d)}
+            style={{
+              display: "flex", alignItems: "center", gap: "4px",
+              padding: "3px 9px",
+              fontFamily: "var(--font-display)",
+              fontSize: "0.58rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              border: `1px solid ${isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--border-base))"}`,
+              borderRadius: "2px",
+              backgroundColor: isActive ? `hsl(var(${cfg.accentVar}) / 0.12)` : "transparent",
+              color: isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--text-dim))",
+              cursor: "pointer",
+              transition: "all 0.15s",
+              boxShadow: isActive ? `0 0 8px hsl(var(${cfg.accentVar}) / 0.2)` : "none",
+            }}
+          >
+            <span>{cfg.icon}</span>
+            <span className="nav-link-text">{cfg.shortLabel}</span>
+          </button>
+        );
+      })}
+    </div>
+  );
+}
 
 function AppHeader() {
   return (
@@ -246,6 +283,30 @@ function AppHeader() {
           <span className="nav-link-text">DIAGRAM</span>
         </Link>
 
+        <Link
+          href="/medical-examples"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            color: "hsl(var(--text-secondary))",
+            textDecoration: "none",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.08em",
+            transition: "color 0.15s",
+          }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
+        >
+          <Stethoscope size={13} />
+          <span className="nav-link-text">MED-EX</span>
+        </Link>
+
+        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+
+        <DomainSwitcher />
+
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
         <div className="header-font-control"><FontSizeControl /></div>
@@ -297,6 +358,9 @@ function IndustrialPanel({
 // ---------------------------------------------------------------------------
 
 export default function Home() {
+  const { domain } = useDomain();
+  const isMedical = domain === "medical";
+
   return (
     <div
       className="app-shell flex flex-col h-screen w-screen overflow-hidden grid-bg"
@@ -328,7 +392,12 @@ export default function Home() {
           <AgentTimeline />
         </IndustrialPanel>
 
-        <IndustrialPanel label="KNOWLEDGE GRAPH // REACTFLOW" accentCssVar="--col-cyan" gridArea="graph"   extraClass="panel-graph">
+        <IndustrialPanel
+          label={isMedical ? "CLINICAL KNOWLEDGE GRAPH // REACTFLOW" : "KNOWLEDGE GRAPH // REACTFLOW"}
+          accentCssVar="--col-cyan"
+          gridArea="graph"
+          extraClass="panel-graph"
+        >
           <GraphViewer />
         </IndustrialPanel>
       </main>

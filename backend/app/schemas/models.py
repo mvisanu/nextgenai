@@ -99,6 +99,11 @@ class QueryRequest(BaseModel):
         description="Natural language question to ask the agent",
         examples=["Find incidents similar to hydraulic actuator crack on Line 1"],
     )
+    domain: str = Field(
+        "aircraft",
+        description="Data domain to query: 'aircraft' (manufacturing/maintenance) or 'medical' (clinical cases)",
+        pattern="^(aircraft|medical)$",
+    )
     filters: dict[str, Any] | None = Field(
         None,
         description="Optional metadata filters: {system, severity, date_range: [from, to]}",

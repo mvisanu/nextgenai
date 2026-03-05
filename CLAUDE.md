@@ -4,60 +4,112 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-An agentic AI MVP that answers queries over three dataset types — incident reports (narrative text), manufacturing defects (structured metadata), and maintenance logs (time-series events) — by routing to vector search, SQL, or hybrid tool chains and synthesizing a cited response.
+Agentic manufacturing intelligence platform. A user submits a natural-language query; the agent classifies intent, plans a multi-step tool sequence, executes vector search / SQL / graph traversal / compute tools, and synthesises a cited response via Claude Sonnet 4.6.
+
+**Live:** https://nextgenai-seven.vercel.app | API: https://nextai-backend.onrender.com
+
+## Stack
+
+- **Frontend**: Next.js 16 App Router, TypeScript, Tailwind, industrial SCADA theme (Orbitron / Rajdhani / JetBrains Mono)
+- **Backend**: FastAPI, Python 3.11, SQLAlchemy 2 (async + sync), Alembic
+- **Database**: PostgreSQL 16 + pgvector — Neon for production, Docker for local dev
+- **Embeddings**: `sentence-transformers/all-MiniLM-L6-v2` (384 dims), IVFFlat cosine index
+- **NER**: spaCy `en_core_web_sm`
+- **LLM**: Anthropic Claude Sonnet 4.6 (`claude-sonnet-4-6`)
+- **Deployment**: Vercel (frontend) + Render Docker (backend)
 
 ## Commands
 
 ```bash
-# Install dependencies
+# ── Local dev ──────────────────────────────────────────────────────────────────
+# 1. Backend + DB via Docker Compose (port 8000, pg on 5432)
+docker compose up --build
+
+# 2. Frontend dev server (requires frontend/.env.local with NEXT_PUBLIC_API_URL)
+cd frontend && npm run dev        # http://localhost:3000
+
+# ── Backend tests ──────────────────────────────────────────────────────────────
+cd backend
 pip install -r requirements.txt
-
-# Ingest all datasets (generates synthetic data if CSVs are absent)
-python -m src.cli ingest --config config.yaml
-
-# Query the agent
-python -m src.cli ask "Find similar incidents to: <free text>"
-python -m src.cli ask "Show defect trends by product for last 90 days"
-python -m src.cli ask "Given this incident text, classify defect and recommend action: <text>"
-
-# Run tests
 pytest tests/
-pytest tests/test_sql_guardrails.py   # single test file
-pytest -k "test_router"               # single test by name
+pytest tests/test_sql_guardrails.py   # single file
+pytest -k "test_router"               # single test
+
+# ── CLI (runs inside container or with venv activated) ─────────────────────────
+python -m backend.src.cli ingest --config backend/config.yaml
+python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 ```
 
 ## Architecture
 
-### Data Layer (`src/db.py`, `src/ingest.py`)
-- **SQLite** single-file database with three canonical tables: `incident_reports`, `manufacturing_defects`, `maintenance_logs`
-- A unified `events` link table connects records across tables via fuzzy keys (date / product / system / part)
-- `ingest.py` reads CSVs from paths in `config.yaml`, maps columns to canonical schemas, or generates synthetic data if files are absent
+### Backend modules (`backend/app/`)
 
-### Vector Layer (`src/embeddings.py`, `src/vector_index.py`)
-- `incident_reports.narrative_text` is chunked (~300–600 tokens, 50–100 token overlap) and embedded using a local-friendly model
-- Chunks stored in a **FAISS or Chroma** local index with metadata (incident_id, date, system, severity)
-- Interface: `embed()`, `upsert()`, `query(top_k)` returning scores + metadata
+| Package | Key files | Purpose |
+|---|---|---|
+| `agent/` | `orchestrator.py`, `intent.py`, `planner.py`, `verifier.py` | Intent classification → plan → tool loop → verify |
+| `api/` | `query.py`, `ingest.py`, `docs.py` | FastAPI routers: `POST /query`, `POST /ingest`, `GET /healthz`, `GET /docs` |
+| `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema, async/sync engines, Alembic |
+| `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
+| `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
+| `llm/` | `client.py` | Anthropic SDK wrapper |
+| `rag/` | `chunker.py`, `embeddings.py`, `retrieval.py` | Sentence-level chunking, SentenceTransformer embed, pgvector HNSW search |
+| `schemas/` | `models.py` | Pydantic v2 request/response models (canonical source of truth) |
+| `tools/` | `vector_tool.py`, `sql_tool.py`, `compute_tool.py` | Guardrailed tool implementations |
+| `main.py` | — | FastAPI app factory, CORS middleware, lifespan |
 
-### Tools (`src/tools_sql.py`, `src/tools_vector.py`)
-- `SQLQueryTool`: executes SELECT-only queries; guardrails reject DROP/DELETE/UPDATE/INSERT
-- `VectorSearchTool`: takes `query_text` + optional filters, returns top-k chunks with scores/excerpts
-- Pre-built SQL queries: defect counts by product+type (last N days), severity distribution, maintenance event trends, incident↔defect join
+### Database tables (`backend/app/db/models.py`)
 
-### Agent (`src/agent.py`)
-- **Intent router** classifies each query as `vector-only`, `sql-only`, or `hybrid`
-- Calls the appropriate tool(s), then runs a reasoning/synthesis step
-- Output schema: `answer`, `evidence` (vector hits + SQL rows), `assumptions`, `next_steps`
+| Table | Description |
+|---|---|
+| `incident_reports` | Narrative text — primary vector embedding source |
+| `manufacturing_defects` | Structured defect records — SQL aggregation |
+| `maintenance_logs` | Time-series sensor/maintenance events |
+| `incident_embeddings` | 384-dim pgvector chunks with char offsets |
+| `graph_node` | KG nodes: `entity` or `chunk` type |
+| `graph_edge` | KG edges: `mentions`, `similarity`, `co_occurrence` |
+| `agent_runs` | Persisted full JSON output per query |
 
-### CLI / API (`src/cli.py`)
-- Entry point: `python -m src.cli <subcommand>`
-- Subcommands: `ingest`, `ask`
+### Frontend pages (`frontend/app/`)
+
+| Route | Component | Description |
+|---|---|---|
+| `/` | `page.tsx` | ChatPanel + GraphViewer + AgentTimeline — main query interface |
+| `/dashboard` | `dashboard/page.tsx` | Five-tab analytics dashboard |
+| `/diagram` | `diagram/page.tsx` | Mermaid architecture diagrams (MVP + enterprise) |
+| `/data` | `data/page.tsx` | Kaggle dataset showcase |
+| `/review` | `review/page.tsx` | Architecture review + learning guide |
+| `/examples` | `examples/page.tsx` | Pre-built example queries |
+| `/faq` | `faq/page.tsx` | FAQ |
+
+Key frontend files:
+- `app/lib/api.ts` — typed API client, `postQuery()`, `getHealth()`, etc.
+- `app/lib/theme.tsx` — `ThemeToggle`, `FontSizeControl`, CSS var system
+- `app/components/ChatPanel.tsx` — real API calls, health-check warm-up, citations
+- `app/components/MermaidDiagram.tsx` — per-diagram `%%{init}%%` theming, single init
 
 ## Configuration
 
-`config.yaml` controls dataset CSV paths and key parameters (embedding model, chunk size/overlap, top-k, SQLite path, vector index path).
+- `backend/config.yaml` — dataset CSV paths, embedding model, chunk size/overlap, top-k
+- `.env` (repo root, gitignored) — `ANTHROPIC_API_KEY`, `PG_DSN`, `DATABASE_URL`
+- `frontend/.env.local` (gitignored) — `NEXT_PUBLIC_API_URL=http://localhost:8000`
+- `render.yaml` — Render Docker deployment blueprint
+- `docker-compose.yml` — local dev: postgres (5432) + backend (8000); frontend runs separately
 
 ## Key Constraints
-- SQL tool must only allow SELECT; all other statement types must be rejected
-- Vector embeddings must store chunk metadata alongside vectors (not just IDs)
-- Agent output must always include evidence references (record IDs + snippets)
-- Synthetic data generation must produce realistic distributions across all three schemas
+
+- **SQL guardrails**: `sql_tool.py` rejects any non-SELECT statement at parse time
+- **Vector metadata**: `incident_embeddings` stores `char_start`/`char_end` per chunk for citation highlighting
+- **Agent output**: always includes `evidence` (vector hits + SQL rows), `claims` with `confidence`, `citations`
+- **CORS**: never use `allow_origins=["*"]` with `allow_credentials=True` — illegal per Fetch spec; use explicit origin list in `main.py`; extend via `CORS_ORIGINS` env var
+- **Mermaid**: call `mermaid.initialize()` once only; inject theme via `%%{init}%%` per diagram; use timestamp-suffixed IDs to avoid DOM ID collisions
+- **Render cold starts**: frontend pings `GET /healthz` on mount (no preflight) to wake the backend before user submits first query
+
+## Environment Variables
+
+| Variable | Where | Purpose |
+|---|---|---|
+| `ANTHROPIC_API_KEY` | `.env` / Render dashboard | Claude API — must be `sk-ant-api03-...` format |
+| `PG_DSN` | `.env` / Render dashboard | PostgreSQL DSN for sync connections |
+| `DATABASE_URL` | `.env` / Render dashboard | Same as `PG_DSN` (asyncpg uses `postgresql+asyncpg://`) |
+| `CORS_ORIGINS` | Render dashboard | Comma-separated extra allowed origins |
+| `NEXT_PUBLIC_API_URL` | `frontend/.env.local` / Vercel | Backend base URL |
