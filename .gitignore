@@ -51,3 +51,4 @@ backend/.testlib/
 
 # MCP config (local only)
 .mcp.json
+.claude/
