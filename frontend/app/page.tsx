@@ -10,7 +10,7 @@ import AgentTimeline from "./components/AgentTimeline";
 import GraphViewer from "./components/GraphViewer";
 import { ThemeToggle, FontSizeControl } from "./lib/theme";
 import Link from "next/link";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch } from "lucide-react";
 
 // ── Shared label font sizes (rem values at 16px base) ──────────────────────
 // Header labels  : 0.7rem  = 11.2px
@@ -221,6 +221,26 @@ function AppHeader() {
         >
           <FlaskConical size={13} />
           EXAMPLES
+        </Link>
+
+        <Link
+          href="/diagram"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "5px",
+            color: "hsl(var(--text-secondary))",
+            textDecoration: "none",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            letterSpacing: "0.08em",
+            transition: "color 0.15s",
+          }}
+          onMouseEnter={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--col-cyan))"; }}
+          onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
+        >
+          <GitBranch size={13} />
+          DIAGRAM
         </Link>
 
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
