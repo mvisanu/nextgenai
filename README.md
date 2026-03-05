@@ -13,11 +13,12 @@ Dual-domain agentic intelligence platform. Ask natural-language questions over c
 
 A user types a free-text query in either **Aircraft** or **Medical** domain mode. The agent:
 
-1. **Classifies intent** — `vector_only`, `sql_only`, `hybrid`, or `compute`
-2. **Plans a tool sequence** — up to 5 steps
-3. **Executes tools** — vector search (HNSW/IVFFlat cosine over pgvector), SQL SELECT (guardrailed), knowledge-graph traversal, or statistical compute
-4. **Synthesises an answer** — Claude Sonnet 4.6 generates a cited response from the evidence
-5. **Returns structured output** — answer, claims with confidence scores, citations, graph path, run summary
+1. **Classifies intent** — `vector_only`, `sql_only`, `hybrid`, or `compute` (Haiku, ~0.7s)
+2. **Plans a tool sequence** — up to 5 steps (Haiku, ~1s)
+3. **Executes tools** — vector search (HNSW/IVFFlat cosine over pgvector), SQL SELECT (guardrailed), knowledge-graph traversal, or statistical compute (~30ms)
+4. **Synthesises an answer** — Claude Sonnet 4.6 generates a cited response from the evidence (~7s)
+5. **Verifies claims** — confidence scores and citations attached (Haiku, ~1s)
+6. **Returns structured output** — answer, claims with confidence scores, citations, graph path, run summary
 
 ---
 
@@ -31,7 +32,7 @@ A user types a free-text query in either **Aircraft** or **Medical** domain mode
 | Database | PostgreSQL 16 + pgvector (Neon for production, Docker for local) |
 | Embeddings | `sentence-transformers/all-MiniLM-L6-v2` (384 dimensions) |
 | NER | spaCy `en_core_web_sm` |
-| LLM | Anthropic Claude Sonnet 4.6 |
+| LLM | Claude Sonnet 4.6 (synthesis) + Haiku 4.5 (classify / plan / verify) |
 | Diagrams | Mermaid.js |
 | Graph | ReactFlow |
 | Deployment | Vercel (frontend) + Render (backend, Docker) |
@@ -169,7 +170,7 @@ npm install
 npm run dev
 ```
 
-Frontend available at `http://localhost:3000`.
+Frontend available at `http://localhost:3005`.
 
 ### 4. Run backend tests
 
@@ -210,7 +211,7 @@ Connect the GitHub repo to Vercel. Required environment variable:
 
 | Route | Description |
 |---|---|
-| `/` | Main chat interface: ChatPanel, GraphViewer (domain-aware), AgentTimeline |
+| `/` | Main chat interface: ChatPanel, GraphViewer (domain-aware, collapsible), AgentTimeline |
 | `/dashboard` | Five-tab analytics dashboard with domain-aware tabs and labels |
 | `/diagram` | Architecture diagrams: MVP stack and enterprise scale (Mermaid) |
 | `/data` | Kaggle dataset showcase with schema details |
@@ -244,3 +245,5 @@ Domain selection is persisted to `localStorage`.
 - **Dual-pipeline seeding**: `entrypoint.sh` runs aircraft and medical seeding as independent steps — each checks its own table row count so neither blocks the other.
 - **IVFFlat vs HNSW**: Aircraft embeddings use HNSW (better recall, higher build cost); medical embeddings use IVFFlat with `lists=100` (faster build for ~800 synthetic chunks).
 - **Synthetic medical data**: If MACCROBAT CSV is not present at ingest time, the pipeline generates 200 realistic clinical cases across 5 specialties (Cardiac, Respiratory, Neurological, GI, Musculoskeletal) with realistic NER entity distributions.
+- **LLM tiering**: Haiku handles classify/plan/verify (fast, JSON-only tasks); Sonnet handles synthesis (quality matters). This brings typical query latency from ~18s to ~10s.
+- **Knowledge graph fallback**: `graph_path` is always returned as `{nodes:[], edges:[]}` (never null). `GraphViewer` checks `nodes.length > 0` to decide whether to show live or mock graph data.

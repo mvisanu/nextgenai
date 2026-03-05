@@ -15,7 +15,7 @@ Agentic manufacturing intelligence platform. A user submits a natural-language q
 - **Database**: PostgreSQL 16 + pgvector — Neon for production, Docker for local dev
 - **Embeddings**: `sentence-transformers/all-MiniLM-L6-v2` (384 dims), IVFFlat cosine index
 - **NER**: spaCy `en_core_web_sm`
-- **LLM**: Anthropic Claude Sonnet 4.6 (`claude-sonnet-4-6`)
+- **LLM**: Anthropic Claude Sonnet 4.6 (`claude-sonnet-4-6`) for synthesis; Haiku 4.5 (`claude-haiku-4-5-20251001`) for classify/plan/verify
 - **Deployment**: Vercel (frontend) + Render Docker (backend)
 
 ## Commands
@@ -26,7 +26,7 @@ Agentic manufacturing intelligence platform. A user submits a natural-language q
 docker compose up --build
 
 # 2. Frontend dev server (requires frontend/.env.local with NEXT_PUBLIC_API_URL)
-cd frontend && npm run dev        # http://localhost:3000
+cd frontend && npm run dev        # http://localhost:3005
 
 # ── Backend tests ──────────────────────────────────────────────────────────────
 cd backend
@@ -51,7 +51,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
 | `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
-| `llm/` | `client.py` | Anthropic SDK wrapper |
+| `llm/` | `client.py` | Anthropic SDK wrapper — `get_llm_client()` (Sonnet), `get_fast_llm_client()` (Haiku) |
 | `rag/` | `chunker.py`, `embeddings.py`, `retrieval.py` | Sentence-level chunking, SentenceTransformer embed, pgvector HNSW search |
 | `schemas/` | `models.py` | Pydantic v2 request/response models (canonical source of truth) |
 | `tools/` | `vector_tool.py`, `sql_tool.py`, `compute_tool.py` | Guardrailed tool implementations |
@@ -73,12 +73,13 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 
 | Route | Component | Description |
 |---|---|---|
-| `/` | `page.tsx` | ChatPanel + GraphViewer + AgentTimeline — main query interface |
+| `/` | `page.tsx` | ChatPanel + GraphViewer (collapsible) + AgentTimeline — main query interface |
 | `/dashboard` | `dashboard/page.tsx` | Five-tab analytics dashboard |
 | `/diagram` | `diagram/page.tsx` | Mermaid architecture diagrams (MVP + enterprise) |
 | `/data` | `data/page.tsx` | Kaggle dataset showcase |
 | `/review` | `review/page.tsx` | Architecture review + learning guide |
-| `/examples` | `examples/page.tsx` | Pre-built example queries |
+| `/examples` | `examples/page.tsx` | Pre-built example queries (aircraft) |
+| `/medical-examples` | `medical-examples/page.tsx` | 14 pre-built clinical example queries |
 | `/faq` | `faq/page.tsx` | FAQ |
 
 Key frontend files:
@@ -103,6 +104,10 @@ Key frontend files:
 - **CORS**: never use `allow_origins=["*"]` with `allow_credentials=True` — illegal per Fetch spec; use explicit origin list in `main.py`; extend via `CORS_ORIGINS` env var
 - **Mermaid**: call `mermaid.initialize()` once only; inject theme via `%%{init}%%` per diagram; use timestamp-suffixed IDs to avoid DOM ID collisions
 - **Render cold starts**: frontend pings `GET /healthz` on mount (no preflight) to wake the backend before user submits first query
+- **LLM routing**: use `get_fast_llm_client()` (Haiku) for classify/plan/verify — simple JSON tasks; use `get_llm_client()` (Sonnet) for synthesis only. Do not use Sonnet for routing.
+- **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding mock vs real — never rely on `?? fallback` alone.
+- **Hydration**: `<html>` in `layout.tsx` has `suppressHydrationWarning`; do NOT put `dark`/`text-medium` in the static SSR className — the inline theme script owns those classes.
+- **Graph pane**: collapsible via `PanelRightClose`/`PanelRightOpen` button in `page.tsx`; state lives in `Home` component.
 
 ## Environment Variables
 
