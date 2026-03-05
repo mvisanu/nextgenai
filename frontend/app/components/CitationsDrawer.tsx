@@ -1,35 +1,24 @@
 "use client";
 
 // ============================================================
-// CitationsDrawer.tsx
-// Implements: T-036-F
-// - shadcn/ui Sheet from the right side
-// - Fetches chunk via getChunk(doc_id, chunk_id) on open
-// - Displays full chunk_text with cited span highlighted via <mark>
-// - Confidence badge: green ≥0.7, yellow 0.4–0.69, red <0.4
-// - Closes on Escape or outside click (Sheet handles both natively)
-// - Shows conflict_note as a warning if present
+// CitationsDrawer.tsx — Industrial data-sheet side panel
+// Source chunk display with confidence meter, highlighted
+// excerpt, and key-value metadata rows
 // ============================================================
 
 import React, { useEffect, useState } from "react";
-import { AlertTriangle, BookOpen } from "lucide-react";
+import { AlertTriangle, BookOpen, X, FileText } from "lucide-react";
 
 import {
   Sheet,
   SheetContent,
-  SheetHeader,
   SheetTitle,
-  SheetDescription,
 } from "@/components/ui/sheet";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 
 import { getChunk } from "../lib/api";
 import type { Claim, ChunkResponse } from "../lib/api";
-import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
 // Props
@@ -38,41 +27,74 @@ import { cn } from "@/lib/utils";
 interface CitationsDrawerProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  /** The claim whose first citation will be fetched and displayed */
   activeCitation: Claim | null;
-  /** 0-based index of the claim in the claims array (for display as [N]) */
   citationIndex: number;
 }
 
 // ---------------------------------------------------------------------------
-// Confidence badge colour mapping (T-036-F spec)
+// Confidence meter bar
 // ---------------------------------------------------------------------------
 
-function ConfidenceBadge({ confidence }: { confidence: number }) {
-  let className: string;
+function ConfidenceMeter({ confidence }: { confidence: number }) {
+  let color: string;
   let label: string;
 
-  if (confidence >= 0.7) {
-    className = "bg-green-100 text-green-800 border-green-200";
-    label = "High";
-  } else if (confidence >= 0.4) {
-    className = "bg-yellow-100 text-yellow-800 border-yellow-200";
-    label = "Medium";
-  } else {
-    className = "bg-red-100 text-red-800 border-red-200";
-    label = "Low";
-  }
+  if (confidence >= 0.7)      { color = "var(--col-green)"; label = "HIGH"; }
+  else if (confidence >= 0.4) { color = "var(--col-amber)"; label = "MED";  }
+  else                        { color = "var(--col-red)";   label = "LOW";  }
+
+  const pct = (confidence * 100).toFixed(0);
 
   return (
-    <Badge variant="outline" className={cn("text-xs", className)}>
-      {label} confidence ({(confidence * 100).toFixed(0)}%)
-    </Badge>
+    <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "0.65rem",
+            fontWeight: 700,
+            letterSpacing: "0.15em",
+            color: `hsl(${color})`,
+          }}
+        >
+          CONFIDENCE: {label}
+        </span>
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            color: `hsl(${color})`,
+          }}
+        >
+          {pct}%
+        </span>
+      </div>
+
+      {/* Bar track */}
+      <div
+        style={{
+          height: 3,
+          backgroundColor: "hsl(var(--border-base))",
+          borderRadius: "1px",
+          overflow: "hidden",
+        }}
+      >
+        <div
+          style={{
+            height: "100%",
+            width: `${pct}%`,
+            backgroundColor: `hsl(${color})`,
+            boxShadow: `0 0 8px hsl(${color} / 0.5)`,
+            transition: "width 0.4s ease",
+          }}
+        />
+      </div>
+    </div>
   );
 }
 
 // ---------------------------------------------------------------------------
 // Highlighted chunk text
-// Split chunk_text around char_start..char_end and wrap the cited span in <mark>
 // ---------------------------------------------------------------------------
 
 function HighlightedChunkText({
@@ -84,18 +106,57 @@ function HighlightedChunkText({
   charStart: number;
   charEnd: number;
 }) {
-  const before = chunkText.slice(0, charStart);
+  const before      = chunkText.slice(0, charStart);
   const highlighted = chunkText.slice(charStart, charEnd);
-  const after = chunkText.slice(charEnd);
+  const after       = chunkText.slice(charEnd);
 
   return (
-    <p className="text-sm leading-relaxed whitespace-pre-wrap">
+    <p
+      style={{
+        fontFamily: "var(--font-mono)",
+        fontSize: "0.9rem",
+        lineHeight: "1.7",
+        whiteSpace: "pre-wrap",
+        color: "hsl(var(--text-secondary))",
+      }}
+    >
       {before}
-      <mark className="citation-highlight bg-accent text-accent-foreground rounded px-0.5">
-        {highlighted}
-      </mark>
+      <mark className="citation-highlight">{highlighted}</mark>
       {after}
     </p>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Metadata key-value row
+// ---------------------------------------------------------------------------
+
+function MetaRow({ label, value }: { label: string; value: string }) {
+  return (
+    <div style={{ display: "flex", alignItems: "baseline", gap: "8px" }}>
+      <span
+        style={{
+          fontFamily: "var(--font-display)",
+          fontSize: "0.62rem",
+          fontWeight: 700,
+          letterSpacing: "0.14em",
+          color: "hsl(var(--text-dim))",
+          flexShrink: 0,
+          minWidth: "60px",
+        }}
+      >
+        {label}
+      </span>
+      <span
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: "0.88rem",
+          color: "hsl(var(--text-data))",
+        }}
+      >
+        {value}
+      </span>
+    </div>
   );
 }
 
@@ -113,11 +174,8 @@ export default function CitationsDrawer({
   const [isFetching, setIsFetching] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
 
-  // Fetch chunk whenever the drawer opens with a new citation
   useEffect(() => {
-    if (!open || !activeCitation || activeCitation.citations.length === 0) {
-      return;
-    }
+    if (!open || !activeCitation || activeCitation.citations.length === 0) return;
 
     const citation = activeCitation.citations[0];
     let cancelled = false;
@@ -129,30 +187,21 @@ export default function CitationsDrawer({
 
       try {
         const data = await getChunk(citation.incident_id, citation.chunk_id);
-        if (!cancelled) {
-          setChunkData(data);
-        }
+        if (!cancelled) setChunkData(data);
       } catch (err) {
-        if (!cancelled) {
+        if (!cancelled)
           setFetchError(
             err instanceof Error ? err.message : "Failed to load source chunk."
           );
-        }
       } finally {
-        if (!cancelled) {
-          setIsFetching(false);
-        }
+        if (!cancelled) setIsFetching(false);
       }
     }
 
     void fetchChunk();
-
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [open, activeCitation]);
 
-  // Clear state when drawer closes
   useEffect(() => {
     if (!open) {
       setChunkData(null);
@@ -163,99 +212,262 @@ export default function CitationsDrawer({
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent side="right" className="w-[480px] sm:w-[540px] flex flex-col">
-        <SheetHeader className="shrink-0">
-          <SheetTitle className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            Citation [{citationIndex + 1}]
-          </SheetTitle>
-          {activeCitation && (
-            <SheetDescription asChild>
-              <div className="space-y-2 pt-1">
+      <SheetContent
+        side="right"
+        style={{
+          width: "480px",
+          maxWidth: "92vw",
+          backgroundColor: "hsl(var(--bg-panel))",
+          borderLeft: "1px solid hsl(var(--border-base))",
+          borderTop: "2px solid hsl(var(--col-cyan))",
+          padding: 0,
+          display: "flex",
+          flexDirection: "column",
+          gap: 0,
+        }}
+      >
+        {/* ── Header ── */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "flex-start",
+            justifyContent: "space-between",
+            padding: "14px 16px 12px",
+            borderBottom: "1px solid hsl(var(--border-base))",
+            backgroundColor: "hsl(var(--bg-surface))",
+            flexShrink: 0,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+            {/* Title row */}
+            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+              <BookOpen size={13} style={{ color: "hsl(var(--col-cyan))", flexShrink: 0 }} />
+              <SheetTitle
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "0.75rem",
+                  fontWeight: 700,
+                  letterSpacing: "0.18em",
+                  textTransform: "uppercase",
+                  color: "hsl(var(--text-secondary))",
+                  margin: 0,
+                }}
+              >
+                SOURCE DOCUMENT // REF [{citationIndex + 1}]
+              </SheetTitle>
+            </div>
+
+            {activeCitation && (
+              <>
                 {/* Claim text */}
-                <p className="text-sm text-foreground font-medium leading-snug">
+                <p
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.92rem",
+                    color: "hsl(var(--text-primary))",
+                    lineHeight: "1.5",
+                    borderLeft: "2px solid hsl(var(--col-cyan))",
+                    paddingLeft: "8px",
+                  }}
+                >
                   {activeCitation.text}
                 </p>
 
-                {/* Confidence badge */}
-                <ConfidenceBadge confidence={activeCitation.confidence} />
+                {/* Confidence meter */}
+                <ConfidenceMeter confidence={activeCitation.confidence} />
 
                 {/* Conflict note */}
                 {activeCitation.conflict_note && (
-                  <Alert variant="destructive" className="py-2">
-                    <AlertTriangle className="h-3.5 w-3.5" />
-                    <AlertDescription className="text-xs ml-1">
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "flex-start",
+                      gap: "7px",
+                      padding: "7px 9px",
+                      border: "1px solid hsl(var(--col-amber) / 0.4)",
+                      borderLeft: "2px solid hsl(var(--col-amber))",
+                      backgroundColor: "hsl(var(--col-amber) / 0.06)",
+                      borderRadius: "2px",
+                    }}
+                  >
+                    <AlertTriangle
+                      size={11}
+                      style={{ color: "hsl(var(--col-amber))", flexShrink: 0, marginTop: "1px" }}
+                    />
+                    <p
+                      style={{
+                        fontFamily: "var(--font-mono)",
+                        fontSize: "0.85rem",
+                        color: "hsl(var(--col-amber))",
+                        lineHeight: "1.4",
+                      }}
+                    >
                       {activeCitation.conflict_note}
-                    </AlertDescription>
-                  </Alert>
+                    </p>
+                  </div>
                 )}
-              </div>
-            </SheetDescription>
-          )}
-        </SheetHeader>
+              </>
+            )}
+          </div>
 
-        <Separator className="my-3 shrink-0" />
+          {/* Close button */}
+          <button
+            onClick={() => onOpenChange(false)}
+            aria-label="Close citation drawer"
+            style={{
+              width: 24,
+              height: 24,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              border: "1px solid hsl(var(--border-base))",
+              borderRadius: "2px",
+              backgroundColor: "transparent",
+              color: "hsl(var(--text-secondary))",
+              cursor: "pointer",
+              flexShrink: 0,
+              marginLeft: "8px",
+              transition: "border-color 0.15s, color 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--col-red) / 0.5)";
+              (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--col-red))";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--border-base))";
+              (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--text-secondary))";
+            }}
+          >
+            <X size={12} />
+          </button>
+        </div>
 
-        {/* Source chunk body */}
-        <ScrollArea className="flex-1">
-          <div className="pr-2 space-y-4">
+        {/* ── Body: chunk content ── */}
+        <ScrollArea style={{ flex: 1 }}>
+          <div style={{ padding: "14px 16px", display: "flex", flexDirection: "column", gap: "14px" }}>
+
+            {/* Loading skeletons */}
             {isFetching && (
-              <div className="space-y-2">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-5/6" />
-                <Skeleton className="h-4 w-4/5" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-3/4" />
+              <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                {[1, 0.85, 0.9, 0.75, 0.8].map((w, i) => (
+                  <Skeleton
+                    key={i}
+                    style={{
+                      height: "10px",
+                      width: `${w * 100}%`,
+                      backgroundColor: "hsl(var(--border-strong))",
+                      borderRadius: "1px",
+                    }}
+                  />
+                ))}
               </div>
             )}
 
+            {/* Fetch error */}
             {fetchError && (
-              <Alert variant="destructive">
-                <AlertDescription>{fetchError}</AlertDescription>
-              </Alert>
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "flex-start",
+                  gap: "7px",
+                  padding: "8px 10px",
+                  border: "1px solid hsl(var(--col-red) / 0.4)",
+                  borderLeft: "2px solid hsl(var(--col-red))",
+                  backgroundColor: "hsl(var(--col-red) / 0.06)",
+                  borderRadius: "2px",
+                }}
+              >
+                <AlertTriangle size={11} style={{ color: "hsl(var(--col-red))", flexShrink: 0, marginTop: "1px" }} />
+                <p
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.88rem",
+                    color: "hsl(var(--col-red))",
+                  }}
+                >
+                  {fetchError}
+                </p>
+              </div>
             )}
 
+            {/* Chunk data */}
             {chunkData && !isFetching && (
               <>
-                {/* Chunk metadata */}
-                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
+                {/* Metadata section */}
+                <div
+                  style={{
+                    padding: "10px 12px",
+                    border: "1px solid hsl(var(--border-base))",
+                    borderRadius: "2px",
+                    backgroundColor: "hsl(var(--bg-elevated))",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "6px",
+                  }}
+                >
+                  <p
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.16em",
+                      color: "hsl(var(--text-dim))",
+                      marginBottom: "2px",
+                    }}
+                  >
+                    DOCUMENT METADATA
+                  </p>
+
                   {chunkData.metadata.system && (
-                    <span>
-                      System:{" "}
-                      <span className="text-foreground font-medium">
-                        {chunkData.metadata.system}
-                      </span>
-                    </span>
+                    <MetaRow label="SYSTEM" value={chunkData.metadata.system} />
                   )}
                   {chunkData.metadata.severity && (
-                    <span>
-                      Severity:{" "}
-                      <span className="text-foreground font-medium">
-                        {chunkData.metadata.severity}
-                      </span>
-                    </span>
+                    <MetaRow label="SEVERITY" value={chunkData.metadata.severity} />
                   )}
                   {chunkData.metadata.event_date && (
-                    <span>
-                      Date:{" "}
-                      <span className="text-foreground font-medium">
-                        {chunkData.metadata.event_date}
-                      </span>
-                    </span>
+                    <MetaRow label="DATE" value={chunkData.metadata.event_date} />
                   )}
                   {chunkData.metadata.asset_id && (
-                    <span>
-                      Asset:{" "}
-                      <span className="text-foreground font-medium">
-                        {chunkData.metadata.asset_id}
-                      </span>
-                    </span>
+                    <MetaRow label="ASSET" value={chunkData.metadata.asset_id} />
                   )}
+                  <MetaRow
+                    label="CHUNK"
+                    value={`${chunkData.chunk_index + 1} of incident ${chunkData.incident_id}`}
+                  />
                 </div>
 
-                <Separator />
+                {/* Divider */}
+                <div
+                  style={{
+                    height: 1,
+                    background:
+                      "linear-gradient(to right, hsl(var(--col-cyan) / 0.3), hsl(var(--border-base)))",
+                  }}
+                />
 
-                {/* Full chunk text with citation highlighted */}
+                {/* Chunk text with highlight */}
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "6px",
+                    marginBottom: "4px",
+                  }}
+                >
+                  <FileText size={10} style={{ color: "hsl(var(--text-dim))", flexShrink: 0 }} />
+                  <p
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.65rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.16em",
+                      color: "hsl(var(--text-dim))",
+                    }}
+                  >
+                    SOURCE EXCERPT
+                  </p>
+                </div>
+
                 {activeCitation && activeCitation.citations.length > 0 ? (
                   <HighlightedChunkText
                     chunkText={chunkData.chunk_text}
@@ -263,24 +475,30 @@ export default function CitationsDrawer({
                     charEnd={activeCitation.citations[0].char_end}
                   />
                 ) : (
-                  <p className="text-sm leading-relaxed whitespace-pre-wrap">
+                  <p
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "0.9rem",
+                      color: "hsl(var(--text-secondary))",
+                      lineHeight: "1.7",
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
                     {chunkData.chunk_text}
                   </p>
                 )}
-
-                {/* Chunk index */}
-                <p className="text-xs text-muted-foreground">
-                  Chunk {chunkData.chunk_index + 1} of incident{" "}
-                  <code className="font-mono text-xs">
-                    {chunkData.incident_id}
-                  </code>
-                </p>
               </>
             )}
 
-            {/* No citation data state */}
+            {/* No citation state */}
             {!isFetching && !fetchError && !chunkData && activeCitation?.citations.length === 0 && (
-              <p className="text-sm text-muted-foreground">
+              <p
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.85rem",
+                  color: "hsl(var(--text-dim))",
+                }}
+              >
                 No source chunk linked to this citation.
               </p>
             )}

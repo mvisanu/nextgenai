@@ -2,50 +2,112 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ══════════════════════════════════════════
+   DARK MODE (default / .dark class)
+   Warmer, higher-contrast than original
+══════════════════════════════════════════ */
+
 @layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-    --radius: 0.5rem;
+  :root,
+  .dark {
+    /* Slightly warmer dark backgrounds — reduce harsh blue cast */
+    --bg-void:    218 22%  5%;   /* near-black, slight warmth */
+    --bg-surface: 218 20%  8%;
+    --bg-panel:   218 18% 10%;
+    --bg-elevated:218 16% 14%;
+    --bg-input:   218 20%  7%;
+
+    /* More visible borders */
+    --border-base:   210 18% 20%;
+    --border-strong: 210 16% 28%;
+
+    /* Accent spectrum — unchanged */
+    --col-green:  155 85% 42%;
+    --col-cyan:   191 92% 50%;
+    --col-amber:   38 90% 52%;
+    --col-red:      0 82% 58%;
+    --col-purple: 276 65% 58%;
+    --col-blue:   218 88% 60%;
+
+    /* ── IMPROVED TEXT CONTRAST ── */
+    --text-primary:   210 12% 93%;  /* was 86% — now nearly white */
+    --text-secondary: 210 10% 68%;  /* was 46% — major readability boost */
+    --text-dim:       210  8% 48%;  /* was 26% — now actually visible */
+    --text-data:      155 85% 52%;  /* slightly brighter green */
+
+    /* shadcn/ui remapping */
+    --background: 218 22% 5%;
+    --foreground:  210 12% 93%;
+    --card:        218 18% 10%;
+    --card-foreground: 210 12% 93%;
+    --popover:     218 16% 14%;
+    --popover-foreground: 210 12% 93%;
+    --primary:     155 85% 42%;
+    --primary-foreground: 218 22% 5%;
+    --secondary:   218 16% 14%;
+    --secondary-foreground: 210 12% 93%;
+    --muted:       218 16% 14%;
+    --muted-foreground: 210 10% 68%;
+    --accent:      218 16% 17%;
+    --accent-foreground: 191 92% 50%;
+    --destructive: 0 82% 58%;
+    --destructive-foreground: 210 12% 93%;
+    --border:      210 18% 20%;
+    --input:       218 20% 7%;
+    --ring:        155 85% 42%;
+    --radius:      0.125rem;
   }
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
+  /* ══════════════════════════════════════════
+     LIGHT MODE (.light class)
+     Warm ivory — technical document aesthetic
+  ══════════════════════════════════════════ */
+
+  .light {
+    --bg-void:    38 35% 94%;   /* warm ivory #f3ede0 */
+    --bg-surface: 38 28% 91%;   /* slightly darker cream */
+    --bg-panel:   38 30% 97%;   /* near-white cream */
+    --bg-elevated:38 22% 88%;   /* medium warm grey */
+    --bg-input:   38 35% 99%;   /* almost white */
+
+    --border-base:   35 18% 75%;
+    --border-strong: 35 16% 60%;
+
+    /* Darkened accents for legibility on light bg */
+    --col-green:  155 70% 32%;
+    --col-cyan:   191 75% 32%;
+    --col-amber:   38 88% 38%;
+    --col-red:      0 72% 44%;
+    --col-purple: 276 58% 44%;
+    --col-blue:   218 75% 42%;
+
+    /* Dark ink text hierarchy */
+    --text-primary:   25 18%  9%;   /* near-black warm ink */
+    --text-secondary: 25 12% 32%;   /* dark warm grey */
+    --text-dim:       25  8% 52%;   /* medium grey */
+    --text-data:      155 70% 28%;  /* dark green */
+
+    /* shadcn/ui remapping */
+    --background: 38 35% 94%;
+    --foreground:  25 18% 9%;
+    --card:        38 30% 97%;
+    --card-foreground: 25 18% 9%;
+    --popover:     38 22% 88%;
+    --popover-foreground: 25 18% 9%;
+    --primary:     155 70% 32%;
+    --primary-foreground: 38 35% 97%;
+    --secondary:   38 22% 88%;
+    --secondary-foreground: 25 18% 9%;
+    --muted:       38 22% 88%;
+    --muted-foreground: 25 12% 32%;
+    --accent:      38 20% 85%;
+    --accent-foreground: 191 75% 30%;
+    --destructive: 0 72% 44%;
+    --destructive-foreground: 38 35% 97%;
+    --border:      35 18% 75%;
+    --input:       38 35% 99%;
+    --ring:        155 70% 32%;
+    --radius:      0.125rem;
   }
 }
 
@@ -53,20 +115,278 @@
   * {
     @apply border-border;
   }
+
+  /* ── Font size tiers (senior-friendly defaults) ──
+     text-small  = 16px  ≈ 12pt  (minimum / compact)
+     text-medium = 18px  ≈ 14pt  (default / recommended)
+     text-large  = 20px  ≈ 16pt  (maximum / high accessibility)
+  ── */
+  html               { font-size: 18px; } /* default: senior-friendly 14pt */
+  html.text-small    { font-size: 16px; } /* compact / 12pt minimum */
+  html.text-medium   { font-size: 18px; } /* default */
+  html.text-large    { font-size: 20px; } /* maximum accessibility */
+
+  html.dark  { color-scheme: dark; }
+  html.light { color-scheme: light; }
+
   body {
-    @apply bg-background text-foreground;
+    background-color: hsl(var(--bg-void));
+    color: hsl(var(--text-primary));
+    font-family: var(--font-body, 'Rajdhani', sans-serif);
+    font-size: 1rem;
+    line-height: 1.7;       /* senior-friendly: min 1.5, recommended 1.7 */
+    font-weight: 500;       /* slightly heavier for legibility */
+    overflow: hidden;
   }
+
+  /* ── Custom scrollbar ── */
+  ::-webkit-scrollbar { width: 4px; height: 4px; }
+  ::-webkit-scrollbar-track { background: hsl(var(--bg-panel)); }
+  ::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); border-radius: 2px; }
+  ::-webkit-scrollbar-thumb:hover { background: hsl(var(--col-green)); }
 }
 
-/* React Flow: override default background to match theme */
+/* ══════════════════════════════════════════
+   DOT-GRID BACKGROUND
+══════════════════════════════════════════ */
+
+.grid-bg {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    hsl(var(--border-base) / 0.9) 1px,
+    transparent 0
+  );
+  background-size: 22px 22px;
+}
+
+/* ══════════════════════════════════════════
+   INDUSTRIAL PANEL SYSTEM
+══════════════════════════════════════════ */
+
+.panel {
+  position: relative;
+  background: hsl(var(--bg-panel));
+  border: 1px solid hsl(var(--border-base));
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Colored top accent bar */
+.panel::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: var(--panel-accent, hsl(var(--col-green)));
+  z-index: 4;
+  pointer-events: none;
+}
+
+/* Corner bracket decorators */
+.corner-tl, .corner-tr, .corner-bl, .corner-br {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  z-index: 5;
+  pointer-events: none;
+}
+
+.corner-tl { top: 2px; left: 0;
+  border-top:  1px solid var(--panel-accent, hsl(var(--col-green)));
+  border-left: 1px solid var(--panel-accent, hsl(var(--col-green))); }
+
+.corner-tr { top: 2px; right: 0;
+  border-top:   1px solid var(--panel-accent, hsl(var(--col-green)));
+  border-right: 1px solid var(--panel-accent, hsl(var(--col-green))); }
+
+.corner-bl { bottom: 0; left: 0;
+  border-bottom: 1px solid var(--panel-accent, hsl(var(--col-green)));
+  border-left:   1px solid var(--panel-accent, hsl(var(--col-green))); }
+
+.corner-br { bottom: 0; right: 0;
+  border-bottom: 1px solid var(--panel-accent, hsl(var(--col-green)));
+  border-right:  1px solid var(--panel-accent, hsl(var(--col-green))); }
+
+/* Panel header — slightly taller for better readability */
+.panel-hdr {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.4rem 0.85rem;
+  border-bottom: 1px solid hsl(var(--border-base));
+  background: hsl(var(--bg-surface));
+  position: relative;
+  z-index: 3;
+  flex-shrink: 0;
+}
+
+/* Bigger panel title — was 0.55rem (~8.8px), now 0.7rem (11.2px) */
+.panel-hdr-title {
+  font-family: var(--font-display, monospace);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--text-secondary));
+}
+
+.panel-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--panel-accent, hsl(var(--col-green)));
+  box-shadow: 0 0 5px var(--panel-accent, hsl(var(--col-green)));
+  animation: dot-pulse 2.4s ease-in-out infinite;
+  flex-shrink: 0;
+}
+
+.panel-body {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+/* ══════════════════════════════════════════
+   ANIMATIONS
+══════════════════════════════════════════ */
+
+@keyframes dot-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 5px var(--panel-accent, hsl(var(--col-green))); }
+  50%       { opacity: 0.3; box-shadow: none; }
+}
+
+@keyframes msg-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes step-in {
+  from { opacity: 0; transform: translateX(-8px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes cursor-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.msg-animate  { animation: msg-in  0.22s ease forwards; }
+.step-animate { animation: step-in 0.18s ease forwards; }
+
+/* ══════════════════════════════════════════
+   TYPOGRAPHY UTILITIES
+══════════════════════════════════════════ */
+
+.font-display { font-family: var(--font-display, monospace); }
+.font-body    { font-family: var(--font-body, sans-serif); }
+.font-data    { font-family: var(--font-mono, monospace); }
+
+.text-data      { color: hsl(var(--text-data)); }
+.text-dim       { color: hsl(var(--text-dim)); }
+.text-secondary { color: hsl(var(--text-secondary)); }
+
+/* ══════════════════════════════════════════
+   INDUSTRIAL FORM ELEMENTS
+══════════════════════════════════════════ */
+
+.industrial-textarea {
+  background: hsl(var(--bg-input)) !important;
+  border: 1px solid hsl(var(--border-base)) !important;
+  border-radius: 2px !important;
+  color: hsl(var(--text-primary)) !important;
+  font-family: var(--font-mono, monospace) !important;
+  font-size: 0.9rem !important;     /* was 0.78rem — now ~14.4px */
+  line-height: 1.7 !important;
+  resize: none !important;
+  caret-color: hsl(var(--col-green)) !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+
+.industrial-textarea:focus {
+  border-color: hsl(var(--col-green) / 0.5) !important;
+  box-shadow: 0 0 0 2px hsl(var(--col-green) / 0.1) !important;
+  outline: none !important;
+}
+
+.industrial-textarea::placeholder {
+  color: hsl(var(--text-dim)) !important;
+  font-size: 0.84rem !important;
+}
+
+/* ══════════════════════════════════════════
+   REACT FLOW OVERRIDES
+══════════════════════════════════════════ */
+
 .react-flow__background {
-  background-color: hsl(var(--muted));
+  background-color: hsl(var(--bg-void)) !important;
 }
 
-/* Citation mark highlight */
-mark.citation-highlight {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
-  border-radius: 2px;
-  padding: 0 2px;
+.react-flow__controls {
+  background: hsl(var(--bg-elevated)) !important;
+  border: 1px solid hsl(var(--border-strong)) !important;
+  border-radius: 2px !important;
+  box-shadow: none !important;
 }
+
+.react-flow__controls-button {
+  background: transparent !important;
+  border: none !important;
+  border-bottom: 1px solid hsl(var(--border-base)) !important;
+  fill: hsl(var(--text-secondary)) !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.react-flow__controls-button:hover {
+  background: hsl(var(--border-base)) !important;
+  fill: hsl(var(--col-green)) !important;
+}
+
+.react-flow__minimap {
+  background: hsl(var(--bg-elevated)) !important;
+  border: 1px solid hsl(var(--border-strong)) !important;
+  border-radius: 2px !important;
+}
+
+/* ══════════════════════════════════════════
+   CITATION HIGHLIGHT
+══════════════════════════════════════════ */
+
+mark.citation-highlight {
+  background-color: hsl(var(--col-green) / 0.18);
+  color: hsl(var(--col-green));
+  border-radius: 2px;
+  padding: 0 3px;
+  border-bottom: 1px solid hsl(var(--col-green) / 0.5);
+}
+
+/* Light mode — more visible highlight */
+.light mark.citation-highlight {
+  background-color: hsl(var(--col-green) / 0.15);
+  color: hsl(var(--col-green));
+}
+
+/* ══════════════════════════════════════════
+   GLOW TEXT — suppressed in light mode
+══════════════════════════════════════════ */
+
+.dark  .glow-green  { text-shadow: 0 0 16px hsl(var(--col-green) / 0.4); }
+.dark  .glow-cyan   { text-shadow: 0 0 16px hsl(var(--col-cyan)  / 0.4); }
+.dark  .glow-amber  { text-shadow: 0 0 16px hsl(var(--col-amber) / 0.4); }
+.light .glow-green,
+.light .glow-cyan,
+.light .glow-amber  { text-shadow: none; }
+
+/* ══════════════════════════════════════════
+   LIGHT MODE PANEL ADJUSTMENTS
+══════════════════════════════════════════ */
+
+/* In light mode, dot glow is less intense */
+.light .panel-dot {
+  box-shadow: 0 0 3px var(--panel-accent, hsl(var(--col-green)));
+}
+
+/* Scrollbar in light mode */
+.light ::-webkit-scrollbar-track { background: hsl(var(--bg-elevated)); }
+.light ::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); }

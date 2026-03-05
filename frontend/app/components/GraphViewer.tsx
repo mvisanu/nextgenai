@@ -1,15 +1,10 @@
 "use client";
 
 // ============================================================
-// GraphViewer.tsx
-// Implements: T-035-F
-// - Renders graph_path.nodes and graph_path.edges via @xyflow/react
-// - entity nodes: circular, purple
-// - chunk nodes: rectangular, teal
-// - Edge labels: type + weight
-// - Clicking a node shows a Popover with label, type, up to 3 linked excerpts
-// - fitView on load; zoom + pan controls visible
-// - Empty state: "Submit a query to see the graph"
+// GraphViewer.tsx — Neon knowledge graph on void canvas
+// entity nodes: purple-glow circles
+// chunk nodes: cyan-glow rectangles
+// dark dot-grid background, glowing edges
 // ============================================================
 
 import React, { useCallback, useState } from "react";
@@ -37,29 +32,31 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 
 import { useRunContext } from "../lib/context";
 import type { GraphNode, GraphEdge, VectorHit } from "../lib/api";
-import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
-// Constants
+// Node colours — neon industrial palette
 // ---------------------------------------------------------------------------
 
-const ENTITY_NODE_COLOUR = "#7c3aed"; // purple-700
-const CHUNK_NODE_COLOUR = "#0d9488";  // teal-600
+const ENTITY_BG    = "#1a0a2e";
+const ENTITY_BORDER = "#9b55d4";
+const ENTITY_TEXT  = "#c084fc";
 
-const EDGE_TYPE_COLOURS: Record<GraphEdge["type"], string> = {
-  mentions: "#9ca3af",       // grey-400
-  similarity: "#3b82f6",    // blue-500
-  co_occurrence: "#8b5cf6", // purple-500
+const CHUNK_BG     = "#051a1a";
+const CHUNK_BORDER  = "#08d4ef";
+const CHUNK_TEXT   = "#67e8f9";
+
+const EDGE_COLOURS: Record<GraphEdge["type"], string> = {
+  mentions:      "#4f93f4",
+  similarity:    "#0dce84",
+  co_occurrence: "#9b55d4",
 };
 
 // ---------------------------------------------------------------------------
-// Custom node data types
+// Node data
 // ---------------------------------------------------------------------------
 
 interface NodeData extends Record<string, unknown> {
@@ -69,7 +66,7 @@ interface NodeData extends Record<string, unknown> {
 }
 
 // ---------------------------------------------------------------------------
-// Custom node: EntityNode (circular, purple)
+// Entity node — circular, purple glow
 // ---------------------------------------------------------------------------
 
 function EntityNode({ data }: NodeProps) {
@@ -78,26 +75,34 @@ function EntityNode({ data }: NodeProps) {
     <>
       <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
       <div
-        className="flex items-center justify-center rounded-full border-2 text-white text-center"
         style={{
-          width: 80,
-          height: 80,
-          backgroundColor: ENTITY_NODE_COLOUR,
-          borderColor: "#5b21b6",
-          fontSize: "10px",
-          fontWeight: 600,
-          lineHeight: "1.2",
-          wordBreak: "break-word",
-          padding: "4px",
+          width: 92,
+          height: 92,
+          borderRadius: "50%",
+          border: `2px solid ${ENTITY_BORDER}`,
+          backgroundColor: ENTITY_BG,
+          boxShadow: `0 0 14px ${ENTITY_BORDER}55, inset 0 0 10px ${ENTITY_BORDER}22`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          padding: "6px",
+          cursor: "pointer",
         }}
         title={d.label}
       >
         <span
           style={{
+            fontFamily: "var(--font-mono, monospace)",
+            fontSize: "11px",
+            fontWeight: 500,
+            color: ENTITY_TEXT,
+            lineHeight: "1.25",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
+            wordBreak: "break-word",
           }}
         >
           {d.label}
@@ -109,7 +114,7 @@ function EntityNode({ data }: NodeProps) {
 }
 
 // ---------------------------------------------------------------------------
-// Custom node: ChunkNode (rectangular, teal)
+// Chunk node — rectangle, cyan glow
 // ---------------------------------------------------------------------------
 
 function ChunkNode({ data }: NodeProps) {
@@ -118,26 +123,34 @@ function ChunkNode({ data }: NodeProps) {
     <>
       <Handle type="target" position={Position.Top} style={{ opacity: 0 }} />
       <div
-        className="flex items-center justify-center rounded-md border-2 text-white text-center"
         style={{
-          width: 120,
-          minHeight: 44,
-          backgroundColor: CHUNK_NODE_COLOUR,
-          borderColor: "#0f766e",
-          fontSize: "10px",
-          fontWeight: 500,
-          lineHeight: "1.3",
-          wordBreak: "break-word",
-          padding: "4px 8px",
+          width: 148,
+          minHeight: 52,
+          borderRadius: "2px",
+          border: `1.5px solid ${CHUNK_BORDER}`,
+          backgroundColor: CHUNK_BG,
+          boxShadow: `0 0 12px ${CHUNK_BORDER}44, inset 0 0 8px ${CHUNK_BORDER}18`,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          textAlign: "center",
+          padding: "5px 8px",
+          cursor: "pointer",
         }}
         title={d.label}
       >
         <span
           style={{
+            fontFamily: "var(--font-mono, monospace)",
+            fontSize: "11px",
+            fontWeight: 400,
+            color: CHUNK_TEXT,
+            lineHeight: "1.3",
             overflow: "hidden",
             display: "-webkit-box",
             WebkitLineClamp: 3,
             WebkitBoxOrient: "vertical",
+            wordBreak: "break-word",
           }}
         >
           {d.label}
@@ -148,17 +161,13 @@ function ChunkNode({ data }: NodeProps) {
   );
 }
 
-// ---------------------------------------------------------------------------
-// nodeTypes registry — defined outside component to prevent re-render warnings
-// ---------------------------------------------------------------------------
-
 const nodeTypes: NodeTypes = {
   entity: EntityNode,
   chunk: ChunkNode,
 };
 
 // ---------------------------------------------------------------------------
-// Layout: two-row grid (entity nodes on top row, chunk nodes on bottom row)
+// Layout: entity nodes top row, chunk nodes bottom row
 // ---------------------------------------------------------------------------
 
 function computeLayout(
@@ -166,23 +175,20 @@ function computeLayout(
   graphEdges: GraphEdge[]
 ): { rfNodes: Node<NodeData>[]; rfEdges: Edge[] } {
   const entityNodes = graphNodes.filter((n) => n.type === "entity");
-  const chunkNodes = graphNodes.filter((n) => n.type === "chunk");
+  const chunkNodes  = graphNodes.filter((n) => n.type === "chunk");
 
   const ENTITY_SPACING_X = 120;
-  const CHUNK_SPACING_X = 160;
-  const ENTITY_ROW_Y = 60;
-  const CHUNK_ROW_Y = 280;
-  const CENTER_X = 500;
+  const CHUNK_SPACING_X  = 160;
+  const ENTITY_ROW_Y     = 60;
+  const CHUNK_ROW_Y      = 280;
+  const CENTER_X         = 500;
 
   const rfNodes: Node<NodeData>[] = [
     ...entityNodes.map((n, i) => ({
       id: n.id,
       type: "entity" as const,
       position: {
-        x:
-          CENTER_X +
-          i * ENTITY_SPACING_X -
-          (entityNodes.length * ENTITY_SPACING_X) / 2,
+        x: CENTER_X + i * ENTITY_SPACING_X - (entityNodes.length * ENTITY_SPACING_X) / 2,
         y: ENTITY_ROW_Y,
       },
       data: {
@@ -195,10 +201,7 @@ function computeLayout(
       id: n.id,
       type: "chunk" as const,
       position: {
-        x:
-          CENTER_X +
-          i * CHUNK_SPACING_X -
-          (chunkNodes.length * CHUNK_SPACING_X) / 2,
+        x: CENTER_X + i * CHUNK_SPACING_X - (chunkNodes.length * CHUNK_SPACING_X) / 2,
         y: CHUNK_ROW_Y,
       },
       data: {
@@ -213,27 +216,29 @@ function computeLayout(
     id: e.id,
     source: e.from_node,
     target: e.to_node,
-    label:
-      e.weight !== null
-        ? `${e.type} (${e.weight.toFixed(2)})`
-        : e.type,
+    label: e.weight !== null ? `${e.type} (${e.weight.toFixed(2)})` : e.type,
     style: {
-      stroke: EDGE_TYPE_COLOURS[e.type],
+      stroke: EDGE_COLOURS[e.type],
       strokeWidth: 1.5,
+      filter: `drop-shadow(0 0 3px ${EDGE_COLOURS[e.type]}88)`,
     },
     markerEnd: {
       type: MarkerType.ArrowClosed,
-      color: EDGE_TYPE_COLOURS[e.type],
+      color: EDGE_COLOURS[e.type],
     },
-    labelStyle: { fontSize: 9, fill: "#6b7280" },
-    labelBgStyle: { fill: "#f9fafb", fillOpacity: 0.8 },
+    labelStyle: {
+      fontFamily: "var(--font-mono, monospace)",
+      fontSize: 10,
+      fill: "#6b7e95",
+    },
+    labelBgStyle: { fill: "#0c1117", fillOpacity: 0.85 },
   }));
 
   return { rfNodes, rfEdges };
 }
 
 // ---------------------------------------------------------------------------
-// Node detail popover content
+// Node detail popover
 // ---------------------------------------------------------------------------
 
 function NodeDetailPopover({
@@ -243,7 +248,6 @@ function NodeDetailPopover({
   node: GraphNode;
   vectorHits: VectorHit[];
 }) {
-  // Match chunk node: id format is "chunk:{embed_id}"
   const nodeChunkId = node.id.startsWith("chunk:")
     ? node.id.slice("chunk:".length)
     : null;
@@ -252,65 +256,99 @@ function NodeDetailPopover({
     ? vectorHits.filter((h) => h.chunk_id === nodeChunkId).slice(0, 3)
     : [];
 
+  const isEntity = node.type === "entity";
+  const accentColor = isEntity ? ENTITY_BORDER : CHUNK_BORDER;
+  const accentText  = isEntity ? ENTITY_TEXT : CHUNK_TEXT;
+
   return (
-    <div className="space-y-3">
-      <div>
-        <p className="text-xs text-muted-foreground mb-0.5">Label</p>
-        <p className="text-sm font-medium break-words">{node.label ?? node.id}</p>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <p className="text-xs text-muted-foreground">Type</p>
-        <Badge
-          variant="outline"
-          className={cn(
-            "text-xs",
-            node.type === "entity"
-              ? "bg-purple-100 text-purple-800 border-purple-200"
-              : "bg-teal-100 text-teal-800 border-teal-200"
-          )}
+    <div
+      style={{
+        fontFamily: "var(--font-mono, monospace)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "10px",
+      }}
+    >
+      {/* Type badge */}
+      <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <span
+          style={{
+            fontSize: "0.65rem",
+            fontFamily: "var(--font-display, monospace)",
+            fontWeight: 700,
+            letterSpacing: "0.14em",
+            padding: "1px 6px",
+            border: `1px solid ${accentColor}88`,
+            borderRadius: "2px",
+            color: accentText,
+            backgroundColor: `${accentColor}18`,
+            boxShadow: `0 0 6px ${accentColor}33`,
+          }}
         >
-          {node.type}
-        </Badge>
+          {node.type.toUpperCase()}
+        </span>
       </div>
 
+      {/* Label */}
+      <div>
+        <p style={{ fontSize: "0.68rem", color: "hsl(var(--text-dim))", letterSpacing: "0.1em", marginBottom: "2px" }}>
+          LABEL
+        </p>
+        <p style={{ fontSize: "0.93rem", color: "hsl(var(--text-primary))", wordBreak: "break-word", lineHeight: "1.4" }}>
+          {node.label ?? node.id}
+        </p>
+      </div>
+
+      {/* Properties */}
       {node.properties && Object.keys(node.properties).length > 0 && (
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Properties</p>
-          <div className="space-y-0.5">
-            {Object.entries(node.properties)
-              .slice(0, 4)
-              .map(([k, v]) => (
-                <p key={k} className="text-xs">
-                  <span className="font-medium">{k}:</span> {String(v)}
-                </p>
-              ))}
+          <p style={{ fontSize: "0.68rem", color: "hsl(var(--text-dim))", letterSpacing: "0.1em", marginBottom: "4px" }}>
+            PROPERTIES
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            {Object.entries(node.properties).slice(0, 4).map(([k, v]) => (
+              <div key={k} style={{ display: "flex", gap: "6px", fontSize: "0.85rem" }}>
+                <span style={{ color: "hsl(var(--text-secondary))", flexShrink: 0 }}>{k}:</span>
+                <span style={{ color: "hsl(var(--text-primary))" }}>{String(v)}</span>
+              </div>
+            ))}
           </div>
         </div>
       )}
 
+      {/* Linked excerpts */}
       {linkedExcerpts.length > 0 && (
-        <>
-          <Separator />
-          <div>
-            <p className="text-xs text-muted-foreground mb-1">
-              Linked excerpts ({linkedExcerpts.length})
-            </p>
-            <ScrollArea className="max-h-32">
-              <div className="space-y-2">
-                {linkedExcerpts.map((hit) => (
-                  <p
-                    key={hit.chunk_id}
-                    className="text-xs text-muted-foreground italic border-l-2 border-border pl-2"
-                  >
-                    {hit.excerpt.slice(0, 120)}
-                    {hit.excerpt.length > 120 ? "…" : ""}
-                  </p>
-                ))}
-              </div>
-            </ScrollArea>
-          </div>
-        </>
+        <div>
+          <div
+            style={{
+              height: 1,
+              backgroundColor: "hsl(var(--border-base))",
+              marginBottom: "8px",
+            }}
+          />
+          <p style={{ fontSize: "0.68rem", color: "hsl(var(--text-dim))", letterSpacing: "0.1em", marginBottom: "5px" }}>
+            LINKED EXCERPTS ({linkedExcerpts.length})
+          </p>
+          <ScrollArea style={{ maxHeight: "96px" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+              {linkedExcerpts.map((hit) => (
+                <p
+                  key={hit.chunk_id}
+                  style={{
+                    fontSize: "0.80rem",
+                    color: "hsl(var(--text-secondary))",
+                    fontStyle: "italic",
+                    lineHeight: "1.4",
+                    borderLeft: `2px solid ${CHUNK_BORDER}66`,
+                    paddingLeft: "7px",
+                  }}
+                >
+                  {hit.excerpt.slice(0, 120)}{hit.excerpt.length > 120 ? "…" : ""}
+                </p>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
       )}
     </div>
   );
@@ -329,12 +367,8 @@ export default function GraphViewer() {
 
   const [selectedNode, setSelectedNode] = useState<GraphNode | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const [popoverAnchor, setPopoverAnchor] = useState<{
-    x: number;
-    y: number;
-  } | null>(null);
+  const [popoverAnchor, setPopoverAnchor] = useState<{ x: number; y: number } | null>(null);
 
-  // Rebuild layout whenever graph_path changes
   const graphPath = runData?.graph_path;
   const prevPathRef = React.useRef<typeof graphPath>(undefined);
 
@@ -347,27 +381,20 @@ export default function GraphViewer() {
     setNodes(rfNodes);
     setEdges(rfEdges);
 
-    // fitView after layout settles
     setTimeout(() => {
       rfInstance?.fitView({ padding: 0.2 });
     }, 100);
   }, [graphPath, rfInstance, setNodes, setEdges]);
 
-  const onInit: OnInit<Node<NodeData>, Edge> = useCallback(
-    (instance) => {
-      setRfInstance(instance);
-    },
-    []
-  );
+  const onInit: OnInit<Node<NodeData>, Edge> = useCallback((instance) => {
+    setRfInstance(instance);
+  }, []);
 
   const handleNodeClick = useCallback(
     (event: React.MouseEvent, rfNode: Node) => {
       if (!runData) return;
-      const nodeData = runData.graph_path.nodes.find(
-        (n) => n.id === rfNode.id
-      );
+      const nodeData = runData.graph_path.nodes.find((n) => n.id === rfNode.id);
       if (!nodeData) return;
-
       setSelectedNode(nodeData);
       setPopoverAnchor({ x: event.clientX, y: event.clientY });
       setPopoverOpen(true);
@@ -377,16 +404,71 @@ export default function GraphViewer() {
 
   if (!runData || !runData.graph_path.nodes.length) {
     return (
-      <div className="flex items-center justify-center h-full text-center px-4">
-        <p className="text-sm text-muted-foreground">
-          Submit a query to see the graph
+      <div
+        className="flex flex-col items-center justify-center h-full"
+        style={{ gap: "10px", textAlign: "center", padding: "16px" }}
+      >
+        {/* Decorative node cluster hint */}
+        <div style={{ position: "relative", width: 64, height: 44 }}>
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 24,
+              height: 24,
+              borderRadius: "50%",
+              border: `1.5px solid ${ENTITY_BORDER}66`,
+              backgroundColor: `${ENTITY_BG}`,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              left: 0,
+              width: 28,
+              height: 18,
+              borderRadius: "2px",
+              border: `1px solid ${CHUNK_BORDER}55`,
+              backgroundColor: `${CHUNK_BG}`,
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 28,
+              height: 18,
+              borderRadius: "2px",
+              border: `1px solid ${CHUNK_BORDER}55`,
+              backgroundColor: `${CHUNK_BG}`,
+            }}
+          />
+        </div>
+
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            color: "hsl(var(--text-dim))",
+            letterSpacing: "0.12em",
+          }}
+        >
+          GRAPH AWAITING DATA
+          <br />
+          <span style={{ fontSize: "0.68rem", opacity: 0.6 }}>
+            submit a query to populate
+          </span>
         </p>
       </div>
     );
   }
 
   return (
-    <div className="relative w-full h-full">
+    <div style={{ position: "relative", width: "100%", height: "100%" }}>
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -401,32 +483,41 @@ export default function GraphViewer() {
         maxZoom={3}
         attributionPosition="bottom-right"
       >
-        <Background gap={16} size={1} />
+        <Background gap={20} size={1} color="hsl(210 22% 12%)" />
         <Controls />
         <MiniMap
-          nodeColor={(n) =>
-            n.type === "entity" ? ENTITY_NODE_COLOUR : CHUNK_NODE_COLOUR
-          }
+          nodeColor={(n) => (n.type === "entity" ? ENTITY_BORDER : CHUNK_BORDER)}
           nodeStrokeWidth={2}
+          maskColor="hsl(216 40% 3% / 0.7)"
           zoomable
           pannable
         />
       </ReactFlow>
 
-      {/* Node detail popover anchored at click position */}
+      {/* Node detail popover */}
       {popoverOpen && selectedNode && popoverAnchor && (
         <div
-          className="fixed z-50"
-          style={{ left: popoverAnchor.x + 8, top: popoverAnchor.y + 8 }}
+          style={{
+            position: "fixed",
+            zIndex: 50,
+            left: popoverAnchor.x + 10,
+            top: popoverAnchor.y + 10,
+          }}
         >
           <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
             <PopoverTrigger asChild>
               <span />
             </PopoverTrigger>
             <PopoverContent
-              className="w-80 p-4"
+              className="w-72 p-4"
               side="right"
               onInteractOutside={() => setPopoverOpen(false)}
+              style={{
+                backgroundColor: "hsl(var(--bg-elevated))",
+                border: "1px solid hsl(var(--border-strong))",
+                borderRadius: "2px",
+                boxShadow: "0 8px 32px hsl(216 40% 3% / 0.8)",
+              }}
             >
               <NodeDetailPopover
                 node={selectedNode}

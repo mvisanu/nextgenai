@@ -38,17 +38,17 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ./data:/app/data
-      - ./demo:/app/demo
-      - ./config.yaml:/app/config.yaml
+      - ./data:/workspace/backend/data
+      - ./demo:/workspace/backend/demo
+      - ./config.yaml:/workspace/backend/config.yaml
     command: ["./entrypoint.sh"]
 
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    environment:
-      NEXT_PUBLIC_API_URL: http://localhost:8000
+      args:
+        NEXT_PUBLIC_API_URL: http://localhost:8000
     ports:
       - "3005:3000"
     depends_on:

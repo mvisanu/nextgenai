@@ -12,8 +12,11 @@ from pathlib import Path
 from alembic import context
 from sqlalchemy import engine_from_config, pool
 
-# Ensure project root is on sys.path so ORM models can be imported
-sys.path.insert(0, str(Path(__file__).resolve().parents[4]))
+# Ensure repo root is on sys.path so "from backend.app.*" imports resolve.
+# In Docker: WORKDIR=/workspace (repo root). Locally: repo root is parents[4].
+_repo_root = str(Path(__file__).resolve().parents[4])
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
 
 from backend.app.db.models import Base  # noqa: E402
 

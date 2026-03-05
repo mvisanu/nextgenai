@@ -18,6 +18,11 @@ const config: Config = {
       },
     },
     extend: {
+      fontFamily: {
+        display: ["var(--font-display)", "monospace"],
+        body:    ["var(--font-body)",    "sans-serif"],
+        mono:    ["var(--font-mono)",    "monospace"],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",

@@ -1,42 +1,25 @@
 "use client";
 
 // ============================================================
-// ChatPanel.tsx
-// Implements: T-033-F
-// - Text input + submit on Enter
-// - Loading skeleton during in-flight POST /query
-// - Answer rendered as markdown (react-markdown)
-// - Error alert on failure
-// - Scrollable message history
-// - Input disabled while in-flight
-// - run_id + full QueryResponse shared via RunContext
-// - Citation links [N] rendered in answer text; clicking opens CitationsDrawer
+// ChatPanel.tsx — Terminal-style query interface
+// Font sizes scaled up for readability
 // ============================================================
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-import { SendHorizontal, AlertCircle } from "lucide-react";
-
-import { Button } from "@/components/ui/button";
-import { Textarea } from "@/components/ui/textarea";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { SendHorizontal, AlertCircle, Terminal } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
 import { postQuery } from "../lib/api";
 import type { QueryResponse, Claim } from "../lib/api";
 import { useRunContext } from "../lib/context";
 import CitationsDrawer from "./CitationsDrawer";
 
-// ---------------------------------------------------------------------------
-// Types
-// ---------------------------------------------------------------------------
+// ── Types ──────────────────────────────────────────────────────────────────
 
 interface Message {
   id: string;
   role: "user" | "assistant";
   content: string;
-  /** Full QueryResponse — only set on assistant messages */
   response?: QueryResponse;
 }
 
@@ -45,20 +28,14 @@ interface ActiveCitationState {
   claimIndex: number;
 }
 
-// ---------------------------------------------------------------------------
-// Helper: inject inline citation links into answer text
-// Each [N] in the answer corresponds to claims[N-1].
-// We render them as clickable spans that open the CitationsDrawer.
-// ---------------------------------------------------------------------------
+// ── Citation segment parser ────────────────────────────────────────────────
 
-// Segment type: either a markdown text block or a citation marker
 type Segment =
   | { kind: "text"; content: string }
   | { kind: "citation"; num: number; claimIndex: number };
 
 function parseSegments(answer: string): Segment[] {
-  const raw = answer.split(/(\[\d+\])/g);
-  return raw.map((part): Segment => {
+  return answer.split(/(\[\d+\])/g).map((part): Segment => {
     const match = part.match(/^\[(\d+)\]$/);
     if (match) {
       const num = parseInt(match[1], 10);
@@ -69,18 +46,15 @@ function parseSegments(answer: string): Segment[] {
 }
 
 function AnswerWithCitations({
-  answer,
-  claims,
-  onCitationClick,
+  answer, claims, onCitationClick,
 }: {
   answer: string;
   claims: Claim[];
   onCitationClick: (claim: Claim, index: number) => void;
 }) {
   const segments = parseSegments(answer);
-
   return (
-    <div className="text-sm leading-relaxed space-y-1">
+    <div style={{ fontFamily: "var(--font-mono)", fontSize: "0.93rem", lineHeight: "1.7", color: "hsl(var(--text-primary))" }}>
       {segments.map((seg, i) => {
         if (seg.kind === "citation") {
           const claim = claims[seg.claimIndex];
@@ -89,21 +63,50 @@ function AnswerWithCitations({
             <button
               key={i}
               onClick={() => onCitationClick(claim, seg.claimIndex)}
-              className="inline-flex items-center justify-center h-5 w-6 rounded text-xs font-bold bg-accent text-accent-foreground hover:bg-accent/80 mx-0.5 align-middle cursor-pointer border border-border"
-              aria-label={`View citation ${seg.num}`}
+              title={`View citation ${seg.num}`}
+              style={{
+                display: "inline-flex", alignItems: "center", justifyContent: "center",
+                width: "1.4rem", height: "1.4rem",
+                marginInline: "2px",
+                fontSize: "0.7rem", fontWeight: 700, fontFamily: "var(--font-display)",
+                color: "hsl(var(--col-green))",
+                border: "1px solid hsl(var(--col-green) / 0.6)",
+                borderRadius: "2px",
+                backgroundColor: "hsl(var(--col-green) / 0.08)",
+                cursor: "pointer", verticalAlign: "middle",
+                transition: "background 0.15s, box-shadow 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.18)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 8px hsl(var(--col-green) / 0.3)";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.08)";
+                (e.currentTarget as HTMLButtonElement).style.boxShadow = "none";
+              }}
             >
               {seg.num}
             </button>
           );
         }
-        // Render markdown text blocks using ReactMarkdown
         return seg.content ? (
           <ReactMarkdown
             key={i}
             components={{
-              // Suppress wrapping <p> tags so inline citation buttons sit correctly
-              p({ children }) {
-                return <span className="block">{children}</span>;
+              p({ children }) { return <span className="block">{children}</span>; },
+              code({ children }) {
+                return (
+                  <code style={{
+                    color: "hsl(var(--col-cyan))",
+                    backgroundColor: "hsl(var(--bg-elevated))",
+                    padding: "0 5px", borderRadius: "2px", fontSize: "0.86rem",
+                  }}>
+                    {children}
+                  </code>
+                );
+              },
+              strong({ children }) {
+                return <strong style={{ color: "hsl(var(--text-data))", fontWeight: 600 }}>{children}</strong>;
               },
             }}
           >
@@ -115,74 +118,64 @@ function AnswerWithCitations({
   );
 }
 
-// ---------------------------------------------------------------------------
-// ChatPanel
-// ---------------------------------------------------------------------------
+// ── Typing indicator ───────────────────────────────────────────────────────
+
+function TypingIndicator() {
+  return (
+    <div style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 12px" }}>
+      <Terminal size={12} style={{ color: "hsl(var(--col-green))", flexShrink: 0 }} />
+      <div style={{ display: "flex", gap: "4px" }}>
+        {[0, 1, 2].map((i) => (
+          <div key={i} style={{
+            width: 5, height: 5, borderRadius: "50%",
+            backgroundColor: "hsl(var(--col-green))",
+            animation: `dot-pulse 1.2s ease-in-out ${i * 0.2}s infinite`,
+          }} />
+        ))}
+      </div>
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "hsl(var(--text-secondary))", letterSpacing: "0.08em" }}>
+        PROCESSING
+      </span>
+    </div>
+  );
+}
+
+// ── Main component ─────────────────────────────────────────────────────────
 
 export default function ChatPanel() {
   const { setRunData } = useRunContext();
-
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [activeCitation, setActiveCitation] =
-    useState<ActiveCitationState | null>(null);
+  const [activeCitation, setActiveCitation] = useState<ActiveCitationState | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
-
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Auto-scroll to bottom when messages change
   useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
   }, [messages, isLoading]);
 
   const handleSubmit = useCallback(async () => {
     const query = inputValue.trim();
     if (!query || isLoading) return;
-
-    const userMessage: Message = {
-      id: crypto.randomUUID(),
-      role: "user",
-      content: query,
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
+    setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "user", content: query }]);
     setInputValue("");
     setIsLoading(true);
     setError(null);
-
     try {
       const response = await postQuery(query);
-
-      const assistantMessage: Message = {
-        id: crypto.randomUUID(),
-        role: "assistant",
-        content: response.answer,
-        response,
-      };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: response.answer, response }]);
       setRunData(response);
     } catch (err) {
-      const message =
-        err instanceof Error
-          ? err.message
-          : "An unexpected error occurred. Please try again.";
-      setError(message);
+      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
     } finally {
       setIsLoading(false);
     }
   }, [inputValue, isLoading, setRunData]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    // Submit on Enter (without Shift)
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      void handleSubmit();
-    }
+    if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void handleSubmit(); }
   };
 
   const handleCitationClick = (claim: Claim, claimIndex: number) => {
@@ -191,88 +184,158 @@ export default function ChatPanel() {
   };
 
   return (
-    <div className="flex flex-col h-full gap-3">
-      {/* Message history */}
-      <ScrollArea className="flex-1 rounded-md border bg-muted/30">
-        <div ref={scrollRef} className="h-full overflow-y-auto p-3 space-y-4">
+    <div style={{ display: "flex", flexDirection: "column", height: "100%", gap: "7px", padding: "8px 10px 10px" }}>
+
+      {/* ── Message history ── */}
+      <ScrollArea className="flex-1">
+        <div ref={scrollRef} className="h-full overflow-y-auto" style={{ paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px" }}>
+
           {messages.length === 0 && !isLoading && (
-            <p className="text-sm text-muted-foreground text-center pt-8">
-              Ask a manufacturing or maintenance question to get started.
-            </p>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px", paddingTop: "28px", gap: "10px" }}>
+              <div style={{
+                width: 36, height: 36,
+                border: "1px solid hsl(var(--col-green) / 0.35)",
+                borderRadius: "2px",
+                display: "flex", alignItems: "center", justifyContent: "center",
+              }}>
+                <Terminal size={16} style={{ color: "hsl(var(--col-green) / 0.45)" }} />
+              </div>
+              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em", textAlign: "center", lineHeight: "1.7" }}>
+                AWAITING QUERY INPUT<br />
+                <span style={{ fontSize: "0.72rem", opacity: 0.7 }}>vector search · sql · graphrag</span>
+              </p>
+            </div>
           )}
 
-          {messages.map((msg) => (
+          {messages.map((msg, idx) => (
             <div
               key={msg.id}
-              className={`flex ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              className="msg-animate"
+              style={{ animationDelay: `${idx * 0.02}s`, display: "flex", justifyContent: msg.role === "user" ? "flex-end" : "flex-start" }}
             >
-              <div
-                className={`max-w-[85%] rounded-lg px-3 py-2 text-sm ${
-                  msg.role === "user"
-                    ? "bg-primary text-primary-foreground"
-                    : "bg-card border border-border"
-                }`}
-              >
-                {msg.role === "user" ? (
-                  <p>{msg.content}</p>
-                ) : msg.response ? (
-                  <AnswerWithCitations
-                    answer={msg.content}
-                    claims={msg.response.claims}
-                    onCitationClick={handleCitationClick}
-                  />
-                ) : (
-                  <p>{msg.content}</p>
-                )}
-              </div>
+              {msg.role === "user" ? (
+                <div style={{
+                  maxWidth: "88%", padding: "8px 12px",
+                  borderRadius: "2px",
+                  border: "1px solid hsl(var(--col-green) / 0.35)",
+                  backgroundColor: "hsl(var(--col-green) / 0.06)",
+                  fontFamily: "var(--font-mono)", fontSize: "0.93rem",
+                  color: "hsl(var(--col-green))", lineHeight: "1.55",
+                }}>
+                  <span style={{ display: "block", fontSize: "0.65rem", color: "hsl(var(--text-dim))", letterSpacing: "0.12em", marginBottom: "4px", textAlign: "right" }}>
+                    OPERATOR &gt;
+                  </span>
+                  {msg.content}
+                </div>
+              ) : (
+                <div style={{
+                  maxWidth: "92%", padding: "10px 12px",
+                  borderRadius: "2px",
+                  border: "1px solid hsl(var(--border-strong))",
+                  borderLeft: "2px solid hsl(var(--col-cyan))",
+                  backgroundColor: "hsl(var(--bg-elevated))",
+                }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: "7px", marginBottom: "7px" }}>
+                    <Terminal size={11} style={{ color: "hsl(var(--col-cyan))", flexShrink: 0 }} />
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.65rem", color: "hsl(var(--col-cyan))", letterSpacing: "0.1em" }}>
+                      NEXTAGENT RESPONSE
+                    </span>
+                  </div>
+                  {msg.response
+                    ? <AnswerWithCitations answer={msg.content} claims={msg.response.claims} onCitationClick={handleCitationClick} />
+                    : <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.93rem", color: "hsl(var(--text-primary))", lineHeight: "1.6" }}>{msg.content}</p>
+                  }
+                </div>
+              )}
             </div>
           ))}
 
-          {/* Loading skeleton while POST /query is in-flight */}
           {isLoading && (
-            <div className="flex justify-start">
-              <div className="max-w-[85%] space-y-2 w-64">
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-4/5" />
-                <Skeleton className="h-4 w-3/5" />
+            <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              <div style={{
+                padding: "8px 12px",
+                border: "1px solid hsl(var(--border-strong))",
+                borderLeft: "2px solid hsl(var(--col-cyan))",
+                backgroundColor: "hsl(var(--bg-elevated))",
+                borderRadius: "2px", minWidth: "180px",
+              }}>
+                <TypingIndicator />
+                <div style={{ display: "flex", flexDirection: "column", gap: "6px", padding: "4px 0" }}>
+                  {[1, 0.75, 0.6].map((w, i) => (
+                    <div key={i} style={{ height: "11px", width: `${w * 100}%`, backgroundColor: "hsl(var(--border-strong))", borderRadius: "1px" }} />
+                  ))}
+                </div>
               </div>
             </div>
           )}
         </div>
       </ScrollArea>
 
-      {/* Error alert */}
+      {/* ── Error alert ── */}
       {error && (
-        <Alert variant="destructive" className="shrink-0">
-          <AlertCircle className="h-4 w-4" />
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>{error}</AlertDescription>
-        </Alert>
+        <div style={{
+          display: "flex", alignItems: "flex-start", gap: "9px", padding: "9px 12px",
+          border: "1px solid hsl(var(--col-red) / 0.5)",
+          borderLeft: "2px solid hsl(var(--col-red))",
+          backgroundColor: "hsl(var(--col-red) / 0.06)",
+          borderRadius: "2px", flexShrink: 0,
+        }}>
+          <AlertCircle size={14} style={{ color: "hsl(var(--col-red))", marginTop: "1px", flexShrink: 0 }} />
+          <div>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: "0.68rem", fontWeight: 700, letterSpacing: "0.15em", color: "hsl(var(--col-red))", marginBottom: "3px" }}>
+              QUERY ERROR
+            </p>
+            <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.84rem", color: "hsl(var(--text-secondary))" }}>
+              {error}
+            </p>
+          </div>
+        </div>
       )}
 
-      {/* Input row */}
-      <div className="flex gap-2 shrink-0">
-        <Textarea
+      {/* ── Input row ── */}
+      <div style={{ display: "flex", gap: "8px", alignItems: "flex-end", flexShrink: 0 }}>
+        <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Ask a question… (Enter to submit, Shift+Enter for new line)"
+          placeholder="Enter query… (Enter to submit, Shift+Enter for newline)"
           disabled={isLoading}
-          className="min-h-[60px] max-h-[120px] resize-none text-sm"
           rows={2}
+          className="industrial-textarea flex-1"
+          style={{ padding: "9px 11px", minHeight: "58px", maxHeight: "110px" }}
         />
-        <Button
+        <button
           onClick={() => void handleSubmit()}
           disabled={isLoading || !inputValue.trim()}
-          size="icon"
-          className="shrink-0 self-end h-[60px] w-[60px]"
           aria-label="Submit query"
+          style={{
+            width: "58px", height: "58px", flexShrink: 0,
+            display: "flex", alignItems: "center", justifyContent: "center",
+            backgroundColor: (isLoading || !inputValue.trim()) ? "hsl(var(--bg-elevated))" : "hsl(var(--col-green) / 0.12)",
+            border: `1px solid ${(isLoading || !inputValue.trim()) ? "hsl(var(--border-base))" : "hsl(var(--col-green) / 0.6)"}`,
+            borderRadius: "2px",
+            cursor: (isLoading || !inputValue.trim()) ? "not-allowed" : "pointer",
+            color: (isLoading || !inputValue.trim()) ? "hsl(var(--text-dim))" : "hsl(var(--col-green))",
+            boxShadow: (isLoading || !inputValue.trim()) ? "none" : "0 0 12px hsl(var(--col-green) / 0.2)",
+            transition: "all 0.15s ease",
+          }}
+          onMouseEnter={(e) => {
+            if (!isLoading && inputValue.trim()) {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.2)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 18px hsl(var(--col-green) / 0.35)";
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isLoading && inputValue.trim()) {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.12)";
+              (e.currentTarget as HTMLButtonElement).style.boxShadow = "0 0 12px hsl(var(--col-green) / 0.2)";
+            }
+          }}
         >
-          <SendHorizontal className="h-5 w-5" />
-        </Button>
+          <SendHorizontal size={18} />
+        </button>
       </div>
 
-      {/* Citations Drawer — opens when a citation link is clicked */}
       <CitationsDrawer
         open={drawerOpen}
         onOpenChange={setDrawerOpen}

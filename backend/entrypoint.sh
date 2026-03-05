@@ -48,7 +48,7 @@ echo "[entrypoint] Database is ready."
 
 # --- Run Alembic migrations ---
 echo "[entrypoint] Running database migrations..."
-cd /app
+cd /workspace/backend
 alembic upgrade head
 echo "[entrypoint] Migrations complete."
 
@@ -74,11 +74,12 @@ except Exception as e:
     print(f'Could not check row count: {e}')
 " | grep -q "SEED_NEEDED" && {
     echo "[entrypoint] No data found — triggering ingest pipeline..."
-    python -m src.cli ingest --config config.yaml || echo "[entrypoint] Ingest warning (non-fatal): check logs"
+    cd /workspace && python -m backend.src.cli ingest --config backend/config.yaml || echo "[entrypoint] Ingest warning (non-fatal): check logs"
 } || echo "[entrypoint] Existing data found — skipping auto-ingest."
 
 # --- Start FastAPI ---
 echo "[entrypoint] Starting uvicorn on port 8000..."
+cd /workspace
 exec uvicorn backend.app.main:app \
     --host 0.0.0.0 \
     --port 8000 \

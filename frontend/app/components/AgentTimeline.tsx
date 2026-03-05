@@ -1,115 +1,204 @@
 "use client";
 
 // ============================================================
-// AgentTimeline.tsx
-// Implements: T-034-F
-// - Renders run_summary.steps as a vertical timeline
-// - Each step: number, tool name Badge (colour coded), latency ms, status
-// - Tool colours: vector=blue, SQL=green, compute=orange
-// - Error steps highlighted in destructive red
-// - Scrollable if steps exceed panel height
-// - Empty state: "No run yet"
+// AgentTimeline.tsx — Circuit-trace execution log
+// Industrial aesthetic: glowing step nodes, tool badges with
+// type-coded glow, amber trace connector lines
 // ============================================================
 
 import React from "react";
-import { CheckCircle2, XCircle, Clock } from "lucide-react";
-
-import { Badge } from "@/components/ui/badge";
+import { CheckCircle2, XCircle, Clock, Cpu } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
-
 import { useRunContext } from "../lib/context";
 import type { StepSummary, RunSummary } from "../lib/api";
-import { cn } from "@/lib/utils";
 
 // ---------------------------------------------------------------------------
-// Tool badge colour mapping (T-034-F spec)
+// Tool colour mapping
 // ---------------------------------------------------------------------------
 
-function getToolBadgeClass(toolName: string): string {
+interface ToolStyle {
+  color: string;
+  label: string;
+}
+
+function getToolStyle(toolName: string): ToolStyle {
   const lower = toolName.toLowerCase();
-  if (lower.includes("vector")) {
-    return "bg-blue-100 text-blue-800 border-blue-200";
-  }
-  if (lower.includes("sql") || lower.includes("query")) {
-    return "bg-green-100 text-green-800 border-green-200";
-  }
-  if (lower.includes("compute") || lower.includes("python")) {
-    return "bg-orange-100 text-orange-800 border-orange-200";
-  }
-  return "bg-secondary text-secondary-foreground";
+  if (lower.includes("vector")) return { color: "var(--col-cyan)",   label: "VEC" };
+  if (lower.includes("sql") || lower.includes("query"))
+                                   return { color: "var(--col-green)", label: "SQL" };
+  if (lower.includes("compute") || lower.includes("python"))
+                                   return { color: "var(--col-amber)", label: "PY" };
+  if (lower.includes("graph"))     return { color: "var(--col-purple)",label: "GRF" };
+  return { color: "var(--col-blue)", label: "SYS" };
 }
 
 // ---------------------------------------------------------------------------
-// Single timeline step
+// Tool badge
+// ---------------------------------------------------------------------------
+
+function ToolBadge({ toolName }: { toolName: string }) {
+  const { color, label: _label } = getToolStyle(toolName);
+  return (
+    <span
+      style={{
+        fontFamily: "var(--font-display)",
+        fontSize: "0.65rem",
+        fontWeight: 700,
+        letterSpacing: "0.12em",
+        padding: "1px 5px",
+        border: `1px solid hsl(${color} / 0.5)`,
+        borderRadius: "2px",
+        color: `hsl(${color})`,
+        backgroundColor: `hsl(${color} / 0.08)`,
+        boxShadow: `0 0 6px hsl(${color} / 0.2)`,
+        flexShrink: 0,
+      }}
+    >
+      {toolName}
+    </span>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Single step
 // ---------------------------------------------------------------------------
 
 function TimelineStep({
   step,
   isLast,
+  index,
 }: {
   step: StepSummary;
   isLast: boolean;
+  index: number;
 }) {
   const hasError = step.error !== null;
+  const { color } = getToolStyle(step.tool_name);
+  const nodeColor = hasError ? "var(--col-red)" : color;
 
   return (
-    <div className="flex gap-3">
-      {/* Step connector — vertical line + circle */}
-      <div className="flex flex-col items-center">
+    <div
+      className="step-animate"
+      style={{
+        animationDelay: `${index * 0.05}s`,
+        display: "flex",
+        gap: "10px",
+        position: "relative",
+      }}
+    >
+      {/* ── Left: node + connector line ── */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          flexShrink: 0,
+        }}
+      >
+        {/* Step number circle */}
         <div
-          className={cn(
-            "flex items-center justify-center w-7 h-7 rounded-full border-2 shrink-0 text-xs font-bold",
-            hasError
-              ? "border-destructive bg-destructive/10 text-destructive"
-              : "border-primary/30 bg-primary/5 text-primary"
-          )}
+          style={{
+            width: 24,
+            height: 24,
+            borderRadius: "50%",
+            border: `1.5px solid hsl(${nodeColor})`,
+            backgroundColor: `hsl(${nodeColor} / 0.1)`,
+            boxShadow: `0 0 8px hsl(${nodeColor} / 0.35)`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontFamily: "var(--font-display)",
+            fontSize: "0.68rem",
+            fontWeight: 700,
+            color: `hsl(${nodeColor})`,
+            flexShrink: 0,
+          }}
         >
           {step.step_number}
         </div>
+
+        {/* Vertical trace line */}
         {!isLast && (
-          <div className="w-0.5 flex-1 bg-border mt-1 mb-1" />
+          <div
+            style={{
+              width: 1,
+              flex: 1,
+              minHeight: "16px",
+              marginTop: "3px",
+              marginBottom: "3px",
+              background: `linear-gradient(to bottom, hsl(${nodeColor} / 0.4), hsl(var(--border-base) / 0.3))`,
+            }}
+          />
         )}
       </div>
 
-      {/* Step content */}
-      <div
-        className={cn(
-          "flex-1 pb-4 min-w-0",
-          hasError && "text-destructive"
-        )}
-      >
-        <div className="flex items-center flex-wrap gap-2 mb-1">
-          {/* Tool name badge */}
-          <Badge
-            variant="outline"
-            className={cn("text-xs shrink-0", getToolBadgeClass(step.tool_name))}
-          >
-            {step.tool_name}
-          </Badge>
+      {/* ── Right: step content ── */}
+      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : "10px" }}>
+        {/* Header row: badge + status + latency */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            flexWrap: "wrap",
+            gap: "6px",
+            marginBottom: "4px",
+          }}
+        >
+          <ToolBadge toolName={step.tool_name} />
 
-          {/* Status icon */}
           {hasError ? (
-            <XCircle className="h-3.5 w-3.5 text-destructive shrink-0" />
+            <XCircle size={11} style={{ color: "hsl(var(--col-red))", flexShrink: 0 }} />
           ) : (
-            <CheckCircle2 className="h-3.5 w-3.5 text-green-600 shrink-0" />
+            <CheckCircle2 size={11} style={{ color: "hsl(var(--col-green))", flexShrink: 0 }} />
           )}
 
-          {/* Latency */}
-          <span className="flex items-center gap-1 text-xs text-muted-foreground shrink-0">
-            <Clock className="h-3 w-3" />
-            {step.latency_ms.toLocaleString()} ms
-          </span>
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "3px",
+              flexShrink: 0,
+            }}
+          >
+            <Clock size={9} style={{ color: "hsl(var(--text-dim))" }} />
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.78rem",
+                color: "hsl(var(--text-secondary))",
+              }}
+            >
+              {step.latency_ms.toLocaleString()} ms
+            </span>
+          </div>
         </div>
 
         {/* Output summary */}
-        <p className="text-xs text-muted-foreground leading-relaxed truncate">
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.85rem",
+            color: "hsl(var(--text-secondary))",
+            lineHeight: "1.4",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+          }}
+        >
           {step.output_summary}
         </p>
 
         {/* Error message */}
         {hasError && (
-          <p className="text-xs text-destructive mt-1 font-medium">
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.82rem",
+              color: "hsl(var(--col-red))",
+              marginTop: "3px",
+              fontWeight: 500,
+            }}
+          >
             {step.error}
           </p>
         )}
@@ -119,48 +208,105 @@ function TimelineStep({
 }
 
 // ---------------------------------------------------------------------------
-// Run header — intent badge + total latency + plan text
+// Run header — intent + total latency + plan
 // ---------------------------------------------------------------------------
 
-const INTENT_LABELS: Record<RunSummary["intent"], string> = {
-  vector_only: "Vector Search",
-  sql_only: "SQL Query",
-  hybrid: "Hybrid",
-  compute: "Compute",
-};
-
-const INTENT_BADGE_CLASS: Record<RunSummary["intent"], string> = {
-  vector_only: "bg-blue-100 text-blue-800 border-blue-200",
-  sql_only: "bg-green-100 text-green-800 border-green-200",
-  hybrid: "bg-purple-100 text-purple-800 border-purple-200",
-  compute: "bg-orange-100 text-orange-800 border-orange-200",
+const INTENT_CONFIG: Record<
+  RunSummary["intent"],
+  { label: string; color: string }
+> = {
+  vector_only: { label: "VECTOR",  color: "var(--col-cyan)"   },
+  sql_only:    { label: "SQL",     color: "var(--col-green)"  },
+  hybrid:      { label: "HYBRID",  color: "var(--col-purple)" },
+  compute:     { label: "COMPUTE", color: "var(--col-amber)"  },
 };
 
 function RunHeader({ summary }: { summary: RunSummary }) {
+  const { label, color } = INTENT_CONFIG[summary.intent];
+
   return (
-    <div className="mb-3 space-y-1.5">
-      <div className="flex items-center gap-2 flex-wrap">
-        <Badge
-          variant="outline"
-          className={cn("text-xs", INTENT_BADGE_CLASS[summary.intent])}
+    <div style={{ marginBottom: "10px" }}>
+      {/* Intent + latency row */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "8px",
+          flexWrap: "wrap",
+          marginBottom: "5px",
+        }}
+      >
+        {/* Intent badge */}
+        <span
+          style={{
+            fontFamily: "var(--font-display)",
+            fontSize: "0.68rem",
+            fontWeight: 700,
+            letterSpacing: "0.14em",
+            padding: "2px 7px",
+            border: `1px solid hsl(${color})`,
+            borderRadius: "2px",
+            color: `hsl(${color})`,
+            backgroundColor: `hsl(${color} / 0.1)`,
+            boxShadow: `0 0 8px hsl(${color} / 0.25)`,
+          }}
         >
-          {INTENT_LABELS[summary.intent]}
-        </Badge>
-        <span className="text-xs text-muted-foreground">
+          {label}
+        </span>
+
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.78rem",
+            color: "hsl(var(--text-secondary))",
+          }}
+        >
           {summary.total_latency_ms.toLocaleString()} ms total
         </span>
+
         {summary.halted_at_step_limit && (
-          <Badge variant="destructive" className="text-xs">
-            Step limit reached
-          </Badge>
+          <span
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: "0.65rem",
+              fontWeight: 700,
+              letterSpacing: "0.1em",
+              padding: "1px 5px",
+              border: "1px solid hsl(var(--col-red) / 0.5)",
+              borderRadius: "2px",
+              color: "hsl(var(--col-red))",
+              backgroundColor: "hsl(var(--col-red) / 0.1)",
+            }}
+          >
+            STEP LIMIT
+          </span>
         )}
       </div>
+
+      {/* Plan text */}
       {summary.plan_text && (
-        <p className="text-xs text-muted-foreground italic leading-relaxed">
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.82rem",
+            color: "hsl(var(--text-dim))",
+            fontStyle: "italic",
+            lineHeight: "1.4",
+            marginBottom: "6px",
+          }}
+        >
           {summary.plan_text}
         </p>
       )}
-      <Separator />
+
+      {/* Separator */}
+      <div
+        style={{
+          height: 1,
+          background:
+            "linear-gradient(to right, hsl(var(--col-amber) / 0.4), hsl(var(--border-base)))",
+        }}
+      />
     </div>
   );
 }
@@ -174,8 +320,29 @@ export default function AgentTimeline() {
 
   if (!runData) {
     return (
-      <div className="flex items-center justify-center h-full">
-        <p className="text-sm text-muted-foreground">No run yet</p>
+      <div
+        className="flex flex-col items-center justify-center h-full"
+        style={{ gap: "8px" }}
+      >
+        <Cpu
+          size={20}
+          style={{ color: "hsl(var(--text-dim))" }}
+        />
+        <p
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.8rem",
+            color: "hsl(var(--text-dim))",
+            letterSpacing: "0.12em",
+            textAlign: "center",
+          }}
+        >
+          NO EXECUTION TRACE
+          <br />
+          <span style={{ fontSize: "0.72rem", opacity: 0.6 }}>
+            submit a query to begin
+          </span>
+        </p>
       </div>
     );
   }
@@ -184,11 +351,19 @@ export default function AgentTimeline() {
 
   return (
     <ScrollArea className="h-full">
-      <div className="pr-3">
+      <div style={{ padding: "8px 12px 12px" }}>
         <RunHeader summary={run_summary} />
 
         {run_summary.steps.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No steps recorded.</p>
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.82rem",
+              color: "hsl(var(--text-dim))",
+            }}
+          >
+            No steps recorded.
+          </p>
         ) : (
           <div>
             {run_summary.steps.map((step, idx) => (
@@ -196,6 +371,7 @@ export default function AgentTimeline() {
                 key={step.step_number}
                 step={step}
                 isLast={idx === run_summary.steps.length - 1}
+                index={idx}
               />
             ))}
           </div>
