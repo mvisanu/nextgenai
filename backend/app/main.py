@@ -7,6 +7,8 @@ from __future__ import annotations
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
+import os
+
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -17,13 +19,19 @@ from backend.app.observability.logging import get_logger
 
 logger = get_logger(__name__)
 
-# Frontend origins allowed to call the API
-CORS_ORIGINS = [
-    "http://localhost:3005",    # Next.js dev server
+# Frontend origins allowed to call the API.
+# NOTE: Do NOT use "*" with allow_credentials=True — browsers block that.
+# Add extra origins via the CORS_ORIGINS env var (comma-separated).
+_CORS_BASE = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+    "http://localhost:3005",
     "http://127.0.0.1:3005",
-    "https://next-agent-ai.vercel.app",  # Vercel production (update with actual URL)
-    "*",  # Temporarily open for demo; remove in any production deployment
+    "https://nextgenai-seven.vercel.app",
+    "https://nextgenai-henna.vercel.app",
 ]
+_extra = os.environ.get("CORS_ORIGINS", "")
+CORS_ORIGINS = _CORS_BASE + [o.strip() for o in _extra.split(",") if o.strip()]
 
 # Request body size limits
 QUERY_MAX_BYTES = 1 * 1024 * 1024    # 1 MB
