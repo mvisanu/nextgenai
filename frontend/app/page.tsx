@@ -76,6 +76,7 @@ function AppHeader() {
         </span>
 
         <span
+          className="header-subtitle"
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: "0.65rem",
@@ -88,8 +89,9 @@ function AppHeader() {
       </div>
 
       {/* ── Right: status + dashboard link + theme toggle ── */}
-      <div className="flex items-center gap-4">
+      <div className="header-inner-right flex items-center gap-4">
         {/* Status indicators */}
+        <div className="header-status-group flex items-center gap-4">
         {[
           { label: "VECTOR", cssVar: "--col-cyan" },
           { label: "SQL",    cssVar: "--col-green" },
@@ -118,6 +120,7 @@ function AppHeader() {
             </span>
           </div>
         ))}
+        </div>{/* end header-status-group */}
 
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
@@ -139,7 +142,7 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <LayoutDashboard size={13} />
-          DASHBOARD
+          <span className="nav-link-text">DASHBOARD</span>
         </Link>
 
         {/* FAQ link */}
@@ -160,7 +163,7 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <HelpCircle size={13} />
-          FAQ
+          <span className="nav-link-text">FAQ</span>
         </Link>
 
         <Link
@@ -180,7 +183,7 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <Database size={13} />
-          DATA
+          <span className="nav-link-text">DATA</span>
         </Link>
 
         <Link
@@ -200,7 +203,7 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <GraduationCap size={13} />
-          REVIEW
+          <span className="nav-link-text">REVIEW</span>
         </Link>
 
         <Link
@@ -220,7 +223,7 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <FlaskConical size={13} />
-          EXAMPLES
+          <span className="nav-link-text">EXAMPLES</span>
         </Link>
 
         <Link
@@ -240,12 +243,12 @@ function AppHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <GitBranch size={13} />
-          DIAGRAM
+          <span className="nav-link-text">DIAGRAM</span>
         </Link>
 
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
-        <FontSizeControl />
+        <div className="header-font-control"><FontSizeControl /></div>
         <ThemeToggle />
       </div>
     </header>
@@ -261,15 +264,17 @@ function IndustrialPanel({
   accentCssVar,
   children,
   gridArea,
+  extraClass = "",
 }: {
   label: string;
   accentCssVar: string;
   children: React.ReactNode;
   gridArea: string;
+  extraClass?: string;
 }) {
   return (
     <div
-      className="panel"
+      className={`panel ${extraClass}`}
       style={{ gridArea, "--panel-accent": `hsl(var(${accentCssVar}))` } as React.CSSProperties}
     >
       <span className="corner-tl" />
@@ -294,12 +299,13 @@ function IndustrialPanel({
 export default function Home() {
   return (
     <div
-      className="flex flex-col h-screen w-screen overflow-hidden grid-bg"
+      className="app-shell flex flex-col h-screen w-screen overflow-hidden grid-bg"
       style={{ backgroundColor: "hsl(var(--bg-void))" }}
     >
       <AppHeader />
 
       <main
+        className="main-panel-grid"
         style={{
           flex: 1,
           overflow: "hidden",
@@ -314,7 +320,7 @@ export default function Home() {
           padding: "6px",
         }}
       >
-        <IndustrialPanel label="COMMS // QUERY INTERFACE"   accentCssVar="--col-green"  gridArea="chat">
+        <IndustrialPanel label="COMMS // QUERY INTERFACE"   accentCssVar="--col-green"  gridArea="chat"     extraClass="panel-chat">
           <ChatPanel />
         </IndustrialPanel>
 
@@ -322,7 +328,7 @@ export default function Home() {
           <AgentTimeline />
         </IndustrialPanel>
 
-        <IndustrialPanel label="KNOWLEDGE GRAPH // REACTFLOW" accentCssVar="--col-cyan" gridArea="graph">
+        <IndustrialPanel label="KNOWLEDGE GRAPH // REACTFLOW" accentCssVar="--col-cyan" gridArea="graph"   extraClass="panel-graph">
           <GraphViewer />
         </IndustrialPanel>
       </main>

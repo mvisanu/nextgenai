@@ -107,7 +107,7 @@ function DashboardHeader() {
           NEXT<span style={{ color: "hsl(var(--col-green))" }}>AGENT</span>AI
         </span>
 
-        <span style={{
+        <span className="header-subtitle" style={{
           fontFamily: "var(--font-mono)",
           fontSize: "0.65rem",
           color: "hsl(var(--text-dim))",
@@ -118,22 +118,24 @@ function DashboardHeader() {
       </div>
 
       {/* Right: live indicator + toggle */}
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        <Activity size={12} style={{ color: "hsl(var(--col-green))" }} />
-        <span style={{
-          fontFamily: "var(--font-mono)",
-          fontSize: "0.65rem",
-          color: "hsl(var(--text-secondary))",
-          letterSpacing: "0.08em",
-        }}>
-          DEMO — SYNTHETIC DATA
-        </span>
-        <div style={{
-          width: 6, height: 6, borderRadius: "50%",
-          backgroundColor: "hsl(var(--col-green))",
-          boxShadow: "0 0 6px hsl(var(--col-green))",
-          animation: "dot-pulse 2.4s ease-in-out infinite",
-        }} />
+      <div className="header-inner-right" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+        <div className="header-status-group" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Activity size={12} style={{ color: "hsl(var(--col-green))" }} />
+          <span className="header-subtitle" style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.65rem",
+            color: "hsl(var(--text-secondary))",
+            letterSpacing: "0.08em",
+          }}>
+            DEMO — SYNTHETIC DATA
+          </span>
+          <div style={{
+            width: 6, height: 6, borderRadius: "50%",
+            backgroundColor: "hsl(var(--col-green))",
+            boxShadow: "0 0 6px hsl(var(--col-green))",
+            animation: "dot-pulse 2.4s ease-in-out infinite",
+          }} />
+        </div>
 
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
@@ -155,7 +157,7 @@ function DashboardHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <HelpCircle size={13} />
-          FAQ
+          <span className="nav-link-text">FAQ</span>
         </Link>
 
         <Link
@@ -175,7 +177,7 @@ function DashboardHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <Database size={13} />
-          DATA
+          <span className="nav-link-text">DATA</span>
         </Link>
 
         <Link
@@ -195,7 +197,7 @@ function DashboardHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <GraduationCap size={13} />
-          REVIEW
+          <span className="nav-link-text">REVIEW</span>
         </Link>
 
         <Link
@@ -215,7 +217,7 @@ function DashboardHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <FlaskConical size={13} />
-          EXAMPLES
+          <span className="nav-link-text">EXAMPLES</span>
         </Link>
 
         <Link
@@ -235,12 +237,12 @@ function DashboardHeader() {
           onMouseLeave={(e) => { (e.currentTarget as HTMLAnchorElement).style.color = "hsl(var(--text-secondary))"; }}
         >
           <GitBranch size={13} />
-          DIAGRAM
+          <span className="nav-link-text">DIAGRAM</span>
         </Link>
 
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
 
-        <FontSizeControl />
+        <div className="header-font-control"><FontSizeControl /></div>
         <ThemeToggle />
       </div>
     </header>
@@ -252,6 +254,7 @@ function DashboardHeader() {
 function TabNav({ active, onChange }: { active: TabId; onChange: (id: TabId) => void }) {
   return (
     <nav
+      className="tab-nav-scroll"
       style={{
         height: "42px",
         backgroundColor: "hsl(var(--bg-void))",
@@ -352,7 +355,7 @@ export default function DashboardPage() {
 
   return (
     <div
-      className="grid-bg"
+      className="app-shell grid-bg"
       style={{
         height: "100vh",
         width: "100vw",

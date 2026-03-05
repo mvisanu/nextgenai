@@ -390,3 +390,100 @@ mark.citation-highlight {
 /* Scrollbar in light mode */
 .light ::-webkit-scrollbar-track { background: hsl(var(--bg-elevated)); }
 .light ::-webkit-scrollbar-thumb { background: hsl(var(--border-strong)); }
+
+/* ══════════════════════════════════════════
+   MOBILE RESPONSIVE
+   Breakpoints:
+     ≤ 900px  tablet  — hide header subtitle
+     ≤ 640px  mobile  — single-column, icon-only nav
+     ≤ 390px  small   — shrink logo text
+══════════════════════════════════════════ */
+
+/* ── Tablet: hide the long header subtitle ── */
+@media (max-width: 900px) {
+  .header-subtitle { display: none !important; }
+}
+
+/* ── Mobile: full responsive overhaul ── */
+@media (max-width: 640px) {
+
+  /* Allow the page shell to scroll vertically */
+  body { overflow-y: auto !important; }
+
+  .app-shell {
+    height: auto !important;
+    min-height: 100svh;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+  }
+
+  /* ── Header ──────────────────────────────── */
+
+  /* Hide status indicators (VECTOR · SQL · GRAPH) */
+  .header-status-group { display: none !important; }
+
+  /* Nav links: icon only, hide text labels */
+  .nav-link-text { display: none !important; }
+
+  /* Hide font-size control (save space) */
+  .header-font-control { display: none !important; }
+
+  /* Tighten right-side header gap */
+  .header-inner-right { gap: 8px !important; }
+
+  /* ── Main panel grid → vertical stack ────── */
+  .main-panel-grid {
+    display: flex !important;
+    flex-direction: column !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    height: auto !important;
+    gap: 4px !important;
+    padding: 4px !important;
+  }
+
+  /* Each panel: scrollable content, sensible min-height */
+  .main-panel-grid > .panel {
+    min-height: 380px;
+    max-height: 90svh;
+    flex-shrink: 0;
+  }
+
+  .main-panel-grid > .panel .panel-body {
+    overflow-y: auto !important;
+  }
+
+  /* Chat panel gets extra height — it's the primary input */
+  .panel-chat { min-height: 460px !important; }
+
+  /* Graph panel */
+  .panel-graph { min-height: 380px !important; }
+
+  /* ── Dashboard tab nav: horizontal scroll ── */
+  .tab-nav-scroll {
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch;
+    flex-wrap: nowrap !important;
+    scrollbar-width: none !important;
+    height: auto !important;
+  }
+  .tab-nav-scroll::-webkit-scrollbar { display: none; }
+
+  /* ── Content pages (data / faq / review …) ── */
+  .content-page-main {
+    padding: 16px 14px 48px !important;
+  }
+}
+
+/* ── Small phones (≤ 390px) ── */
+@media (max-width: 390px) {
+  .header-logo-name {
+    font-size: 0.65rem !important;
+    letter-spacing: 0.12em !important;
+  }
+  .panel-hdr-title {
+    font-size: 0.58rem !important;
+    letter-spacing: 0.1em !important;
+  }
+}
