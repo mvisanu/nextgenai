@@ -168,10 +168,18 @@ async function apiFetch<T>(
   options?: RequestInit
 ): Promise<T> {
   const url = `${BASE_URL}${path}`;
+  const method = (options?.method ?? "GET").toUpperCase();
+  // Only set Content-Type on requests that carry a body (POST/PUT/PATCH).
+  // GET/HEAD must NOT send Content-Type — it turns a simple CORS request into
+  // a preflighted request, breaking the cold-start /healthz ping on Render.
+  const baseHeaders: Record<string, string> =
+    method !== "GET" && method !== "HEAD"
+      ? { "Content-Type": "application/json" }
+      : {};
   const response = await fetch(url, {
     headers: {
-      "Content-Type": "application/json",
-      ...(options?.headers ?? {}),
+      ...baseHeaders,
+      ...(options?.headers as Record<string, string> | undefined ?? {}),
     },
     ...options,
   });
@@ -236,10 +244,16 @@ export async function getChunk(
 
 /**
  * GET /healthz — Liveness and DB health check.
- * Used on app mount to detect Render cold-start warm-up state.
+ * Uses a bare fetch (no Content-Type header) so the request stays a
+ * CORS "simple request" — no preflight OPTIONS is sent. This is critical
+ * for the Render cold-start ping: if the server is just waking up, it
+ * cannot respond to an OPTIONS preflight, and CORS would block the GET.
  */
 export async function getHealth(): Promise<HealthResponse> {
-  return apiFetch<HealthResponse>("/healthz");
+  const url = `${BASE_URL}/healthz`;
+  const response = await fetch(url); // no extra headers — stays simple
+  if (!response.ok) throw new Error(`HTTP ${response.status}`);
+  return response.json() as Promise<HealthResponse>;
 }
 
 /**
