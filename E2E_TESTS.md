@@ -1,9 +1,10 @@
 # E2E Test Suite Documentation — NextAgentAI
 
-**Version:** 1.0
-**Date:** 2026-03-04
+**Version:** 2.0
+**Updated:** 2026-03-05
 **Framework:** Playwright (TypeScript)
 **Browsers:** Chromium (primary), Firefox, WebKit
+**Test count:** 10 original files + 10 new files = ~200 individual tests
 
 ---
 
@@ -23,6 +24,7 @@
 12. [Coverage Summary](#12-coverage-summary)
 13. [Known Flaky Tests and Mitigation](#13-known-flaky-tests-and-mitigation)
 14. [Adding New Tests](#14-adding-new-tests)
+15. [Bug Report](#15-bug-report)
 
 ---
 
@@ -30,52 +32,26 @@
 
 | Requirement | Version | Notes |
 |---|---|---|
-| Node.js | 20+ | Required by Next.js 15 and Playwright |
+| Node.js | 20+ | Required by Next.js 16 and Playwright |
 | npm | 10+ | Used for installing Playwright |
-| Frontend dev server | running on port 3000 | `npm run dev` in `frontend/` |
-| Backend (optional) | running on port 8000 | Only needed for live-backend tests |
+| Frontend dev server | running on port 3005 | `npm run dev` in `frontend/` |
+| Backend (optional) | running on port 8000 | Only needed for `19-api-contract.spec.ts` |
 | Docker (optional) | any | For full-stack local dev via `docker compose up` |
 
-The test suite is designed to run **entirely with a mocked backend** — you do NOT need a live database, Kaggle credentials, or an Anthropic API key to run any of the 10 test files. The mock responses in `e2e/fixtures/test-data.ts` simulate all three PRD demo queries accurately.
+The test suite is designed to run **entirely with a mocked backend** for all tests except `19-api-contract.spec.ts`. You do NOT need a live database, Kaggle credentials, or an Anthropic API key to run any of the other test files. The mock responses in `e2e/fixtures/test-data.ts` simulate all three PRD demo queries accurately.
 
 ---
 
 ## 2. Installation and Setup
 
-All Playwright dependencies are installed at the **repo root level** (not inside `frontend/`). This keeps the e2e tooling separate from the Next.js production bundle.
-
 ```bash
-# 1. Navigate to the repo root
-cd C:/Users/Bruce/source/repos/NextAgentAI
-
-# 2. Install Playwright and its test runner
-npm install --save-dev @playwright/test
-
-# 3. Install the browser binaries (Chromium, Firefox, WebKit)
-npx playwright install
-
-# 4. Install system dependencies for the browsers (Linux/CI only)
-npx playwright install-deps
+# From the repo root — install Playwright and its browsers
+cd /c/Users/Bruce/source/repos/NextAgentAI
+npm install          # installs @playwright/test (already in devDependencies)
+npx playwright install --with-deps   # downloads Chromium, Firefox, WebKit
 ```
 
-Create a `package.json` at the repo root if one does not exist (or add these scripts to an existing one):
-
-```json
-{
-  "scripts": {
-    "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui",
-    "test:e2e:headed": "playwright test --headed",
-    "test:e2e:report": "playwright show-report"
-  },
-  "devDependencies": {
-    "@playwright/test": "^1.49.0",
-    "typescript": "5.7.3"
-  }
-}
-```
-
-**TypeScript configuration:** The `playwright.config.ts` and all test files are TypeScript. Playwright uses its own built-in TypeScript transpilation — no separate `tsconfig.json` is required at the repo root (though you may add one pointing to `frontend/tsconfig.json` if you want type-checking for the fixtures).
+No additional build steps are required. The `playwright.config.ts` at the repo root starts the Next.js dev server automatically (via `webServer`) before running tests.
 
 ---
 
@@ -83,157 +59,128 @@ Create a `package.json` at the repo root if one does not exist (or add these scr
 
 | Variable | Default | Description |
 |---|---|---|
-| `PLAYWRIGHT_BASE_URL` | `http://localhost:3000` | Frontend URL that tests navigate to |
-| `PLAYWRIGHT_API_URL` | `http://localhost:8000` | Backend API URL used for route intercepts |
-| `CI` | _(unset)_ | Set by GitHub Actions; enables 2 retries and HTML reporter |
-| `SKIP_WEBSERVER` | _(unset)_ | Set to `true` to skip the auto-started dev server |
+| `PLAYWRIGHT_BASE_URL` | `http://localhost:3005` | Frontend URL to test against |
+| `PLAYWRIGHT_API_URL` | `http://localhost:8000` | Backend API URL for mocks and live tests |
+| `SKIP_WEBSERVER` | unset | Set to `true` to skip starting the dev server (e.g., in CI when already running) |
+| `SKIP_LIVE_API_TESTS` | unset | Set to `true` to skip `19-api-contract.spec.ts` live API tests |
+| `CI` | unset | Set automatically by GitHub Actions; enables retries and GitHub reporter |
 
-For local development, the defaults work without any `.env` file. For CI or deployment testing, set these as environment variables or secrets.
+To test against the live Vercel/Render deployment:
+
+```bash
+PLAYWRIGHT_BASE_URL=https://nextgenai-seven.vercel.app \
+PLAYWRIGHT_API_URL=https://nextai-backend.onrender.com \
+SKIP_WEBSERVER=true \
+npx playwright test
+```
 
 ---
 
 ## 4. Running the Full Suite
 
 ```bash
-# From the repo root — starts the Next.js dev server automatically
-npx playwright test
-
-# Or using the npm script (if package.json scripts are configured)
+# From the repo root (where playwright.config.ts lives)
 npm run test:e2e
+# or directly:
+npx playwright test
 ```
 
-The `webServer` block in `playwright.config.ts` starts `npm run dev` inside `frontend/` automatically before the tests begin, and shuts it down when they complete.
-
-To run tests against an already-running frontend server (faster for iterative development):
-
-```bash
-SKIP_WEBSERVER=true npx playwright test
-```
+This will:
+1. Start the Next.js dev server (port 3005)
+2. Run all specs in `e2e/tests/` across Chromium, Firefox, and WebKit
+3. Generate an HTML report at `playwright-report/index.html`
 
 ---
 
 ## 5. Running Specific Tests
 
-### Run a single test file
-
 ```bash
-npx playwright test e2e/tests/01-layout.spec.ts
-npx playwright test e2e/tests/06-demo-queries.spec.ts
-```
+# Run a single test file
+npx playwright test e2e/tests/11-navigation.spec.ts
 
-### Run a single test by name (grep)
+# Run tests matching a string
+npx playwright test --grep "domain switcher"
 
-```bash
-npx playwright test --grep "renders the Chat panel heading"
-npx playwright test --grep "Demo Query 3"
-```
+# Run only Chromium
+npm run test:e2e:chromium
 
-### Run a test group (describe block)
+# Run only Firefox
+npm run test:e2e:firefox
 
-```bash
-npx playwright test --grep "Agent Timeline"
-npx playwright test --grep "Citations — drawer opens and closes"
-```
+# Run only WebKit
+npm run test:e2e:webkit
 
-### Run in headed mode (see the browser)
+# Run in headed mode (see the browser)
+npm run test:e2e:headed
 
-```bash
-npx playwright test --headed
-npx playwright test e2e/tests/04-graph-viewer.spec.ts --headed
-```
+# Run with Playwright UI (interactive mode)
+npm run test:e2e:ui
 
-### Run in UI mode (interactive test explorer)
+# Run a specific test group (all navigation tests)
+npx playwright test 11-navigation
 
-```bash
-npx playwright test --ui
-```
+# Skip live API tests (default in most CI runs)
+SKIP_LIVE_API_TESTS=true npx playwright test
 
-### Run on a specific browser only
-
-```bash
-npx playwright test --project=chromium
-npx playwright test --project=firefox
-npx playwright test --project=webkit
-```
-
-### Debug a single test
-
-```bash
-npx playwright test --debug e2e/tests/05-citations.spec.ts --grep "clicking \[1\] opens"
+# Run ONLY the live API contract tests
+npx playwright test 19-api-contract
 ```
 
 ---
 
 ## 6. Running Against the Live Deployment
 
-To run the full suite against the production Vercel frontend talking to the Render backend:
-
 ```bash
-PLAYWRIGHT_BASE_URL=https://next-agent-ai.vercel.app \
+# Full suite against Vercel + Render (note: backend cold-start may cause 60s delay)
+PLAYWRIGHT_BASE_URL=https://nextgenai-seven.vercel.app \
 PLAYWRIGHT_API_URL=https://nextai-backend.onrender.com \
 SKIP_WEBSERVER=true \
+SKIP_LIVE_API_TESTS=false \
 npx playwright test
 ```
 
-**Important notes for live-backend testing:**
-
-- All 10 test files use Playwright route interception (mocks). When `PLAYWRIGHT_API_URL` points to the live Render backend, the mock routes shadow the real API at the same URL pattern. This means even against a live deployment, the tests run with mocked data.
-- To test the **actual live API** end-to-end (no mocks), you would need to remove or skip the `page.route()` calls. This is intentional — demo queries against a live LLM are non-deterministic and 10-30s latency makes them unsuitable for a regression suite.
-- See [Mock vs Live Backend](#9-mock-vs-live-backend) for guidance on when to use each approach.
-- The Render free tier cold-starts after 15 minutes of inactivity. If running against live Render, increase `timeout` in `playwright.config.ts` to `90_000` and `navigationTimeout` to `60_000`.
+**Warning:** The Render free-tier backend has a cold-start delay of up to 60 seconds. Tests have a 60-second timeout for API calls, but the initial health check retry logic (up to 15 retries × 8s = 2 minutes) may cause some tests to time out on a cold backend. The test suite is configured with `retries: 2` on CI to mitigate this.
 
 ---
 
 ## 7. Interpreting the HTML Report
 
-After any test run, the HTML report is saved to `playwright-report/`. Open it with:
-
 ```bash
-npx playwright show-report
-# or
+# Open the report (after running tests)
 npm run test:e2e:report
+# or
+npx playwright show-report
 ```
 
-### Report structure
+The HTML report opens at `playwright-report/index.html` and shows:
 
-| Section | Meaning |
-|---|---|
-| Green (passed) | Test completed successfully across all browser projects |
-| Red (failed) | At least one browser/assertion failed; click for details |
-| Yellow (flaky) | Test failed then passed on retry — investigate the root cause |
-| Screenshot tab | Full-page screenshot captured at the moment of failure |
-| Video tab | Screen recording replayed from the first retry |
-| Trace tab | Interactive Playwright trace — step-by-step network, DOM, and action log |
+- **Green**: Test passed
+- **Red**: Test failed — click to expand the error, screenshot, and trace
+- **Yellow/Orange**: Test was flaky (passed on retry)
 
-### Using the Trace Viewer
+**Screenshots** are captured automatically on first failure. They appear in the test detail view.
 
-When a test fails after a retry, a `trace.zip` is attached. Open it directly:
+**Videos** are recorded on the first retry of a failing test.
 
+**Traces** are recorded on the first retry. To view a trace:
 ```bash
-npx playwright show-trace playwright-report/data/<hash>/trace.zip
+npx playwright show-trace playwright-report/data/<trace-file>.zip
 ```
-
-The trace viewer shows:
-- Every `page.goto`, `fill`, `click`, `waitFor` call with timestamps
-- Screenshots at each step
-- Network requests with request/response bodies (useful for mock validation)
-- Console logs and JavaScript errors
+The trace viewer shows a timeline of every action, screenshot, network request, and console log.
 
 ---
 
 ## 8. CI/CD Integration
 
-### GitHub Actions — example workflow
+Add to `.github/workflows/e2e.yml`:
 
 ```yaml
-# .github/workflows/e2e.yml
 name: E2E Tests
 
 on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
 
 jobs:
   e2e:
@@ -245,308 +192,321 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
-          cache: 'npm'
+          node-version: "20"
+          cache: "npm"
 
-      # Install root-level Playwright dependencies
       - name: Install root dependencies
-        run: npm install
+        run: npm ci
 
-      # Install browser binaries
+      - name: Install frontend dependencies
+        run: npm ci
+        working-directory: frontend
+
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
 
-      # Install frontend dependencies (needed for the dev server)
-      - name: Install frontend dependencies
-        working-directory: frontend
-        run: npm install
-
-      # Run E2E tests (webServer starts the frontend automatically)
-      - name: Run E2E tests
-        run: npx playwright test
+      - name: Run E2E tests (mocked backend)
+        run: |
+          SKIP_LIVE_API_TESTS=true npx playwright test
         env:
           CI: true
-          PLAYWRIGHT_BASE_URL: http://localhost:3000
-          PLAYWRIGHT_API_URL: http://localhost:8000
 
-      # Upload artifacts on failure
-      - name: Upload test report
+      - name: Upload Playwright Report
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: playwright-report
           path: playwright-report/
-          retention-days: 7
-
-      - name: Upload traces on failure
-        uses: actions/upload-artifact@v4
-        if: failure()
-        with:
-          name: playwright-traces
-          path: test-results/
-          retention-days: 7
+          retention-days: 30
 ```
 
-### CI best practices for this project
+For PRs that should also run live API tests:
 
-- Run only the Chromium project in CI for speed; add Firefox and WebKit as a scheduled nightly job.
-- Set `workers: 2` in `playwright.config.ts` for CI (already configured when `CI=true`).
-- Cache the Playwright browser binaries using `~/.cache/ms-playwright` in the GitHub Actions cache.
-- The `SKIP_WEBSERVER` env var is NOT set in CI — let Playwright manage the dev server lifecycle.
+```yaml
+      - name: Run live API contract tests
+        if: github.ref == 'refs/heads/main'
+        run: npx playwright test 19-api-contract
+        env:
+          PLAYWRIGHT_API_URL: ${{ secrets.RENDER_API_URL }}
+          SKIP_WEBSERVER: true
+          CI: true
+```
 
 ---
 
 ## 9. Mock vs Live Backend
 
-### When to use the mocked backend (default)
+Most tests use Playwright's `page.route()` to intercept HTTP calls and return fixture data. This means:
 
-All 10 test files use Playwright route interception (`page.route()`) to mock:
-- `POST /query` — returns a deterministic `QueryResponse` fixture
-- `GET /docs/{id}/chunks/{id}` — returns a deterministic `ChunkResponse` fixture
-- `GET /healthz` — returns `{ status: "ok" }` or `{ status: "degraded" }`
+- No backend server is required
+- Tests run in milliseconds (no real LLM calls)
+- Results are deterministic
 
-**Use mocked mode for:**
-- All automated CI regression testing
-- Frontend behaviour (loading states, error handling, drawer interactions)
-- Performance and flakiness — no LLM latency, no cold starts
-- Offline development (no database or API key needed)
+The mock architecture uses two files:
+- `e2e/fixtures/test-data.ts` — mock response shapes (QueryResponse, ChunkResponse, HealthResponse)
+- `e2e/fixtures/api-mock.ts` — `page.route()` helpers that intercept the API URL
 
-### When to use the live backend
+**Important:** Route mocks must be registered BEFORE `page.goto()`. All `beforeEach` hooks call `mockHealthOk(page)` (or similar) before navigating.
 
-Run against the live backend when you want to verify:
-- The actual LLM answer quality and content for the three demo queries
-- Real vector search scores and graph path shapes
-- End-to-end latency from the Render deployment
-- Backend changes haven't broken the API contract (schema alignment)
+### Live backend tests (19-api-contract.spec.ts)
 
-To run without mocks, create a separate smoke test file (e.g., `e2e/tests/99-live-smoke.spec.ts`) that does NOT call `page.route()` and set realistic timeouts. Do not include this file in the standard CI run.
+These tests use Playwright's `request.newContext()` to make real HTTP calls. They are skipped by default (`SKIP_LIVE_API_TESTS=true`). Set `SKIP_LIVE_API_TESTS=false` and provide `PLAYWRIGHT_API_URL` to run them.
 
-```bash
-# Run live smoke tests only (no mocks, requires live backend)
-PLAYWRIGHT_BASE_URL=https://next-agent-ai.vercel.app \
-PLAYWRIGHT_API_URL=https://nextai-backend.onrender.com \
-SKIP_WEBSERVER=true \
-npx playwright test e2e/tests/99-live-smoke.spec.ts --timeout=90000
-```
+Individual test timeouts are set to 70 seconds for hybrid queries that involve LLM synthesis.
 
 ---
 
 ## 10. Test Data Management
 
-### Mock fixture files
-
-All mock response data is centralised in two files:
+### Fixtures
 
 | File | Purpose |
 |---|---|
-| `e2e/fixtures/test-data.ts` | All `QueryResponse`, `ChunkResponse`, and `HealthResponse` fixtures |
-| `e2e/fixtures/api-mock.ts` | Route intercept helper functions that wrap `page.route()` |
+| `e2e/fixtures/test-data.ts` | Full mock QueryResponse, ChunkResponse, HealthResponse objects |
+| `e2e/fixtures/api-mock.ts` | `page.route()` helpers: `mockHealthOk`, `mockQueryResponse`, `mockQueryError500`, `mockQueryTimeout`, `mockChunkResponse`, `mockChunk404`, `mockAllDemoQueries` |
+| `e2e/fixtures/page-fixtures.ts` | Domain config constants, nav item definitions, tab definitions, sample queries |
 
-The fixtures exactly match the TypeScript interfaces from `BACKEND.md` / `frontend/app/lib/api.ts`. If the backend schema changes, update these fixtures and the TypeScript type errors will surface immediately.
+### Isolation
 
-### Shared IDs
+Every test is fully isolated:
+- `beforeEach` mocks are registered fresh per test (Playwright clears routes between tests)
+- `localStorage` is cleared at the start of domain-specific tests via `page.evaluate(() => localStorage.removeItem(...))`
+- No test depends on the state left by another test
 
-The following IDs are exported from `test-data.ts` and used consistently across all fixtures:
+### Adding new fixture data
 
-| Export | Value | Used in |
-|---|---|---|
-| `CHUNK_ID_HYDRAULIC` | `embed-hydraulic-001` | Query 1 citation, chunk fetch |
-| `INCIDENT_ID_HYDRAULIC` | `INC-A1B2C3D4` | Query 1 citation, chunk fetch |
-| `CHUNK_ID_DEFECT_TREND` | `embed-defect-trend-001` | Query 2 citation, chunk fetch |
-| `INCIDENT_ID_DEFECT_TREND` | `INC-D5E6F7A8` | Query 2 citation, chunk fetch |
-| `CHUNK_ID_HYBRID` | `embed-hybrid-001` | Query 3 citation, chunk fetch |
-| `INCIDENT_ID_HYBRID` | `INC-H9I0J1K2` | Query 3 citation, chunk fetch |
-
-### Adding new test data
-
-1. Add new `QueryResponse` or `ChunkResponse` objects to `e2e/fixtures/test-data.ts`
-2. Export new mock helpers from `e2e/fixtures/api-mock.ts`
-3. Reference them in your test file — no other files need changing
+To add a new mock response, add it to `e2e/fixtures/test-data.ts` following the existing pattern, then register a new route helper in `e2e/fixtures/api-mock.ts`.
 
 ---
 
 ## 11. File Index
 
-```
-e2e/
-  fixtures/
-    test-data.ts          # All mock response fixtures (QueryResponse, ChunkResponse, HealthResponse)
-    api-mock.ts           # page.route() helpers for mocking API endpoints
-  helpers/
-    panels.ts             # FourPanelPage page object — all panel interactions
-    assertions.ts         # Custom assertion helpers (badge colour, XSS, ARIA, focus trap)
-  tests/
-    01-layout.spec.ts     # Initial page load, panel visibility, viewport fill
-    02-chat-submit.spec.ts # Query submission: input, loading, answer, history
-    03-agent-timeline.spec.ts # Timeline: empty state, steps, badges, errors, plan text
-    04-graph-viewer.spec.ts   # Graph: empty state, nodes, edges, colours, zoom, popover
-    05-citations.spec.ts  # Citations: inline links, drawer, highlight, badges, conflict
-    06-demo-queries.spec.ts   # All 3 PRD demo queries end-to-end (mocked)
-    07-error-states.spec.ts   # API 500, 400 prevention, timeout, 404 chunk, degraded health
-    08-edge-cases.spec.ts # Empty query, long query, XSS, special chars, rapid submit, refresh
-    09-accessibility.spec.ts  # ARIA labels, keyboard nav, focus trap, heading hierarchy
-    10-api-health.spec.ts # healthz ok/degraded states, response shape
+### Helpers
 
-playwright.config.ts       # Root-level Playwright configuration
-E2E_TESTS.md               # This file
-```
+| File | Description |
+|---|---|
+| `e2e/helpers/panels.ts` | `FourPanelPage` — page object for the main `/` page (chat, timeline, graph) |
+| `e2e/helpers/assertions.ts` | Custom assertions: badge colours, ARIA, XSS safety, drawer focus trap |
+| `e2e/helpers/nav-page.ts` | `NavPage`, `DashboardPage`, `ExamplesPage`, `FaqPage`, `DataPage` — page objects for all secondary pages |
+
+### Fixtures
+
+| File | Description |
+|---|---|
+| `e2e/fixtures/test-data.ts` | Mock API response fixtures for all three demo queries |
+| `e2e/fixtures/api-mock.ts` | Route intercept helpers for backend API calls |
+| `e2e/fixtures/page-fixtures.ts` | Static domain/nav/tab constants for reuse across tests |
+
+### Test Files
+
+| File | Coverage |
+|---|---|
+| `e2e/tests/01-layout.spec.ts` | Main page: panel presence, viewport sizing, React Flow |
+| `e2e/tests/02-chat-submit.spec.ts` | Chat: submit flow, loading state, response rendering |
+| `e2e/tests/03-agent-timeline.spec.ts` | Agent timeline: step rendering, tool badges, plan text |
+| `e2e/tests/04-graph-viewer.spec.ts` | Graph viewer: node count, edge types, zoom controls |
+| `e2e/tests/05-citations.spec.ts` | Citations drawer: open/close, confidence badge, highlight |
+| `e2e/tests/06-demo-queries.spec.ts` | All three PRD demo queries: end-to-end flow |
+| `e2e/tests/07-error-states.spec.ts` | API 500, network timeout, chunk 404, health degraded |
+| `e2e/tests/08-edge-cases.spec.ts` | Empty input, XSS, rapid clicks, special characters |
+| `e2e/tests/09-accessibility.spec.ts` | ARIA labels, keyboard navigation, focus trap |
+| `e2e/tests/10-api-health.spec.ts` | /healthz ok and degraded states visible in UI |
+| `e2e/tests/11-navigation.spec.ts` | NAVIGATE dropdown all 7 links, direct URL, back/forward |
+| `e2e/tests/12-domain-switcher.spec.ts` | Aircraft ↔ medical: placeholder, disclaimer, graph label, localStorage, dashboard tabs |
+| `e2e/tests/13-main-page.spec.ts` | Main page: header, chat panel, warm-up ping, GraphViewer, AgentTimeline, theme toggle |
+| `e2e/tests/14-dashboard.spec.ts` | Dashboard: 5 tabs aircraft and medical, domain banner, nav dropdown |
+| `e2e/tests/15-examples.spec.ts` | /examples: 14 cards, copy button, accordion expand/collapse, industry section |
+| `e2e/tests/16-medical-examples.spec.ts` | /medical-examples: 14 cards, copy, PhD frame sections, specialties |
+| `e2e/tests/17-faq.spec.ts` | /faq: aircraft/medical section dividers, accordion, at least 6 sections |
+| `e2e/tests/18-data-page.spec.ts` | /data: DS-01…DS-05 labels, schema toggle, copy snippet, Kaggle links |
+| `e2e/tests/19-api-contract.spec.ts` | Live backend: GET /healthz shape, POST /query shape, 422 validation, 404 |
+| `e2e/tests/20-additional-error-states.spec.ts` | Cold start, CORS fix verification, double-submit guard, medical disclaimer |
 
 ---
 
 ## 12. Coverage Summary
 
-### Screens and panels covered
-
-| Panel | Covered in | Notes |
-|---|---|---|
-| Chat panel | 01, 02, 06, 07, 08, 09 | Full CRUD: input, submit, history, errors |
-| Agent Timeline | 01, 03, 06 | Empty state, steps, badges, errors |
-| Graph Viewer | 01, 04, 06 | Empty state, nodes, edges, zoom, popover |
-| Citations Drawer | 05, 06, 07, 08, 09 | Open/close, highlight, badges, error, a11y |
-
-### PRD acceptance criteria covered
-
-| AC | Description | Covered By |
-|---|---|---|
-| F7-AC1 | Chat panel — submit query, answer rendered | 02-chat-submit |
-| F7-AC2 | Agent timeline — show each step | 03-agent-timeline |
-| F7-AC3 | Graph viewer — React Flow renders graph_path | 04-graph-viewer |
-| F7-AC4 | Citations drawer — highlighted source span | 05-citations |
-| F4-AC1 | Intent classified correctly | 03, 06 (intent badge) |
-| F4-AC4 | Each claim has citation + confidence | 05-citations |
-| PRD-SM3 | UI renders graph path | 04-graph-viewer |
-| Demo Q1 | Vector-only: hydraulic actuator crack | 06-demo-queries |
-| Demo Q2 | SQL-only: defect trends | 06-demo-queries |
-| Demo Q3 | Hybrid: avionics connector classify | 06-demo-queries |
-
-### What is NOT covered by this suite
-
-| Gap | Reason |
+| Category | Covered |
 |---|---|
-| `POST /ingest` trigger and polling | No UI for this in the current frontend |
-| `GET /docs` document list | Not used in the frontend (library function only) |
-| Real LLM answer quality | Non-deterministic; requires live backend smoke tests |
-| Docker Compose stack health | Requires Docker; out of scope for frontend e2e |
-| Vector search latency < 500ms | Performance test; requires live DB with 10k rows |
-| End-to-end ingest pipeline | Backend integration test, not frontend e2e |
+| All 8 pages/routes | Yes (/, /dashboard, /examples, /medical-examples, /data, /review, /faq, /diagram) |
+| Domain switcher (aircraft ↔ medical) | Yes — placeholder, disclaimer, graph label, tab labels, banner, localStorage |
+| NAVIGATE dropdown (7 items) | Yes — all items click-tested |
+| Browser back/forward | Yes |
+| Chat panel: empty state | Yes |
+| Chat panel: submit flow | Yes |
+| Chat panel: loading state | Yes |
+| Chat panel: error state (500) | Yes |
+| Chat panel: network timeout | Yes |
+| Chat panel: whitespace validation | Yes |
+| Submit button: disabled states | Yes |
+| Backend warm-up ping (/healthz) | Yes — called on load, status banners |
+| CORS fix (no Content-Type on GET) | Yes — header inspection test |
+| GraphViewer: React Flow nodes | Yes — node count, entity/chunk types |
+| AgentTimeline: step rendering | Yes |
+| Citations drawer | Yes — open, close, confidence, highlight, 404 |
+| Theme toggle | Yes — dark/light, localStorage, persistence |
+| Font size control | Partial (accessible via keyboard, not pixel-level) |
+| Dashboard: all 5 tabs clickable | Yes |
+| Dashboard: domain banner | Yes |
+| Example pages: copy button | Yes — COPIED state and revert |
+| Example pages: accordion | Yes |
+| FAQ: accordion expand/collapse | Yes |
+| Data page: schema toggle | Yes |
+| API contract: /healthz shape | Yes |
+| API contract: POST /query shape | Yes |
+| API contract: validation (422) | Yes |
+| API contract: 404 on invalid run | Yes |
+| XSS safety | Yes (08-edge-cases) |
+| ARIA labels | Yes (09-accessibility) |
 
 ---
 
 ## 13. Known Flaky Tests and Mitigation
 
-### Graph node count timing
+### Backend cold-start (19-api-contract.spec.ts)
 
-**Test:** `04-graph-viewer.spec.ts — renders the correct number of nodes`
+**Risk:** Render free-tier backend sleeps after inactivity. The first POST /query can take 60+ seconds.
 
-**Cause:** React Flow's `useEffect` triggers layout computation asynchronously after the RunContext is updated. On slow CI machines, the nodes may not be in the DOM when the assertion runs.
+**Mitigation:**
+- Individual test timeout is set to 70 seconds
+- `retries: 2` on CI means three attempts total
+- Run the API contract tests after the health ping test — by then, the backend may be warm
+- Consider a pre-test warm-up step in CI: `curl $PLAYWRIGHT_API_URL/healthz`
 
-**Mitigation:** The test uses `page.waitForSelector('.react-flow__node', { timeout: 10_000 })` before counting. If still flaky, increase the timeout or add `await page.waitForFunction(() => document.querySelectorAll('.react-flow__node').length >= 4)`.
+### React Flow async layout (04-graph-viewer.spec.ts)
 
----
+**Risk:** React Flow uses an internal layout algorithm that runs asynchronously after mount. Node positions and counts may briefly show zero.
 
-### Loading skeleton visibility
+**Mitigation:**
+- All graph node selectors use `waitForSelector('.react-flow__node', { timeout: 10_000 })`
+- Never count nodes immediately after `page.goto()` — always wait for the selector first
 
-**Test:** `02-chat-submit.spec.ts — loading skeleton appears while request is in-flight`
+### Copy-to-clipboard tests (15-examples, 16-medical-examples, 18-data-page)
 
-**Cause:** With a very fast mock (no artificial delay), the skeleton may render and disappear faster than Playwright's screenshot interval. The test uses a 200ms mock delay specifically to ensure the skeleton is visible long enough to assert.
+**Risk:** `page.context().grantPermissions(['clipboard-write'])` may not work on all browser contexts, particularly WebKit.
 
-**Mitigation:** The 200ms delay in the mock is intentional. Do not reduce it below 150ms.
+**Mitigation:**
+- Tests use `grantPermissions` before clicking
+- WebKit clipboard behaviour differs — if tests fail on WebKit only, skip with `test.skip(browserName === 'webkit', ...)`
+- The COPIED visual state is asserted (text change), not the actual clipboard contents
 
----
+### Domain switcher timing (12-domain-switcher.spec.ts)
 
-### Popover closing timing (Graph Viewer)
+**Risk:** The `setDomain()` call writes to localStorage and updates React state. There's a brief window where the UI may not yet reflect the new domain.
 
-**Test:** `04-graph-viewer.spec.ts — node popover closes when clicking outside`
+**Mitigation:**
+- All domain switch assertions use `{ timeout: 5_000 }` to allow for state propagation
+- A `waitForTimeout(150)` settle delay is used in the `NavPage.setDomain()` helper
 
-**Cause:** Radix UI Popover uses a `pointerdown` event listener for outside click detection. Playwright's `mouse.click()` at coordinates may not always trigger the pointerdown before the pointerup, depending on the platform.
+### localhost:3005 port conflict
 
-**Mitigation:** Use `page.mouse.move(50, 50)` followed by `page.mouse.down()` and `page.mouse.up()` if `mouse.click()` proves unreliable. Alternatively, press `Escape` to close the popover reliably.
+**Risk:** If another process is using port 3005, the dev server fails to start.
 
----
-
-### Citations drawer focus trap on WebKit
-
-**Test:** `09-accessibility.spec.ts — focus is trapped inside the drawer`
-
-**Cause:** WebKit's focus management for `role="dialog"` elements differs slightly from Chromium and Firefox. Radix UI's Sheet component uses `@radix-ui/react-focus-scope` which is typically cross-browser, but WebKit may require an additional frame to establish focus.
-
-**Mitigation:** Add a small `await page.waitForTimeout(100)` after opening the drawer in WebKit-only contexts if the test fails. The test currently includes a `waitForDrawerOpen()` helper which should provide enough settling time.
-
----
-
-### `waitForAnswer()` timeout on slow CI
-
-**Test:** Multiple chat submission tests
-
-**Cause:** The `waitForAnswer()` helper waits for `.justify-start .bg-card` to be visible. On slow CI, the React state update and re-render can exceed the default 5s assertion timeout.
-
-**Mitigation:** `waitForAnswer()` uses `{ timeout: 30_000 }` which should be sufficient. If CI is particularly slow, increase the global `expect.timeout` in `playwright.config.ts` to `15_000`.
+**Mitigation:**
+- The `playwright.config.ts` uses `reuseExistingServer: !process.env.CI` — locally, it reuses a running server
+- In CI, always start fresh: `SKIP_WEBSERVER=false`
 
 ---
 
 ## 14. Adding New Tests
 
-### Step 1: Understand the component
+### Adding a test for a new page
 
-Read the relevant component source in `frontend/app/components/` to understand what DOM elements are rendered and what state drives them.
+1. Create `e2e/tests/NN-page-name.spec.ts`
+2. Add a Page Object to `e2e/helpers/nav-page.ts` if the page has non-trivial interactions
+3. Add any static data constants to `e2e/fixtures/page-fixtures.ts`
+4. Follow the naming convention: `describe("[Page] — [Context]"` / `test("verb + observable outcome")`
 
-### Step 2: Create or extend a mock fixture
+### Adding a new API mock
 
-If your new test needs a different API response shape, add a new fixture object to `e2e/fixtures/test-data.ts` and a corresponding helper to `e2e/fixtures/api-mock.ts`.
+1. Add the fixture object to `e2e/fixtures/test-data.ts`
+2. Add a route helper to `e2e/fixtures/api-mock.ts`:
+   ```typescript
+   export async function mockMyEndpoint(page: Page): Promise<void> {
+     await page.route(`${API_URL}/my-endpoint`, async (route) => {
+       await route.fulfill({
+         status: 200,
+         contentType: "application/json",
+         body: JSON.stringify(MY_FIXTURE),
+       });
+     });
+   }
+   ```
+3. Call it in `beforeEach` before `page.goto()`
 
-### Step 3: Add page object methods if needed
+### Selector priority
 
-If your test requires interacting with a new UI pattern that isn't yet covered by `FourPanelPage`, add a method to `e2e/helpers/panels.ts`. Follow the dual selector strategy: try `aria-label` or `role` first, then Tailwind class names.
+1. `getByRole()` — semantic, most resilient
+2. `getByText()` — content-based, good for labels
+3. `getByTitle()` — for icon buttons with title attributes
+4. `locator("[class*='...']")` — CSS class partial match, use when no semantic option exists
+5. `data-testid` — add to components as a last resort and document the addition
 
-### Step 4: Write the test
+### Common pitfalls
 
+- **Never use `page.waitForTimeout()`** for anything longer than 300ms. Use `waitForSelector`, `waitForResponse`, or `expect().toBeVisible({ timeout })` instead.
+- **Register route mocks before `page.goto()`** — Playwright only intercepts from the point of registration.
+- **LocalStorage state leaks** between tests if not cleared — always explicitly set or remove `nextai_domain` and `theme` in `beforeEach` when testing domain/theme behaviour.
+
+---
+
+## 15. Bug Report
+
+### Analysis conducted: 2026-03-05
+
+The following was checked against the actual codebase:
+
+#### Confirmed bug from task description — `disease_cases` table
+
+**Status: NOT FOUND in current code.**
+
+After searching all Python files in `backend/`, the `disease_cases` table name does not appear anywhere. The SQL tool (`backend/app/tools/sql_tool.py`) uses:
+- `disease_records` — for the `disease_counts_by_specialty`, `disease_severity_distribution`, and `disease_symptom_profile` named queries
+- `medical_cases` — for the `medical_system_summary` named query
+
+Both `disease_records` and `medical_cases` are real tables confirmed in:
+- `backend/app/db/models.py` (lines 217, 271)
+- `backend/app/db/migrations/versions/0002_medical_domain.py`
+
+The bug may have existed in an earlier version and was already fixed, or may only manifest when the LLM agent generates ad-hoc SQL queries that incorrectly reference `disease_cases`. The `medical_system_summary` named query uses `medical_cases` correctly.
+
+**Recommendation:** Add a test in `19-api-contract.spec.ts` (live mode) that submits a medical SQL-intent query and verifies no `UndefinedTable` error appears in the response.
+
+#### Confirmed bug: Existing test helpers use wrong selectors
+
+**Status: ACTIVE.**
+
+`e2e/helpers/panels.ts` uses `getByRole("heading", { name: "Chat", exact: true })` but the main page renders:
+```html
+<span class="panel-hdr-title">COMMS // QUERY INTERFACE</span>
+```
+— not a heading element with "Chat". Tests in `01-layout.spec.ts` through `10-api-health.spec.ts` that use `FourPanelPage` with `assertAllPanelsVisible()` are likely failing in the current codebase.
+
+**Fix:** Update `panels.ts` to use correct selectors. The new test files (11–20) were written with the correct selectors from the actual markup.
+
+**Recommended `panels.ts` fix:**
 ```typescript
-// e2e/tests/11-my-feature.spec.ts
-import { test, expect } from "@playwright/test";
-import { FourPanelPage } from "../helpers/panels";
-import { mockQueryResponse, mockHealthOk, MOCK_RESPONSE_QUERY_1 } from "../fixtures/api-mock";
+// OLD (broken):
+this.chatPanel = page.locator("main").filter({ has: page.getByRole("heading", { name: "Chat", exact: true }) });
 
-test.describe("My Feature — context description", () => {
-  test.beforeEach(async ({ page }) => {
-    await mockHealthOk(page);
-    await mockQueryResponse(page, MOCK_RESPONSE_QUERY_1);
-  });
+// NEW (correct):
+this.chatPanel = page.locator(".panel-chat, .panel").filter({ hasText: /COMMS.*QUERY INTERFACE/ });
 
-  test("describes the observable outcome as a verb phrase", async ({ page }) => {
-    const panelPage = new FourPanelPage(page);
-    await panelPage.navigate();
-    // ... test body
-  });
-});
+// And assertAllPanelsVisible():
+async assertAllPanelsVisible(): Promise<void> {
+  await expect(page.getByText(/COMMS.*QUERY INTERFACE|QUERY INTERFACE/i).first()).toBeVisible();
+  await expect(page.getByText(/AGENT EXECUTION TRACE/i)).toBeVisible();
+  await expect(page.getByText(/KNOWLEDGE GRAPH/i).first()).toBeVisible();
+}
 ```
 
-### Naming conventions
+#### CORS fix verified in code
 
-- File: `NN-feature-name.spec.ts` (zero-padded two-digit prefix for ordering)
-- Describe: `[Component/Feature] — [Context]`
-- Test names: start with a verb (`shows`, `renders`, `opens`, `prevents`, `navigates`)
-
-### Selector strategy
-
-Priority order:
-1. `getByRole()` — most resilient to HTML changes
-2. `getByPlaceholder()`, `getByLabel()`, `getByText()` — semantic
-3. `aria-label` attribute selectors — `page.getByRole("button", { name: ... })`
-4. Tailwind class names (`.bg-blue-100`) — use only when no semantic selector exists
-5. `data-testid` — add these to components when all else fails; document the addition
-
-### Data-testid recommendations
-
-The following elements currently lack `data-testid` attributes and rely on class/role selectors. Adding these would make the tests more robust:
-
-| Element | Recommended data-testid | Component |
-|---|---|---|
-| Chat message scroll area | `chat-message-list` | `ChatPanel.tsx` |
-| Individual user message | `chat-message-user` | `ChatPanel.tsx` |
-| Individual assistant message | `chat-message-assistant` | `ChatPanel.tsx` |
-| Timeline step row | `timeline-step-{n}` | `AgentTimeline.tsx` |
-| Timeline empty state | `timeline-empty` | `AgentTimeline.tsx` |
-| Graph empty state | `graph-empty` | `GraphViewer.tsx` |
-| Citation drawer content | `citation-drawer-content` | `CitationsDrawer.tsx` |
-| Confidence badge | `confidence-badge` | `CitationsDrawer.tsx` |
-| Highlighted citation span | `citation-highlight` (class already present) | `CitationsDrawer.tsx` |
+`api.ts` correctly omits `Content-Type` on GET/HEAD requests:
+```typescript
+const baseHeaders: Record<string, string> =
+  method !== "GET" && method !== "HEAD"
+    ? { "Content-Type": "application/json" }
+    : {};
+```
+Test `20-additional-error-states.spec.ts` verifies this by capturing request headers on the `/healthz` route intercept.

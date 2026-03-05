@@ -12,7 +12,7 @@ from backend.app.observability.logging import get_logger
 
 logger = get_logger(__name__)
 
-_SYSTEM_PROMPT = """\
+_SYSTEM_PROMPT_AIRCRAFT = """\
 You are a planning agent for a manufacturing intelligence system.
 Given a user query and a routing intent, generate a numbered step-by-step plan.
 
@@ -20,13 +20,57 @@ Available tools:
 - VectorSearchTool: semantic similarity search over incident narratives
   inputs: {"query_text": "...", "filters": {}, "top_k": 8}
 - SQLQueryTool: read-only SQL queries for structured data
-  inputs: {"sql": "SELECT ...", "named_query": "defect_counts_by_product|severity_distribution|maintenance_trends|incidents_defects_join", "params": {}}
+  IMPORTANT: Always use named_query instead of raw sql to avoid schema errors.
+  Available named queries (use EXACTLY these names):
+    - defect_counts_by_product   — defect counts by product & type (params: {"days": 90})
+    - severity_distribution      — severity level distribution across all defects
+    - maintenance_trends         — maintenance event counts by month
+    - incidents_defects_join     — join incident reports with manufacturing defects
+  inputs: {"named_query": "<name>", "params": {"days": 90}}
 - PythonComputeTool: sandboxed Python for arithmetic/statistics
   inputs: {"code": "result = ...", "context": {}}
 
 Intent routing rules:
 - vector_only → one VectorSearchTool step
-- sql_only → one or two SQLQueryTool steps
+- sql_only → one or two SQLQueryTool steps using named_query
+- hybrid → at least one VectorSearchTool + one SQLQueryTool
+- compute → SQLQueryTool to get data, then PythonComputeTool
+
+Return JSON ONLY with this exact structure:
+{
+  "plan_text": "Natural language description of the plan for the user...",
+  "steps": [
+    {
+      "step_number": 1,
+      "description": "What this step does",
+      "tool": "VectorSearchTool|SQLQueryTool|PythonComputeTool",
+      "tool_inputs": {}
+    }
+  ]
+}
+"""
+
+_SYSTEM_PROMPT_MEDICAL = """\
+You are a planning agent for a clinical intelligence system.
+Given a user query and a routing intent, generate a numbered step-by-step plan.
+
+Available tools:
+- VectorSearchTool: semantic similarity search over clinical case narratives
+  inputs: {"query_text": "...", "filters": {}, "top_k": 8}
+- SQLQueryTool: read-only SQL queries for structured clinical data
+  IMPORTANT: Always use named_query instead of raw sql to avoid schema errors.
+  Available named queries (use EXACTLY these names):
+    - disease_counts_by_specialty    — disease counts grouped by specialty & disease name (params: {"days": 90})
+    - disease_severity_distribution  — severity/outcome distribution across disease records
+    - disease_symptom_profile        — symptom prevalence (fever, cough, fatigue, dyspnea) per disease
+    - medical_system_summary         — case counts by body system with severity breakdown
+  inputs: {"named_query": "<name>", "params": {"days": 90}}
+- PythonComputeTool: sandboxed Python for arithmetic/statistics
+  inputs: {"code": "result = ...", "context": {}}
+
+Intent routing rules:
+- vector_only → one VectorSearchTool step
+- sql_only → one or two SQLQueryTool steps using named_query
 - hybrid → at least one VectorSearchTool + one SQLQueryTool
 - compute → SQLQueryTool to get data, then PythonComputeTool
 
@@ -49,6 +93,7 @@ def generate_plan(
     query: str,
     intent: str,
     llm: LLMClient,
+    domain: str = "aircraft",
 ) -> dict[str, Any]:
     """
     Generate a numbered tool execution plan.
@@ -57,6 +102,7 @@ def generate_plan(
         query:  User's natural language question.
         intent: Classified intent (vector_only, sql_only, hybrid, compute).
         llm:    LLMClient instance.
+        domain: "aircraft" or "medical" — selects the correct named queries.
 
     Returns:
         {
@@ -64,14 +110,15 @@ def generate_plan(
           "steps":      list of step dicts (step_number, description, tool, tool_inputs)
         }
     """
-    logger.info("Generating plan", extra={"intent": intent})
+    logger.info("Generating plan", extra={"intent": intent, "domain": domain})
 
+    system_prompt = _SYSTEM_PROMPT_MEDICAL if domain == "medical" else _SYSTEM_PROMPT_AIRCRAFT
     prompt = f"Query: {query}\nIntent: {intent}\n\nGenerate the execution plan."
 
     try:
         response = llm.complete(
             prompt=prompt,
-            system=_SYSTEM_PROMPT,
+            system=system_prompt,
             json_mode=True,
             max_tokens=1024,
         )
@@ -90,10 +137,10 @@ def generate_plan(
 
     except Exception as exc:
         logger.warning("Plan generation failed — using fallback plan", extra={"error": str(exc)})
-        return _fallback_plan(query, intent)
+        return _fallback_plan(query, intent, domain)
 
 
-def _fallback_plan(query: str, intent: str) -> dict[str, Any]:
+def _fallback_plan(query: str, intent: str, domain: str = "aircraft") -> dict[str, Any]:
     """Generate a safe fallback plan when the LLM fails."""
     steps: list[dict[str, Any]] = []
 
@@ -107,19 +154,28 @@ def _fallback_plan(query: str, intent: str) -> dict[str, Any]:
 
     if intent in ("sql_only", "hybrid"):
         n = len(steps) + 1
-        steps.append({
-            "step_number": n,
-            "description": "Query structured defect data for trends and counts",
-            "tool": "SQLQueryTool",
-            "tool_inputs": {"named_query": "defect_counts_by_product", "params": {"days": 90}},
-        })
+        if domain == "medical":
+            steps.append({
+                "step_number": n,
+                "description": "Query structured clinical data for disease counts by specialty",
+                "tool": "SQLQueryTool",
+                "tool_inputs": {"named_query": "disease_counts_by_specialty", "params": {"days": 90}},
+            })
+        else:
+            steps.append({
+                "step_number": n,
+                "description": "Query structured defect data for trends and counts",
+                "tool": "SQLQueryTool",
+                "tool_inputs": {"named_query": "defect_counts_by_product", "params": {"days": 90}},
+            })
 
     if intent == "compute":
+        named = "disease_severity_distribution" if domain == "medical" else "severity_distribution"
         steps.append({
             "step_number": 1,
             "description": "Retrieve data for computation",
             "tool": "SQLQueryTool",
-            "tool_inputs": {"named_query": "severity_distribution"},
+            "tool_inputs": {"named_query": named},
         })
         steps.append({
             "step_number": 2,

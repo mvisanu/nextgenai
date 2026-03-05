@@ -161,7 +161,7 @@ class AgentOrchestrator:
 
         # ------------------------------------------------------------------ PLAN
         logger.info("State: PLAN", extra={"run_id": run_id, "intent": intent})
-        plan = generate_plan(query, intent, self.llm)
+        plan = generate_plan(query, intent, self.llm, domain=domain)
         plan_steps = plan.get("steps", [])
         plan_text = plan.get("plan_text", "")
 
@@ -199,6 +199,19 @@ class AgentOrchestrator:
 
                 elif tool_name == "SQLQueryTool":
                     named = tool_inputs.get("named_query")
+                    if not named and tool_inputs.get("sql"):
+                        # LLM generated raw SQL — substitute a safe named query to prevent
+                        # hallucinated table/column names from reaching the database.
+                        named = (
+                            "disease_counts_by_specialty"
+                            if domain == "medical"
+                            else "defect_counts_by_product"
+                        )
+                        logger.warning(
+                            "Raw SQL from LLM replaced with named query",
+                            extra={"original_sql": tool_inputs["sql"][:200], "named": named},
+                        )
+                        tool_inputs = {"named_query": named, "params": {"days": 90}}
                     if named:
                         params = tool_inputs.get("params", {})
                         output = self._sql_tool.run_named(named, params)
