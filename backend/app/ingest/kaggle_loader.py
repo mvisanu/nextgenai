@@ -17,7 +17,7 @@ from backend.app.observability.logging import get_logger
 logger = get_logger(__name__)
 
 # Seed CSV paths (relative to repo root — resolved at runtime)
-_REPO_ROOT = Path(__file__).resolve().parents[4]
+_REPO_ROOT = Path(__file__).resolve().parents[3]
 SEED_DIR = _REPO_ROOT / "demo" / "seed_sql"
 
 
