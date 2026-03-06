@@ -124,8 +124,8 @@ class AgentOrchestrator:
         max_steps: int = MAX_STEPS,
         tool_timeout_seconds: int = TOOL_TIMEOUT_SECONDS,
     ) -> None:
-        self.llm = llm or get_fast_llm_client()      # Haiku — all steps including synthesis
-        self._fast_llm = get_fast_llm_client()       # Haiku — classify, plan, verify
+        self.llm = llm or get_llm_client()            # Sonnet — hybrid/compute synthesis
+        self._fast_llm = get_fast_llm_client()       # Haiku — classify, plan, verify, simple synthesis
         self.max_steps = max_steps
         self.tool_timeout_seconds = tool_timeout_seconds
 
@@ -320,9 +320,11 @@ class AgentOrchestrator:
         )
 
         system_prompt = _SYNTHESIS_SYSTEM_MEDICAL if domain == "medical" else _SYNTHESIS_SYSTEM_AIRCRAFT
+        # Haiku for simple vector/sql queries; Sonnet for hybrid/compute (multi-source reasoning)
+        synthesis_llm = self.llm if intent in ("hybrid", "compute") else self._fast_llm
 
         try:
-            synthesis_response = self.llm.complete(
+            synthesis_response = synthesis_llm.complete(
                 prompt=synthesis_prompt,
                 system=system_prompt,
                 json_mode=True,

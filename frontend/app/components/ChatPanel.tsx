@@ -278,6 +278,50 @@ export default function ChatPanel() {
                     ? <AnswerWithCitations answer={msg.content} claims={msg.response.claims} onCitationClick={handleCitationClick} />
                     : <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.93rem", color: "hsl(var(--text-primary))", lineHeight: "1.6" }}>{msg.content}</p>
                   }
+                  {msg.response?.claims?.length > 0 && (
+                    <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "5px" }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "0.55rem", letterSpacing: "0.14em", color: "hsl(var(--text-dim))" }}>
+                        CLAIM CONFIDENCE
+                      </span>
+                      {msg.response.claims.map((claim, i) => {
+                        const pct = Math.round(claim.confidence * 100);
+                        const colour = claim.confidence >= 0.8
+                          ? "var(--col-green)"
+                          : claim.confidence >= 0.5
+                          ? "var(--col-amber)"
+                          : "var(--col-red)";
+                        return (
+                          <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                            <span style={{
+                              fontFamily: "var(--font-display)", fontSize: "0.6rem", fontWeight: 700,
+                              letterSpacing: "0.08em", color: `hsl(${colour})`,
+                              minWidth: "2.8rem", textAlign: "right",
+                            }}>
+                              {(claim.confidence).toFixed(2)}
+                            </span>
+                            <div style={{ flex: 1, height: "4px", backgroundColor: "hsl(var(--border-base))", borderRadius: "2px", overflow: "hidden" }}>
+                              <div style={{
+                                width: `${pct}%`, height: "100%",
+                                backgroundColor: `hsl(${colour})`,
+                                borderRadius: "2px",
+                                transition: "width 0.4s ease",
+                              }} />
+                            </div>
+                            <span style={{
+                              fontFamily: "var(--font-mono)", fontSize: "0.7rem",
+                              color: "hsl(var(--text-secondary))",
+                              flex: 3,
+                              overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
+                            }}
+                              title={claim.text}
+                            >
+                              [{i + 1}] {claim.text}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               )}
             </div>
