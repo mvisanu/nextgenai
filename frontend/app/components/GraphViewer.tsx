@@ -433,20 +433,17 @@ export default function GraphViewer() {
   const hasRealGraph = (runData?.graph_path?.nodes?.length ?? 0) > 0;
   const graphPath = hasRealGraph ? runData!.graph_path : (isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH);
   const isMockGraph = !hasRealGraph;
-  const prevPathRef = React.useRef<typeof graphPath>(undefined);
-
+  // Re-apply layout whenever graphPath changes OR when rfInstance becomes
+  // available (ReactFlow measures node dimensions on mount; edges can only
+  // be drawn after that measurement, so we must set edges again then).
   React.useEffect(() => {
     if (!graphPath) return;
-    if (graphPath === prevPathRef.current) return;
-    prevPathRef.current = graphPath;
-
     const { rfNodes, rfEdges } = computeLayout(graphPath.nodes, graphPath.edges);
     setNodes(rfNodes);
     setEdges(rfEdges);
-
-    setTimeout(() => {
-      rfInstance?.fitView({ padding: 0.2 });
-    }, 100);
+    if (rfInstance) {
+      setTimeout(() => rfInstance.fitView({ padding: 0.2 }), 100);
+    }
   }, [graphPath, rfInstance, setNodes, setEdges]);
 
   const onInit: OnInit<Node<NodeData>, Edge> = useCallback((instance) => {
