@@ -25,7 +25,7 @@ import {
   type NodeProps,
   type ReactFlowInstance,
 } from "@xyflow/react";
-import "@xyflow/react/dist/style.css";
+// Note: @xyflow/react/dist/style.css is imported globally in layout.tsx
 
 import {
   Popover,
@@ -267,27 +267,30 @@ function computeLayout(
     })),
   ];
 
-  const rfEdges: Edge[] = graphEdges.map((e) => ({
-    id: e.id,
-    source: e.from_node,
-    target: e.to_node,
-    label: e.weight !== null ? `${e.type} (${e.weight.toFixed(2)})` : e.type,
-    style: {
-      stroke: EDGE_COLOURS[e.type],
-      strokeWidth: 1.5,
-      filter: `drop-shadow(0 0 3px ${EDGE_COLOURS[e.type]}88)`,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: EDGE_COLOURS[e.type],
-    },
-    labelStyle: {
-      fontFamily: "var(--font-mono, monospace)",
-      fontSize: 10,
-      fill: "#6b7e95",
-    },
-    labelBgStyle: { fill: "#0c1117", fillOpacity: 0.85 },
-  }));
+  const rfEdges: Edge[] = graphEdges.map((e) => {
+    const colour = EDGE_COLOURS[e.type] ?? "#4f93f4";
+    return {
+      id: e.id,
+      source: e.from_node,
+      target: e.to_node,
+      type: "smoothstep",
+      label: e.weight !== null ? `${e.type} (${e.weight.toFixed(2)})` : e.type,
+      style: {
+        stroke: colour,
+        strokeWidth: 2,
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: colour,
+      },
+      labelStyle: {
+        fontFamily: "var(--font-mono, monospace)",
+        fontSize: 10,
+        fill: "#6b7e95",
+      },
+      labelBgStyle: { fill: "#0c1117", fillOpacity: 0.85 },
+    };
+  });
 
   return { rfNodes, rfEdges };
 }

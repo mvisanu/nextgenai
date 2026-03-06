@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Orbitron, Rajdhani, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
+import "@xyflow/react/dist/style.css";
 import { RunProvider } from "./lib/context";
 import { ThemeProvider } from "./lib/theme";
 import { DomainProvider } from "./lib/domain-context";
