@@ -157,7 +157,7 @@ class AgentOrchestrator:
 
         # ------------------------------------------------------------------ CLASSIFY
         logger.info("State: CLASSIFY", extra={"run_id": run_id})
-        intent = classify_intent(query, self._fast_llm)
+        intent = classify_intent(query, self._fast_llm, domain=domain)
 
         # ------------------------------------------------------------------ PLAN
         logger.info("State: PLAN", extra={"run_id": run_id, "intent": intent})
