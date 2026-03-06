@@ -271,10 +271,19 @@ function computeLayout(
   const chunkNodes  = graphNodes.filter((n) => n.type === "chunk");
 
   const ENTITY_SPACING_X = 120;
-  const CHUNK_SPACING_X  = 160;
+  const CHUNK_SPACING_X  = 180;
+  const CHUNK_SPACING_Y  = 120;
   const ENTITY_ROW_Y     = 60;
   const CHUNK_ROW_Y      = 280;
   const CENTER_X         = 500;
+
+  // When there are no entity nodes (synthetic graph from vector hits), arrange
+  // chunk nodes in a grid instead of a single long horizontal row.
+  const chunkCols = entityNodes.length === 0
+    ? Math.ceil(Math.sqrt(chunkNodes.length))
+    : chunkNodes.length;
+  const gridWidth  = chunkCols * CHUNK_SPACING_X;
+  const gridStartY = entityNodes.length === 0 ? 40 : CHUNK_ROW_Y;
 
   const rfNodes: Node<NodeData>[] = [
     ...entityNodes.map((n, i) => ({
@@ -295,12 +304,14 @@ function computeLayout(
       const chunkId = n.id.startsWith("chunk:") ? n.id.slice("chunk:".length) : n.id;
       const hit = hitByChunkId?.get(chunkId);
       const rawLabel = hit?.excerpt ?? n.label ?? n.id;
+      const col = i % chunkCols;
+      const row = Math.floor(i / chunkCols);
       return {
         id: n.id,
         type: "chunk" as const,
         position: {
-          x: CENTER_X + i * CHUNK_SPACING_X - (chunkNodes.length * CHUNK_SPACING_X) / 2,
-          y: CHUNK_ROW_Y,
+          x: CENTER_X + col * CHUNK_SPACING_X - gridWidth / 2,
+          y: gridStartY + row * CHUNK_SPACING_Y,
         },
         data: {
           label: rawLabel.slice(0, 60),
@@ -310,6 +321,7 @@ function computeLayout(
       };
     }),
   ];
+
 
   const rfEdges: Edge[] = graphEdges.map((e) => {
     const colour = EDGE_COLOURS[e.type] ?? "#4f93f4";
