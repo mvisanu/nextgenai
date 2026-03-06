@@ -270,7 +270,7 @@ This is an **environment/test-infrastructure bug** — the production code is co
 - **Severity:** High (frontend warm-up ping may be cached by CDN or browser, defeating the Render cold-start mitigation)
 - **Failing Test:** T-IMPL-09 (code inspection)
 - **Description:** T-09 AC requires the `/healthz` endpoint to return `Cache-Control: no-store`. The endpoint is defined in `backend/app/api/docs.py` and returns a `HealthResponse` Pydantic model directly. No custom headers are set. The TASKS2.md states this was a Phase 1 task to be applied in `docs.py`.
-- **Steps to Reproduce:** `curl -I https://nextai-backend.onrender.com/healthz | grep -i cache-control` — expected: `cache-control: no-store`, actual: header absent
+- **Steps to Reproduce:** `curl -I https://nextgenai-5bf8.onrender.com/healthz | grep -i cache-control` — expected: `cache-control: no-store`, actual: header absent
 - **Expected:** `Cache-Control: no-store` in response headers
 - **Actual:** No Cache-Control header
 - **Suggested Fix:** Change the `/healthz` handler to return `ORJSONResponse({"status": ..., "db": ..., "version": ...}, headers={"Cache-Control": "no-store"})` instead of returning the Pydantic model directly.

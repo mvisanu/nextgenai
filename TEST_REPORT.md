@@ -971,19 +971,19 @@ New test file written: `backend/tests/test_comprehensive_qa.py` (100 tests)
 ### P0 — CRITICAL — BUG-2025-001: Production Backend Completely Down
 
 **Failing Tests**: Live smoke tests T-LIVE-01 through T-LIVE-07
-**Description**: `https://nextai-backend.onrender.com` returns HTTP 404 (HTML, from Render proxy) for every route: `/`, `/healthz`, `/query`, `/ingest`, `/api/docs`. This is not a FastAPI 404 — it is Render's own proxy returning 404, indicating the application container is not running.
+**Description**: `https://nextgenai-5bf8.onrender.com` returns HTTP 404 (HTML, from Render proxy) for every route: `/`, `/healthz`, `/query`, `/ingest`, `/api/docs`. This is not a FastAPI 404 — it is Render's own proxy returning 404, indicating the application container is not running.
 
 The Vercel frontend (`https://nextgenai-seven.vercel.app`) returns HTTP 200 and is accessible, but is non-functional without the backend.
 
 **Evidence**:
 ```
-curl https://nextai-backend.onrender.com/healthz
+curl https://nextgenai-5bf8.onrender.com/healthz
 < HTTP/2 404
 < content-type: text/html; charset=utf-8
 <!doctype html><html lang=en><title>404 Not Found</title>...
 ```
 
-**Reproduction**: `curl -s https://nextai-backend.onrender.com/healthz`
+**Reproduction**: `curl -s https://nextgenai-5bf8.onrender.com/healthz`
 **Expected**: `{"status":"ok"|"degraded","db":true|false,"version":"1.0.0"}`
 **Actual**: Render HTML 404 page
 
@@ -1075,13 +1075,13 @@ Result: PASS
 
 | Test | URL | Expected | Actual | Result |
 |---|---|---|---|---|
-| GET /healthz | https://nextai-backend.onrender.com/healthz | 200 JSON | 404 HTML | FAIL |
-| GET / | https://nextai-backend.onrender.com/ | 200 JSON | 404 HTML | FAIL |
-| POST /query valid | https://nextai-backend.onrender.com/query | 200 JSON | 404 HTML | FAIL |
-| POST /query SQL inject | https://nextai-backend.onrender.com/query | 422 or safe 200 | 404 HTML | FAIL |
-| POST /query empty | https://nextai-backend.onrender.com/query | 422 | 404 HTML | FAIL |
-| POST /ingest | https://nextai-backend.onrender.com/ingest | 202 | 404 HTML | FAIL |
-| GET /api/docs | https://nextai-backend.onrender.com/api/docs | 200 HTML | 404 HTML | FAIL |
+| GET /healthz | https://nextgenai-5bf8.onrender.com/healthz | 200 JSON | 404 HTML | FAIL |
+| GET / | https://nextgenai-5bf8.onrender.com/ | 200 JSON | 404 HTML | FAIL |
+| POST /query valid | https://nextgenai-5bf8.onrender.com/query | 200 JSON | 404 HTML | FAIL |
+| POST /query SQL inject | https://nextgenai-5bf8.onrender.com/query | 422 or safe 200 | 404 HTML | FAIL |
+| POST /query empty | https://nextgenai-5bf8.onrender.com/query | 422 | 404 HTML | FAIL |
+| POST /ingest | https://nextgenai-5bf8.onrender.com/ingest | 202 | 404 HTML | FAIL |
+| GET /api/docs | https://nextgenai-5bf8.onrender.com/api/docs | 200 HTML | 404 HTML | FAIL |
 | GET frontend | https://nextgenai-seven.vercel.app | 200 | 200 | PASS |
 
 ---

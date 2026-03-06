@@ -620,7 +620,7 @@ class AgentRunResult:
 ## Typed API Contracts
 
 **Base URL:**
-- Production: `https://nextai-backend.onrender.com`
+- Production: `https://nextgenai-5bf8.onrender.com`
 - Local: `http://localhost:8000`
 
 **API docs:** `GET /api/docs` (Swagger UI), `GET /api/redoc`

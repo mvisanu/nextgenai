@@ -53,7 +53,7 @@ services:
 | No `CORS_ORIGINS` env var defined in render.yaml | Low risk | Add if additional frontend origins are needed |
 | No `LLM_MODEL` env var | OK | Default `claude-sonnet-4-6` is used; override here if model changes |
 
-**Render service URL:** `https://nextai-backend.onrender.com`
+**Render service URL:** `https://nextgenai-5bf8.onrender.com`
 
 ---
 
@@ -104,14 +104,14 @@ Run these checks immediately after the new container is live. Render shows deplo
 
 **a) Health check:**
 ```bash
-curl -i https://nextai-backend.onrender.com/healthz
+curl -i https://nextgenai-5bf8.onrender.com/healthz
 # Expected: HTTP 200, body {"status":"ok","db":true,"version":"1.0.0"}
 # Expected header: cache-control: no-store  (T-09)
 ```
 
 **b) GZip compression (T-08):**
 ```bash
-curl -si -X POST https://nextai-backend.onrender.com/query \
+curl -si -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -H "Accept-Encoding: gzip" \
   -d '{"query": "Find hydraulic incidents", "domain": "aircraft"}' \
@@ -121,7 +121,7 @@ curl -si -X POST https://nextai-backend.onrender.com/query \
 
 **c) ORJSONResponse (T-07):**
 ```bash
-curl -si https://nextai-backend.onrender.com/healthz | grep -i "content-type"
+curl -si https://nextgenai-5bf8.onrender.com/healthz | grep -i "content-type"
 # Expected: content-type: application/json
 # (ORJSONResponse still returns application/json content-type — no change visible externally)
 ```
@@ -129,10 +129,10 @@ curl -si https://nextai-backend.onrender.com/healthz | grep -i "content-type"
 **d) Concurrent request test (T-01):**
 ```bash
 # Fire two queries simultaneously; confirm both complete in ~parallel, not serially
-curl -s -X POST https://nextai-backend.onrender.com/query \
+curl -s -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Find hydraulic failures", "domain": "aircraft"}' &
-curl -s -X POST https://nextai-backend.onrender.com/query \
+curl -s -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Show defect counts by product", "domain": "aircraft"}' &
 wait
@@ -333,7 +333,7 @@ git push origin main
 
 **Smoke test (T-11):**
 ```bash
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Find hydraulic incidents", "domain": "aircraft"}'
 # Expected: valid response with vector_hits. Confirm no "ivfflat" in Render logs.
@@ -401,7 +401,7 @@ git push origin main
 
 **Smoke test (T-13):**
 ```bash
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Find hydraulic incidents", "domain": "aircraft"}'
 # Expected: graph_path.nodes and graph_path.edges populated, same as before.
@@ -489,7 +489,7 @@ git push origin main
 **Vector search quality check (T-10/T-11):**
 ```bash
 # Query that returns vector hits — confirm scores are in [0, 1]
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "hydraulic actuator crack", "domain": "aircraft"}' \
   | python3 -c "
@@ -505,7 +505,7 @@ for h in hits[:3]:
 
 **Graph expansion check (T-12/T-13):**
 ```bash
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "hydraulic system defects", "domain": "aircraft"}' \
   | python3 -c "
@@ -556,7 +556,7 @@ pip install httpie
 
 # Fire 5 concurrent requests
 for i in $(seq 1 5); do
-  http --timeout=60 POST https://nextai-backend.onrender.com/query \
+  http --timeout=60 POST https://nextgenai-5bf8.onrender.com/query \
     query="Find hydraulic incidents" domain=aircraft &
 done
 wait
@@ -578,10 +578,10 @@ wait
 
 ```bash
 # 1. Basic health
-curl https://nextai-backend.onrender.com/healthz
+curl https://nextgenai-5bf8.onrender.com/healthz
 
 # 2. Functional test — aircraft domain
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Show defect trends by product for last 90 days", "domain": "aircraft"}' \
   | python3 -c "
@@ -596,7 +596,7 @@ print('SQL rows:', len(r['evidence']['sql_rows']))
 "
 
 # 3. Medical domain
-curl -X POST https://nextai-backend.onrender.com/query \
+curl -X POST https://nextgenai-5bf8.onrender.com/query \
   -H "Content-Type: application/json" \
   -d '{"query": "Find cases with respiratory symptoms", "domain": "medical"}' \
   | python3 -c "

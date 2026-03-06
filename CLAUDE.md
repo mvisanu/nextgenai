@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Agentic manufacturing intelligence platform. A user submits a natural-language query; the agent classifies intent, plans a multi-step tool sequence, executes vector search / SQL / graph traversal / compute tools, and synthesises a cited response via Claude Sonnet 4.6.
 
-**Live:** https://nextgenai-seven.vercel.app | API: https://nextai-backend.onrender.com
+**Live:** https://nextgenai-seven.vercel.app | API: https://nextgenai-5bf8.onrender.com
 
 ## Stack
 

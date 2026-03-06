@@ -184,7 +184,7 @@ NEXT_PUBLIC_API_URL=http://backend:8000
 
 For Vercel:
 ```
-NEXT_PUBLIC_API_URL=https://nextai-backend.onrender.com
+NEXT_PUBLIC_API_URL=https://nextgenai-5bf8.onrender.com
 ```
 
 ---
@@ -237,7 +237,7 @@ docker compose up --build
 3. Vercel auto-detects Next.js in `frontend/`.
 4. Set the **Root Directory** to `frontend/` in Vercel project settings.
 5. Add environment variable:
-   - `NEXT_PUBLIC_API_URL` = `https://nextai-backend.onrender.com` (your Render backend URL)
+   - `NEXT_PUBLIC_API_URL` = `https://nextgenai-5bf8.onrender.com` (your Render backend URL)
 6. Click **Deploy**.
 
 Subsequent `git push` to `main` triggers automatic Vercel redeploys.

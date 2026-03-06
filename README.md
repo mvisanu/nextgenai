@@ -3,7 +3,7 @@
 Dual-domain agentic intelligence platform. Ask natural-language questions over clinical case reports and aircraft/manufacturing datasets — vector search, SQL, knowledge-graph traversal, and Claude-synthesised cited answers in one industrial-grade UI.
 
 **Live demo:** https://nextgenai-seven.vercel.app
-**API:** https://nextai-backend.onrender.com/api/docs
+**API:** https://nextgenai-5bf8.onrender.com/api/docs
 
 > The Render backend runs on a free tier and spins down after 15 minutes of inactivity. The first query on a cold instance may take ~60 seconds. The frontend shows a "BACKEND WARMING UP" banner while it reconnects.
 
@@ -203,7 +203,7 @@ Connect the GitHub repo to Vercel. Required environment variable:
 
 | Variable | Value |
 |---|---|
-| `NEXT_PUBLIC_API_URL` | `https://nextai-backend.onrender.com` |
+| `NEXT_PUBLIC_API_URL` | `https://nextgenai-5bf8.onrender.com` |
 
 ---
 
