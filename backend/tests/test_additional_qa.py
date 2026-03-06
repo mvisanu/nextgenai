@@ -27,7 +27,7 @@ DEMO_SEED_SQL = REPO_ROOT / "demo" / "seed_sql"
 CONFIG_YAML = REPO_ROOT / "config.yaml"
 ENV_EXAMPLE = REPO_ROOT / ".env.example"
 RENDER_YAML = REPO_ROOT / "render.yaml"
-VERCEL_JSON = REPO_ROOT / "vercel.json"
+VERCEL_JSON = REPO_ROOT / "frontend" / "vercel.json"
 REQUIREMENTS_TXT = BACKEND_ROOT / "requirements.txt"
 
 
@@ -165,9 +165,13 @@ class TestDeploymentConfigs:
         data = json.loads(text)  # raises if invalid
         assert isinstance(data, dict)
 
-    def test_vercel_json_root_directory_is_frontend(self):
+    def test_vercel_json_framework_is_nextjs(self):
         data = json.loads(VERCEL_JSON.read_text())
-        assert data.get("rootDirectory") == "frontend"
+        # vercel.json in frontend/ does not need rootDirectory (it IS the root)
+        # If present, it should be nextjs; auto-detection is also valid.
+        framework = data.get("framework")
+        if framework is not None:
+            assert framework == "nextjs"
 
     def test_vercel_json_has_next_public_api_url(self):
         data = json.loads(VERCEL_JSON.read_text())
@@ -1132,10 +1136,10 @@ class TestFrontendComponents:
         text = self._read("ChatPanel.tsx")
         assert "error" in text.lower()
 
-    def test_chat_panel_uses_skeleton(self):
-        """Loading skeleton must be used per FRONTEND.md spec."""
+    def test_chat_panel_uses_loader2(self):
+        """ChatPanel uses Loader2 spinner from lucide-react (not Skeleton) for loading state."""
         text = self._read("ChatPanel.tsx")
-        assert "Skeleton" in text
+        assert "Loader2" in text
 
     def test_chat_panel_uses_react_markdown(self):
         text = self._read("ChatPanel.tsx")

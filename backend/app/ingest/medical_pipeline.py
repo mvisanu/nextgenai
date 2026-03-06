@@ -22,6 +22,7 @@ import pandas as pd
 from sqlalchemy import text
 
 from backend.app.db.session import get_sync_session
+from backend.app.graph.builder import build_graph
 from backend.app.observability.logging import get_logger
 from backend.app.rag.chunker import chunk_text
 from backend.app.rag.embeddings import EmbeddingModel
@@ -649,6 +650,8 @@ def run_medical_ingest_pipeline(
         "cases_loaded": 0,
         "disease_records_loaded": 0,
         "chunks_embedded": 0,
+        "graph_nodes": 0,
+        "graph_edges": 0,
         "status": "running",
     }
 
@@ -671,6 +674,13 @@ def run_medical_ingest_pipeline(
         with get_sync_session() as session:
             summary["chunks_embedded"] = _embed_medical_cases(session)
         logger.info("Medical embeddings stored", extra={"count": summary["chunks_embedded"]})
+
+        # Phase 4: build knowledge graph from medical embeddings
+        with get_sync_session() as session:
+            graph_result = build_graph(session, domain="medical")
+        summary["graph_nodes"] = graph_result["nodes"]
+        summary["graph_edges"] = graph_result["edges"]
+        logger.info("Medical knowledge graph built", extra=graph_result)
 
         summary["status"] = "complete"
         logger.info("Medical ingest pipeline complete", extra=summary)

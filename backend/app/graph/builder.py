@@ -130,9 +130,9 @@ def extract_entities(text: str) -> list[dict[str, Any]]:
 # ---------------------------------------------------------------------------
 
 
-def build_graph(session, edge_similarity_threshold: float = 0.80) -> dict[str, int]:
+def build_graph(session, edge_similarity_threshold: float = 0.80, domain: str = "aircraft") -> dict[str, int]:
     """
-    Build the knowledge graph from incident_embeddings.
+    Build the knowledge graph from incident_embeddings (aircraft) or medical_embeddings (medical).
 
     For each chunk:
       1. Create a chunk node in graph_node.
@@ -148,14 +148,16 @@ def build_graph(session, edge_similarity_threshold: float = 0.80) -> dict[str, i
     Returns:
         {"nodes": total_node_count, "edges": total_edge_count}
     """
-    logger.info("Building knowledge graph")
+    logger.info("Building knowledge graph", extra={"domain": domain})
+
+    # Select source table based on domain
+    if domain == "medical":
+        embed_sql = "SELECT embed_id, case_id AS incident_id, chunk_text, embedding FROM medical_embeddings WHERE embedding IS NOT NULL"
+    else:
+        embed_sql = "SELECT embed_id, incident_id, chunk_text, embedding FROM incident_embeddings WHERE embedding IS NOT NULL"
 
     # Fetch all embeddings
-    result = session.execute(text(
-        "SELECT embed_id, incident_id, chunk_text, embedding "
-        "FROM incident_embeddings "
-        "WHERE embedding IS NOT NULL"
-    ))
+    result = session.execute(text(embed_sql))
     embeddings_data = result.fetchall()
 
     if not embeddings_data:

@@ -429,6 +429,7 @@ function SchemaTable({ columns, accentVar }: { columns: SchemaColumn[]; accentVa
 
 function DatasetCard({ ds, animDelay }: { ds: DatasetCard; animDelay: number }) {
   const [snippetOpen, setSnippetOpen] = useState(false);
+  const [schemaOpen, setSchemaOpen] = useState(false);
 
   return (
     <div
@@ -570,21 +571,47 @@ function DatasetCard({ ds, animDelay }: { ds: DatasetCard; animDelay: number }) 
 
         {/* Schema table */}
         <div>
-          <p
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "0.58rem",
-              fontWeight: 700,
-              letterSpacing: "0.14em",
-              color: "hsl(var(--text-dim))",
-              marginBottom: "8px",
-            }}
-          >
-            SCHEMA // COLUMN REFERENCE
-          </p>
-          <div style={{ border: "1px solid hsl(var(--border-base))", borderRadius: "2px", overflow: "hidden", backgroundColor: "hsl(var(--bg-void) / 0.5)" }}>
-            <SchemaTable columns={ds.schema} accentVar={ds.accentVar} />
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "8px" }}>
+            <p
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "0.58rem",
+                fontWeight: 700,
+                letterSpacing: "0.14em",
+                color: "hsl(var(--text-dim))",
+                margin: 0,
+              }}
+            >
+              SCHEMA // COLUMN REFERENCE
+            </p>
+            <button
+              onClick={() => setSchemaOpen((v) => !v)}
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                padding: "3px 8px",
+                border: `1px solid hsl(${ds.accentVar} / 0.4)`,
+                borderRadius: "2px",
+                backgroundColor: "transparent",
+                color: `hsl(${ds.accentVar})`,
+                cursor: "pointer",
+                fontFamily: "var(--font-display)",
+                fontSize: "0.55rem",
+                fontWeight: 700,
+                letterSpacing: "0.1em",
+                transition: "background 0.15s",
+              }}
+            >
+              {schemaOpen ? <ChevronUp size={10} /> : <ChevronDown size={10} />}
+              {schemaOpen ? "HIDE SCHEMA" : "SHOW SCHEMA"}
+            </button>
           </div>
+          {schemaOpen && (
+            <div style={{ border: "1px solid hsl(var(--border-base))", borderRadius: "2px", overflow: "hidden", backgroundColor: "hsl(var(--bg-void) / 0.5)" }}>
+              <SchemaTable columns={ds.schema} accentVar={ds.accentVar} />
+            </div>
+          )}
         </div>
 
         {/* Why useful */}

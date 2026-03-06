@@ -873,3 +873,180 @@ All 241 tests pass. The 9 previously failing tests are now green. No regressions
 | `demo/seed_sql/defects_supplemental.csv` | BUG-004 | Expanded from 25 to 52 data rows |
 | `demo/seed_sql/maintenance_logs.csv` | BUG-004 | Expanded from 40 to 55 data rows |
 | `TEST_REPORT.md` | All | Updated bug statuses to RESOLVED, added fix details |
+
+---
+
+---
+
+# 2026-03-05 Comprehensive QA Run
+
+## Summary
+
+| Category | Total | Passed | Failed | Skipped / Blocked |
+|---|---|---|---|---|
+| Existing backend unit tests | 241 | 236 | 5 | 2 (integration, deselected) |
+| New comprehensive QA tests (new file) | 100 | 100 | 0 | 0 |
+| **Total backend** | **341** | **336** | **5** | **2** |
+| Frontend TypeScript check | 1 | 1 | 0 | 0 |
+| Live API smoke tests | 8 | 1 | 7 | 0 |
+| **Grand total** | **350** | **338** | **12** | **2** |
+
+New test file written: `backend/tests/test_comprehensive_qa.py` (100 tests)
+
+---
+
+## New Tests Written (2026-03-05)
+
+| Class | Count | Area Covered |
+|---|---|---|
+| TestCorsConfiguration | 5 | CORS wildcard safety, origin list, env var parsing |
+| TestSqlGuardrailBypassAttempts | 7 | Tab/newline escapes, unicode lookalikes, all 8 named queries |
+| TestComputeToolSecurity | 12 | 6 more blocked modules, stdev, json/re, infinite-loop timeout |
+| TestQueryRequestDomainField | 5 | Domain pattern: aircraft/medical only |
+| TestQueryRequestEdgeCases | 8 | Unicode, emoji, whitespace, boundary lengths, filters |
+| TestApiEndpoints | 15 | healthz shape/status/version, 422 cases, 202 ingest, OpenAPI routes |
+| TestLLMClientEnvironment | 2 | EnvironmentError when ANTHROPIC_API_KEY missing |
+| TestVerifier | 8 | Empty claims, fallback confidence, clamping, mock LLM path |
+| TestGraphExpanderEdgeCases | 2 | Empty seed list, k=0 |
+| TestRequestSizeLimits | 3 | QUERY_MAX_BYTES=1MB, INGEST_MAX_BYTES=10MB |
+| TestVercelJsonLocation | 6 | vercel.json in frontend/, framework=nextjs, NEXT_PUBLIC_API_URL |
+| TestChatPanelLoadingIndicator | 4 | Loader2 present, Skeleton absent, isLoading, WifiOff |
+| TestApiClientGetRequests | 3 | No Content-Type on GET, apiFetch conditional headers |
+| TestConcurrentRequests | 2 | Thread-safe guardrail, thread-safe chunker (20 threads) |
+| TestProductionUrlConfiguration | 4 | render.yaml, vercel.json API URL, CORS includes Vercel domain |
+| TestNamedQuerySubstitution | 3 | Days placeholder, int-cast injection prevention, medical query keys |
+| TestOrchestrator | 7 | _build_evidence_context, _fallback_answer, _normalise_result |
+| TestDbSession | 1 | check_db_health returns bool |
+
+---
+
+## Bugs Found (2026-03-05 Run) — Prioritised
+
+### P0 — CRITICAL — BUG-2025-001: Production Backend Completely Down
+
+**Failing Tests**: Live smoke tests T-LIVE-01 through T-LIVE-07
+**Description**: `https://nextai-backend.onrender.com` returns HTTP 404 (HTML, from Render proxy) for every route: `/`, `/healthz`, `/query`, `/ingest`, `/api/docs`. This is not a FastAPI 404 — it is Render's own proxy returning 404, indicating the application container is not running.
+
+The Vercel frontend (`https://nextgenai-seven.vercel.app`) returns HTTP 200 and is accessible, but is non-functional without the backend.
+
+**Evidence**:
+```
+curl https://nextai-backend.onrender.com/healthz
+< HTTP/2 404
+< content-type: text/html; charset=utf-8
+<!doctype html><html lang=en><title>404 Not Found</title>...
+```
+
+**Reproduction**: `curl -s https://nextai-backend.onrender.com/healthz`
+**Expected**: `{"status":"ok"|"degraded","db":true|false,"version":"1.0.0"}`
+**Actual**: Render HTML 404 page
+
+**Suggested Fix**:
+1. Log in to Render dashboard and check if service `nextai-backend` is suspended.
+2. Verify env vars `PG_DSN`, `DATABASE_URL`, `ANTHROPIC_API_KEY` are set.
+3. Review Render deployment logs for Docker build/startup errors.
+4. Push to main to trigger autoDeploy (per render.yaml `autoDeploy: true`).
+5. Consider upgrading from free tier to prevent auto-suspension.
+
+---
+
+### P1 — HIGH — BUG-2025-002: Test Suite Looks for vercel.json at Wrong Path
+
+**Failing Tests**: TestDeploymentConfigs::test_vercel_json_exists (and 3 cascading failures)
+**Description**: `test_additional_qa.py` defines `VERCEL_JSON = REPO_ROOT / "vercel.json"` (repo root). The file actually lives at `frontend/vercel.json`. Four tests fail with FileNotFoundError.
+
+Additionally, the test `test_vercel_json_root_directory_is_frontend` expects `data["rootDirectory"] == "frontend"`, but the actual file contains only `{"framework": "nextjs", "env": {...}}` — no `rootDirectory` key.
+
+**Suggested Fix**: In `test_additional_qa.py` line 29:
+```python
+# Fix path:
+VERCEL_JSON = REPO_ROOT / "frontend" / "vercel.json"
+# Fix assertion (rootDirectory not set — use framework instead):
+assert data.get("framework") == "nextjs"
+```
+
+---
+
+### P2 — MEDIUM — BUG-2025-003: ChatPanel Uses Loader2 Spinner, Not Skeleton
+
+**Failing Test**: TestFrontendComponents::test_chat_panel_uses_skeleton
+**Description**: The test asserts `"Skeleton" in ChatPanel.tsx`. ChatPanel does not use shadcn `Skeleton`. It uses `Loader2` (lucide-react animated spinner) and `WifiOff` (offline indicator). The UX is acceptable, but the test expectation is wrong.
+
+**Suggested Fix**:
+```python
+# Update test:
+def test_chat_panel_has_loading_indicator(self):
+    text = self._read("ChatPanel.tsx")
+    assert "Loader2" in text, "ChatPanel must use Loader2 spinner"
+```
+
+---
+
+### P2 — MEDIUM — BUG-2025-004: Whitespace-Only Queries Pass Schema Validation
+
+**Failing Test**: None (documented by T-NEW-05-03)
+**Description**: `QueryRequest(query="   ")` succeeds because `min_length=3` counts characters, not non-whitespace characters. The agent receives a blank query, wastes an LLM call, and returns a degraded response.
+
+**Suggested Fix**: Add a Pydantic `field_validator`:
+```python
+@field_validator("query")
+@classmethod
+def query_must_not_be_blank(cls, v: str) -> str:
+    if not v.strip():
+        raise ValueError("query must not be blank or whitespace-only")
+    return v
+```
+
+---
+
+### P2 — MEDIUM — BUG-2025-005: VectorSearchTool Timeout Not Enforced on Windows
+
+**Failing Test**: None (static code analysis)
+**Description**: `VectorSearchTool._timeout()` uses `signal.SIGALRM` which is unavailable on Windows (no-op). Development and CI on Windows cannot test or enforce the 30-second tool timeout. `PythonComputeTool` already uses the correct cross-platform approach with `threading.Event` + `thread.join(timeout=N)`.
+
+**Suggested Fix**: Refactor `VectorSearchTool._timeout()` to use `concurrent.futures.ThreadPoolExecutor` with a timeout parameter, matching the `PythonComputeTool` pattern.
+
+---
+
+### P3 — LOW — BUG-2025-006: pythonjsonlogger Deprecation Warning in All Test Runs
+
+**Description**: Every test run emits `DeprecationWarning: pythonjsonlogger.jsonlogger has been moved to pythonjsonlogger.json`. Update the import in `backend/app/observability/logging.py`.
+
+---
+
+## Frontend TypeScript Check (2026-03-05)
+
+```bash
+cd frontend && npx tsc --noEmit
+# Exit code: 0 — zero errors
+```
+
+Result: PASS
+
+---
+
+## Live Smoke Tests (2026-03-05)
+
+| Test | URL | Expected | Actual | Result |
+|---|---|---|---|---|
+| GET /healthz | https://nextai-backend.onrender.com/healthz | 200 JSON | 404 HTML | FAIL |
+| GET / | https://nextai-backend.onrender.com/ | 200 JSON | 404 HTML | FAIL |
+| POST /query valid | https://nextai-backend.onrender.com/query | 200 JSON | 404 HTML | FAIL |
+| POST /query SQL inject | https://nextai-backend.onrender.com/query | 422 or safe 200 | 404 HTML | FAIL |
+| POST /query empty | https://nextai-backend.onrender.com/query | 422 | 404 HTML | FAIL |
+| POST /ingest | https://nextai-backend.onrender.com/ingest | 202 | 404 HTML | FAIL |
+| GET /api/docs | https://nextai-backend.onrender.com/api/docs | 200 HTML | 404 HTML | FAIL |
+| GET frontend | https://nextgenai-seven.vercel.app | 200 | 200 | PASS |
+
+---
+
+## Recommendations (2026-03-05)
+
+1. **Urgent**: Restore Render backend deployment — see BUG-2025-001. The frontend is live but the agent is completely unavailable.
+2. Fix `VERCEL_JSON` path in existing tests — BUG-2025-002 (4-line fix).
+3. Fix Skeleton test to check `Loader2` — BUG-2025-003 (1-line fix).
+4. Add blank-query validation to `QueryRequest` — BUG-2025-004.
+5. Replace `signal.SIGALRM` in `VectorSearchTool` with threading-based timeout — BUG-2025-005.
+6. Update `pythonjsonlogger` import to suppress deprecation warning — BUG-2025-006.
+7. Set up uptime monitoring on `GET /healthz` to catch future outages automatically.
+8. Consider adding `pytest-xdist` for parallel test execution (current suite: 178s).
