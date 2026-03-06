@@ -34,6 +34,7 @@ export interface VectorHit {
     event_date: string | null;
     char_start: number | null;
     char_end: number | null;
+    domain?: string | null;
   };
 }
 
