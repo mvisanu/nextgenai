@@ -286,7 +286,7 @@ class AgentOrchestrator:
             seed_ids = [f"chunk:{h['chunk_id']}" for h in vector_hits]
             try:
                 with get_sync_session() as session:
-                    graph_result = expand_graph(session, seed_ids, k=2)
+                    graph_result = expand_graph(session, seed_ids, k=1)
                 graph_nodes = graph_result.get("nodes", [])
                 graph_edges = graph_result.get("edges", [])
             except Exception as exc:
@@ -377,8 +377,8 @@ class AgentOrchestrator:
                 "sql_rows": sql_rows,
             },
             graph_path={
-                "nodes": graph_nodes[:100],  # Limit for response size
-                "edges": graph_edges[:200],
+                "nodes": graph_nodes[:40],
+                "edges": graph_edges[:80],
             },
             run_summary={
                 "intent": intent,

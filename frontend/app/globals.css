@@ -386,6 +386,31 @@
    REACT FLOW OVERRIDES
 ══════════════════════════════════════════ */
 
+/* Critical: handles must be position:absolute so edges connect at node
+   boundaries. Without this (e.g. if dist/style.css fails to load in
+   production) handles render inline and edges draw at wrong coordinates. */
+.react-flow__handle {
+  position: absolute !important;
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: transparent !important;
+  border: none !important;
+  min-width: unset !important;
+  min-height: unset !important;
+}
+
+/* Edge SVG paths must have no fill so the stroke colour shows */
+.react-flow__edge-path,
+.react-flow__connection-path {
+  fill: none !important;
+}
+
+/* Ensure the edge SVG layer is visible */
+.react-flow__edges {
+  overflow: visible !important;
+}
+
 .react-flow__background {
   background-color: hsl(var(--bg-void)) !important;
 }
