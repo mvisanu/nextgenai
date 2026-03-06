@@ -283,7 +283,7 @@ export default function ChatPanel() {
                       <span style={{ fontFamily: "var(--font-display)", fontSize: "0.55rem", letterSpacing: "0.14em", color: "hsl(var(--text-dim))" }}>
                         CLAIM CONFIDENCE
                       </span>
-                      {msg.response.claims.map((claim, i) => {
+                      {(msg.response?.claims ?? []).map((claim, i) => {
                         const pct = Math.round(claim.confidence * 100);
                         const colour = claim.confidence >= 0.8
                           ? "var(--col-green)"
