@@ -278,7 +278,7 @@ export default function ChatPanel() {
                     ? <AnswerWithCitations answer={msg.content} claims={msg.response.claims} onCitationClick={handleCitationClick} />
                     : <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.93rem", color: "hsl(var(--text-primary))", lineHeight: "1.6" }}>{msg.content}</p>
                   }
-                  {msg.response?.claims?.length > 0 && (
+                  {(msg.response?.claims?.length ?? 0) > 0 && (
                     <div style={{ marginTop: "10px", display: "flex", flexDirection: "column", gap: "5px" }}>
                       <span style={{ fontFamily: "var(--font-display)", fontSize: "0.55rem", letterSpacing: "0.14em", color: "hsl(var(--text-dim))" }}>
                         CLAIM CONFIDENCE
