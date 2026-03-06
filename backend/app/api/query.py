@@ -1,6 +1,10 @@
 """
 POST /query — run the agent orchestrator and return structured results.
 GET /runs/{run_id} — retrieve a previously stored agent run.
+
+T-17: orchestrator.run() is now natively async — run_in_threadpool is no longer
+needed. The route handler calls await orchestrator.run(...) directly.
+The sync run_in_threadpool import is retained as a comment for traceability.
 """
 from __future__ import annotations
 
@@ -11,7 +15,7 @@ from fastapi import APIRouter, HTTPException
 from sqlalchemy import text
 
 from backend.app.agent.orchestrator import AgentOrchestrator
-from backend.app.db.session import get_sync_session
+from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import QueryRequest, QueryResponse, RunRecord
 
@@ -44,7 +48,9 @@ async def run_query(body: QueryRequest) -> QueryResponse:
 
     try:
         orchestrator = _get_orchestrator()
-        result = orchestrator.run(body.query, domain=body.domain)
+        # T-17: orchestrator.run() is natively async — no run_in_threadpool needed.
+        # T-01 (run_in_threadpool) has been superseded by this full async rewrite.
+        result = await orchestrator.run(body.query, domain=body.domain)
         result_dict = result.to_dict()
 
         # Convert to response schema
@@ -62,9 +68,10 @@ async def run_query(body: QueryRequest) -> QueryResponse:
     description="Fetch the full result of a previously executed agent run by its run_id.",
 )
 async def get_run(run_id: str) -> RunRecord:
+    # T3-08: use async session to avoid blocking the event loop
     try:
-        with get_sync_session() as session:
-            result = session.execute(
+        async with get_session() as session:
+            result = await session.execute(
                 text("SELECT run_id, query, result, created_at FROM agent_runs WHERE run_id = :run_id"),
                 {"run_id": run_id},
             )
@@ -116,6 +123,8 @@ def _normalise_result(d: dict[str, Any]) -> dict[str, Any]:
             "tools_used": run_summary.get("tools_used", []),
             "total_latency_ms": run_summary.get("total_latency_ms", 0.0),
             "halted_at_step_limit": run_summary.get("halted_at_step_limit", False),
+            "state_timings_ms": run_summary.get("state_timings_ms", {}),
+            "cached": run_summary.get("cached", False),
         },
         "assumptions": d.get("assumptions", []),
         "next_steps": d.get("next_steps", []),

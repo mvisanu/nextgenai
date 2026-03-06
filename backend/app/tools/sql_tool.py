@@ -1,6 +1,9 @@
 """
 SQLQueryTool — SELECT-only SQL execution with regex guardrail.
 Rejects any DML/DDL statements before they reach the database.
+
+T-17: run_async() and run_named_async() added. Both use the async SQLAlchemy
+session so they do not block the event loop during DB I/O.
 """
 from __future__ import annotations
 
@@ -10,12 +13,16 @@ from typing import Any
 
 from sqlalchemy import text
 
-from backend.app.db.session import get_sync_session
+from backend.app.db.session import get_session, get_sync_session
 from backend.app.observability.logging import get_logger
 
 logger = get_logger(__name__)
 
 TOOL_NAME = "SQLQueryTool"
+
+# TTL cache for named query results (T-14)
+CACHE_TTL_SECONDS = 300  # 5 minutes
+_named_query_cache: dict[str, tuple[float, dict[str, Any]]] = {}
 
 # Guardrail: reject any statement containing these DML/DDL keywords
 # Case-insensitive, word-boundary anchored to avoid false positives in identifiers
@@ -262,3 +269,121 @@ class SQLQueryTool:
         sql = sql.replace(":days days", f"{int(days)} days")
 
         return self.run(sql)
+
+    def run_named_cached(
+        self, name: str, params: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """
+        Execute a named query with TTL-based result caching (T-14).
+
+        Results are cached for CACHE_TTL_SECONDS (300s). The cache key
+        is the query name plus the serialised params dict so different
+        parameter values are cached independently.
+
+        Args:
+            name:   Named query identifier (same as run_named()).
+            params: Optional parameter dict (same as run_named()).
+
+        Returns:
+            Same structure as run_named(), with an added "cached" bool field.
+        """
+        params = params or {}
+        cache_key = f"{name}:{sorted(params.items())}"
+        now = time.monotonic()
+
+        cached_ts, cached_result = _named_query_cache.get(cache_key, (0.0, {}))
+        if cached_result and (now - cached_ts) < CACHE_TTL_SECONDS:
+            logger.info(
+                "SQLQueryTool cache hit",
+                extra={"name": name, "age_s": round(now - cached_ts, 1)},
+            )
+            result = dict(cached_result)
+            result["cached"] = True
+            return result
+
+        result = self.run_named(name, params)
+        _named_query_cache[cache_key] = (now, result)
+        result = dict(result)
+        result["cached"] = False
+        return result
+
+    # ------------------------------------------------------------------
+    # Async variants (T-17)
+    # ------------------------------------------------------------------
+
+    async def run_async(self, sql: str) -> dict[str, Any]:
+        """
+        Async variant of run(). Uses the async SQLAlchemy session.
+
+        The guardrail check is performed synchronously before any DB I/O
+        (it is pure string matching — no blocking cost).
+
+        Args and return value are identical to run().
+        """
+        t_start = time.perf_counter()
+
+        match = _BLOCKED_PATTERN.search(sql)
+        if match:
+            raise SQLGuardrailError(
+                f"SQL guardrail violation: statement contains blocked keyword '{match.group(0)}'. "
+                f"Only SELECT queries are permitted."
+            )
+
+        try:
+            async with get_session() as session:
+                result = await session.execute(text(sql))
+                columns = list(result.keys())
+                rows = [list(row) for row in result.fetchall()]
+
+        except SQLGuardrailError:
+            raise
+        except Exception as exc:
+            elapsed = (time.perf_counter() - t_start) * 1000
+            logger.error(
+                "SQLQueryTool async error",
+                extra={"error": str(exc), "sql": sql[:200]},
+            )
+            return {
+                "tool_name": TOOL_NAME,
+                "columns": [],
+                "rows": [],
+                "row_count": 0,
+                "latency_ms": round(elapsed, 1),
+                "error": str(exc),
+            }
+
+        elapsed = (time.perf_counter() - t_start) * 1000
+        logger.info(
+            "SQLQueryTool async complete",
+            extra={"row_count": len(rows), "latency_ms": round(elapsed, 1)},
+        )
+        return {
+            "tool_name": TOOL_NAME,
+            "columns": columns,
+            "rows": rows,
+            "row_count": len(rows),
+            "latency_ms": round(elapsed, 1),
+            "error": None,
+        }
+
+    async def run_named_async(
+        self, name: str, params: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """
+        Async variant of run_named(). Resolves the template synchronously
+        then delegates to run_async() for non-blocking DB execution.
+
+        Args and return value are identical to run_named().
+        """
+        if name not in _NAMED_QUERIES:
+            raise ValueError(
+                f"Unknown named query '{name}'. "
+                f"Available: {list(_NAMED_QUERIES.keys())}"
+            )
+
+        params = params or {}
+        sql = _NAMED_QUERIES[name]
+        days = params.get("days", 90)
+        sql = sql.replace(":days days", f"{int(days)} days")
+
+        return await self.run_async(sql)

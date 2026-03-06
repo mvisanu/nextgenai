@@ -84,6 +84,11 @@ class RunSummary(BaseModel):
     tools_used: list[str] = Field(default_factory=list)
     total_latency_ms: float
     halted_at_step_limit: bool = False
+    state_timings_ms: dict[str, float] = Field(
+        default_factory=dict,
+        description="Per-state latency breakdown in milliseconds (T3-02)",
+    )
+    cached: bool = Field(False, description="True if this result was served from query cache (T3-04)")
 
 
 # ---------------------------------------------------------------------------

@@ -39,6 +39,43 @@ import { useDomain } from "../lib/domain-context";
 import type { GraphNode, GraphEdge, GraphPath, VectorHit } from "../lib/api";
 
 // ---------------------------------------------------------------------------
+// Build a synthetic graph from vector hits when the backend graph is empty.
+// Produces chunk nodes (one per hit) + similarity edges between adjacent hits.
+// ---------------------------------------------------------------------------
+
+function buildSyntheticGraph(hits: VectorHit[]): GraphPath {
+  const nodes: GraphNode[] = hits.map((h) => ({
+    id: `chunk:${h.chunk_id}`,
+    type: "chunk" as const,
+    label: h.excerpt.slice(0, 80) || h.chunk_id,
+    properties: {
+      incident_id: h.incident_id,
+      score: h.score,
+      severity: h.metadata.severity ?? null,
+      event_date: h.metadata.event_date ?? null,
+    },
+  }));
+
+  // Connect consecutive hits with similarity edges (they're already ranked by score)
+  const edges: GraphEdge[] = [];
+  for (let i = 0; i < hits.length - 1; i++) {
+    const a = hits[i];
+    const b = hits[i + 1];
+    // Approximate similarity: average of their individual scores (both vs same query)
+    const weight = Math.round(((a.score + b.score) / 2) * 100) / 100;
+    edges.push({
+      id: `sim:${a.chunk_id.slice(-8)}:${b.chunk_id.slice(-8)}`,
+      from_node: `chunk:${a.chunk_id}`,
+      to_node: `chunk:${b.chunk_id}`,
+      type: "similarity" as const,
+      weight,
+    });
+  }
+
+  return { nodes, edges };
+}
+
+// ---------------------------------------------------------------------------
 // Node colours — neon industrial palette
 // ---------------------------------------------------------------------------
 
@@ -227,7 +264,8 @@ const nodeTypes: NodeTypes = {
 
 function computeLayout(
   graphNodes: GraphNode[],
-  graphEdges: GraphEdge[]
+  graphEdges: GraphEdge[],
+  hitByChunkId?: Map<string, VectorHit>
 ): { rfNodes: Node<NodeData>[]; rfEdges: Edge[] } {
   const entityNodes = graphNodes.filter((n) => n.type === "entity");
   const chunkNodes  = graphNodes.filter((n) => n.type === "chunk");
@@ -252,19 +290,25 @@ function computeLayout(
         properties: n.properties,
       } as NodeData,
     })),
-    ...chunkNodes.map((n, i) => ({
-      id: n.id,
-      type: "chunk" as const,
-      position: {
-        x: CENTER_X + i * CHUNK_SPACING_X - (chunkNodes.length * CHUNK_SPACING_X) / 2,
-        y: CHUNK_ROW_Y,
-      },
-      data: {
-        label: (n.label ?? n.id).slice(0, 50),
-        nodeType: n.type,
-        properties: n.properties,
-      } as NodeData,
-    })),
+    ...chunkNodes.map((n, i) => {
+      // Prefer the vector hit excerpt (more descriptive) over the DB-stored label
+      const chunkId = n.id.startsWith("chunk:") ? n.id.slice("chunk:".length) : n.id;
+      const hit = hitByChunkId?.get(chunkId);
+      const rawLabel = hit?.excerpt ?? n.label ?? n.id;
+      return {
+        id: n.id,
+        type: "chunk" as const,
+        position: {
+          x: CENTER_X + i * CHUNK_SPACING_X - (chunkNodes.length * CHUNK_SPACING_X) / 2,
+          y: CHUNK_ROW_Y,
+        },
+        data: {
+          label: rawLabel.slice(0, 60),
+          nodeType: n.type,
+          properties: n.properties,
+        } as NodeData,
+      };
+    }),
   ];
 
   const rfEdges: Edge[] = graphEdges.map((e) => {
@@ -430,22 +474,50 @@ export default function GraphViewer() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{ x: number; y: number } | null>(null);
 
-  // Use real query graph if available (non-empty), otherwise fall back to domain mock graph
+  // Priority order for graph data:
+  //  1. Real graph returned by backend (nodes.length > 0) — always query-specific
+  //  2. Synthetic graph built from vector hits — query-specific, shown after a query
+  //     when the backend graph is empty (graph not yet built in DB, or expansion failed)
+  //  3. Static domain mock — shown only before the first query (no runData yet)
   const hasRealGraph = (runData?.graph_path?.nodes?.length ?? 0) > 0;
-  const graphPath = hasRealGraph ? runData!.graph_path : (isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH);
-  const isMockGraph = !hasRealGraph;
+  const rawVectorHits = runData?.evidence?.vector_hits;
+  const vectorHitsForGraph = React.useMemo(
+    () => rawVectorHits ?? [],
+    [rawVectorHits]
+  );
+  const hasSyntheticGraph = !hasRealGraph && vectorHitsForGraph.length > 0;
+
+  const graphPath: GraphPath = React.useMemo(() => {
+    if (hasRealGraph) return runData!.graph_path;
+    if (hasSyntheticGraph) return buildSyntheticGraph(vectorHitsForGraph);
+    return isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH;
+  }, [hasRealGraph, hasSyntheticGraph, vectorHitsForGraph, isMedical, runData]);
+
+  // isMockGraph = true only for the static pre-query sample data (not synthetic)
+  const isMockGraph = !hasRealGraph && !hasSyntheticGraph;
+
+  // Build a chunk_id → VectorHit map for label enrichment in computeLayout
+  const hitByChunkId = React.useMemo(() => {
+    const map = new Map<string, VectorHit>();
+    for (const hit of vectorHitsForGraph) {
+      map.set(hit.chunk_id, hit);
+    }
+    return map;
+  }, [vectorHitsForGraph]);
+
   // Re-apply layout whenever graphPath changes OR when rfInstance becomes
   // available (ReactFlow measures node dimensions on mount; edges can only
   // be drawn after that measurement, so we must set edges again then).
   React.useEffect(() => {
     if (!graphPath) return;
-    const { rfNodes, rfEdges } = computeLayout(graphPath.nodes, graphPath.edges);
+    const { rfNodes, rfEdges } = computeLayout(graphPath.nodes, graphPath.edges, hitByChunkId);
     setNodes(rfNodes);
     setEdges(rfEdges);
     if (rfInstance) {
       setTimeout(() => rfInstance.fitView({ padding: 0.2 }), 100);
     }
-  }, [graphPath, rfInstance, setNodes, setEdges]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [graphPath, rfInstance, hitByChunkId]);
 
   const onInit: OnInit<Node<NodeData>, Edge> = useCallback((instance) => {
     setRfInstance(instance);
@@ -520,11 +592,11 @@ export default function GraphViewer() {
           letterSpacing: "0.14em",
           padding: "2px 7px",
           borderRadius: "2px",
-          border: `1px solid ${isMockGraph ? "#9b55d488" : "#0dce8488"}`,
-          backgroundColor: isMockGraph ? "#1a0a2e" : "#051a0e",
-          color: isMockGraph ? "#c084fc" : "#0dce84",
+          border: `1px solid ${isMockGraph ? "#9b55d488" : hasSyntheticGraph ? "#f59e0b88" : "#0dce8488"}`,
+          backgroundColor: isMockGraph ? "#1a0a2e" : hasSyntheticGraph ? "#1a0e00" : "#051a0e",
+          color: isMockGraph ? "#c084fc" : hasSyntheticGraph ? "#f59e0b" : "#0dce84",
         }}>
-          {isMockGraph ? "SAMPLE DATA" : "LIVE QUERY"}
+          {isMockGraph ? "SAMPLE DATA" : hasSyntheticGraph ? "VECTOR HITS" : "LIVE QUERY"}
         </span>
       </div>
 

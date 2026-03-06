@@ -5,6 +5,9 @@ Model: all-MiniLM-L6-v2, produces 384-dimensional vectors.
 """
 from __future__ import annotations
 
+import functools
+import sys
+
 import numpy as np
 from sentence_transformers import SentenceTransformer
 
@@ -72,7 +75,8 @@ class EmbeddingModel:
             texts,
             batch_size=batch_size,
             convert_to_numpy=True,
-            show_progress_bar=len(texts) > 500,
+            # T3-15: suppress tqdm ANSI codes when stderr is not a TTY (e.g. Render logs)
+            show_progress_bar=len(texts) > 500 and sys.stderr.isatty(),
             normalize_embeddings=True,   # Unit-normalised for cosine similarity
         )
         return vectors.astype(np.float32)
@@ -80,3 +84,18 @@ class EmbeddingModel:
     def encode_single(self, text: str) -> np.ndarray:
         """Convenience method for encoding a single query string."""
         return self.encode([text])[0]
+
+    @functools.lru_cache(maxsize=512)
+    def encode_single_cached(self, text: str) -> tuple:
+        """
+        LRU-cached embedding for a single query string.
+
+        Returns a tuple of floats (hashable, required by lru_cache) instead of a
+        numpy array. Callers that need a numpy array should wrap the result:
+            np.array(model.encode_single_cached(q), dtype=np.float32)
+
+        Identical queries skip model inference entirely on cache hits.
+        Cache capacity: 512 entries (~200 KB at 384 dims × 4 bytes × 512).
+        """
+        vec = self.encode_single(text)
+        return tuple(vec.tolist())

@@ -1,9 +1,15 @@
 """
 PythonComputeTool — sandboxed Python execution for arithmetic and statistical computation.
 Restricts builtins and blocks dangerous module imports.
+
+T-17: run_async() added. The sandboxed execution uses a daemon thread internally
+(see run()), which already keeps the calling thread unblocked. run_async() wraps
+run() in asyncio.get_event_loop().run_in_executor so it does not tie up the event
+loop while waiting for the thread timeout.
 """
 from __future__ import annotations
 
+import asyncio
 import io
 import sys
 import time
@@ -187,3 +193,19 @@ class PythonComputeTool:
             "stdout": captured_stdout.getvalue(),
             "error": error_msg,
         }
+
+    async def run_async(
+        self, code: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        """
+        Async variant of run().
+
+        run() already spawns a daemon thread and calls thread.join(timeout),
+        so it blocks the *calling* thread for up to TIMEOUT_SECONDS. Wrapping
+        it in run_in_executor prevents that blocking call from occupying the
+        event loop thread.
+
+        Args and return value are identical to run().
+        """
+        loop = asyncio.get_event_loop()
+        return await loop.run_in_executor(None, self.run, code, context)

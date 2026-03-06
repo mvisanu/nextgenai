@@ -57,7 +57,14 @@ def get_sync_engine():
     global _sync_engine
     if _sync_engine is None:
         dsn = _get_dsn(async_driver=False)
-        _sync_engine = create_engine(dsn, pool_pre_ping=True)
+        _sync_engine = create_engine(
+            dsn,
+            pool_pre_ping=True,
+            pool_size=10,
+            max_overflow=10,
+            pool_timeout=30,
+            pool_recycle=1800,
+        )
         logger.info("Sync DB engine created")
     return _sync_engine
 
@@ -106,6 +113,9 @@ def get_async_engine():
             pool_pre_ping=True,
             pool_size=10,
             max_overflow=20,
+            pool_timeout=30,
+            pool_recycle=1800,
+            connect_args={"server_settings": {"hnsw.ef_search": "40"}},
         )
         logger.info("Async DB engine created")
     return _async_engine

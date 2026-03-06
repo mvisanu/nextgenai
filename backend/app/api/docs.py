@@ -6,6 +6,7 @@ GET /healthz — liveness and DB health check.
 from __future__ import annotations
 
 from fastapi import APIRouter, HTTPException
+from fastapi.responses import ORJSONResponse
 from sqlalchemy import text
 
 from backend.app.db.session import check_db_health, get_sync_session
@@ -18,17 +19,19 @@ router = APIRouter()
 
 @router.get(
     "/healthz",
-    response_model=HealthResponse,
     summary="Health check",
     description="Returns service health status and DB connectivity.",
     tags=["Health"],
 )
-async def health_check() -> HealthResponse:
+async def health_check() -> ORJSONResponse:
     db_ok = await check_db_health()
-    return HealthResponse(
-        status="ok" if db_ok else "degraded",
-        db=db_ok,
-        version="1.0.0",
+    return ORJSONResponse(
+        content={
+            "status": "ok" if db_ok else "degraded",
+            "db": db_ok,
+            "version": "1.0.0",
+        },
+        headers={"Cache-Control": "no-store"},
     )
 
 

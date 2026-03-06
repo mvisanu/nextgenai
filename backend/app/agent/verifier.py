@@ -2,14 +2,19 @@
 Claim verifier and confidence scorer.
 Verifies each claim in the agent's synthesised answer against retrieved evidence,
 assigns confidence scores, and attaches citations.
+
+T-17: verify_claims_async() is the async variant used by the async orchestrator.
 """
 from __future__ import annotations
 
 import json
 from typing import Any
 
+from pydantic import ValidationError
+
 from backend.app.llm.client import LLMClient
 from backend.app.observability.logging import get_logger
+from backend.app.schemas.llm_outputs import VerifyOutput
 
 logger = get_logger(__name__)
 
@@ -30,6 +35,8 @@ For each claim, extract supporting citations from the evidence:
 - citation char_start/char_end: character span in the chunk text (use 0 and len(chunk_text) if unknown)
 
 If a claim conflicts with evidence, reduce confidence by 0.2 and add a conflict_note.
+If an evidence item has conflict_flagged: true, treat it as a known conflict — reduce
+confidence by 0.2 and populate conflict_note to explain the contradiction.
 
 Return JSON ONLY:
 {
@@ -71,13 +78,15 @@ def verify_claims(
     logger.info("Verifying claims", extra={"claim_count": len(claims), "evidence_count": len(evidence)})
 
     # Build evidence summary for the LLM (keep small — verify only needs top hits)
+    # T3-07: include conflict_flagged from graph scorer so LLM can act on it
     evidence_summary = []
-    for item in evidence[:5]:  # Top 5 evidence items only
+    for item in evidence[:5]:
         evidence_summary.append({
             "chunk_id": item.get("chunk_id") or item.get("node_id", ""),
             "incident_id": item.get("incident_id") or item.get("source_incident_id", ""),
             "excerpt": (item.get("excerpt") or item.get("text_excerpt", ""))[:150],
             "score": item.get("score") or item.get("composite_score", 0.0),
+            "conflict_flagged": item.get("conflict", False),  # T3-07
         })
 
     prompt = (
@@ -86,42 +95,51 @@ def verify_claims(
         f"Verify each claim and return the JSON response."
     )
 
-    try:
-        response = llm.complete(
-            prompt=prompt,
+    def _do_call(p: str) -> VerifyOutput:
+        raw = llm.complete(
+            prompt=p,
             system=_SYSTEM_PROMPT,
             json_mode=True,
-            max_tokens=768,
+            max_tokens=1536,
         )
-        data = json.loads(response)
-        verified = data.get("verified_claims", [])
+        data = json.loads(raw)
+        return VerifyOutput.model_validate(data)
 
-        # Validate and normalise
+    try:
+        try:
+            validated = _do_call(prompt)
+        except (json.JSONDecodeError, ValidationError) as first_err:
+            # T3-01: one-shot retry with error-correction prefix
+            logger.warning(
+                "verify_claims: validation failed — retrying",
+                extra={"error": str(first_err)[:300]},
+            )
+            retry_prompt = (
+                f"{prompt}\n\n"
+                f"Your previous response failed validation: {first_err}. "
+                "Please return valid JSON matching the schema exactly."
+            )
+            validated = _do_call(retry_prompt)
+
         result = []
-        for claim in verified:
-            citations = claim.get("citations", [])
-            # Ensure all required citation fields exist
-            norm_citations = []
-            for c in citations:
-                norm_citations.append({
+        for claim in validated.verified_claims:
+            norm_citations = [
+                {
                     "chunk_id": c.get("chunk_id", ""),
                     "incident_id": c.get("incident_id", ""),
                     "char_start": int(c.get("char_start", 0)),
                     "char_end": int(c.get("char_end", 100)),
-                })
-
-            confidence = float(claim.get("confidence", 0.5))
-            confidence = max(0.0, min(1.0, confidence))  # Clamp to [0, 1]
-
-            # Reduce confidence if evidence is sparse
+                }
+                for c in claim.citations
+            ]
+            confidence = max(0.0, min(1.0, claim.confidence))
             if len(evidence) < 2:
                 confidence = min(confidence, 0.5)
-
             result.append({
-                "text": str(claim.get("text", "")),
+                "text": claim.text,
                 "confidence": round(confidence, 3),
                 "citations": norm_citations,
-                "conflict_note": claim.get("conflict_note"),
+                "conflict_note": claim.conflict_note,
             })
 
         logger.info("Claims verified", extra={"verified": len(result)})
@@ -132,18 +150,123 @@ def verify_claims(
         return _fallback_verification(claims, evidence)
 
 
+async def verify_claims_async(
+    claims: list[dict[str, Any]],
+    evidence: list[dict[str, Any]],
+    llm: LLMClient,
+) -> list[dict[str, Any]]:
+    """
+    Async variant of verify_claims().
+
+    Uses complete_async() so the event loop is not blocked during the
+    Haiku API round-trip. Semantics are identical to the sync version.
+
+    Args:
+        claims:   List of raw claim dicts from synthesis.
+        evidence: Evidence items from vector search and graph expansion.
+        llm:      LLMClient instance with complete_async() (ClaudeClient).
+
+    Returns:
+        List of verified claim dicts with confidence scores and citations.
+    """
+    if not claims:
+        return []
+
+    logger.info(
+        "verify_claims_async: verifying",
+        extra={"claim_count": len(claims), "evidence_count": len(evidence)},
+    )
+
+    # T3-07: include conflict_flagged from graph scorer
+    evidence_summary = []
+    for item in evidence[:5]:
+        evidence_summary.append({
+            "chunk_id": item.get("chunk_id") or item.get("node_id", ""),
+            "incident_id": item.get("incident_id") or item.get("source_incident_id", ""),
+            "excerpt": (item.get("excerpt") or item.get("text_excerpt", ""))[:150],
+            "score": item.get("score") or item.get("composite_score", 0.0),
+            "conflict_flagged": item.get("conflict", False),  # T3-07
+        })
+
+    prompt = (
+        f"Claims to verify:\n{json.dumps(claims, indent=2)}\n\n"
+        f"Supporting evidence:\n{json.dumps(evidence_summary, indent=2)}\n\n"
+        f"Verify each claim and return the JSON response."
+    )
+
+    async def _do_call_async(p: str) -> VerifyOutput:
+        raw = await llm.complete_async(
+            prompt=p,
+            system=_SYSTEM_PROMPT,
+            json_mode=True,
+            max_tokens=1536,
+        )
+        data = json.loads(raw)
+        return VerifyOutput.model_validate(data)
+
+    try:
+        try:
+            validated = await _do_call_async(prompt)
+        except (json.JSONDecodeError, ValidationError) as first_err:
+            # T3-01: one-shot retry with error-correction prefix
+            logger.warning(
+                "verify_claims_async: validation failed — retrying",
+                extra={"error": str(first_err)[:300]},
+            )
+            retry_prompt = (
+                f"{prompt}\n\n"
+                f"Your previous response failed validation: {first_err}. "
+                "Please return valid JSON matching the schema exactly."
+            )
+            validated = await _do_call_async(retry_prompt)
+
+        result = []
+        for claim in validated.verified_claims:
+            norm_citations = [
+                {
+                    "chunk_id": c.get("chunk_id", ""),
+                    "incident_id": c.get("incident_id", ""),
+                    "char_start": int(c.get("char_start", 0)),
+                    "char_end": int(c.get("char_end", 100)),
+                }
+                for c in claim.citations
+            ]
+            confidence = max(0.0, min(1.0, claim.confidence))
+            if len(evidence) < 2:
+                confidence = min(confidence, 0.5)
+            result.append({
+                "text": claim.text,
+                "confidence": round(confidence, 3),
+                "citations": norm_citations,
+                "conflict_note": claim.conflict_note,
+            })
+
+        logger.info("verify_claims_async: complete", extra={"verified": len(result)})
+        return result
+
+    except Exception as exc:
+        logger.warning(
+            "verify_claims_async: failed — using fallback scores",
+            extra={"error": str(exc)},
+        )
+        return _fallback_verification(claims, evidence)
+
+
 def _fallback_verification(
     claims: list[dict[str, Any]],
     evidence: list[dict[str, Any]],
 ) -> list[dict[str, Any]]:
     """
-    Fallback: assign conservative confidence scores based on evidence count only.
+    Fallback: assign ranked confidence scores based on evidence count and claim position.
     Used when the LLM fails to respond correctly.
+
+    T3-07: confidence is ranked by position (earlier claims get higher scores) so
+    the fallback provides a meaningful signal rather than flat uniform scores.
     """
     base_confidence = 0.6 if len(evidence) >= 2 else 0.3
 
     result = []
-    for claim in claims:
+    for idx, claim in enumerate(claims):
         # Attach first evidence item as citation if available
         citations = []
         if evidence:
@@ -155,9 +278,12 @@ def _fallback_verification(
                 "char_end": 100,
             })
 
+        # T3-07: rank confidence by position — each subsequent claim is 0.05 lower, floor 0.2
+        confidence = max(0.2, base_confidence - 0.05 * idx)
+
         result.append({
             "text": str(claim.get("text", claim if isinstance(claim, str) else "")),
-            "confidence": base_confidence,
+            "confidence": round(confidence, 3),
             "citations": citations,
             "conflict_note": None,
         })

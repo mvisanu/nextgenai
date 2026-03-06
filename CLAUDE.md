@@ -13,7 +13,7 @@ Agentic manufacturing intelligence platform. A user submits a natural-language q
 - **Frontend**: Next.js 16 App Router, TypeScript, Tailwind, industrial SCADA theme (Orbitron / Rajdhani / JetBrains Mono)
 - **Backend**: FastAPI, Python 3.11, SQLAlchemy 2 (async + sync), Alembic
 - **Database**: PostgreSQL 16 + pgvector — Neon for production, Docker for local dev
-- **Embeddings**: `sentence-transformers/all-MiniLM-L6-v2` (384 dims), IVFFlat cosine index
+- **Embeddings**: `sentence-transformers/all-MiniLM-L6-v2` (384 dims), HNSW cosine index
 - **NER**: spaCy `en_core_web_sm`
 - **LLM**: Anthropic Claude Sonnet 4.6 (`claude-sonnet-4-6`) for synthesis; Haiku 4.5 (`claude-haiku-4-5-20251001`) for classify/plan/verify
 - **Deployment**: Vercel (frontend) + Render Docker (backend)

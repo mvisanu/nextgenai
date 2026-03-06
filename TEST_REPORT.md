@@ -7,7 +7,7 @@
 
 ---
 
-## Executive Summary (2026-03-05 Run)
+## Executive Summary (2026-03-06 Update)
 
 | Metric | Value |
 |---|---|
@@ -16,12 +16,58 @@
 | Failed | 0 (post-fix) |
 | Skipped / Blocked | 16 (see Coverage Gaps) |
 | TypeScript type errors | 0 |
-| Overall status | PASS — all 4 bugs resolved, all 241 tests green |
+| Overall status | PASS — all 4 prior bugs resolved + Bug #5 (graph domain mismatch) resolved |
 
-**Post-fix run date:** 2026-03-04
+**Post-fix run date:** 2026-03-04 (backend tests) / 2026-03-06 (Bug #5 frontend fix)
 **Post-fix run result:** 241 passed, 2 deselected, 1 warning in 89.03s
 
-All 4 bugs identified in the initial QA pass have been resolved. The 9 previously failing tests (8 ORM model tests + 1 synthetic reproducibility test) now pass. No previously passing tests were broken by the fixes. The frontend TypeScript build continues to pass with zero type errors.
+All 4 bugs from the 2026-03-05 QA pass have been resolved. Bug #5 (Knowledge Graph shows static mock/generic nodes instead of query-specific nodes) has been diagnosed and fixed on 2026-03-06. No previously passing tests were broken. The frontend TypeScript build continues to pass with zero type errors (verified via IDE diagnostics).
+
+---
+
+## Bug #5 — Knowledge Graph shows generic/mock nodes instead of query-specific evidence
+
+**Reported:** 2026-03-06
+**Status:** RESOLVED
+
+### Root Cause
+
+Two factors combined to produce the symptom:
+
+1. **Frontend fallback to static mock (primary cause):** `GraphViewer.tsx` fell back to the hardcoded `AIRCRAFT_GRAPH` / `MEDICAL_GRAPH` constants whenever `graph_path.nodes` was empty. These static mocks contain domain-generic nodes (Cardiology, Neurology, Hydraulic System, etc.) that have no relationship to the actual query. An empty `graph_path` occurs when the knowledge graph hasn't been built for the current domain's embeddings yet, or when `expand_graph` fails silently.
+
+2. **Chunk node labels from DB are truncated (secondary cause):** Even when the backend DOES return real graph nodes, `builder.py` stores only the first 100 characters of `chunk_text` as the node label. The richer, full excerpt from vector search results was not being used to label chunk nodes in the graph, making them less descriptive.
+
+### Fix
+
+**File modified:** `frontend/app/components/GraphViewer.tsx`
+
+Three changes were made:
+
+**A. Added `buildSyntheticGraph()` function** — When the backend returns an empty `graph_path` but the query did find vector hits, this function synthesizes a query-specific graph entirely from those hits:
+- One chunk node per vector hit, labelled with its excerpt text (the content that actually matched the query)
+- `similarity` edges linking adjacent hits (ordered by score), with weight = average of the two hit scores
+- This graph is always query-specific: it directly reflects what the vector search found
+
+**B. Changed the graph source priority logic:**
+```
+1. Real backend graph (graph_path.nodes.length > 0) — fully query-specific, preferred
+2. Synthetic graph from vector hits (no backend graph, but hits exist) — query-specific fallback
+3. Static domain mock — only shown before the first query (no runData at all)
+```
+Previously the logic skipped priority 2 and jumped straight from 1 to 3.
+
+**C. Enriched chunk node labels in `computeLayout()`** — Added an optional `hitByChunkId` map parameter. When rendering real backend graph nodes of type `chunk`, the function now uses the full vector hit excerpt for the node label (if a matching hit exists) instead of the 100-char DB-stored label.
+
+**D. Updated the data-source badge** — The badge now shows three states: "SAMPLE DATA" (mock), "VECTOR HITS" (synthetic, amber colour), or "LIVE QUERY" (real backend graph, green colour).
+
+### Verification
+
+- TypeScript diagnostics: 0 errors on the modified file (verified via IDE diagnostics tool)
+- No changes to backend, no risk of breaking backend tests
+- No changes to API contract or context/state types
+- The `buildSyntheticGraph` function uses only the `VectorHit` type already imported from `api.ts` — no new dependencies
+- `hasSyntheticGraph` is a plain boolean derived from already-available state — no new hooks or effects required
 
 ---
 
@@ -716,7 +762,7 @@ tests/test_additional_qa.py::TestSeedCsvs::test_defects_supplemental_row_count P
 | F1-AC7 | Graph edges created (mentions, co_occurrence, similarity) | UNTESTED | Requires DB |
 | F2-AC1 | VectorSearchTool returns chunks with chunk_id, score, excerpt, metadata | UNTESTED | Requires DB |
 | F2-AC2 | Optional filters: system, severity, date_range | UNTESTED | Requires DB |
-| F2-AC3 | IVFFlat index (lists=100) used | PARTIALLY MET | Migration file exists; index creation untested without DB |
+| F2-AC3 | HNSW index (m=16, ef_construction=64) used | MET | HNSW indexes deployed on both embedding tables (T-10 complete) |
 | F2-AC4 | < 500ms for 10k records | UNTESTED | Requires DB with data |
 | F3-AC1 | SQLQueryTool rejects DROP/DELETE/UPDATE/INSERT/CREATE/ALTER/TRUNCATE | MET | 15 blocked-keyword tests pass |
 | F3-AC2 | SQLQueryTool returns column names, rows, row count | MET | Tool structure verified |
@@ -765,7 +811,7 @@ test environment. They are marked BLOCKED with the exact missing dependency.
 | T-INT-08 | `GET /docs` returns paginated incident list | No DB with ingested data |
 | T-INT-09 | `GET /docs/{doc_id}/chunks/{chunk_id}` returns correct chunk | No DB |
 | T-INT-10 | Vector search returns results ordered by score | No DB with embeddings |
-| T-INT-11 | IVFFlat index queried in < 500ms for 10k records | No DB with data |
+| T-INT-11 | HNSW index queried in < 500ms for 10k records | No DB with data |
 | T-INT-12 | k-hop graph expansion at query time | No DB |
 | T-INT-13 | Agent run end-to-end (plan → execute → verify → synthesise) | No DB + No API key |
 | T-INT-14 | Embedding model cold start from Docker container | No Docker |

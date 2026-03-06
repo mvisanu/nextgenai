@@ -11,7 +11,8 @@ import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, ORJSONResponse
+from starlette.middleware.gzip import GZipMiddleware
 
 from backend.app.api import docs, ingest, query
 from backend.app.db.session import dispose_async_engine, get_async_engine
@@ -77,6 +78,7 @@ def create_app() -> FastAPI:
         redoc_url="/api/redoc",     # ReDoc
         openapi_url="/api/openapi.json",
         lifespan=lifespan,
+        default_response_class=ORJSONResponse,
     )
 
     # ------------------------------------------------------------------ CORS
@@ -87,6 +89,12 @@ def create_app() -> FastAPI:
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+    # ------------------------------------------------------------------ GZip
+    # Added AFTER CORS so CORS headers are set before compression.
+    # minimum_size=1000 skips small responses (healthz); compresslevel=4 balances
+    # CPU cost vs compression ratio for the 5–20 KB agent JSON payloads.
+    app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=4)
 
     # ------------------------------------------------------------------ Request size limit middleware
     @app.middleware("http")

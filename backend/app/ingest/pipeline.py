@@ -62,19 +62,27 @@ def _upsert_dataframe_sync(session, table_name: str, df: pd.DataFrame, pk_col: s
         f"ON CONFLICT ({pk_col}) DO NOTHING"
     )
 
-    inserted = 0
+    # Clean all rows upfront (convert NaN/NaT to None for SQL compatibility)
+    clean_rows = []
     for row in rows:
+        clean_rows.append({
+            k: (None if (isinstance(v, float) and v != v) else v)
+            for k, v in row.items()
+        })
+
+    # Bulk executemany every 500 rows to reduce round-trips to Neon (T-15)
+    BATCH = 500
+    inserted = 0
+    for batch_start in range(0, len(clean_rows), BATCH):
+        batch = clean_rows[batch_start: batch_start + BATCH]
         try:
-            # Convert NaN/NaT to None for SQL compatibility
-            clean_row = {
-                k: (None if (isinstance(v, float) and v != v) else v)
-                for k, v in row.items()
-            }
-            result = session.execute(sql, clean_row)
+            result = session.execute(sql, batch)
             inserted += result.rowcount
+            session.commit()
         except Exception as exc:
-            logger.warning("Row insert failed", extra={"table": table_name, "error": str(exc)})
-    session.commit()
+            session.rollback()
+            logger.warning("Batch insert failed", extra={"table": table_name, "error": str(exc)})
+
     logger.info("Upserted rows", extra={"table": table_name, "inserted": inserted, "total": len(rows)})
     return inserted
 
@@ -137,28 +145,118 @@ def _embed_and_store_sync(session, chunk_size: int = 400, overlap: int = 75, bat
         for record, vector in zip(batch, vectors):
             record["embedding"] = vector.tolist()
 
-        # Insert batch
-        for record in batch:
+        # Bulk executemany — commit once per batch to reduce round-trips (T-15)
+        COMMIT_BATCH = 500
+        embed_sql = text(
+            "INSERT INTO incident_embeddings "
+            "(embed_id, incident_id, chunk_index, chunk_text, embedding, char_start, char_end) "
+            "VALUES (:embed_id, :incident_id, :chunk_index, :chunk_text, :embedding, :char_start, :char_end) "
+            "ON CONFLICT (embed_id) DO NOTHING"
+        )
+        for commit_start in range(0, len(batch), COMMIT_BATCH):
+            commit_slice = batch[commit_start: commit_start + COMMIT_BATCH]
+            # Serialise embeddings to string for pgvector compatibility
+            serialised = [
+                {**r, "embedding": str(r["embedding"])} for r in commit_slice
+            ]
             try:
-                session.execute(
-                    text(
-                        "INSERT INTO incident_embeddings "
-                        "(embed_id, incident_id, chunk_index, chunk_text, embedding, char_start, char_end) "
-                        "VALUES (:embed_id, :incident_id, :chunk_index, :chunk_text, :embedding, :char_start, :char_end) "
-                        "ON CONFLICT (embed_id) DO NOTHING"
-                    ),
-                    {**record, "embedding": str(record["embedding"])},
-                )
-                total_stored += 1
+                session.execute(embed_sql, serialised)
+                total_stored += len(serialised)
+                session.commit()
             except Exception as exc:
-                logger.warning("Chunk insert failed", extra={"error": str(exc)})
-        session.commit()
+                session.rollback()
+                logger.warning("Chunk insert batch failed", extra={"error": str(exc)})
         logger.info(
             "Embedding batch stored",
             extra={"batch": batch_start // batch_size + 1, "stored_so_far": total_stored},
         )
 
     logger.info("Embedding complete", extra={"total_chunks": total_stored})
+    return total_stored
+
+
+# ---------------------------------------------------------------------------
+# Phase 4b: Chunk + embed + store for medical domain (T3-13)
+# ---------------------------------------------------------------------------
+
+
+def _embed_and_store_medical_sync(session, chunk_size: int = 400, overlap: int = 75, batch_size: int = 256) -> int:
+    """
+    T3-13: Mirror of _embed_and_store_sync() for the medical domain.
+
+    For each medical_case that has no embeddings yet:
+      - Chunk the narrative
+      - Embed all chunks in batch
+      - Insert into medical_embeddings
+
+    Idempotent: skips cases already embedded.
+    Returns total chunks stored.
+    """
+    result = session.execute(text(
+        """
+        SELECT mc.case_id, mc.narrative
+        FROM medical_cases mc
+        LEFT JOIN medical_embeddings me ON me.case_id = mc.case_id
+        WHERE me.embed_id IS NULL AND mc.narrative IS NOT NULL AND mc.narrative != ''
+        """
+    ))
+    cases = result.fetchall()
+
+    if not cases:
+        logger.info("All medical cases already embedded — skipping")
+        return 0
+
+    logger.info("Embedding medical cases", extra={"count": len(cases)})
+    model = EmbeddingModel.get()
+
+    chunk_records: list[dict[str, Any]] = []
+    for case_id, narrative in cases:
+        chunks = chunk_text(narrative, chunk_size=chunk_size, overlap=overlap)
+        for chunk in chunks:
+            chunk_records.append({
+                "embed_id": str(uuid.uuid4()),
+                "case_id": case_id,
+                "chunk_index": chunk["chunk_index"],
+                "chunk_text": chunk["chunk_text"],
+                "char_start": chunk["char_start"],
+                "char_end": chunk["char_end"],
+                "embedding": None,
+            })
+
+    total_stored = 0
+    for batch_start in range(0, len(chunk_records), batch_size):
+        batch = chunk_records[batch_start: batch_start + batch_size]
+        texts = [r["chunk_text"] for r in batch]
+        vectors = model.encode(texts)
+
+        for record, vector in zip(batch, vectors):
+            record["embedding"] = vector.tolist()
+
+        COMMIT_BATCH = 500
+        embed_sql = text(
+            "INSERT INTO medical_embeddings "
+            "(embed_id, case_id, chunk_index, chunk_text, embedding, char_start, char_end) "
+            "VALUES (:embed_id, :case_id, :chunk_index, :chunk_text, :embedding, :char_start, :char_end) "
+            "ON CONFLICT (embed_id) DO NOTHING"
+        )
+        for commit_start in range(0, len(batch), COMMIT_BATCH):
+            commit_slice = batch[commit_start: commit_start + COMMIT_BATCH]
+            serialised = [
+                {**r, "embedding": str(r["embedding"])} for r in commit_slice
+            ]
+            try:
+                session.execute(embed_sql, serialised)
+                total_stored += len(serialised)
+                session.commit()
+            except Exception as exc:
+                session.rollback()
+                logger.warning("Medical chunk insert batch failed", extra={"error": str(exc)})
+        logger.info(
+            "Medical embedding batch stored",
+            extra={"batch": batch_start // batch_size + 1, "stored_so_far": total_stored},
+        )
+
+    logger.info("Medical embedding complete", extra={"total_chunks": total_stored})
     return total_stored
 
 
@@ -179,6 +277,7 @@ def run_ingest_pipeline(config: Any = None) -> dict[str, Any]:
         "defects_loaded": 0,
         "maintenance_loaded": 0,
         "chunks_embedded": 0,
+        "medical_chunks_embedded": 0,
         "graph_nodes": 0,
         "graph_edges": 0,
         "status": "running",
@@ -211,10 +310,15 @@ def run_ingest_pipeline(config: Any = None) -> dict[str, Any]:
         summary["defects_loaded"] = def_count
         summary["maintenance_loaded"] = mnt_count
 
-        # --- Phase 4: Chunk + embed ---
+        # --- Phase 4: Chunk + embed (aircraft) ---
         with get_sync_session() as session:
             chunks = _embed_and_store_sync(session)
         summary["chunks_embedded"] = chunks
+
+        # --- Phase 4b: Chunk + embed (medical) ---
+        with get_sync_session() as session:
+            medical_chunks = _embed_and_store_medical_sync(session)
+        summary["medical_chunks_embedded"] = medical_chunks
 
         # --- Phase 5: Build knowledge graph ---
         try:

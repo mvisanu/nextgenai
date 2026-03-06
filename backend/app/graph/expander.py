@@ -2,6 +2,9 @@
 k-hop graph neighbourhood expander.
 Starting from seed chunk/entity node IDs, expands the knowledge graph
 by following edges up to k hops out.
+
+T-17: expand_graph_async() added. Uses the async SQLAlchemy session so
+graph DB queries do not block the event loop.
 """
 from __future__ import annotations
 
@@ -10,6 +13,7 @@ from typing import Any
 
 from sqlalchemy import text
 
+from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 
 logger = get_logger(__name__)
@@ -58,27 +62,33 @@ def expand_graph(
         # Expand from current frontier
         frontier_list = list(frontier)
 
-        # For hop 0 (first expansion from seeds): include similarity edges
-        # For subsequent hops: only follows and co_occurrence (structural edges)
-        if hop == 0:
-            type_filter = "IN ('mentions', 'co_occurrence', 'similarity')"
-        else:
-            type_filter = "IN ('mentions', 'co_occurrence')"
-
         # Chunk frontier for large seed sets (PostgreSQL has parameter limits)
         CHUNK = 100
         new_frontier: set[str] = set()
 
         for chunk_start in range(0, len(frontier_list), CHUNK):
             chunk = frontier_list[chunk_start: chunk_start + CHUNK]
-            placeholders = ", ".join(f"'{nid}'" for nid in chunk)
 
-            # Outgoing edges
-            result = session.execute(text(f"""
-                SELECT id, from_node, to_node, type, weight
-                FROM graph_edge
-                WHERE from_node IN ({placeholders}) AND type {type_filter}
-            """))
+            # Build edge type list for parameterized ANY binding.
+            # Hop 0: include similarity edges to broaden initial expansion.
+            # Subsequent hops: structural edges only (avoids runaway expansion).
+            if hop == 0:
+                edge_types = ["mentions", "co_occurrence", "similarity"]
+            else:
+                edge_types = ["mentions", "co_occurrence"]
+
+            # Single merged query: outgoing OR incoming edges in one round-trip.
+            # Uses parameterized ANY(:ids) instead of f-string interpolation to
+            # enable query plan caching and prevent SQL injection.
+            result = session.execute(
+                text(
+                    "SELECT id, from_node, to_node, type, weight "
+                    "FROM graph_edge "
+                    "WHERE (from_node = ANY(:node_ids) OR to_node = ANY(:node_ids)) "
+                    "AND type = ANY(:edge_types)"
+                ),
+                {"node_ids": chunk, "edge_types": edge_types},
+            )
             for row in result.fetchall():
                 edge_dict = {
                     "id": row.id,
@@ -88,25 +98,10 @@ def expand_graph(
                     "weight": row.weight,
                 }
                 collected_edges.append(edge_dict)
+                # Expand frontier in both directions
                 if row.to_node not in visited_node_ids:
                     new_frontier.add(row.to_node)
                     visited_node_ids.add(row.to_node)
-
-            # Incoming edges (bidirectional traversal)
-            result = session.execute(text(f"""
-                SELECT id, from_node, to_node, type, weight
-                FROM graph_edge
-                WHERE to_node IN ({placeholders}) AND type {type_filter}
-            """))
-            for row in result.fetchall():
-                edge_dict = {
-                    "id": row.id,
-                    "from_node": row.from_node,
-                    "to_node": row.to_node,
-                    "type": row.type,
-                    "weight": row.weight,
-                }
-                collected_edges.append(edge_dict)
                 if row.from_node not in visited_node_ids:
                     new_frontier.add(row.from_node)
                     visited_node_ids.add(row.from_node)
@@ -136,12 +131,14 @@ def expand_graph(
         CHUNK = 100
         for chunk_start in range(0, len(all_ids), CHUNK):
             chunk = all_ids[chunk_start: chunk_start + CHUNK]
-            placeholders = ", ".join(f"'{nid}'" for nid in chunk)
-            result = session.execute(text(f"""
-                SELECT id, type, label, properties
-                FROM graph_node
-                WHERE id IN ({placeholders})
-            """))
+            result = session.execute(
+                text(
+                    "SELECT id, type, label, properties "
+                    "FROM graph_node "
+                    "WHERE id = ANY(:node_ids)"
+                ),
+                {"node_ids": chunk},
+            )
             for row in result.fetchall():
                 nodes.append({
                     "id": row.id,
@@ -162,3 +159,32 @@ def expand_graph(
         },
     )
     return {"nodes": nodes, "edges": unique_edges}
+
+
+async def expand_graph_async(
+    seed_ids: list[str],
+    k: int = 2,
+) -> dict[str, list[dict[str, Any]]]:
+    """
+    Async variant of expand_graph().
+
+    Acquires an async SQLAlchemy session and executes the same iterative
+    k-hop expansion using await session.execute(). The session is passed
+    into the sync expand_graph() logic via session.run_sync() to avoid
+    duplicating the traversal code.
+
+    Args:
+        seed_ids: List of graph_node IDs to start expansion from.
+        k:        Number of hops to expand. Default 2.
+
+    Returns:
+        {"nodes": [...], "edges": [...]}  — same structure as expand_graph().
+    """
+    if not seed_ids:
+        return {"nodes": [], "edges": []}
+
+    async with get_session() as session:
+        result = await session.run_sync(
+            lambda sync_session: expand_graph(sync_session, seed_ids, k=k)
+        )
+    return result

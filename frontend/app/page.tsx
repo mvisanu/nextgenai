@@ -13,7 +13,7 @@ import { ThemeToggle, FontSizeControl } from "./lib/theme";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "./lib/domain-context";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, PanelRightClose, PanelRightOpen } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, PanelRightClose, PanelRightOpen, Bot } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -74,6 +74,7 @@ const NAV_ITEMS = [
   { href: "/review",           label: "REVIEW",      icon: GraduationCap,   accent: "--col-purple" },
   { href: "/examples",         label: "EXAMPLES",    icon: FlaskConical,    accent: "--col-green"  },
   { href: "/medical-examples", label: "MED-EX",      icon: Stethoscope,     accent: "--col-cyan"   },
+  { href: "/agent",            label: "AGENT",       icon: Bot,             accent: "--col-pink"   },
   { href: "/diagram",          label: "DIAGRAM",     icon: GitBranch,       accent: "--col-cyan"   },
   { href: "/faq",              label: "FAQ",          icon: HelpCircle,      accent: "--col-cyan"   },
 ] as const;
