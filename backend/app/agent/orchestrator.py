@@ -74,12 +74,11 @@ class AgentRunResult:
 
 _SYNTHESIS_SYSTEM_AIRCRAFT = """\
 You are a manufacturing intelligence analyst specialising in aviation maintenance and quality engineering.
-Synthesise a clear, concise answer from the provided evidence. Be brief — aim for 3-5 sentences in the answer.
-Every factual claim must be directly grounded in the evidence.
-Do not speculate beyond what the evidence shows.
-Frame recommendations as engineering hypotheses requiring qualified review — not definitive instructions.
-If the evidence is insufficient, state clearly what was searched and what could not be found.
-Limit claims to 3, assumptions to 2, next_steps to 2.
+Synthesise a concise answer from the provided evidence in 2-3 sentences maximum.
+Every factual claim must be directly grounded in the evidence. Do not speculate.
+Frame recommendations as engineering hypotheses requiring qualified review.
+If evidence is insufficient, say so in one sentence.
+Limit: 2 claims, 1 assumption, 1 next_step.
 
 Return JSON ONLY:
 {
@@ -92,10 +91,9 @@ Return JSON ONLY:
 
 _SYNTHESIS_SYSTEM_MEDICAL = """\
 You are a clinical intelligence assistant supporting healthcare quality analysis.
-Synthesise a clear, concise answer from the provided clinical evidence. Be brief — aim for 3-5 sentences in the answer.
-Every factual claim must be directly grounded in the case data.
-Do not speculate beyond what the evidence shows.
-Limit claims to 3, assumptions to 2, next_steps to 2.
+Synthesise a concise answer from the provided clinical evidence in 2-3 sentences maximum.
+Every factual claim must be directly grounded in the case data. Do not speculate.
+Limit: 2 claims, 1 assumption, 1 next_step.
 
 IMPORTANT: All outputs are AI-generated hypotheses for research purposes only.
 They require review by a qualified medical professional. Never provide diagnoses
@@ -432,11 +430,11 @@ def _build_evidence_context(
 
     if vector_hits:
         parts.append("=== Similar Incident Chunks ===")
-        for i, hit in enumerate(vector_hits[:8]):
+        for i, hit in enumerate(vector_hits[:5]):
             parts.append(
                 f"[{i+1}] Score: {hit.get('score', 0):.3f} | "
                 f"Incident: {hit.get('incident_id', 'N/A')}\n"
-                f"{hit.get('excerpt', '')[:300]}"
+                f"{hit.get('excerpt', '')[:180]}"
             )
 
     if sql_rows:

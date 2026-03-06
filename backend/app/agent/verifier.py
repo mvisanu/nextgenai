@@ -70,13 +70,13 @@ def verify_claims(
 
     logger.info("Verifying claims", extra={"claim_count": len(claims), "evidence_count": len(evidence)})
 
-    # Build evidence summary for the LLM (truncated to avoid token limits)
+    # Build evidence summary for the LLM (keep small — verify only needs top hits)
     evidence_summary = []
-    for item in evidence[:20]:  # Top 20 evidence items
+    for item in evidence[:5]:  # Top 5 evidence items only
         evidence_summary.append({
             "chunk_id": item.get("chunk_id") or item.get("node_id", ""),
             "incident_id": item.get("incident_id") or item.get("source_incident_id", ""),
-            "excerpt": (item.get("excerpt") or item.get("text_excerpt", ""))[:300],
+            "excerpt": (item.get("excerpt") or item.get("text_excerpt", ""))[:150],
             "score": item.get("score") or item.get("composite_score", 0.0),
         })
 
@@ -91,7 +91,7 @@ def verify_claims(
             prompt=prompt,
             system=_SYSTEM_PROMPT,
             json_mode=True,
-            max_tokens=2048,
+            max_tokens=768,
         )
         data = json.loads(response)
         verified = data.get("verified_claims", [])
