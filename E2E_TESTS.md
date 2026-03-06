@@ -69,7 +69,7 @@ To test against the live Vercel/Render deployment:
 
 ```bash
 PLAYWRIGHT_BASE_URL=https://nextgenai-seven.vercel.app \
-PLAYWRIGHT_API_URL=https://nextai-backend.onrender.com \
+PLAYWRIGHT_API_URL=https://nextgenai-5bf8.onrender.com \
 SKIP_WEBSERVER=true \
 npx playwright test
 ```
@@ -133,7 +133,7 @@ npx playwright test 19-api-contract
 ```bash
 # Full suite against Vercel + Render (note: backend cold-start may cause 60s delay)
 PLAYWRIGHT_BASE_URL=https://nextgenai-seven.vercel.app \
-PLAYWRIGHT_API_URL=https://nextai-backend.onrender.com \
+PLAYWRIGHT_API_URL=https://nextgenai-5bf8.onrender.com \
 SKIP_WEBSERVER=true \
 SKIP_LIVE_API_TESTS=false \
 npx playwright test
