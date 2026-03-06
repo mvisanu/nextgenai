@@ -124,7 +124,7 @@ class AgentOrchestrator:
         max_steps: int = MAX_STEPS,
         tool_timeout_seconds: int = TOOL_TIMEOUT_SECONDS,
     ) -> None:
-        self.llm = llm or get_llm_client()          # Sonnet — synthesis only
+        self.llm = llm or get_fast_llm_client()      # Haiku — all steps including synthesis
         self._fast_llm = get_fast_llm_client()       # Haiku — classify, plan, verify
         self.max_steps = max_steps
         self.tool_timeout_seconds = tool_timeout_seconds
@@ -161,7 +161,13 @@ class AgentOrchestrator:
 
         # ------------------------------------------------------------------ PLAN
         logger.info("State: PLAN", extra={"run_id": run_id, "intent": intent})
-        plan = generate_plan(query, intent, self._fast_llm, domain=domain)
+        # Skip the LLM planner for vector_only — the fallback plan is identical
+        # and saves a full Haiku API round-trip (~500ms)
+        if intent == "vector_only":
+            from backend.app.agent.planner import _fallback_plan
+            plan = _fallback_plan(query, intent, domain)
+        else:
+            plan = generate_plan(query, intent, self._fast_llm, domain=domain)
         plan_steps = plan.get("steps", [])
         plan_text = plan.get("plan_text", "")
 
