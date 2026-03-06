@@ -274,21 +274,17 @@ function computeLayout(
       source: e.from_node,
       target: e.to_node,
       type: "smoothstep",
-      label: e.weight !== null ? `${e.type} (${e.weight.toFixed(2)})` : e.type,
+      // No inline labels — they overlap when many edges share the same path.
+      // Edge type + weight visible in the legend and on node click.
       style: {
         stroke: colour,
         strokeWidth: 2,
+        opacity: 0.85,
       },
       markerEnd: {
         type: MarkerType.ArrowClosed,
         color: colour,
       },
-      labelStyle: {
-        fontFamily: "var(--font-mono, monospace)",
-        fontSize: 10,
-        fill: "#6b7e95",
-      },
-      labelBgStyle: { fill: "#0c1117", fillOpacity: 0.85 },
     };
   });
 
@@ -419,7 +415,12 @@ function NodeDetailPopover({
 export default function GraphViewer() {
   const { runData } = useRunContext();
   const { domain } = useDomain();
-  const isMedical = domain === "medical";
+
+  // Detect the actual queried domain from vector hit metadata so the graph
+  // mock/badge matches the query result even if the UI selector changed.
+  const queryDomain: string =
+    runData?.evidence?.vector_hits?.[0]?.metadata?.domain ?? domain;
+  const isMedical = queryDomain === "medical";
 
   const [nodes, setNodes, onNodesChange] = useNodesState<Node<NodeData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState<Edge>([]);
@@ -525,6 +526,25 @@ export default function GraphViewer() {
         }}>
           {isMockGraph ? "SAMPLE DATA" : "LIVE QUERY"}
         </span>
+      </div>
+
+      {/* Edge colour legend — bottom-left */}
+      <div style={{
+        position: "absolute", bottom: 44, left: 8, zIndex: 10,
+        display: "flex", flexDirection: "column", gap: "3px",
+        pointerEvents: "none",
+      }}>
+        {(Object.entries(EDGE_COLOURS) as [string, string][]).map(([type, colour]) => (
+          <div key={type} style={{ display: "flex", alignItems: "center", gap: "5px" }}>
+            <div style={{ width: 18, height: 2, backgroundColor: colour, borderRadius: 1 }} />
+            <span style={{
+              fontFamily: "var(--font-display)", fontSize: "0.38rem",
+              letterSpacing: "0.12em", color: colour, opacity: 0.8,
+            }}>
+              {type.replace("_", " ").toUpperCase()}
+            </span>
+          </div>
+        ))}
       </div>
 
       {/* Node detail popover */}
