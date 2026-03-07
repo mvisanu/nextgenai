@@ -223,34 +223,6 @@ function DashboardHeader() {
           </span>
         </Link>
 
-        <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-
-        {/* Diamond logo */}
-        <div style={{ position: "relative", display: "flex", alignItems: "center", justifyContent: "center", width: 22, height: 22 }}>
-          <div style={{
-            position: "absolute", width: 18, height: 18,
-            border: "1.5px solid hsl(var(--col-green))",
-            transform: "rotate(45deg)",
-            boxShadow: "0 0 8px hsl(var(--col-green) / 0.3)",
-          }} />
-          <div style={{
-            width: 8, height: 8,
-            backgroundColor: "hsl(var(--col-green))",
-            transform: "rotate(45deg)",
-            boxShadow: "0 0 6px hsl(var(--col-green))",
-          }} />
-        </div>
-
-        <span style={{
-          fontFamily: "var(--font-display)",
-          fontSize: "0.75rem",
-          fontWeight: 700,
-          letterSpacing: "0.2em",
-          color: "hsl(var(--text-primary))",
-        }}>
-          NEXT<span style={{ color: "hsl(var(--col-green))" }}>AGENT</span>AI
-        </span>
-
         <span className="header-subtitle" style={{
           fontFamily: "var(--font-mono)",
           fontSize: "0.65rem",

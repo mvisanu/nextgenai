@@ -912,13 +912,6 @@ export default function MedicalExamplesPage() {
             <ArrowLeft size={13} />
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.68rem", letterSpacing: "0.1em" }}>MAIN APP</span>
           </Link>
-          <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-          <span style={{
-            fontFamily: "var(--font-display)", fontSize: "0.75rem", fontWeight: 700,
-            letterSpacing: "0.2em", color: "hsl(var(--text-primary))",
-          }}>
-            NEXT<span style={{ color: "hsl(var(--col-green))" }}>AGENT</span>AI
-          </span>
           <span style={{
             fontFamily: "var(--font-mono)", fontSize: "0.65rem",
             color: "hsl(var(--col-cyan))", letterSpacing: "0.08em",
