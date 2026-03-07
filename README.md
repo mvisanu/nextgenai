@@ -61,7 +61,7 @@ NextAgentAI/
 │   └── requirements.txt
 ├── frontend/
 │   └── app/
-│       ├── components/     # ChatPanel, GraphViewer, AgentTimeline, MermaidDiagram
+│       ├── components/     # AppHeader (shared), ChatPanel, GraphViewer, AgentTimeline, MermaidDiagram
 │       ├── dashboard/      # Five-tab analytics dashboard (domain-aware)
 │       ├── diagram/        # MVP + enterprise architecture diagrams
 │       ├── data/           # Kaggle dataset showcase
@@ -225,9 +225,20 @@ Connect the GitHub repo to Vercel. Required environment variable:
 
 ---
 
+## Navigation
+
+Every page shares a global `AppHeader` rendered by `layout.tsx`. It contains:
+- NEXTAGENTAI branding and tool status indicators (VECTOR / SQL / GRAPH)
+- **NAVIGATE** dropdown — links to all pages (HOME, DASHBOARD, DATA, REVIEW, EXAMPLES, MED-EX, AGENT, DIAGRAM, FAQ)
+- **Domain switcher** — toggle between Aircraft and Medical modes
+
+Each page's own sub-header contains only page-specific content (back link, subtitle, status info). The NAVIGATE dropdown is also present in each sub-header for convenience.
+
+---
+
 ## Domain Switcher
 
-The header includes a domain toggle (aircraft / medical). Switching domains changes:
+The domain toggle (aircraft / medical) appears in the global header. Switching domains changes:
 
 - **Chat panel** — system prompt, query placeholder, and disclaimer text
 - **Knowledge graph** — shows aircraft SCADA graph or clinical knowledge graph
@@ -260,3 +271,4 @@ Domain selection is persisted to `localStorage`.
 - **ChatPanel retry on 502**: 3-attempt retry loop with 4s delay for transient Render cold-start 502/preflight failures. Shows amber "retrying..." banner. Non-network errors (4xx) are not retried.
 - **Clear button**: Trash2 icon appears in the input row once messages exist. Resets chat, graph, timeline, and input in one click.
 - **Stale cache skip**: `orchestrator._check_query_cache()` skips cached entries with `claims: []` — ensures degraded responses cached during DB outages are replaced on next query.
+- **Shared AppHeader**: `layout.tsx` renders `<AppHeader />` above all pages. The dashboard outer container uses `height: calc(100vh - 46px)` (not `100vh`) to stay within viewport. Page sub-headers must not duplicate the global NavDropdown or DomainSwitcher.

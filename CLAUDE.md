@@ -85,6 +85,8 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `/faq` | `faq/page.tsx` | FAQ |
 
 Key frontend files:
+- `app/layout.tsx` — renders `<AppHeader />` above all `{children}` inside `RunProvider`; every page inherits the global nav automatically
+- `app/components/AppHeader.tsx` — shared site-wide header: NEXTAGENTAI logo, VECTOR/SQL/GRAPH status dots, `NavDropdown` (exported), `DomainSwitcher`. `NavDropdown` is also imported individually by each page's sub-header for the NAVIGATE dropdown.
 - `app/lib/api.ts` — typed API client, `postQuery()`, `getHealth()`, etc.
 - `app/lib/theme.tsx` — `ThemeToggle`, `FontSizeControl`, CSS var system
 - `app/components/ChatPanel.tsx` — real API calls, health-check warm-up, citations, retry loop, clear button
@@ -113,6 +115,8 @@ Key frontend files:
 - **ORJSONResponse**: `main.py` sets `default_response_class=ORJSONResponse`; requires `orjson>=3.10` in requirements.
 - **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding display tier — 3-tier priority: (1) real backend graph, (2) synthetic graph built from vector hits (amber "VECTOR HITS" badge), (3) static mock (purple "SAMPLE DATA" badge).
 - **Hydration**: `<html>` in `layout.tsx` has `suppressHydrationWarning`; do NOT put `dark`/`text-medium` in the static SSR className — the inline theme script owns those classes.
+- **Shared AppHeader**: `layout.tsx` renders `<AppHeader />` (46px) above every page. Pages must NOT define their own full-height global header. Page-level sub-headers are secondary (back link + subtitle + status). Do NOT add `DomainSwitcher` or a second `NavDropdown` to page sub-headers — they already appear in the global AppHeader.
+- **Dashboard height**: dashboard outer div uses `height: "calc(100vh - 46px)"` (not `100vh`) to account for the 46px global AppHeader rendered by layout.tsx.
 - **Graph pane**: collapsible via `PanelRightClose`/`PanelRightOpen` button in `page.tsx`; state lives in `Home` component.
 - **Open items (do not regress)**: CR-007 — `compute_tool.py` uses `asyncio.get_event_loop()` in `run_async()` (deprecated, should be `get_running_loop()`).
 - **Claim confidence display**: scores rendered as integer `%` (e.g. `15%`) not raw decimal. Colour thresholds: `>=70%` green, `>=40%` amber, else red. Text wraps to 2 lines (no single-line truncation).
