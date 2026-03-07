@@ -13,7 +13,7 @@ import {
   ArrowLeft, Bot, Cpu, GitBranch, Layers,
   Zap, ChevronRight, BarChart3, Shield, Database,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 import MermaidDiagram from "../components/MermaidDiagram";
 
 // ── Diagram sources ────────────────────────────────────────────────────────
@@ -739,6 +739,7 @@ export default function AgentPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <NavDropdown />
         </div>
       </header>
 

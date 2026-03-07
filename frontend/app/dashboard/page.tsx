@@ -26,8 +26,8 @@ import Tab2IncidentExplorer  from "./components/Tab2IncidentExplorer";
 import Tab3DefectAnalytics   from "./components/Tab3DefectAnalytics";
 import Tab4MaintenanceTrends from "./components/Tab4MaintenanceTrends";
 import Tab5DataEval          from "./components/Tab5DataEval";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -125,66 +125,6 @@ function DomainSwitcher() {
   );
 }
 
-const DASH_NAV_ITEMS = [
-  { href: "/",                 label: "MAIN APP",   icon: ArrowLeft,      accent: "--col-green"  },
-  { href: "/data",             label: "DATA",        icon: Database,       accent: "--col-amber"  },
-  { href: "/review",           label: "REVIEW",      icon: GraduationCap,  accent: "--col-purple" },
-  { href: "/examples",         label: "EXAMPLES",    icon: FlaskConical,   accent: "--col-green"  },
-  { href: "/medical-examples", label: "MED-EX",      icon: Stethoscope,    accent: "--col-cyan"   },
-  { href: "/diagram",          label: "DIAGRAM",     icon: GitBranch,      accent: "--col-cyan"   },
-  { href: "/faq",              label: "FAQ",          icon: HelpCircle,     accent: "--col-cyan"   },
-] as const;
-
-function DashNavDropdown() {
-  const router = useRouter();
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <button
-          style={{
-            display: "flex", alignItems: "center", gap: "4px",
-            padding: "3px 8px",
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.6rem", fontWeight: 600, letterSpacing: "0.1em",
-            color: "hsl(var(--text-secondary))",
-            backgroundColor: "transparent",
-            border: "1px solid hsl(var(--border-base))",
-            borderRadius: "2px", cursor: "pointer", transition: "all 0.15s",
-          }}
-          onMouseEnter={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.color = "hsl(var(--col-cyan))"; el.style.borderColor = "hsl(var(--col-cyan))"; }}
-          onMouseLeave={(e) => { const el = e.currentTarget as HTMLButtonElement; el.style.color = "hsl(var(--text-secondary))"; el.style.borderColor = "hsl(var(--border-base))"; }}
-        >
-          NAVIGATE <ChevronDown size={10} />
-        </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent
-        align="end" sideOffset={6}
-        style={{
-          backgroundColor: "hsl(var(--bg-surface))",
-          border: "1px solid hsl(var(--border-base))",
-          borderRadius: "2px", padding: "4px", minWidth: "160px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.4)",
-        }}
-      >
-        <DropdownMenuLabel style={{ fontFamily: "var(--font-mono)", fontSize: "0.55rem", letterSpacing: "0.14em", color: "hsl(var(--text-dim))", padding: "4px 8px 6px" }}>
-          // PAGES
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator style={{ backgroundColor: "hsl(var(--border-base))", margin: "0 0 4px" }} />
-        {DASH_NAV_ITEMS.map(({ href, label, icon: Icon, accent }) => (
-          <DropdownMenuItem
-            key={href}
-            onSelect={() => router.push(href)}
-            style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", letterSpacing: "0.08em", color: "hsl(var(--text-secondary))", padding: "5px 8px", borderRadius: "1px", cursor: "pointer", gap: "7px" }}
-            className="nav-dropdown-item"
-          >
-            <Icon size={11} style={{ color: `hsl(var(${accent}))`, flexShrink: 0 }} />
-            {label}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-}
 
 function DashboardHeader() {
   return (
@@ -255,7 +195,7 @@ function DashboardHeader() {
 
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 
-        <DashNavDropdown />
+        <NavDropdown />
 
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 

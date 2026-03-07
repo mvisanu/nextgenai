@@ -14,7 +14,7 @@ import {
   Heart, Plane, Factory, Cpu, Truck, FlaskConical,
   Building2, Leaf, CheckCircle2, Copy, Check,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -848,6 +848,7 @@ export default function ExamplesPage() {
             {EXAMPLES.length} TEST QUERIES · {INDUSTRIES.length} INDUSTRIES
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+          <NavDropdown />
         </div>
       </header>
 

@@ -12,7 +12,7 @@ import {
   ArrowLeft, Database, ExternalLink, ChevronDown, ChevronUp,
   Activity, Layers, BarChart2, GitMerge, Copy, Check, Stethoscope,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -814,6 +814,7 @@ function DataHeader() {
           5 DATASETS // DUAL-DOMAIN MVP
         </span>
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+        <NavDropdown />
       </div>
     </header>
   );

@@ -26,7 +26,7 @@ import {
   Users,
   ClipboardList,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Shared style constants ────────────────────────────────────────────────────
 
@@ -762,6 +762,7 @@ function FaqHeader() {
             backgroundColor: "hsl(var(--border-strong))",
           }}
         />
+        <NavDropdown />
       </div>
     </header>
   );

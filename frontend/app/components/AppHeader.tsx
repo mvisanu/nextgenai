@@ -78,7 +78,7 @@ function DomainSwitcher() {
 // Nav dropdown
 // ---------------------------------------------------------------------------
 
-function NavDropdown() {
+export function NavDropdown() {
   const router = useRouter();
   return (
     <DropdownMenu>

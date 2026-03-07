@@ -14,7 +14,7 @@ import {
   CheckCircle2, Circle, Activity, Brain, Layers,
   Database, GitMerge, Shield, Rocket, Monitor, BarChart2, Stethoscope,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 
@@ -1307,6 +1307,7 @@ export default function ReviewPage() {
             {reviewed.size}/{totalQuestions} REVIEWED — {pct}%
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+          <NavDropdown />
         </div>
       </header>
 

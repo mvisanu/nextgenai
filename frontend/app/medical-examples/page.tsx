@@ -14,7 +14,7 @@ import {
   Heart, Brain, Wind, Stethoscope, Microscope,
   FlaskConical, BookOpen, GitBranch, Copy, Check,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 
 // ── Types ────────────────────────────────────────────────────────────────────
 
@@ -925,6 +925,7 @@ export default function MedicalExamplesPage() {
             {EXAMPLES.length} CLINICAL QUERIES · {RESEARCH_ANGLES.length} CROSS-DOMAIN PATTERNS
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
+          <NavDropdown />
         </div>
       </header>
 

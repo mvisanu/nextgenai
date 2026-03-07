@@ -12,7 +12,7 @@ import {
   ArrowLeft, GitBranch, Layers, Globe, Server, Database,
   Cpu, Shield, Users, Zap, BarChart3, ChevronRight,
 } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
+import { NavDropdown } from "../components/AppHeader";
 import MermaidDiagram from "../components/MermaidDiagram";
 
 // ── Diagram sources ────────────────────────────────────────────────────────
@@ -405,6 +405,7 @@ export default function DiagramPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <NavDropdown />
         </div>
       </header>
 
