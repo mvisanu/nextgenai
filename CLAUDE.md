@@ -64,7 +64,8 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `incident_reports` | Narrative text — primary vector embedding source |
 | `manufacturing_defects` | Structured defect records — SQL aggregation |
 | `maintenance_logs` | Time-series sensor/maintenance events |
-| `incident_embeddings` | 384-dim pgvector chunks with char offsets |
+| `incident_embeddings` | 384-dim pgvector chunks with char offsets — HNSW cosine index |
+| `medical_embeddings` | 384-dim pgvector chunks for medical/clinical domain — HNSW cosine index (note: ingest not yet wired in `pipeline.py` — T3-13) |
 | `graph_node` | KG nodes: `entity` or `chunk` type |
 | `graph_edge` | KG edges: `mentions`, `similarity`, `co_occurrence` |
 | `agent_runs` | Persisted full JSON output per query |
@@ -105,10 +106,14 @@ Key frontend files:
 - **CORS**: never use `allow_origins=["*"]` with `allow_credentials=True` — illegal per Fetch spec; use explicit origin list in `main.py`; extend via `CORS_ORIGINS` env var
 - **Mermaid**: call `mermaid.initialize()` once only; inject theme via `%%{init}%%` per diagram; use timestamp-suffixed IDs to avoid DOM ID collisions
 - **Render cold starts**: frontend pings `GET /healthz` on mount (no preflight) to wake the backend before user submits first query
-- **LLM routing**: use `get_fast_llm_client()` (Haiku) for classify/plan/verify — simple JSON tasks; use `get_llm_client()` (Sonnet) for synthesis only. Do not use Sonnet for routing.
-- **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding mock vs real — never rely on `?? fallback` alone.
+- **LLM routing**: use `get_fast_llm_client()` / `get_async_fast_llm_client()` (Haiku) for classify/plan/verify — simple JSON tasks; use `get_llm_client()` / `get_async_llm_client()` (Sonnet) for synthesis only. Do not use Sonnet for routing.
+- **Async orchestration**: `orchestrator.py` primary path is `async def run()`; `asyncio.gather(vector_task, sql_task)` for hybrid/compute intents. All LLM calls use `complete_async()`.
+- **Verifier max_tokens**: must be `1536` in `verifier.py` — lower values truncate the JSON response and silently drop all claims.
+- **ORJSONResponse**: `main.py` sets `default_response_class=ORJSONResponse`; requires `orjson>=3.10` in requirements.
+- **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding display tier — 3-tier priority: (1) real backend graph, (2) synthetic graph built from vector hits (amber "VECTOR HITS" badge), (3) static mock (purple "SAMPLE DATA" badge).
 - **Hydration**: `<html>` in `layout.tsx` has `suppressHydrationWarning`; do NOT put `dark`/`text-medium` in the static SSR className — the inline theme script owns those classes.
 - **Graph pane**: collapsible via `PanelRightClose`/`PanelRightOpen` button in `page.tsx`; state lives in `Home` component.
+- **Open items (do not regress)**: CR-003 — `get_run()` in `query.py` is `async def` but uses `get_sync_session()` (blocks event loop); CR-007 — `compute_tool.py` uses `asyncio.get_event_loop()` in `run_async()` (deprecated, should be `get_running_loop()`); T3-13 — `_embed_and_store_medical_sync()` not implemented in `pipeline.py` so `medical_embeddings` is always empty.
 - **`anthropic` package**: must be `>=0.49.0` — `AsyncAnthropic` was introduced in that version; `0.40.0` breaks the async LLM client and silently falls back to no-claims responses.
 - **Render DB DSN format**: `PG_DSN` = `postgresql://...?sslmode=require`; `DATABASE_URL` = `postgresql+asyncpg://...?ssl=require`. The `?` must separate the DB name from query params — `neondb&channel_binding=require` (missing `?`) causes `db:false` in `/healthz`.
 - **GraphViewer memoization**: `graphPath` and `vectorHitsForGraph` must be `useMemo` — plain inline expressions create new references each render and trigger the ReactFlow `StoreUpdater` infinite loop.

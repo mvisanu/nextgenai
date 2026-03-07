@@ -53,6 +53,9 @@ alembic upgrade head
 echo "[entrypoint] Migrations complete."
 
 # --- Seed aircraft data (only on first run if tables are empty) ---
+# Check BOTH incident_reports AND incident_embeddings: if embeddings are missing
+# (e.g. after a schema migration that recreated tables) we must re-run ingest
+# even when incident_reports already has rows.
 echo "[entrypoint] Checking if aircraft seed data is needed..."
 python -c "
 import os, sys
@@ -64,20 +67,22 @@ try:
     conn = psycopg2.connect(url)
     cur = conn.cursor()
     cur.execute('SELECT COUNT(*) FROM incident_reports')
-    count = cur.fetchone()[0]
+    inc_count = cur.fetchone()[0]
+    cur.execute('SELECT COUNT(*) FROM incident_embeddings')
+    emb_count = cur.fetchone()[0]
     conn.close()
-    if count == 0:
+    if inc_count == 0 or emb_count == 0:
         print('SEED_NEEDED')
     else:
-        print(f'Data exists ({count} incidents). Skipping auto-seed.')
+        print(f'Data exists ({inc_count} incidents, {emb_count} embeddings). Skipping auto-seed.')
 except Exception as e:
     print(f'Could not check row count: {e}')
 " | grep -q "SEED_NEEDED" && {
-    echo "[entrypoint] No aircraft data found — triggering ingest pipeline..."
+    echo "[entrypoint] No aircraft data or embeddings found — triggering ingest pipeline..."
     cd /workspace && python -m backend.src.cli ingest --config backend/config.yaml || echo "[entrypoint] Ingest warning (non-fatal): check logs"
 } || echo "[entrypoint] Existing aircraft data found — skipping auto-ingest."
 
-# --- Seed medical data (only on first run if medical_cases is empty) ---
+# --- Seed medical data (only on first run if medical_cases or medical_embeddings is empty) ---
 echo "[entrypoint] Checking if medical seed data is needed..."
 python -c "
 import os, sys
@@ -89,12 +94,14 @@ try:
     conn = psycopg2.connect(url)
     cur = conn.cursor()
     cur.execute('SELECT COUNT(*) FROM medical_cases')
-    count = cur.fetchone()[0]
+    case_count = cur.fetchone()[0]
+    cur.execute('SELECT COUNT(*) FROM medical_embeddings')
+    emb_count = cur.fetchone()[0]
     conn.close()
-    if count == 0:
+    if case_count == 0 or emb_count == 0:
         print('MEDICAL_SEED_NEEDED')
     else:
-        print(f'Medical data exists ({count} cases). Skipping auto-seed.')
+        print(f'Medical data exists ({case_count} cases, {emb_count} embeddings). Skipping auto-seed.')
 except Exception as e:
     print(f'Could not check medical row count: {e}')
 " | grep -q "MEDICAL_SEED_NEEDED" && {

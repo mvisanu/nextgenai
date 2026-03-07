@@ -6,11 +6,11 @@
 // type-coded glow, amber trace connector lines
 // ============================================================
 
-import React from "react";
-import { CheckCircle2, XCircle, Clock, Cpu } from "lucide-react";
+import React, { useState } from "react";
+import { CheckCircle2, XCircle, Clock, Cpu, ChevronDown, ChevronRight } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useRunContext } from "../lib/context";
-import type { StepSummary, RunSummary } from "../lib/api";
+import type { StepSummary, RunSummary, Evidence } from "../lib/api";
 
 // ---------------------------------------------------------------------------
 // Tool colour mapping
@@ -60,6 +60,253 @@ function ToolBadge({ toolName }: { toolName: string }) {
 }
 
 // ---------------------------------------------------------------------------
+// Step detail panel — shown when a step row is expanded
+// ---------------------------------------------------------------------------
+
+function StepDetail({
+  step,
+  evidence,
+}: {
+  step: StepSummary;
+  evidence: Evidence;
+}) {
+  const lower = step.tool_name.toLowerCase();
+  const { color } = getToolStyle(step.tool_name);
+
+  const panelStyle: React.CSSProperties = {
+    marginTop: "6px",
+    marginBottom: "2px",
+    borderLeft: `2px solid hsl(${color} / 0.35)`,
+    paddingLeft: "10px",
+    paddingTop: "6px",
+    paddingBottom: "6px",
+  };
+
+  const labelStyle: React.CSSProperties = {
+    fontFamily: "var(--font-display)",
+    fontSize: "0.6rem",
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    color: `hsl(${color} / 0.7)`,
+    marginBottom: "6px",
+  };
+
+  const monoSm: React.CSSProperties = {
+    fontFamily: "var(--font-mono)",
+    fontSize: "0.75rem",
+    color: "hsl(var(--text-secondary))",
+    lineHeight: "1.5",
+  };
+
+  const dimStyle: React.CSSProperties = {
+    fontFamily: "var(--font-mono)",
+    fontSize: "0.7rem",
+    color: "hsl(var(--text-dim))",
+  };
+
+  // ── VectorSearchTool ──
+  if (lower.includes("vector")) {
+    const hits = evidence.vector_hits ?? [];
+    if (hits.length === 0) {
+      return (
+        <div style={panelStyle}>
+          <div style={labelStyle}>VECTOR HITS</div>
+          <p style={dimStyle}>No vector hits recorded.</p>
+        </div>
+      );
+    }
+    // Normalise scores within this result set so best match = 1.000
+    const rawScores = hits.map((h) => h.score);
+    const minScore = Math.min(...rawScores);
+    const maxScore = Math.max(...rawScores);
+    const scoreRange = maxScore - minScore;
+    const normalise = (s: number) =>
+      scoreRange > 0 ? (s - minScore) / scoreRange : 1;
+    return (
+      <div style={panelStyle}>
+        <div style={labelStyle}>VECTOR HITS — {hits.length} chunks</div>
+        <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+          {hits.map((hit, i) => {
+            const normScore = normalise(hit.score);
+            return (
+            <div
+              key={hit.chunk_id}
+              style={{
+                padding: "6px 8px",
+                backgroundColor: "hsl(var(--bg-void) / 0.6)",
+                border: "1px solid hsl(var(--border-base) / 0.5)",
+                borderRadius: "2px",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "8px",
+                  marginBottom: "4px",
+                  flexWrap: "wrap",
+                }}
+              >
+                <span style={{ ...dimStyle, flexShrink: 0 }}>#{i + 1}</span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "0.72rem",
+                    color: `hsl(${color})`,
+                    fontWeight: 600,
+                    flexShrink: 0,
+                  }}
+                >
+                  score {normScore.toFixed(3)}
+                </span>
+                {/* Score bar */}
+                <div style={{ flex: 1, minWidth: "40px", maxWidth: "80px", height: "4px", backgroundColor: `hsl(${color} / 0.15)`, borderRadius: "2px", overflow: "hidden" }}>
+                  <div style={{ width: `${normScore * 100}%`, height: "100%", backgroundColor: `hsl(${color})`, borderRadius: "2px" }} />
+                </div>
+                {hit.metadata?.system && (
+                  <span style={{ ...dimStyle, flexShrink: 0 }}>
+                    sys:{hit.metadata.system}
+                  </span>
+                )}
+                {hit.metadata?.severity && (
+                  <span style={{ ...dimStyle, flexShrink: 0 }}>
+                    sev:{hit.metadata.severity}
+                  </span>
+                )}
+                <span style={{ ...dimStyle, flexShrink: 0, marginLeft: "auto" }}>
+                  id:{hit.incident_id.slice(0, 8)}
+                </span>
+              </div>
+              <p
+                style={{
+                  ...monoSm,
+                  display: "-webkit-box",
+                  WebkitLineClamp: 3,
+                  WebkitBoxOrient: "vertical",
+                  overflow: "hidden",
+                  margin: 0,
+                }}
+              >
+                {hit.excerpt}
+              </p>
+            </div>
+          );})}
+        </div>
+      </div>
+    );
+  }
+
+  // ── SQLQueryTool ──
+  if (lower.includes("sql") || lower.includes("query")) {
+    const sqlResults = evidence.sql_rows ?? [];
+    if (sqlResults.length === 0) {
+      return (
+        <div style={panelStyle}>
+          <div style={labelStyle}>SQL RESULTS</div>
+          <p style={dimStyle}>No SQL results recorded.</p>
+        </div>
+      );
+    }
+    return (
+      <div style={panelStyle}>
+        {sqlResults.map((result, ri) => {
+          const cols = result.columns ?? [];
+          const rows = (result.rows ?? []) as unknown[][];
+          const preview = rows.slice(0, 10);
+          return (
+            <div key={ri} style={{ marginBottom: ri < sqlResults.length - 1 ? "10px" : 0 }}>
+              <div style={labelStyle}>
+                SQL RESULT — {result.row_count} rows
+                {result.query ? ` / ${result.query.slice(0, 40)}` : ""}
+              </div>
+              {cols.length > 0 && preview.length > 0 ? (
+                <div style={{ overflowX: "auto" }}>
+                  <table
+                    style={{
+                      borderCollapse: "collapse",
+                      width: "100%",
+                      minWidth: "max-content",
+                    }}
+                  >
+                    <thead>
+                      <tr>
+                        {cols.map((col) => (
+                          <th
+                            key={col}
+                            style={{
+                              ...dimStyle,
+                              fontWeight: 700,
+                              letterSpacing: "0.08em",
+                              textAlign: "left",
+                              padding: "3px 8px 3px 0",
+                              borderBottom: "1px solid hsl(var(--border-base) / 0.5)",
+                              whiteSpace: "nowrap",
+                            }}
+                          >
+                            {col}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {preview.map((row, rowI) => (
+                        <tr key={rowI}>
+                          {(row as unknown[]).map((cell, cellI) => (
+                            <td
+                              key={cellI}
+                              style={{
+                                ...monoSm,
+                                padding: "3px 8px 3px 0",
+                                borderBottom: "1px solid hsl(var(--border-base) / 0.2)",
+                                whiteSpace: "nowrap",
+                                maxWidth: "180px",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {String(cell ?? "")}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {rows.length > 10 && (
+                    <p style={{ ...dimStyle, marginTop: "4px" }}>
+                      ... {rows.length - 10} more rows
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p style={dimStyle}>No rows returned.</p>
+              )}
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+
+  // ── ComputeTool ──
+  if (lower.includes("compute") || lower.includes("python")) {
+    return (
+      <div style={panelStyle}>
+        <div style={labelStyle}>COMPUTE OUTPUT</div>
+        <p style={monoSm}>{step.output_summary}</p>
+      </div>
+    );
+  }
+
+  // ── Fallback ──
+  return (
+    <div style={panelStyle}>
+      <div style={labelStyle}>STEP OUTPUT</div>
+      <p style={monoSm}>{step.output_summary}</p>
+    </div>
+  );
+}
+
+// ---------------------------------------------------------------------------
 // Single step
 // ---------------------------------------------------------------------------
 
@@ -67,14 +314,27 @@ function TimelineStep({
   step,
   isLast,
   index,
+  evidence,
+  isExpanded,
+  onToggle,
 }: {
   step: StepSummary;
   isLast: boolean;
   index: number;
+  evidence: Evidence;
+  isExpanded: boolean;
+  onToggle: () => void;
 }) {
   const hasError = step.error !== null;
   const { color } = getToolStyle(step.tool_name);
   const nodeColor = hasError ? "var(--col-red)" : color;
+
+  // Determine if this step has any expandable content
+  const lower = step.tool_name.toLowerCase();
+  const hasVectorData = lower.includes("vector") && (evidence.vector_hits ?? []).length > 0;
+  const hasSqlData = (lower.includes("sql") || lower.includes("query")) && (evidence.sql_rows ?? []).length > 0;
+  const hasComputeData = lower.includes("compute") || lower.includes("python");
+  const isExpandable = hasVectorData || hasSqlData || hasComputeData || !hasError;
 
   return (
     <div
@@ -118,7 +378,7 @@ function TimelineStep({
         </div>
 
         {/* Vertical trace line */}
-        {!isLast && (
+        {(!isLast || isExpanded) && (
           <div
             style={{
               width: 1,
@@ -133,15 +393,28 @@ function TimelineStep({
       </div>
 
       {/* ── Right: step content ── */}
-      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast ? 0 : "10px" }}>
-        {/* Header row: badge + status + latency */}
+      <div style={{ flex: 1, minWidth: 0, paddingBottom: isLast && !isExpanded ? 0 : "10px" }}>
+        {/* Header row: badge + status + latency + expand toggle */}
         <div
+          onClick={isExpandable ? onToggle : undefined}
           style={{
             display: "flex",
             alignItems: "center",
             flexWrap: "wrap",
             gap: "6px",
             marginBottom: "4px",
+            cursor: isExpandable ? "pointer" : "default",
+            padding: "2px 0",
+            borderRadius: "2px",
+            transition: "background-color 0.1s",
+          }}
+          onMouseEnter={(e) => {
+            if (isExpandable) {
+              (e.currentTarget as HTMLDivElement).style.backgroundColor = `hsl(${color} / 0.05)`;
+            }
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLDivElement).style.backgroundColor = "transparent";
           }}
         >
           <ToolBadge toolName={step.tool_name} />
@@ -171,22 +444,35 @@ function TimelineStep({
               {step.latency_ms.toLocaleString()} ms
             </span>
           </div>
-        </div>
 
-        {/* Output summary */}
-        <p
-          style={{
-            fontFamily: "var(--font-mono)",
-            fontSize: "0.85rem",
-            color: "hsl(var(--text-secondary))",
-            lineHeight: "1.4",
-            overflow: "hidden",
-            textOverflow: "ellipsis",
-            whiteSpace: "nowrap",
-          }}
-        >
-          {step.output_summary}
-        </p>
+          {/* Output summary — inline in header row */}
+          <p
+            style={{
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.85rem",
+              color: "hsl(var(--text-secondary))",
+              lineHeight: "1.4",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
+              flex: 1,
+              minWidth: 0,
+              margin: 0,
+            }}
+          >
+            {step.output_summary}
+          </p>
+
+          {/* Expand chevron */}
+          {isExpandable && (
+            <span style={{ color: `hsl(${color} / 0.6)`, flexShrink: 0, lineHeight: 1 }}>
+              {isExpanded
+                ? <ChevronDown size={11} />
+                : <ChevronRight size={11} />
+              }
+            </span>
+          )}
+        </div>
 
         {/* Error message */}
         {hasError && (
@@ -201,6 +487,11 @@ function TimelineStep({
           >
             {step.error}
           </p>
+        )}
+
+        {/* Expanded detail panel */}
+        {isExpanded && (
+          <StepDetail step={step} evidence={evidence} />
         )}
       </div>
     </div>
@@ -317,6 +608,7 @@ function RunHeader({ summary }: { summary: RunSummary }) {
 
 export default function AgentTimeline() {
   const { runData } = useRunContext();
+  const [expandedStep, setExpandedStep] = useState<number | null>(null);
 
   if (!runData) {
     return (
@@ -347,7 +639,7 @@ export default function AgentTimeline() {
     );
   }
 
-  const { run_summary } = runData;
+  const { run_summary, evidence } = runData;
 
   return (
     <ScrollArea className="h-full">
@@ -372,6 +664,13 @@ export default function AgentTimeline() {
                 step={step}
                 isLast={idx === run_summary.steps.length - 1}
                 index={idx}
+                evidence={evidence}
+                isExpanded={expandedStep === step.step_number}
+                onToggle={() =>
+                  setExpandedStep(
+                    expandedStep === step.step_number ? null : step.step_number
+                  )
+                }
               />
             ))}
           </div>

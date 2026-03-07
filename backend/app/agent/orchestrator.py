@@ -1045,6 +1045,12 @@ async def _check_query_cache(query: str, ttl_seconds: int = 300) -> dict[str, An
         result_data = row.result
         if isinstance(result_data, str):
             result_data = json.loads(result_data)
+        # BUG-PROD-006: skip degraded cached responses (empty claims list means
+        # the entry was stored during a DB outage / fallback path).  Treat as a
+        # cache miss so the next request runs a fresh pipeline.
+        if result_data.get("claims") == []:
+            logger.info("Query cache skip — cached entry has empty claims (degraded response)")
+            return None
         return result_data
     except Exception as exc:
         # Cache miss on any DB error — don't block the request

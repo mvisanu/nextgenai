@@ -153,6 +153,7 @@ export default function ChatPanel() {
   const [activeCitation, setActiveCitation] = useState<ActiveCitationState | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [apiStatus, setApiStatus] = useState<"checking" | "ready" | "cold">("checking");
+  const [retryStatus, setRetryStatus] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   // Wake up Render free-tier backend on mount.
@@ -191,16 +192,48 @@ export default function ChatPanel() {
     setInputValue("");
     setIsLoading(true);
     setError(null);
-    try {
-      const response = await postQuery(query, domain);
-      setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: response.answer, response }]);
-      setRunData(response);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "An unexpected error occurred.");
-    } finally {
-      setIsLoading(false);
+    setRetryStatus(null);
+
+    const MAX_RETRIES = 3;
+    const RETRY_DELAY_MS = 4000;
+
+    const isNetworkError = (err: unknown): boolean => {
+      if (!(err instanceof Error)) return false;
+      const msg = err.message.toLowerCase();
+      return msg.includes("failed to fetch") || msg.includes("networkerror") || msg.includes("network error");
+    };
+
+    let lastErr: unknown;
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+      try {
+        const response = await postQuery(query, domain);
+        setRetryStatus(null);
+        setMessages((prev) => [...prev, { id: crypto.randomUUID(), role: "assistant", content: response.answer, response }]);
+        setRunData(response);
+        setIsLoading(false);
+        return;
+      } catch (err) {
+        lastErr = err;
+        // Do not retry on 4xx — those are real application errors.
+        if (!isNetworkError(err)) break;
+        if (attempt < MAX_RETRIES) {
+          setRetryStatus(`Connection issue, retrying... (${attempt}/${MAX_RETRIES - 1})`);
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY_MS));
+        }
+      }
     }
-  }, [inputValue, isLoading, setRunData]);
+
+    setRetryStatus(null);
+    const isNetwork = isNetworkError(lastErr);
+    setError(
+      isNetwork
+        ? "Backend is temporarily unavailable. Please try again in a moment."
+        : lastErr instanceof Error
+        ? lastErr.message
+        : "An unexpected error occurred."
+    );
+    setIsLoading(false);
+  }, [inputValue, isLoading, setRunData, domain]);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); void handleSubmit(); }
@@ -347,6 +380,22 @@ export default function ChatPanel() {
           )}
         </div>
       </ScrollArea>
+
+      {/* ── Retry status ── */}
+      {retryStatus && (
+        <div style={{
+          display: "flex", alignItems: "center", gap: "9px", padding: "9px 12px",
+          border: "1px solid hsl(var(--col-amber) / 0.5)",
+          borderLeft: "2px solid hsl(var(--col-amber))",
+          backgroundColor: "hsl(var(--col-amber) / 0.06)",
+          borderRadius: "2px", flexShrink: 0,
+        }}>
+          <Loader2 size={14} style={{ color: "hsl(var(--col-amber))", animation: "spin 1s linear infinite", flexShrink: 0 }} />
+          <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.84rem", color: "hsl(var(--col-amber))" }}>
+            {retryStatus}
+          </p>
+        </div>
+      )}
 
       {/* ── Error alert ── */}
       {error && (

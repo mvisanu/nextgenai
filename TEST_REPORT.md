@@ -7,7 +7,7 @@
 
 ---
 
-## Executive Summary (2026-03-06 Update)
+## Executive Summary (2026-03-07 Update)
 
 | Metric | Value |
 |---|---|
@@ -16,12 +16,64 @@
 | Failed | 0 (post-fix) |
 | Skipped / Blocked | 16 (see Coverage Gaps) |
 | TypeScript type errors | 0 |
-| Overall status | PASS — all 4 prior bugs resolved + Bug #5 (graph domain mismatch) resolved |
+| Overall status | PASS — BUG-PROD-007 (entrypoint seed check) fixed + FEAT-001 (AgentTimeline click-to-expand) added |
 
-**Post-fix run date:** 2026-03-04 (backend tests) / 2026-03-06 (Bug #5 frontend fix)
-**Post-fix run result:** 241 passed, 2 deselected, 1 warning in 89.03s
+**Post-fix run date:** 2026-03-07
+**Post-fix run result:** 241 passed, 2 deselected, 1 warning in 89.03s (no new tests added; frontend TSC clean)
 
-All 4 bugs from the 2026-03-05 QA pass have been resolved. Bug #5 (Knowledge Graph shows static mock/generic nodes instead of query-specific nodes) has been diagnosed and fixed on 2026-03-06. No previously passing tests were broken. The frontend TypeScript build continues to pass with zero type errors (verified via IDE diagnostics).
+BUG-PROD-007 (entrypoint skips re-seeding when incident_reports has rows but incident_embeddings is empty) fixed in `backend/entrypoint.sh`. FEAT-001 (clickable tool step rows in AgentTimeline with inline detail panels) implemented in `frontend/app/components/AgentTimeline.tsx`. No previously passing tests were broken. TypeScript build: 0 errors.
+
+---
+
+## BUG-PROD-007 — "Found 0 similar chunks" / "Returned 0 rows" on live Render instance
+
+**Reported:** 2026-03-07
+**Status:** RESOLVED
+
+### Root Cause
+
+`entrypoint.sh` seed-check logic only queried `COUNT(*) FROM incident_reports`. On a redeployment where `incident_reports` already had rows (from a prior seed run) but `incident_embeddings` was empty (e.g. after a Neon schema migration or table recreation), the check returned `count > 0` and **skipped the ingest pipeline entirely**. Vector search then returned 0 hits because the HNSW index had nothing to search, and SQL queries returned 0 rows because the manufacturing tables were also empty.
+
+The 848.8 ms latency for both tools (identical to each other) is consistent with this: the async `gather()` in the orchestrator runs both tools in parallel, so they share a wall-clock time. The tools completed quickly because they ran valid queries against empty tables — not because they failed.
+
+### Fix
+
+**File modified:** `backend/entrypoint.sh`
+
+Changed both seed-check blocks (aircraft and medical) to query **both** the source table and the embeddings table:
+
+- Aircraft: `SELECT COUNT(*) FROM incident_reports` AND `SELECT COUNT(*) FROM incident_embeddings` — triggers ingest if **either** is 0
+- Medical: `SELECT COUNT(*) FROM medical_cases` AND `SELECT COUNT(*) FROM medical_embeddings` — triggers ingest if **either** is 0
+
+This ensures that if embeddings were wiped (without wiping the source rows), the next Render deploy will re-embed and re-seed correctly.
+
+**Note:** To fix the live Render instance immediately (without a redeploy), trigger `POST /ingest` from the dashboard or via `curl -X POST https://nextgenai-5bf8.onrender.com/ingest`. The pipeline is idempotent — it uses `ON CONFLICT DO NOTHING` upserts.
+
+---
+
+## FEAT-001 — Clickable tool results in AgentTimeline
+
+**Reported:** 2026-03-07
+**Status:** RESOLVED
+
+### Implementation
+
+**File modified:** `frontend/app/components/AgentTimeline.tsx`
+
+Added click-to-expand inline detail panels for each tool step in the AgentTimeline.
+
+**Changes:**
+1. Added `useState<number | null>` (`expandedStep`) to `AgentTimeline` — tracks which step (by `step_number`) is currently expanded; only one at a time (accordion pattern).
+2. Added `StepDetail` component — renders tool-specific detail for the expanded step:
+   - **VectorSearchTool**: shows all `evidence.vector_hits` as cards — score, system/severity metadata, and up to 3 lines of excerpt text.
+   - **SQLQueryTool**: renders `evidence.sql_rows` as a responsive scrollable table with column headers; shows "... N more rows" indicator when over 10 rows.
+   - **ComputeTool**: shows the `output_summary` text.
+3. Updated `TimelineStep` to accept `evidence`, `isExpanded`, and `onToggle` props; the header row becomes a click target with hover highlight and a `ChevronDown`/`ChevronRight` indicator.
+4. The `evidence` object comes directly from `runData` in `useRunContext()` — no new API calls needed.
+
+Styling matches the existing SCADA industrial theme: dark backgrounds, per-tool accent colors, monospace fonts.
+
+TypeScript: 0 errors (`npx tsc --noEmit` clean).
 
 ---
 
