@@ -291,8 +291,6 @@ function DashboardHeader() {
 
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
 
-        <div className="header-font-control"><FontSizeControl /></div>
-        <ThemeToggle />
       </div>
     </header>
   );

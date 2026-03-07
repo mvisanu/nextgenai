@@ -1315,8 +1315,6 @@ export default function ReviewPage() {
             {reviewed.size}/{totalQuestions} REVIEWED — {pct}%
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-          <FontSizeControl />
-          <ThemeToggle />
         </div>
       </header>
 

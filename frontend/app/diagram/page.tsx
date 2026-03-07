@@ -405,8 +405,6 @@ export default function DiagramPage() {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <FontSizeControl />
-          <ThemeToggle />
         </div>
       </header>
 

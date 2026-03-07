@@ -855,8 +855,6 @@ export default function ExamplesPage() {
             {EXAMPLES.length} TEST QUERIES · {INDUSTRIES.length} INDUSTRIES
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-          <FontSizeControl />
-          <ThemeToggle />
         </div>
       </header>
 

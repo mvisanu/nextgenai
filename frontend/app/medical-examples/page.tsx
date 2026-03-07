@@ -932,8 +932,6 @@ export default function MedicalExamplesPage() {
             {EXAMPLES.length} CLINICAL QUERIES · {RESEARCH_ANGLES.length} CROSS-DOMAIN PATTERNS
           </span>
           <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-          <FontSizeControl />
-          <ThemeToggle />
         </div>
       </header>
 

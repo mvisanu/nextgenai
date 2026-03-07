@@ -8,7 +8,6 @@
 
 import { useRouter } from "next/navigation";
 import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home } from "lucide-react";
-import { ThemeToggle, FontSizeControl } from "../lib/theme";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
 import {
   DropdownMenu,
@@ -264,8 +263,6 @@ export default function AppHeader() {
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
         <DomainSwitcher />
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
-        <div className="header-font-control"><FontSizeControl /></div>
-        <ThemeToggle />
       </div>
     </header>
   );

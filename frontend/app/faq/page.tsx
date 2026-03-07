@@ -816,8 +816,6 @@ function FaqHeader() {
             backgroundColor: "hsl(var(--border-strong))",
           }}
         />
-        <FontSizeControl />
-        <ThemeToggle />
       </div>
     </header>
   );

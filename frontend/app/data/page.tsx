@@ -826,8 +826,6 @@ function DataHeader() {
           5 DATASETS // DUAL-DOMAIN MVP
         </span>
         <div style={{ width: 1, height: 16, backgroundColor: "hsl(var(--border-strong))" }} />
-        <FontSizeControl />
-        <ThemeToggle />
       </div>
     </header>
   );
