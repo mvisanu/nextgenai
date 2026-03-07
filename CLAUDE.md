@@ -87,7 +87,8 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 Key frontend files:
 - `app/lib/api.ts` — typed API client, `postQuery()`, `getHealth()`, etc.
 - `app/lib/theme.tsx` — `ThemeToggle`, `FontSizeControl`, CSS var system
-- `app/components/ChatPanel.tsx` — real API calls, health-check warm-up, citations
+- `app/components/ChatPanel.tsx` — real API calls, health-check warm-up, citations, retry loop, clear button
+- `app/components/AgentTimeline.tsx` — execution trace; steps are click-to-expand showing vector hits / SQL rows / compute output
 - `app/components/MermaidDiagram.tsx` — per-diagram `%%{init}%%` theming, single init
 
 ## Configuration
@@ -113,7 +114,14 @@ Key frontend files:
 - **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding display tier — 3-tier priority: (1) real backend graph, (2) synthetic graph built from vector hits (amber "VECTOR HITS" badge), (3) static mock (purple "SAMPLE DATA" badge).
 - **Hydration**: `<html>` in `layout.tsx` has `suppressHydrationWarning`; do NOT put `dark`/`text-medium` in the static SSR className — the inline theme script owns those classes.
 - **Graph pane**: collapsible via `PanelRightClose`/`PanelRightOpen` button in `page.tsx`; state lives in `Home` component.
-- **Open items (do not regress)**: CR-003 — `get_run()` in `query.py` is `async def` but uses `get_sync_session()` (blocks event loop); CR-007 — `compute_tool.py` uses `asyncio.get_event_loop()` in `run_async()` (deprecated, should be `get_running_loop()`); T3-13 — `_embed_and_store_medical_sync()` not implemented in `pipeline.py` so `medical_embeddings` is always empty.
+- **Open items (do not regress)**: CR-007 — `compute_tool.py` uses `asyncio.get_event_loop()` in `run_async()` (deprecated, should be `get_running_loop()`).
+- **Claim confidence display**: scores rendered as integer `%` (e.g. `15%`) not raw decimal. Colour thresholds: `>=70%` green, `>=40%` amber, else red. Text wraps to 2 lines (no single-line truncation).
+- **AgentTimeline expand**: each step is click-to-expand accordion. Vector hits shown with min-max normalised score + score bar. SQL results shown as scrollable table. Expand state: `expandedStep: number | null` (one open at a time).
+- **Vector hit score normalisation**: raw cosine scores from synthetic data are ~0.01–0.02 (all similar due to template structure). Display normalises within result set: `(score - min) / (max - min)`. Best match = 1.000.
+- **ChatPanel retry**: on network/502 error, retries up to 3× with 4s delay. Shows amber banner "Connection issue, retrying... (N/3)". Does not retry on 4xx. After exhaustion: "Backend is temporarily unavailable."
+- **ChatPanel clear**: Trash2 button appears left of input when messages exist and not loading. Clears messages, input, error, and runData (resets graph + timeline).
+- **Query cache skip**: `_check_query_cache()` in `orchestrator.py` returns `None` (cache miss) when cached entry has `claims: []` — prevents stale degraded responses from DB-outage period being served.
+- **Seed check**: `entrypoint.sh` verifies both tables per domain: aircraft checks `incident_reports AND incident_embeddings`; medical checks `medical_cases AND medical_embeddings`. Triggers re-seed if either is empty.
 - **`anthropic` package**: must be `>=0.49.0` — `AsyncAnthropic` was introduced in that version; `0.40.0` breaks the async LLM client and silently falls back to no-claims responses.
 - **Render DB DSN format**: `PG_DSN` = `postgresql://...?sslmode=require`; `DATABASE_URL` = `postgresql+asyncpg://...?ssl=require`. The `?` must separate the DB name from query params — `neondb&channel_binding=require` (missing `?`) causes `db:false` in `/healthz`.
 - **GraphViewer memoization**: `graphPath` and `vectorHitsForGraph` must be `useMemo` — plain inline expressions create new references each render and trigger the ReactFlow `StoreUpdater` infinite loop.

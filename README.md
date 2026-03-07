@@ -253,3 +253,10 @@ Domain selection is persisted to `localStorage`.
 - **`anthropic` SDK version**: backend requires `>=0.49.0` for `AsyncAnthropic`. Running `0.40.0` silently breaks synthesis and returns no claims/confidence scores.
 - **GraphViewer memoization**: `graphPath` and `vectorHitsForGraph` are wrapped in `useMemo` to prevent the ReactFlow `StoreUpdater` infinite re-render loop.
 - **Synthetic graph grid layout**: when the backend returns no graph nodes, `GraphViewer` builds a synthetic graph from vector hits and displays chunk nodes in a `ceil(sqrt(n))`-column grid.
+- **Render DSN format**: `PG_DSN` uses `postgresql://` + `sslmode=require`; `DATABASE_URL` uses `postgresql+asyncpg://` + `ssl=require`. Values are not interchangeable — swapping them causes auth failures. No line-breaks in hostname when copy-pasting from Neon.
+- **Seed check (dual-table)**: `entrypoint.sh` checks both `incident_reports AND incident_embeddings` (aircraft) and `medical_cases AND medical_embeddings` (medical). Re-seeds if either table is empty — prevents queries returning 0 results after a schema reset.
+- **AgentTimeline expand**: each tool step is click-to-expand. Vector hits display min-max normalised scores + score bar (raw cosine values ~0.01 from synthetic template data are meaningless absolute values). SQL results rendered as a scrollable table.
+- **Claim confidence as %**: displayed as integer percentage (`15%`) with colour thresholds `≥70%` green / `≥40%` amber / else red. Text wraps to 2 lines.
+- **ChatPanel retry on 502**: 3-attempt retry loop with 4s delay for transient Render cold-start 502/preflight failures. Shows amber "retrying..." banner. Non-network errors (4xx) are not retried.
+- **Clear button**: Trash2 icon appears in the input row once messages exist. Resets chat, graph, timeline, and input in one click.
+- **Stale cache skip**: `orchestrator._check_query_cache()` skips cached entries with `claims: []` — ensures degraded responses cached during DB outages are replaced on next query.
