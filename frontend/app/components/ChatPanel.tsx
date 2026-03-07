@@ -7,7 +7,7 @@
 
 import React, { useRef, useEffect, useState, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-import { SendHorizontal, AlertCircle, Terminal, Loader2, WifiOff } from "lucide-react";
+import { SendHorizontal, AlertCircle, Terminal, Loader2, WifiOff, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { postQuery, getHealth } from "../lib/api";
 import type { QueryResponse, Claim } from "../lib/api";
@@ -444,6 +444,41 @@ export default function ChatPanel() {
 
       {/* ── Input row ── */}
       <div style={{ display: "flex", gap: "8px", alignItems: "flex-end", flexShrink: 0 }}>
+        {/* Clear button — only visible when there are messages */}
+        {messages.length > 0 && !isLoading && (
+          <button
+            onClick={() => {
+              setMessages([]);
+              setInputValue("");
+              setError(null);
+              setRunData(null);
+            }}
+            aria-label="Clear conversation"
+            title="Clear conversation"
+            style={{
+              width: "36px", height: "58px", flexShrink: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              backgroundColor: "transparent",
+              border: "1px solid hsl(var(--border-base))",
+              borderRadius: "2px",
+              cursor: "pointer",
+              color: "hsl(var(--text-dim))",
+              transition: "all 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--col-red))";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--col-red) / 0.5)";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-red) / 0.08)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.color = "hsl(var(--text-dim))";
+              (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--border-base))";
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent";
+            }}
+          >
+            <Trash2 size={14} />
+          </button>
+        )}
         <textarea
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
