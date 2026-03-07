@@ -5,6 +5,7 @@ import "@xyflow/react/dist/style.css";
 import { RunProvider } from "./lib/context";
 import { ThemeProvider } from "./lib/theme";
 import { DomainProvider } from "./lib/domain-context";
+import AppHeader from "./components/AppHeader";
 
 const orbitron = Orbitron({
   subsets: ["latin"],
@@ -63,7 +64,10 @@ export default function RootLayout({
       >
         <ThemeProvider>
           <DomainProvider>
-            <RunProvider>{children}</RunProvider>
+            <RunProvider>
+              <AppHeader />
+              {children}
+            </RunProvider>
           </DomainProvider>
         </ThemeProvider>
       </body>

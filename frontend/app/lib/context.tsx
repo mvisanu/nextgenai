@@ -10,8 +10,8 @@ import type { QueryResponse } from "./api";
 interface RunContextValue {
   /** Full response from the most recent POST /query call. Null before first query. */
   runData: QueryResponse | null;
-  /** Replaces runData with the latest agent response. Called by ChatPanel on success. */
-  setRunData: (data: QueryResponse) => void;
+  /** Replaces runData with the latest agent response. Pass null to clear. */
+  setRunData: (data: QueryResponse | null) => void;
 }
 
 const RunContext = createContext<RunContextValue | null>(null);
