@@ -954,8 +954,8 @@ export default function MedicalExamplesPage() {
           letterSpacing: "0.06em",
           lineHeight: 1.5,
         }}>
-          RESEARCH DISCLAIMER: All clinical scenarios use synthetic data generated for research purposes only.
-          AI-generated analysis is NOT a substitute for clinical judgment. No patient data is used.
+          RESEARCH DISCLAIMER: AI-generated analysis is provided for research purposes only and is not clinical advice.
+          All clinical scenarios use synthetic data — no real patient data is used.
           Outputs must not be used for actual clinical decision-making. This system is a research prototype.
         </span>
       </div>

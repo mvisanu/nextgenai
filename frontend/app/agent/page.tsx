@@ -7,7 +7,7 @@
 // Rendered with Mermaid.js, styled in industrial SCADA theme
 // ============================================================
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import {
   ArrowLeft, Bot, Cpu, GitBranch, Layers,
@@ -651,6 +651,15 @@ function SequenceTab() {
 
 export default function AgentPage() {
   const [activeTab, setActiveTab] = useState<TabId>("state");
+  // diagKey increments each time a tab becomes active, forcing MermaidDiagram
+  // to remount and re-render after the container is visible in the DOM.
+  // Without this, the diagram renders into a zero-height container on the
+  // initial page load before CSS layout has settled.
+  const [diagKey, setDiagKey] = useState(0);
+
+  useEffect(() => {
+    setDiagKey(k => k + 1);
+  }, [activeTab]);
 
   return (
     <div
@@ -852,11 +861,15 @@ export default function AgentPage() {
       </nav>
 
       {/* ── Content ── */}
+      {/* diagKey is passed as the React key so each tab's diagram component
+          remounts whenever the active tab changes — this ensures Mermaid
+          renders into a visible, correctly-sized container rather than a
+          zero-height hidden element. */}
       <main style={{ flex: 1, padding: "28px 32px 48px", maxWidth: 1280, width: "100%", margin: "0 auto" }}>
-        {activeTab === "state"    && <StateTab />}
-        {activeTab === "llm"      && <LLMTab />}
-        {activeTab === "intent"   && <IntentTab />}
-        {activeTab === "sequence" && <SequenceTab />}
+        {activeTab === "state"    && <StateTab    key={`state-${diagKey}`} />}
+        {activeTab === "llm"      && <LLMTab      key={`llm-${diagKey}`} />}
+        {activeTab === "intent"   && <IntentTab   key={`intent-${diagKey}`} />}
+        {activeTab === "sequence" && <SequenceTab key={`sequence-${diagKey}`} />}
       </main>
     </div>
   );
