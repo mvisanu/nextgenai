@@ -318,21 +318,21 @@ export default function ChatPanel() {
                       </span>
                       {(msg.response?.claims ?? []).map((claim, i) => {
                         const pct = Math.round(claim.confidence * 100);
-                        const colour = claim.confidence >= 0.8
+                        const colour = claim.confidence >= 0.7
                           ? "var(--col-green)"
-                          : claim.confidence >= 0.5
+                          : claim.confidence >= 0.4
                           ? "var(--col-amber)"
                           : "var(--col-red)";
                         return (
-                          <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                          <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "8px" }}>
                             <span style={{
                               fontFamily: "var(--font-display)", fontSize: "0.6rem", fontWeight: 700,
                               letterSpacing: "0.08em", color: `hsl(${colour})`,
-                              minWidth: "2.8rem", textAlign: "right",
+                              minWidth: "2.8rem", textAlign: "right", paddingTop: "2px",
                             }}>
-                              {(claim.confidence).toFixed(2)}
+                              {pct}%
                             </span>
-                            <div style={{ flex: 1, height: "4px", backgroundColor: "hsl(var(--border-base))", borderRadius: "2px", overflow: "hidden" }}>
+                            <div style={{ flex: 1, height: "4px", backgroundColor: "hsl(var(--border-base))", borderRadius: "2px", overflow: "hidden", marginTop: "6px" }}>
                               <div style={{
                                 width: `${pct}%`, height: "100%",
                                 backgroundColor: `hsl(${colour})`,
@@ -344,7 +344,10 @@ export default function ChatPanel() {
                               fontFamily: "var(--font-mono)", fontSize: "0.7rem",
                               color: "hsl(var(--text-secondary))",
                               flex: 3,
-                              overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis",
+                              display: "-webkit-box",
+                              WebkitLineClamp: 2,
+                              WebkitBoxOrient: "vertical",
+                              overflow: "hidden",
                             }}
                               title={claim.text}
                             >
