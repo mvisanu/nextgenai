@@ -7,27 +7,17 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import {
   MessageSquare, Layers, BarChart2, TrendingUp, FlaskConical,
-  ArrowLeft, Activity, HelpCircle, Database, GraduationCap, GitBranch, Stethoscope, ChevronDown,
+  ArrowLeft, Activity,
 } from "lucide-react";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 import Tab1AgentQuery        from "./components/Tab1AgentQuery";
 import Tab2IncidentExplorer  from "./components/Tab2IncidentExplorer";
 import Tab3DefectAnalytics   from "./components/Tab3DefectAnalytics";
 import Tab4MaintenanceTrends from "./components/Tab4MaintenanceTrends";
 import Tab5DataEval          from "./components/Tab5DataEval";
-import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
-import { NavDropdown } from "../components/AppHeader";
+import { useDomain } from "../lib/domain-context";
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
@@ -89,43 +79,6 @@ function useTabs(isMedical: boolean): Tab[] {
 
 // ── Dashboard header ───────────────────────────────────────────────────────────
 
-function DomainSwitcher() {
-  const { domain, setDomain } = useDomain();
-  return (
-    <div style={{ display: "flex", gap: "3px", alignItems: "center" }}>
-      {(["aircraft", "medical"] as Domain[]).map((d) => {
-        const cfg = DOMAIN_CONFIGS[d];
-        const isActive = domain === d;
-        return (
-          <button
-            key={d}
-            onClick={() => setDomain(d)}
-            style={{
-              display: "flex", alignItems: "center", gap: "4px",
-              padding: "3px 9px",
-              fontFamily: "var(--font-display)",
-              fontSize: "0.58rem",
-              fontWeight: 700,
-              letterSpacing: "0.12em",
-              border: `1px solid ${isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--border-base))"}`,
-              borderRadius: "2px",
-              backgroundColor: isActive ? `hsl(var(${cfg.accentVar}) / 0.12)` : "transparent",
-              color: isActive ? `hsl(var(${cfg.accentVar}))` : "hsl(var(--text-dim))",
-              cursor: "pointer",
-              transition: "all 0.15s",
-              boxShadow: isActive ? `0 0 8px hsl(var(${cfg.accentVar}) / 0.2)` : "none",
-            }}
-          >
-            <span>{cfg.icon}</span>
-            <span className="nav-link-text">{cfg.shortLabel}</span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
-
 function DashboardHeader() {
   return (
     <header
@@ -173,7 +126,7 @@ function DashboardHeader() {
         </span>
       </div>
 
-      {/* Right: live indicator + toggle */}
+      {/* Right: live indicator */}
       <div className="header-inner-right" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
         <div className="header-status-group" style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Activity size={12} style={{ color: "hsl(var(--col-green))" }} />
@@ -192,17 +145,6 @@ function DashboardHeader() {
             animation: "dot-pulse 2.4s ease-in-out infinite",
           }} />
         </div>
-
-        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
-
-        <NavDropdown />
-
-        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
-
-        <DomainSwitcher />
-
-        <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
-
       </div>
     </header>
   );
@@ -389,7 +331,7 @@ export default function DashboardPage() {
     <div
       className="app-shell grid-bg"
       style={{
-        height: "100vh",
+        height: "calc(100vh - 46px)",
         width: "100vw",
         overflow: "hidden",
         display: "flex",
