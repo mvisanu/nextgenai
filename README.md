@@ -192,10 +192,12 @@ The `render.yaml` blueprint deploys via Docker. Required environment variables i
 
 | Variable | Value |
 |---|---|
-| `PG_DSN` | Neon PostgreSQL connection string (`postgresql+asyncpg://...`) |
-| `DATABASE_URL` | Same as `PG_DSN` |
+| `PG_DSN` | `postgresql://user:pass@host.neon.tech/neondb?sslmode=require` |
+| `DATABASE_URL` | `postgresql+asyncpg://user:pass@host.neon.tech/neondb?ssl=require` |
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (`sk-ant-api03-...`) |
 | `CORS_ORIGINS` | Additional allowed origins, comma-separated (optional) |
+
+> **DSN format**: `PG_DSN` uses psycopg2 syntax (`sslmode=require`); `DATABASE_URL` uses asyncpg syntax (`postgresql+asyncpg://` prefix + `ssl=require`). Both require `?` before query params — a missing `?` produces `"db":false` in `/healthz`.
 
 ### Frontend → Vercel
 
@@ -212,6 +214,7 @@ Connect the GitHub repo to Vercel. Required environment variable:
 | Route | Description |
 |---|---|
 | `/` | Main chat interface: ChatPanel, GraphViewer (domain-aware, collapsible), AgentTimeline |
+| `/agent` | Agent architecture viewer — STATE MACHINE, LLM ROUTING, INTENT & TOOLS, REQUEST FLOW |
 | `/dashboard` | Five-tab analytics dashboard with domain-aware tabs and labels |
 | `/diagram` | Architecture diagrams: MVP stack and enterprise scale (Mermaid) |
 | `/data` | Kaggle dataset showcase with schema details |
@@ -247,3 +250,6 @@ Domain selection is persisted to `localStorage`.
 - **Synthetic medical data**: If MACCROBAT CSV is not present at ingest time, the pipeline generates 200 realistic clinical cases across 5 specialties (Cardiac, Respiratory, Neurological, GI, Musculoskeletal) with realistic NER entity distributions.
 - **LLM tiering**: Haiku handles classify/plan/verify (fast, JSON-only tasks); Sonnet handles synthesis (quality matters). This brings typical query latency from ~18s to ~10s.
 - **Knowledge graph fallback**: `graph_path` is always returned as `{nodes:[], edges:[]}` (never null). `GraphViewer` checks `nodes.length > 0` to decide whether to show live or mock graph data.
+- **`anthropic` SDK version**: backend requires `>=0.49.0` for `AsyncAnthropic`. Running `0.40.0` silently breaks synthesis and returns no claims/confidence scores.
+- **GraphViewer memoization**: `graphPath` and `vectorHitsForGraph` are wrapped in `useMemo` to prevent the ReactFlow `StoreUpdater` infinite re-render loop.
+- **Synthetic graph grid layout**: when the backend returns no graph nodes, `GraphViewer` builds a synthetic graph from vector hits and displays chunk nodes in a `ceil(sqrt(n))`-column grid.

@@ -51,7 +51,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
 | `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
-| `llm/` | `client.py` | Anthropic SDK wrapper — `get_llm_client()` (Sonnet), `get_fast_llm_client()` (Haiku) |
+| `llm/` | `client.py` | Anthropic SDK wrapper — `get_llm_client()` / `get_async_llm_client()` (Sonnet), `get_fast_llm_client()` / `get_async_fast_llm_client()` (Haiku); module-level singletons |
 | `rag/` | `chunker.py`, `embeddings.py`, `retrieval.py` | Sentence-level chunking, SentenceTransformer embed, pgvector HNSW search |
 | `schemas/` | `models.py` | Pydantic v2 request/response models (canonical source of truth) |
 | `tools/` | `vector_tool.py`, `sql_tool.py`, `compute_tool.py` | Guardrailed tool implementations |
@@ -74,6 +74,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | Route | Component | Description |
 |---|---|---|
 | `/` | `page.tsx` | ChatPanel + GraphViewer (collapsible) + AgentTimeline — main query interface |
+| `/agent` | `agent/page.tsx` | Agent architecture — 4 tabs: STATE MACHINE, LLM ROUTING, INTENT & TOOLS, REQUEST FLOW |
 | `/dashboard` | `dashboard/page.tsx` | Five-tab analytics dashboard |
 | `/diagram` | `diagram/page.tsx` | Mermaid architecture diagrams (MVP + enterprise) |
 | `/data` | `data/page.tsx` | Kaggle dataset showcase |
@@ -108,6 +109,10 @@ Key frontend files:
 - **graph_path always present**: backend always returns `graph_path: {nodes:[], edges:[]}` (never null). In `GraphViewer.tsx`, check `nodes.length > 0` before deciding mock vs real — never rely on `?? fallback` alone.
 - **Hydration**: `<html>` in `layout.tsx` has `suppressHydrationWarning`; do NOT put `dark`/`text-medium` in the static SSR className — the inline theme script owns those classes.
 - **Graph pane**: collapsible via `PanelRightClose`/`PanelRightOpen` button in `page.tsx`; state lives in `Home` component.
+- **`anthropic` package**: must be `>=0.49.0` — `AsyncAnthropic` was introduced in that version; `0.40.0` breaks the async LLM client and silently falls back to no-claims responses.
+- **Render DB DSN format**: `PG_DSN` = `postgresql://...?sslmode=require`; `DATABASE_URL` = `postgresql+asyncpg://...?ssl=require`. The `?` must separate the DB name from query params — `neondb&channel_binding=require` (missing `?`) causes `db:false` in `/healthz`.
+- **GraphViewer memoization**: `graphPath` and `vectorHitsForGraph` must be `useMemo` — plain inline expressions create new references each render and trigger the ReactFlow `StoreUpdater` infinite loop.
+- **Synthetic graph layout**: when backend returns empty `graph_path`, `GraphViewer` builds a synthetic graph from vector hits arranged in a `sqrt(n)`-column grid (not a single horizontal row).
 
 ## Environment Variables
 
@@ -115,6 +120,6 @@ Key frontend files:
 |---|---|---|
 | `ANTHROPIC_API_KEY` | `.env` / Render dashboard | Claude API — must be `sk-ant-api03-...` format |
 | `PG_DSN` | `.env` / Render dashboard | PostgreSQL DSN for sync connections |
-| `DATABASE_URL` | `.env` / Render dashboard | Same as `PG_DSN` (asyncpg uses `postgresql+asyncpg://`) |
+| `DATABASE_URL` | `.env` / Render dashboard | Async DSN — use `postgresql+asyncpg://` prefix and `ssl=require` (not `sslmode=require`) |
 | `CORS_ORIGINS` | Render dashboard | Comma-separated extra allowed origins |
 | `NEXT_PUBLIC_API_URL` | `frontend/.env.local` / Vercel | Backend base URL |
