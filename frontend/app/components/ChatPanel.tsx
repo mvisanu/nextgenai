@@ -141,6 +141,50 @@ function TypingIndicator() {
   );
 }
 
+// ── Sample queries ─────────────────────────────────────────────────────────
+
+const SAMPLE_QUERIES_AIRCRAFT = [
+  {
+    id: "a1",
+    intent: "VECTOR",
+    intentColor: "--col-cyan",
+    query: "Find incidents similar to: hydraulic leak near actuator, suspected seal degradation, unit reworked.",
+  },
+  {
+    id: "a2",
+    intent: "SQL",
+    intentColor: "--col-amber",
+    query: "Show defect trends by product line for the last 90 days and highlight any product with more than 10% defect rate.",
+  },
+  {
+    id: "a3",
+    intent: "HYBRID",
+    intentColor: "--col-purple",
+    query: "What are the most common avionics failure modes and which product lines are most affected?",
+  },
+];
+
+const SAMPLE_QUERIES_MEDICAL = [
+  {
+    id: "m1",
+    intent: "VECTOR",
+    intentColor: "--col-cyan",
+    query: "Find cases similar to: 58-year-old male, ST-elevation, chest pain radiating to jaw, troponin positive.",
+  },
+  {
+    id: "m2",
+    intent: "SQL",
+    intentColor: "--col-amber",
+    query: "Show disease frequency by specialty for the last 6 months and highlight the top 3 diagnoses.",
+  },
+  {
+    id: "m3",
+    intent: "HYBRID",
+    intentColor: "--col-purple",
+    query: "What are the most common respiratory presentations and what outcomes are associated with them?",
+  },
+];
+
 // ── Main component ─────────────────────────────────────────────────────────
 
 export default function ChatPanel() {
@@ -252,21 +296,80 @@ export default function ChatPanel() {
         <div ref={scrollRef} className="h-full overflow-y-auto" style={{ paddingRight: "4px", display: "flex", flexDirection: "column", gap: "8px" }}>
 
           {messages.length === 0 && !isLoading && (
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px", paddingTop: "28px", gap: "10px" }}>
-              <div style={{
-                width: 36, height: 36,
-                border: `1px solid hsl(var(${config.accentVar}) / 0.35)`,
-                borderRadius: "2px",
-                display: "flex", alignItems: "center", justifyContent: "center",
-              }}>
-                <Terminal size={16} style={{ color: `hsl(var(${config.accentVar}) / 0.45)` }} />
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "80px", paddingTop: "20px", gap: "16px", paddingBottom: "8px" }}>
+              {/* Icon + status */}
+              <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "8px" }}>
+                <div style={{
+                  width: 36, height: 36,
+                  border: `1px solid hsl(var(${config.accentVar}) / 0.35)`,
+                  borderRadius: "2px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Terminal size={16} style={{ color: `hsl(var(${config.accentVar}) / 0.45)` }} />
+                </div>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.78rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em", textAlign: "center", lineHeight: "1.7" }}>
+                  AWAITING QUERY INPUT<br />
+                  <span style={{ fontSize: "0.68rem", opacity: 0.7 }}>vector search · sql · graphrag · {config.label.toLowerCase()}</span>
+                </p>
               </div>
-              <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.8rem", color: "hsl(var(--text-dim))", letterSpacing: "0.08em", textAlign: "center", lineHeight: "1.7" }}>
-                AWAITING QUERY INPUT<br />
-                <span style={{ fontSize: "0.72rem", opacity: 0.7 }}>vector search · sql · graphrag · {config.label.toLowerCase()}</span>
-              </p>
+
+              {/* Sample queries */}
+              <div style={{ width: "100%", maxWidth: "540px", display: "flex", flexDirection: "column", gap: "6px" }}>
+                <span style={{
+                  fontFamily: "var(--font-display)", fontSize: "0.5rem", fontWeight: 700,
+                  letterSpacing: "0.18em", color: "hsl(var(--text-dim))",
+                  textAlign: "center",
+                }}>
+                  TRY A SAMPLE QUERY
+                </span>
+                {(domain === "medical" ? SAMPLE_QUERIES_MEDICAL : SAMPLE_QUERIES_AIRCRAFT).map((sq) => (
+                  <button
+                    key={sq.id}
+                    onClick={() => setInputValue(sq.query)}
+                    style={{
+                      display: "flex", alignItems: "flex-start", gap: "8px",
+                      padding: "7px 10px",
+                      border: `1px solid hsl(var(--border-base))`,
+                      borderLeft: `2px solid hsl(var(${sq.intentColor}) / 0.5)`,
+                      borderRadius: "2px",
+                      backgroundColor: "hsl(var(--bg-elevated))",
+                      cursor: "pointer",
+                      textAlign: "left",
+                      transition: "all 0.15s",
+                      width: "100%",
+                    }}
+                    onMouseEnter={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = `hsl(var(${sq.intentColor}) / 0.06)`;
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = `hsl(var(${sq.intentColor}) / 0.35)`;
+                    }}
+                    onMouseLeave={(e) => {
+                      (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--bg-elevated))";
+                      (e.currentTarget as HTMLButtonElement).style.borderColor = "hsl(var(--border-base))";
+                    }}
+                  >
+                    <span style={{
+                      fontFamily: "var(--font-display)", fontSize: "0.45rem", fontWeight: 700,
+                      letterSpacing: "0.12em", color: `hsl(var(${sq.intentColor}))`,
+                      border: `1px solid hsl(var(${sq.intentColor}) / 0.4)`,
+                      borderRadius: "2px", padding: "1px 5px",
+                      backgroundColor: `hsl(var(${sq.intentColor}) / 0.08)`,
+                      flexShrink: 0, marginTop: "1px",
+                    }}>
+                      {sq.intent}
+                    </span>
+                    <span style={{
+                      fontFamily: "var(--font-mono)", fontSize: "0.68rem",
+                      color: "hsl(var(--text-secondary))", lineHeight: "1.5",
+                    }}>
+                      {sq.query}
+                    </span>
+                  </button>
+                ))}
+              </div>
+
+              {/* Disclaimer */}
               {config.disclaimer && (
-                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "hsl(var(--col-amber))", textAlign: "center", maxWidth: "340px", lineHeight: "1.5", border: "1px solid hsl(var(--col-amber) / 0.3)", borderRadius: "2px", padding: "6px 10px" }}>
+                <p style={{ fontFamily: "var(--font-mono)", fontSize: "0.62rem", color: "hsl(var(--col-amber))", textAlign: "center", maxWidth: "400px", lineHeight: "1.5", border: "1px solid hsl(var(--col-amber) / 0.3)", borderRadius: "2px", padding: "6px 10px" }}>
                   ⚠ {config.disclaimer}
                 </p>
               )}
