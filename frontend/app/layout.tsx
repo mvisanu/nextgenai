@@ -5,6 +5,7 @@ import "@xyflow/react/dist/style.css";
 import { RunProvider } from "./lib/context";
 import { ThemeProvider } from "./lib/theme";
 import { DomainProvider } from "./lib/domain-context";
+import { AuthProvider } from "./lib/auth-context";
 import AppHeader from "./components/AppHeader";
 
 const orbitron = Orbitron({
@@ -63,12 +64,14 @@ export default function RootLayout({
         style={{ fontFamily: "var(--font-body, sans-serif)" }}
       >
         <ThemeProvider>
-          <DomainProvider>
-            <RunProvider>
-              <AppHeader />
-              {children}
-            </RunProvider>
-          </DomainProvider>
+          <AuthProvider>
+            <DomainProvider>
+              <RunProvider>
+                <AppHeader />
+                {children}
+              </RunProvider>
+            </DomainProvider>
+          </AuthProvider>
         </ThemeProvider>
       </body>
     </html>

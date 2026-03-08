@@ -12,9 +12,10 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 
+from backend.app.auth.jwt import get_current_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.tools.sql_tool import _NAMED_QUERIES
@@ -43,6 +44,7 @@ async def get_defects(
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
     domain: str | None = Query(None, description="Domain filter (currently unused — always manufacturing)"),
+    current_user: dict = Depends(get_current_user),
 ) -> list[dict[str, Any]]:
     """
     Returns [{product, defect_type, count}] sorted by count DESC.
@@ -93,6 +95,7 @@ async def get_defects(
 async def get_maintenance(
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
+    current_user: dict = Depends(get_current_user),
 ) -> list[dict[str, Any]]:
     """
     Returns [{month, event_type, count}] sorted by month DESC.
@@ -128,6 +131,7 @@ async def get_diseases(
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
     specialty: str | None = Query(None, description="Filter by specialty name"),
+    current_user: dict = Depends(get_current_user),
 ) -> list[dict[str, Any]]:
     """
     Returns [{specialty, disease, count}] sorted by count DESC.

@@ -212,7 +212,8 @@ const BASE_URL =
  */
 async function apiFetch<T>(
   path: string,
-  options?: RequestInit
+  options?: RequestInit,
+  accessToken?: string
 ): Promise<T> {
   const url = `${BASE_URL}${path}`;
   const method = (options?.method ?? "GET").toUpperCase();
@@ -223,6 +224,12 @@ async function apiFetch<T>(
     method !== "GET" && method !== "HEAD"
       ? { "Content-Type": "application/json" }
       : {};
+
+  // Add Authorization header when token provided
+  if (accessToken) {
+    baseHeaders["Authorization"] = `Bearer ${accessToken}`;
+  }
+
   const response = await fetch(url, {
     headers: {
       ...baseHeaders,
@@ -261,7 +268,8 @@ export async function postQuery(
   domain: "aircraft" | "medical" = "aircraft",
   filters?: QueryRequest["filters"],
   sessionId?: string | null,
-  conversationHistory?: ConversationTurn[] | null
+  conversationHistory?: ConversationTurn[] | null,
+  accessToken?: string
 ): Promise<QueryResponse> {
   const body: QueryRequest = {
     query,
@@ -273,7 +281,7 @@ export async function postQuery(
   return apiFetch<QueryResponse>("/query", {
     method: "POST",
     body: JSON.stringify(body),
-  });
+  }, accessToken);
 }
 
 /**
@@ -348,17 +356,18 @@ export async function triggerIngest(): Promise<IngestResponse> {
  */
 export async function getRuns(
   limit = 20,
-  offset = 0
+  offset = 0,
+  accessToken?: string
 ): Promise<RunListResponse> {
   const qs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
-  return apiFetch<RunListResponse>(`/runs?${qs.toString()}`);
+  return apiFetch<RunListResponse>(`/runs?${qs.toString()}`, undefined, accessToken);
 }
 
 /**
  * GET /runs/{run_id} — Retrieve full QueryResponse for a single run.
  */
-export async function getRun(runId: string): Promise<QueryResponse> {
-  const record = await apiFetch<RunRecord>(`/runs/${encodeURIComponent(runId)}`);
+export async function getRun(runId: string, accessToken?: string): Promise<QueryResponse> {
+  const record = await apiFetch<RunRecord>(`/runs/${encodeURIComponent(runId)}`, undefined, accessToken);
   return record.result;
 }
 
@@ -367,12 +376,13 @@ export async function getRun(runId: string): Promise<QueryResponse> {
  */
 export async function patchFavourite(
   runId: string,
-  isFavourite: boolean
+  isFavourite: boolean,
+  accessToken?: string
 ): Promise<HistoryRunSummary> {
   return apiFetch<HistoryRunSummary>(`/runs/${encodeURIComponent(runId)}/favourite`, {
     method: "PATCH",
     body: JSON.stringify({ is_favourite: isFavourite }),
-  });
+  }, accessToken);
 }
 
 // ---------------------------------------------------------------------------
@@ -385,14 +395,15 @@ export async function patchFavourite(
 export async function getAnalyticsDefects(
   from?: string,
   to?: string,
-  domain?: "aircraft" | "medical"
+  domain?: "aircraft" | "medical",
+  accessToken?: string
 ): Promise<DefectAnalytics[]> {
   const qs = new URLSearchParams();
   if (from) qs.set("from", from);
   if (to) qs.set("to", to);
   if (domain) qs.set("domain", domain);
   const q = qs.toString();
-  return apiFetch<DefectAnalytics[]>(`/analytics/defects${q ? `?${q}` : ""}`);
+  return apiFetch<DefectAnalytics[]>(`/analytics/defects${q ? `?${q}` : ""}`, undefined, accessToken);
 }
 
 /**
@@ -400,13 +411,14 @@ export async function getAnalyticsDefects(
  */
 export async function getAnalyticsMaintenance(
   from?: string,
-  to?: string
+  to?: string,
+  accessToken?: string
 ): Promise<MaintenanceTrend[]> {
   const qs = new URLSearchParams();
   if (from) qs.set("from", from);
   if (to) qs.set("to", to);
   const q = qs.toString();
-  return apiFetch<MaintenanceTrend[]>(`/analytics/maintenance${q ? `?${q}` : ""}`);
+  return apiFetch<MaintenanceTrend[]>(`/analytics/maintenance${q ? `?${q}` : ""}`, undefined, accessToken);
 }
 
 /**
@@ -415,12 +427,13 @@ export async function getAnalyticsMaintenance(
 export async function getAnalyticsDiseases(
   from?: string,
   to?: string,
-  specialty?: string
+  specialty?: string,
+  accessToken?: string
 ): Promise<DiseaseAnalytics[]> {
   const qs = new URLSearchParams();
   if (from) qs.set("from", from);
   if (to) qs.set("to", to);
   if (specialty) qs.set("specialty", specialty);
   const q = qs.toString();
-  return apiFetch<DiseaseAnalytics[]>(`/analytics/diseases${q ? `?${q}` : ""}`);
+  return apiFetch<DiseaseAnalytics[]>(`/analytics/diseases${q ? `?${q}` : ""}`, undefined, accessToken);
 }

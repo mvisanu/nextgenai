@@ -26,6 +26,7 @@ from sqlalchemy import (
     func,
 )
 from sqlalchemy.dialects.postgresql import JSONB, UUID
+from sqlalchemy.dialects.postgresql import UUID as PGUUID
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 
@@ -212,6 +213,8 @@ class AgentRun(Base):
     session_id = Column(UUID(as_uuid=True), nullable=True)
     # W3-002 — Epic 2: Query History & Favourites — NOT NULL DEFAULT FALSE
     is_favourite = Column(Boolean, nullable=False, server_default="false", default=False)
+    # W4-004 — Wave 4: Auth — Supabase user UUID; nullable so existing rows are unaffected
+    user_id = Column(PGUUID(as_uuid=True), nullable=True, index=True)
 
 
 # ── Medical domain models ──────────────────────────────────────────────────────

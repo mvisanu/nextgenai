@@ -50,6 +50,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 |---|---|---|
 | `agent/` | `orchestrator.py`, `intent.py`, `planner.py`, `verifier.py` | Intent classification → plan → tool loop → verify |
 | `api/` | `query.py`, `runs.py`, `analytics.py`, `ingest.py`, `docs.py` | FastAPI routers: `POST /query`, `GET /runs`, `GET /analytics/*`, `POST /ingest`, `GET /healthz` |
+| `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` FastAPI dependency |
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema + Wave 3 columns, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
 | `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
@@ -63,15 +64,15 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/query` | Main agent query — returns `QueryResponse`; supports SSE streaming via `Accept: text/event-stream` |
-| `GET` | `/runs` | Paginated run history — `?limit=20&offset=0` |
-| `GET` | `/runs/{run_id}` | Single run full response |
-| `PATCH` | `/runs/{run_id}/favourite` | Toggle `is_favourite` on a run |
-| `GET` | `/analytics/defects` | Defect aggregates — `?from=&to=&domain=` |
-| `GET` | `/analytics/maintenance` | Maintenance trends — `?from=&to=` |
-| `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` |
-| `POST` | `/ingest` | Ingest documents |
-| `GET` | `/healthz` | Health check — `Cache-Control: no-store` |
+| `POST` | `/query` | Main agent query — returns `QueryResponse`; supports SSE streaming via `Accept: text/event-stream` — **requires Bearer token** |
+| `GET` | `/runs` | Paginated run history — `?limit=20&offset=0` — **requires Bearer token**; filters by `user_id` |
+| `GET` | `/runs/{run_id}` | Single run full response — **requires Bearer token**; returns 404 for another user's run |
+| `PATCH` | `/runs/{run_id}/favourite` | Toggle `is_favourite` on a run — **requires Bearer token**; returns 404 for another user's run |
+| `GET` | `/analytics/defects` | Defect aggregates — `?from=&to=&domain=` — **requires Bearer token** |
+| `GET` | `/analytics/maintenance` | Maintenance trends — `?from=&to=` — **requires Bearer token** |
+| `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` — **requires Bearer token** |
+| `POST` | `/ingest` | Ingest documents — public |
+| `GET` | `/healthz` | Health check — `Cache-Control: no-store` — public |
 
 ### Database tables (`backend/app/db/models.py`)
 
@@ -84,7 +85,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `medical_embeddings` | 384-dim pgvector chunks for medical/clinical domain — HNSW cosine index |
 | `graph_node` | KG nodes: `entity` or `chunk` type |
 | `graph_edge` | KG edges: `mentions`, `similarity`, `co_occurrence` |
-| `agent_runs` | Persisted full JSON output per query; Wave 3 adds `session_id UUID` (nullable) and `is_favourite BOOLEAN DEFAULT FALSE` |
+| `agent_runs` | Persisted full JSON output per query; Wave 3 adds `session_id UUID` (nullable) and `is_favourite BOOLEAN DEFAULT FALSE`; Wave 4 adds `user_id UUID` (nullable) — Supabase user UUID |
 
 ### Wave 3 Alembic migrations (in `backend/app/db/migrations/versions/`)
 
@@ -93,6 +94,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `0003_add_session_id_to_agent_runs.py` | Adds `session_id UUID` nullable column |
 | `0004_add_is_favourite_to_agent_runs.py` | Adds `is_favourite BOOLEAN NOT NULL DEFAULT FALSE` |
 | `0005_wave3_indexes.py` | HNSW on `medical_embeddings` + GIN FTS on `incident_reports`/`medical_cases` + composite index on `agent_runs(LOWER(query), created_at DESC)` — all use `op.execute("COMMIT")` before `CONCURRENTLY` |
+| `0006_add_user_id_to_agent_runs.py` | Adds `user_id UUID` nullable column + `idx_agent_runs_user_id` HNSW index (user_id, created_at DESC) |
 
 ### Frontend pages (`frontend/app/`)
 
@@ -109,9 +111,14 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `/faq` | `faq/page.tsx` | FAQ |
 
 Key frontend files:
-- `app/layout.tsx` — renders `<AppHeader />` above all `{children}` inside `RunProvider`; every page inherits the global nav automatically
-- `app/components/AppHeader.tsx` — shared site-wide header: NEXTAGENTAI logo, VECTOR/SQL/GRAPH status dots, `NavDropdown` (exported), `DomainSwitcher`
-- `app/lib/api.ts` — typed API client: `postQuery()`, `getHealth()`, `getRuns()`, `getRun()`, `patchFavourite()`, `getAnalyticsDefects()`, `getAnalyticsMaintenance()`, `getAnalyticsDiseases()`
+- `app/layout.tsx` — renders `<AppHeader />` above all `{children}`; provider nesting: `ThemeProvider` → `AuthProvider` → `DomainProvider` → `RunProvider`
+- `app/components/AppHeader.tsx` — shared site-wide header: NEXTAGENTAI logo, VECTOR/SQL/GRAPH status dots, `NavDropdown` (exported), `DomainSwitcher`, user email pill + SIGN OUT button (Wave 4)
+- `app/lib/api.ts` — typed API client: `postQuery()`, `getHealth()`, `getRuns()`, `getRun()`, `patchFavourite()`, `getAnalyticsDefects()`, `getAnalyticsMaintenance()`, `getAnalyticsDiseases()` — protected functions accept optional `accessToken?: string` as last param
+- `app/lib/supabase.ts` — browser Supabase client singleton (`createBrowserClient`)
+- `app/lib/supabase-server.ts` — server Supabase client factory (`createServerClient`, per-request)
+- `app/lib/auth-context.tsx` — `AuthProvider` + `useAuth()` hook; provides `{ user, accessToken, loading, signOut }`
+- `middleware.ts` — Next.js middleware: session refresh via `supabase.auth.getUser()` + route protection redirects to `/sign-in?next=<path>`
+- `app/(auth)/sign-in/page.tsx`, `sign-up/page.tsx`, `forgot-password/page.tsx`, `reset-password/page.tsx` — auth pages (SCADA theme, `"use client"`)
 - `app/lib/theme.tsx` — `ThemeToggle`, `FontSizeControl`, CSS var system
 - `app/components/ChatPanel.tsx` — real API calls, session memory (UUID in component state), SSE streaming renderer, health-check warm-up, citations, retry loop, clear button, AGENT NOTES section, medical disclaimer banner, examples localStorage bridge
 - `app/components/AgentTimeline.tsx` — execution trace; steps click-to-expand; CACHED badge; timing breakdown bar chart; source labels (BM25/VECTOR/HYBRID); CSV download on SQL tables
@@ -125,7 +132,8 @@ Key frontend files:
 
 - `backend/config.yaml` — dataset CSV paths, embedding model, chunk size/overlap, top-k
 - `.env` (repo root, gitignored) — `ANTHROPIC_API_KEY`, `PG_DSN`, `DATABASE_URL`
-- `frontend/.env.local` (gitignored) — `NEXT_PUBLIC_API_URL=http://localhost:8000`
+- `frontend/.env.local` (gitignored) — `NEXT_PUBLIC_API_URL`, `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL`
+- `frontend/.env.local.example` — template with all required vars including Wave 4 Supabase vars
 - `render.yaml` — Render Docker deployment blueprint
 - `docker-compose.yml` — local dev: postgres (5432) + backend (8000); frontend runs separately
 
@@ -162,6 +170,12 @@ Key frontend files:
 - **Synthetic graph layout**: when backend returns empty `graph_path`, `GraphViewer` builds a synthetic graph from vector hits arranged in a `sqrt(n)`-column grid
 - **Alembic CONCURRENTLY**: every `CREATE INDEX CONCURRENTLY` migration must call `op.execute("COMMIT")` immediately before the index statement; every migration must have a working `downgrade()`
 - **Feature flags**: orchestrator-touching epics gated by env vars — `CONVERSATIONAL_MEMORY_ENABLED` (session history), `STREAMING_ENABLED` (SSE synthesis)
+- **Wave 4 Auth — Supabase**: uses `@supabase/ssr` (not deprecated `@supabase/auth-helpers-nextjs`); `createBrowserClient` for client components, `createServerClient` for RSC/middleware
+- **Wave 4 Auth — middleware**: `supabase.auth.getUser()` MUST be called (not `getSession()`) — verifies token server-side and triggers cookie refresh; protected routes: `/`, `/dashboard`, `/data`, `/review`, `/examples`, `/medical-examples`, `/agent`, `/diagram`, `/faq`; public routes: `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`
+- **Wave 4 Auth — JWT**: backend validates Supabase JWTs locally via `python-jose` HS256 using `SUPABASE_JWT_SECRET`; no outbound Supabase API call per request; `user_id = claims["sub"]` stored on `agent_runs`
+- **Wave 4 Auth — open redirect**: `?next=` param must start with `/` and not contain `://` or start with `//`; invalid values default to `/`
+- **Wave 4 Auth — secrets**: `SUPABASE_JWT_SECRET` is backend-only — never in `NEXT_PUBLIC_` env vars or frontend code; Supabase anon key is safe to expose client-side (public by design)
+- **Wave 4 Auth — `apiFetch`**: accepts optional third param `accessToken?: string`; injects `Authorization: Bearer <token>` when present; `getHealth()` never receives a token — must stay CORS simple request
 - **Frontend dev mode — webpack only**: `npm run dev` uses `--webpack` flag. Next.js 16.1.6 Turbopack panics with `OptionAppProject no longer exists` when building the `/_app` Pages Router endpoint inside an App Router project. Do NOT switch to `--turbo` or remove `--webpack`; production `next build` (webpack) is unaffected.
 - **ExportModal SSR constraint**: `ExportModal` must always be imported via `dynamic(() => import("./ExportModal"), { ssr: false })` — never as a static import. `@react-pdf/renderer` calls `StyleSheet.create()` (which uses browser canvas APIs) at module load time; static import crashes Next.js SSR with a `ReferenceError`.
 - **Domain session isolation**: `ChatPanel` uses three React refs for per-domain state: `domainSnapshotsRef` (stores `{messages, sessionId, conversationHistory, runData}` per domain key), `currentStateRef` (updated every render to avoid stale closure in the domain-switch effect), and `prevDomainRef` (detects domain change). On domain switch, the effect saves current state into the previous domain's snapshot and restores the new domain's snapshot. `updateRunData` wrapper calls `setRunData` AND writes to the current domain's snapshot so graph/timeline restore correctly.
@@ -182,6 +196,10 @@ Key frontend files:
 | `CONVERSATIONAL_MEMORY_ENABLED` | `.env` / Render dashboard | Gates session context injection in orchestrator (default `true`) |
 | `STREAMING_ENABLED` | `.env` / Render dashboard | Gates SSE streaming synthesis endpoint (default `true`) |
 | `EAGER_MODEL_LOAD` | Render dashboard | Set `true` to load embedding model at startup — required for <1.5s first-token on streaming |
+| `NEXT_PUBLIC_SUPABASE_URL` | `frontend/.env.local` / Vercel | Supabase project URL (e.g. `https://xxxx.supabase.co`) |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `frontend/.env.local` / Vercel | Supabase anon/public key — safe to expose client-side |
+| `NEXT_PUBLIC_SITE_URL` | `frontend/.env.local` / Vercel | Full frontend URL for email redirect links (`http://localhost:3005` dev, `https://nextgenai-seven.vercel.app` prod) |
+| `SUPABASE_JWT_SECRET` | `.env` / Render dashboard | JWT secret from Supabase dashboard → Settings → API → JWT Settings — backend-only, never in frontend |
 
 ## Test Suite
 
@@ -202,3 +220,11 @@ Key frontend files:
 | `TEST_REPORT.md` | Test results: 520/525 passing; 14 bugs found and resolved; P3 ORJSONResponse deprecation tracked |
 | `upgrade.md` | Master implementation prompt — Phase 4 UX & Intelligence epics |
 | `optimize.md` | Performance analysis — Wave 1/2 optimisations applied |
+
+## Wave 4 Reference Docs (repo root)
+
+| File | Purpose |
+|---|---|
+| `prd3.md` | Wave 4 PRD v1.0 — Supabase Auth; 7 user stories, architecture decisions, acceptance criteria |
+| `tasks3.md` | 28 atomic Wave 4 tasks (W4-001 → W4-028); phases 1–5; critical path |
+| `auth_prompt.md` | Auth implementation brief — sign-up/sign-in/reset/protect flows |

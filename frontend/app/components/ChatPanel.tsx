@@ -26,6 +26,7 @@ import { postQuery, getHealth, getRun } from "../lib/api";
 import type { QueryResponse, Claim, ConversationTurn } from "../lib/api";
 import { useRunContext } from "../lib/context";
 import { useDomain } from "../lib/domain-context";
+import { useAuth } from "../lib/auth-context";
 import CitationsDrawer from "./CitationsDrawer";
 import HistorySidebar from "./HistorySidebar";
 
@@ -283,6 +284,7 @@ function emptySnapshot(): DomainSnapshot {
 function ChatPanelInner() {
   const { setRunData } = useRunContext();
   const { domain, setDomain, config } = useDomain();
+  const { accessToken } = useAuth();
   const searchParams = useSearchParams();
   const router = useRouter();
 
@@ -382,7 +384,7 @@ function ChatPanelInner() {
     let cancelled = false;
     async function loadSharedRun() {
       try {
-        const fullRun = await getRun(runId!);
+        const fullRun = await getRun(runId!, accessToken ?? undefined);
         if (!cancelled) {
           updateRunData(fullRun);
           // Populate ChatPanel with the shared run's content as message bubbles
@@ -474,6 +476,7 @@ function ChatPanelInner() {
         headers: {
           "Content-Type": "application/json",
           "Accept": "text/event-stream",
+          ...(accessToken ? { "Authorization": `Bearer ${accessToken}` } : {}),
         },
         body: JSON.stringify({
           query,
@@ -609,7 +612,8 @@ function ChatPanelInner() {
           domain,
           undefined,
           currentSessionId,
-          historyForRequest.length > 0 ? historyForRequest : null
+          historyForRequest.length > 0 ? historyForRequest : null,
+          accessToken ?? undefined
         );
         setRetryStatus(null);
         setMessages((prev) => [

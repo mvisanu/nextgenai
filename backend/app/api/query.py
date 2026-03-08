@@ -15,11 +15,12 @@ import json
 import os
 from typing import Any, AsyncGenerator
 
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy import text
 
 from backend.app.agent.orchestrator import AgentOrchestrator
+from backend.app.auth.jwt import get_current_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import QueryRequest, QueryResponse, RunRecord
@@ -55,8 +56,15 @@ def _get_orchestrator() -> AgentOrchestrator:
         413: {"description": "Request body exceeds 1 MB limit"},
     },
 )
-async def run_query(body: QueryRequest, request: Request):
+async def run_query(
+    body: QueryRequest,
+    request: Request,
+    current_user: dict = Depends(get_current_user),
+):
     logger.info("Query received", extra={"query": body.query[:200]})
+
+    # Extract user_id from JWT sub claim (W4-007)
+    user_id = current_user.get("sub")
 
     # W3-008/W3-009: Check for SSE streaming request
     # If the client sends Accept: text/event-stream, route to SSE generator (if enabled).
@@ -69,7 +77,7 @@ async def run_query(body: QueryRequest, request: Request):
         # Return SSE regardless of flag — when disabled, generator omits token events
         # and just emits done/error. This avoids returning 500 on a streaming request.
         return StreamingResponse(
-            _sse_generator(body, streaming_tokens=streaming_enabled),
+            _sse_generator(body, streaming_tokens=streaming_enabled, user_id=user_id),
             media_type="text/event-stream",
             headers={
                 "Cache-Control": "no-cache",
@@ -82,11 +90,13 @@ async def run_query(body: QueryRequest, request: Request):
         orchestrator = _get_orchestrator()
         # T-17: orchestrator.run() is natively async — no run_in_threadpool needed.
         # W3-005: pass session_id and conversation_history for conversational memory
+        # W4-007: pass user_id for per-user run storage
         result = await orchestrator.run(
             body.query,
             domain=body.domain,
             session_id=body.session_id,
             conversation_history=body.conversation_history,
+            user_id=user_id,
         )
         result_dict = result.to_dict()
 
@@ -98,7 +108,11 @@ async def run_query(body: QueryRequest, request: Request):
         raise HTTPException(status_code=500, detail=f"Agent error: {str(exc)}")
 
 
-async def _sse_generator(body: QueryRequest, streaming_tokens: bool = True) -> AsyncGenerator[str, None]:
+async def _sse_generator(
+    body: QueryRequest,
+    streaming_tokens: bool = True,
+    user_id: str | None = None,
+) -> AsyncGenerator[str, None]:
     """
     W3-008: SSE generator for streaming synthesis.
     Runs the full agent pipeline, then emits events in SSE format.
@@ -107,6 +121,7 @@ async def _sse_generator(body: QueryRequest, streaming_tokens: bool = True) -> A
         body:             The QueryRequest body.
         streaming_tokens: When True, emits word-by-word token events before 'done'.
                           When False (STREAMING_ENABLED=false), emits only 'done'/'error'.
+        user_id:          Supabase user UUID from the verified JWT sub claim (W4-007).
     """
     try:
         orchestrator = _get_orchestrator()
@@ -115,6 +130,7 @@ async def _sse_generator(body: QueryRequest, streaming_tokens: bool = True) -> A
             domain=body.domain,
             session_id=body.session_id,
             conversation_history=body.conversation_history,
+            user_id=user_id,
         )
         result_dict = result.to_dict()
         response = QueryResponse(**_normalise_result(result_dict))
@@ -144,12 +160,20 @@ async def _sse_generator(body: QueryRequest, streaming_tokens: bool = True) -> A
     summary="Retrieve stored agent run",
     description="Fetch the full result of a previously executed agent run by its run_id.",
 )
-async def get_run(run_id: str) -> RunRecord:
+async def get_run(
+    run_id: str,
+    current_user: dict = Depends(get_current_user),
+) -> RunRecord:
     # T3-08: use async session to avoid blocking the event loop
+    # W4-007: guard — only the run owner (by user_id) may retrieve the run
+    user_id = current_user.get("sub")
     try:
         async with get_session() as session:
             result = await session.execute(
-                text("SELECT run_id, query, result, created_at FROM agent_runs WHERE run_id = :run_id"),
+                text(
+                    "SELECT run_id, query, result, created_at, user_id "
+                    "FROM agent_runs WHERE run_id = :run_id"
+                ),
                 {"run_id": run_id},
             )
             row = result.fetchone()
@@ -157,6 +181,11 @@ async def get_run(run_id: str) -> RunRecord:
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
 
     if not row:
+        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
+
+    # Return 404 (not 403) to avoid leaking run existence to other users
+    row_user_id = str(row.user_id) if row.user_id else None
+    if row_user_id and row_user_id != user_id:
         raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
 
     result_data = row.result

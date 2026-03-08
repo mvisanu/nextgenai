@@ -12,6 +12,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { getRuns, patchFavourite, getRun } from "../lib/api";
 import type { HistoryRunSummary, QueryResponse } from "../lib/api";
 import { useRunContext } from "../lib/context";
+import { useAuth } from "../lib/auth-context";
 
 // ---------------------------------------------------------------------------
 // Relative timestamp formatter
@@ -198,6 +199,7 @@ interface HistorySidebarProps {
 
 export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
   const { setRunData } = useRunContext();
+  const { accessToken } = useAuth();
   const [runs, setRuns] = useState<HistoryRunSummary[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -208,7 +210,7 @@ export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
     setIsLoading(true);
     setError(null);
     try {
-      const resp = await getRuns(20, 0);
+      const resp = await getRuns(20, 0, accessToken ?? undefined);
       // Sort: favourites first, then reverse chronological
       const sorted = [...resp.items].sort((a, b) => {
         if (a.is_favourite !== b.is_favourite) return a.is_favourite ? -1 : 1;
@@ -222,7 +224,7 @@ export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [accessToken]);
 
   // Fetch on open
   useEffect(() => {
@@ -234,14 +236,14 @@ export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
   const handleLoad = useCallback(async (run: HistoryRunSummary) => {
     setLoadingId(run.id);
     try {
-      const fullRun = await getRun(run.id);
+      const fullRun = await getRun(run.id, accessToken ?? undefined);
       setRunData(fullRun as QueryResponse);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load run.");
     } finally {
       setLoadingId(null);
     }
-  }, [setRunData]);
+  }, [setRunData, accessToken]);
 
   const handleToggleFavourite = useCallback(async (run: HistoryRunSummary) => {
     // Optimistic update
@@ -249,7 +251,7 @@ export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
       prev.map((r) => r.id === run.id ? { ...r, is_favourite: !r.is_favourite } : r)
     );
     try {
-      const updated = await patchFavourite(run.id, !run.is_favourite);
+      const updated = await patchFavourite(run.id, !run.is_favourite, accessToken ?? undefined);
       setRuns((prev) => {
         const next = prev.map((r) => r.id === run.id ? updated : r);
         return [...next].sort((a, b) => {
@@ -265,7 +267,7 @@ export default function HistorySidebar({ open, onClose }: HistorySidebarProps) {
         prev.map((r) => r.id === run.id ? { ...r, is_favourite: run.is_favourite } : r)
       );
     }
-  }, []);
+  }, [accessToken]);
 
   const handleShare = useCallback((run: HistoryRunSummary) => {
     const url = `${window.location.origin}/?run=${encodeURIComponent(run.id)}`;

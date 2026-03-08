@@ -170,6 +170,7 @@ class AgentOrchestrator:
         domain: str = "aircraft",
         session_id: str | None = None,
         conversation_history: list[dict] | None = None,
+        user_id: str | None = None,
     ) -> AgentRunResult:
         """
         Execute the full agentic loop asynchronously.
@@ -193,6 +194,8 @@ class AgentOrchestrator:
             domain:               "aircraft" or "medical".
             session_id:           Client session UUID for multi-turn context (optional).
             conversation_history: Prior turns [{role, content} or {query, answer_summary}] (optional).
+            user_id:              Supabase user UUID (from JWT 'sub' claim). Stored on agent_runs
+                                  for per-user history filtering. None for unauthenticated callers.
 
         Returns:
             AgentRunResult with full structured output.
@@ -667,6 +670,7 @@ class AgentOrchestrator:
 
         # Persist to agent_runs table (async session)
         # W3-005: store session_id for conversational memory / history sidebar
+        # W4-006: store user_id (Supabase UUID from JWT sub claim) for per-user filtering
         try:
             import uuid as _uuid
             _session_uuid = None
@@ -676,17 +680,25 @@ class AgentOrchestrator:
                 except (ValueError, AttributeError):
                     _session_uuid = None
 
+            _user_uuid = None
+            if user_id:
+                try:
+                    _user_uuid = _uuid.UUID(user_id)
+                except (ValueError, AttributeError):
+                    _user_uuid = None
+
             async with get_session() as session:
                 await session.execute(
                     text(
-                        "INSERT INTO agent_runs (run_id, query, result, session_id) "
-                        "VALUES (:run_id, :query, :result, :session_id)"
+                        "INSERT INTO agent_runs (run_id, query, result, session_id, user_id) "
+                        "VALUES (:run_id, :query, :result, :session_id, :user_id)"
                     ),
                     {
                         "run_id": run_id,
                         "query": query,
                         "result": json.dumps(result.to_dict()),
                         "session_id": _session_uuid,
+                        "user_id": _user_uuid,
                     },
                 )
             _state_timings["save_ms"] = round((time.perf_counter() - _t_save_start) * 1000, 1)

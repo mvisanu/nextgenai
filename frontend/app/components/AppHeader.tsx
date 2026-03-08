@@ -7,8 +7,9 @@
 // ============================================================
 
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home, Building2 } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home, Building2, LogOut } from "lucide-react";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
+import { useAuth } from "../lib/auth-context";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -170,6 +171,7 @@ export function NavDropdown() {
 // ---------------------------------------------------------------------------
 
 export default function AppHeader() {
+  const { user, loading, signOut } = useAuth();
   return (
     <header
       className="flex items-center justify-between px-4 shrink-0"
@@ -264,6 +266,57 @@ export default function AppHeader() {
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
         <DomainSwitcher />
         <div style={{ width: 1, height: 14, backgroundColor: "hsl(var(--border-strong))" }} />
+        {!loading && user && (
+          <>
+            <span
+              title={user.email ?? ""}
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.6rem",
+                color: "hsl(var(--text-dim))",
+                maxWidth: "160px",
+                overflow: "hidden",
+                textOverflow: "ellipsis",
+                whiteSpace: "nowrap",
+              }}
+            >
+              {user.email}
+            </span>
+            <button
+              onClick={signOut}
+              aria-label="Sign out"
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "4px",
+                padding: "3px 8px",
+                fontFamily: "var(--font-mono)",
+                fontSize: "0.6rem",
+                fontWeight: 600,
+                letterSpacing: "0.1em",
+                color: "hsl(var(--text-secondary))",
+                backgroundColor: "transparent",
+                border: "1px solid hsl(var(--border-base))",
+                borderRadius: "2px",
+                cursor: "pointer",
+                transition: "all 0.15s",
+              }}
+              onMouseEnter={(e) => {
+                const el = e.currentTarget as HTMLButtonElement;
+                el.style.color = "hsl(var(--col-cyan))";
+                el.style.borderColor = "hsl(var(--col-cyan))";
+              }}
+              onMouseLeave={(e) => {
+                const el = e.currentTarget as HTMLButtonElement;
+                el.style.color = "hsl(var(--text-secondary))";
+                el.style.borderColor = "hsl(var(--border-base))";
+              }}
+            >
+              <LogOut size={10} />
+              SIGN OUT
+            </button>
+          </>
+        )}
       </div>
     </header>
   );

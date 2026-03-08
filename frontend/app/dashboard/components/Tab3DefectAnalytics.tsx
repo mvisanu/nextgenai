@@ -12,6 +12,7 @@ import {
   DISEASE_BY_TYPE, SEVERITY_BY_SPECIALTY, DISEASE_TREND, CLINICAL_THEMES,
 } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { useAuth } from "../../lib/auth-context";
 import { getAnalyticsDefects, getAnalyticsDiseases } from "../../lib/api";
 import type { DefectAnalytics, DiseaseAnalytics } from "../../lib/api";
 
@@ -166,6 +167,7 @@ function ChartSkeleton({ height = 200 }: { height?: number }) {
 
 export default function Tab3DefectAnalytics() {
   const { domain, config } = useDomain();
+  const { accessToken } = useAuth();
   const isMedical = domain === "medical";
 
   // Real analytics data — fetched on mount and domain change
@@ -180,8 +182,8 @@ export default function Tab3DefectAnalytics() {
     setApiByType(null);
 
     const fetchData = isMedical
-      ? getAnalyticsDiseases()
-      : getAnalyticsDefects();
+      ? getAnalyticsDiseases(undefined, undefined, undefined, accessToken ?? undefined)
+      : getAnalyticsDefects(undefined, undefined, undefined, accessToken ?? undefined);
 
     fetchData
       .then((rows) => {
@@ -225,7 +227,7 @@ export default function Tab3DefectAnalytics() {
       });
 
     return () => { cancelled = true; };
-  }, [isMedical]);
+  }, [isMedical, accessToken]);
 
   // Use real API data when available, fall back to mock
   const byTypeData     = apiByType ?? (isMedical ? DISEASE_BY_TYPE       : DEFECT_BY_TYPE);

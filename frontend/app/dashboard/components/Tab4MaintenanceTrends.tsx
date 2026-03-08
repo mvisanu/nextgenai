@@ -13,6 +13,7 @@ import {
   type MaintenancePoint,
 } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { useAuth } from "../../lib/auth-context";
 import { getAnalyticsMaintenance } from "../../lib/api";
 import type { MaintenanceTrend } from "../../lib/api";
 
@@ -85,6 +86,7 @@ function ChartPanel({ title, accentVar, children }: {
 
 export default function Tab4MaintenanceTrends() {
   const { domain, config } = useDomain();
+  const { accessToken } = useAuth();
   const isMedical = domain === "medical";
   const accent = config.accentVar;
 
@@ -110,7 +112,7 @@ export default function Tab4MaintenanceTrends() {
     setApiLoading(true);
     setApiError(null);
 
-    getAnalyticsMaintenance()
+    getAnalyticsMaintenance(undefined, undefined, accessToken ?? undefined)
       .then((rows: MaintenanceTrend[]) => {
         if (cancelled) return;
         // Aggregate by month across all event types
@@ -131,7 +133,7 @@ export default function Tab4MaintenanceTrends() {
       .finally(() => { if (!cancelled) setApiLoading(false); });
 
     return () => { cancelled = true; };
-  }, [isMedical]);
+  }, [isMedical, accessToken]);
 
   const data: MaintenancePoint[] = metricsMap[assetId] ?? [];
   const metricLabel = metricLabelMap[assetId] ?? "Metric Value";

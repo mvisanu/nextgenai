@@ -10,9 +10,10 @@ from __future__ import annotations
 import json
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy import text
 
+from backend.app.auth.jwt import get_current_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import HistoryRunSummary, RunListResponse, RunRecord
@@ -30,26 +31,33 @@ router = APIRouter()
 async def get_runs(
     limit: int = Query(20, ge=1, le=100, description="Number of runs to return"),
     offset: int = Query(0, ge=0, description="Pagination offset"),
+    current_user: dict = Depends(get_current_user),
 ) -> RunListResponse:
     """
-    Paginated list of agent runs from agent_runs table.
+    Paginated list of agent runs from agent_runs table, filtered to the
+    authenticated user's runs only (W4-007: WHERE user_id = :user_id).
     Returns HistoryRunSummary items sorted by created_at DESC.
     """
+    user_id = current_user.get("sub")
     try:
         async with get_session() as session:
-            # Get total count
-            count_result = await session.execute(text("SELECT COUNT(*) FROM agent_runs"))
+            # Get total count for this user's runs
+            count_result = await session.execute(
+                text("SELECT COUNT(*) FROM agent_runs WHERE user_id = :user_id::uuid"),
+                {"user_id": user_id},
+            )
             total = count_result.scalar() or 0
 
-            # Get paginated rows
+            # Get paginated rows for this user
             rows_result = await session.execute(
                 text(
                     "SELECT run_id, query, result, created_at, is_favourite "
                     "FROM agent_runs "
+                    "WHERE user_id = :user_id::uuid "
                     "ORDER BY created_at DESC "
                     "LIMIT :limit OFFSET :offset"
                 ),
-                {"limit": limit, "offset": offset},
+                {"user_id": user_id, "limit": limit, "offset": offset},
             )
             rows = rows_result.fetchall()
     except Exception as exc:
@@ -88,16 +96,21 @@ async def get_runs(
     summary="Toggle favourite status for a run",
     description="Toggles is_favourite on the specified run and returns the updated summary.",
 )
-async def toggle_favourite(run_id: str) -> HistoryRunSummary:
+async def toggle_favourite(
+    run_id: str,
+    current_user: dict = Depends(get_current_user),
+) -> HistoryRunSummary:
     """
-    Toggle is_favourite on an agent_run. Returns 404 if run_id not found.
+    Toggle is_favourite on an agent_run.
+    Returns 404 if run_id not found or belongs to a different user (W4-007).
     """
+    user_id = current_user.get("sub")
     try:
         async with get_session() as session:
-            # Fetch current state
+            # Fetch current state — include user_id for ownership check
             result = await session.execute(
                 text(
-                    "SELECT run_id, query, result, created_at, is_favourite "
+                    "SELECT run_id, query, result, created_at, is_favourite, user_id "
                     "FROM agent_runs WHERE run_id = :run_id"
                 ),
                 {"run_id": run_id},
@@ -105,6 +118,11 @@ async def toggle_favourite(run_id: str) -> HistoryRunSummary:
             row = result.fetchone()
 
             if not row:
+                raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
+
+            # Return 404 (not 403) to avoid leaking run existence to other users
+            row_user_id = str(row.user_id) if row.user_id else None
+            if row_user_id and row_user_id != user_id:
                 raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
 
             # Toggle the value

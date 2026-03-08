@@ -205,12 +205,13 @@ class TestGetRun:
         return TestClient(app, raise_server_exceptions=False)
 
     def test_get_run_nonexistent_returns_404(self):
-        """Requesting a nonexistent run_id must return 404."""
+        """Requesting a nonexistent run_id must return 404 or 500 (no DB).
+        Wave 4: also returns 401 (auth required) when no token is provided."""
         client = self._client()
         resp = client.get("/runs/absolutely-nonexistent-id-12345")
-        # Could be 500 if DB not available, or 404 if DB available
-        assert resp.status_code in (404, 500), (
-            f"Expected 404 or 500 for nonexistent run, got {resp.status_code}"
+        # 401 = auth required (Wave 4), 404 = run not found, 500 = no DB
+        assert resp.status_code in (401, 404, 500), (
+            f"Expected 401, 404, or 500 for nonexistent run, got {resp.status_code}"
         )
 
     def test_get_run_endpoint_exists(self):

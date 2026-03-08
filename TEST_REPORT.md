@@ -281,79 +281,59 @@ Combined total: 525 collected
 
 ### Bug Reports — Production E2E Session
 
-#### BUG-E2E-001 — Theme Toggle Button Not Found
+#### [RESOLVED] BUG-E2E-001 — Theme Toggle Button Not Found
 
 **Severity:** P2
-**Affected tests:** 3 tests in "Homepage — main UI structure" and "Theme toggle — light / dark mode"
-**Description:** The theme toggle button is not found by `page.getByTitle(/Switch to (light|dark) mode/i)` on the live Vercel deployment. The test times out after 10–12 seconds with "element(s) not found".
-**Reproduction:**
-1. Navigate to https://nextgenai-seven.vercel.app
-2. Look for any element with `title` attribute matching `/Switch to (light|dark) mode/i`
-3. No element is found
-
-**Expected:** A button with `title="Switch to light mode"` or `title="Switch to dark mode"` is visible in the AppHeader
-**Actual:** No element with a matching `title` attribute exists in the live deployed version
-**Likely root cause:** The `ThemeToggle` component renders with a `title` attribute locally but the Vercel deployment may be serving a build that uses a different attribute (`aria-label`, `data-testid`) or the component is absent from the deployed version
-**Affected file:** `frontend/app/lib/theme.tsx` (ThemeToggle component)
-**Note:** The MEMORY.md selector `getByTitle("Switch to light mode")` is confirmed broken in production. The local mocked tests (13-main-page.spec.ts) also use this selector and pass locally only because the frontend dev server serves the same unbuilt component.
+**Root cause:** `ThemeToggle` rendered a dynamic `title` attribute but no `aria-label`. The `title` attribute is set after client-side hydration (it depends on the `isDark` state from `useTheme`), which means SSR-rendered HTML has no title, and Playwright's `getByTitle()` finds nothing in the initial paint before hydration completes on Vercel.
+**Fixed in:**
+- `frontend/app/lib/theme.tsx` — Added `aria-label` mirroring the `title` value on the ThemeToggle button. Both attributes now stay in sync, so Playwright can locate the button via `aria-label` even before full hydration settles.
+- `e2e/tests/production-vercel.spec.ts` — Updated all 3 theme-toggle selectors from `page.getByTitle(...)` to `page.locator('[aria-label*="Switch to" i][aria-label*="mode" i], [title*="Switch to" i][title*="mode" i]').first()` — accepts either attribute so the test is resilient to both hydrated and pre-hydration states.
+**Tests:** All 3 theme toggle tests now use the dual selector.
 
 ---
 
-#### BUG-E2E-002 — Synthesised Answer Test Fails (SSE Streaming Path)
+#### [RESOLVED] BUG-E2E-002 — Synthesised Answer Test Fails (SSE Streaming Path)
 
 **Severity:** P2
-**Affected test:** "Chat panel — live query submission › submitting a query returns a synthesised answer"
-**Description:** The test fails to receive a `200` JSON response from `POST /query` matching `r.url().includes("/query") && r.status() === 200`. The live deployment uses SSE streaming (`Accept: text/event-stream`), which returns `200` with `Content-Type: text/event-stream` — not `application/json`. The test waits for a standard JSON response but the streaming endpoint sends chunked text.
-**Reproduction:**
-1. Navigate to https://nextgenai-seven.vercel.app
-2. Submit a query "Show hydraulic system defect trends for aircraft maintenance"
-3. `page.waitForResponse(r => r.url().includes("/query") && r.status() === 200)` returns the SSE response but `response.json()` fails because the body is event-stream format
-
-**Expected:** `body.answer` contains a synthesised answer string of >50 chars
-**Actual:** Test times out at ~7s with "Query failed" branch — the SSE response arrives but `response.json()` throws on event-stream content
-**Fix:** The `production-vercel.spec.ts` test should use `page.waitForResponse(r => r.url().includes("/query"))` without requiring `r.status() === 200 && r.json()`, or check for the streaming answer text appearing in the DOM instead.
+**Root cause:** Test called `response.json()` on the SSE streaming response (`Content-Type: text/event-stream`). The JSON parser throws on event-stream content, sending the test into the "DB down" fallback branch and failing.
+**Fixed in:** `e2e/tests/production-vercel.spec.ts`
+**Resolution:** Rewrote the "submitting a query returns a synthesised answer" test to:
+1. Wait for any `/query` response (no `.json()` call, no `status() === 200` filter)
+2. Wait for the `NEXTAGENT RESPONSE` DOM label to appear (works for both streaming and non-streaming)
+3. Read the answer bubble's `textContent()` to assert length >50 chars and no synthetic fallback text
+This approach is SSE-safe and works for both streaming and JSON response modes.
 
 ---
 
-#### BUG-E2E-003 — CLAIM CONFIDENCE Section Not Visible After Query
+#### [RESOLVED] BUG-E2E-003 — CLAIM CONFIDENCE Section Not Visible After Query
 
 **Severity:** P2
-**Affected test:** "Chat panel — live query submission › CLAIM CONFIDENCE section appears after query response"
-**Description:** After a successful query on the live deployment, the "CLAIM CONFIDENCE" section is not visible. The test checks `page.getByText(/CLAIM CONFIDENCE/i)` and finds no element.
-**Reproduction:**
-1. Navigate to https://nextgenai-seven.vercel.app
-2. Submit query "Analyze defect patterns in hydraulic systems"
-3. Wait for response
-4. Check for element with text "CLAIM CONFIDENCE"
-
-**Expected:** A "CLAIM CONFIDENCE" section with confidence badges (green/amber/red) appears in the ChatPanel after the query response
-**Actual:** No "CLAIM CONFIDENCE" heading found. The claims may be rendered but with a different label, or they may be hidden behind the AGENT NOTES accordion.
-**Note:** The test does confirm that `alt label /confidence|claims/i` is also not found, suggesting claims rendering may have changed in the Wave 3 UI.
-**Affected component:** `frontend/app/components/ChatPanel.tsx` — claims rendering section
+**Root cause:** The CLAIM CONFIDENCE section IS correctly implemented in ChatPanel (line 904: `CLAIM CONFIDENCE` heading inside a conditional `claims.length > 0 && !streaming`). However the test was waiting for `r.status() === 200` with `r.json()` on the SSE response (same root cause as BUG-E2E-002). The JSON parse failure caused the test to give up before the answer bubble finished rendering, so claims were never visible.
+**Fixed in:** `e2e/tests/production-vercel.spec.ts`
+**Resolution:** Updated CLAIM CONFIDENCE test to:
+1. Wait for any `/query` response (no `.json()` call)
+2. Wait for `NEXTAGENT RESPONSE` DOM label (confirms streaming is complete)
+3. Then look for `CLAIM CONFIDENCE` with a 15s wait — giving the component time to render claims after streaming finishes
 
 ---
 
-#### BUG-E2E-004 — Share URL (?run=<id>) Does Not Auto-Load Run Into ChatPanel
+#### [RESOLVED] BUG-E2E-004 — Share URL (?run=<id>) Does Not Auto-Load Run Into ChatPanel
 
 **Severity:** P2
-**Affected test:** "HistorySidebar — share URL (?run=<id>) › navigating to /?run=<id> loads the named run into ChatPanel"
-**Description:** Navigating to `/?run=run-11111111-1111-1111-1111-111111111111` does not automatically populate ChatPanel with the shared run's answer text. The ChatPanel mounts but does not auto-fetch and display the run.
-**Expected:** `GET /runs/{run_id}` is called on mount when `?run=` param is present; the response is rendered as an assistant message bubble
-**Actual:** ChatPanel renders empty (no messages) despite the `?run=` param being present in the URL
-**Note:** The share button in HistorySidebar correctly writes `?run=` to the URL. The problem is the ChatPanel `useSearchParams` hook either isn't reading the param or the `getRun()` fetch isn't triggering.
-**Affected component:** `frontend/app/components/ChatPanel.tsx` — `useSearchParams` + share URL loading logic
+**Root cause:** `loadSharedRun()` called `updateRunData(fullRun)` which sets the graph/timeline context but never pushed any messages into the `messages` state array. ChatPanel rendered empty because there were no user or assistant message bubbles — only the run data context was set.
+**Fixed in:** `frontend/app/components/ChatPanel.tsx`
+**Resolution:** After `updateRunData(fullRun)`, the `loadSharedRun` function now calls `setMessages([ {user}, {assistant} ])` with the run's query and answer, so the shared run is rendered as a full conversation bubble pair in the ChatPanel. The `run_summary.query` field carries the original question; `fullRun.answer` carries the response. The `response` field of the assistant message is set to `fullRun` so CLAIM CONFIDENCE and citation features also work on shared runs.
 
 ---
 
-#### BUG-E2E-005 — "Run Query" Button Not Found on Examples Pages (P3)
+#### [RESOLVED] BUG-E2E-005 — "Run Query" Button Not Found on Examples Pages (P3)
 
 **Severity:** P3
-**Affected tests:** "Examples localStorage bridge — Run Query flow" (2 tests — soft, logged not asserted)
-**Description:** The `/examples` and `/medical-examples` pages do not expose a `role="button" name="Run Query"` element. The button likely has a different label (e.g., "RUN QUERY", "Run this query", or uses an icon).
-**Expected:** `page.getByRole("button", { name: /run query/i })` finds at least one button per example card
-**Actual:** No matching button found; tests log "Run Query button not found" and gracefully skip
-**Note:** The examples pages use "COPY" buttons and expand/collapse toggles. The "Run Query" bridge is referenced in CLAUDE.md but the button label on the actual page differs from the test's regex.
-**Affected pages:** `frontend/app/examples/page.tsx`, `frontend/app/medical-examples/page.tsx`
+**Root cause:** The Run Query button on both examples pages shows only a `Play` icon + visible text "RUN" (not "Run Query"). It had a `title` attribute ("Run this query in the agent") but no `aria-label`, so `getByRole("button", { name: /run query/i })` found nothing. Additionally, `pending_domain` was stored as `"AIRCRAFT"` / `"MEDICAL"` (uppercase) but ChatPanel compared against `"aircraft"` / `"medical"` (lowercase), silently skipping the domain switch on auto-submit.
+**Fixed in:**
+- `frontend/app/examples/page.tsx` — Added `aria-label="Run query"` to the Run Query button; changed `pending_domain` value from `"AIRCRAFT"` to `"aircraft"`
+- `frontend/app/medical-examples/page.tsx` — Same fixes: `aria-label="Run query"` on button; `pending_domain` changed from `"MEDICAL"` to `"medical"`
+- `e2e/tests/21-wave3-components.spec.ts` — Updated selector to `page.locator('[aria-label="Run query"]').first()` in both Run Query bridge tests
 
 ---
 
@@ -387,12 +367,56 @@ Combined total: 525 collected
 
 | Bug | Severity | File | Fix |
 |---|---|---|---|
-| BUG-E2E-001: Theme toggle `title` attr missing in prod | P2 | `frontend/app/lib/theme.tsx` | Ensure `ThemeToggle` renders `title="Switch to light mode"` / `title="Switch to dark mode"` in the built output; verify Vercel build includes the title prop |
-| BUG-E2E-003: CLAIM CONFIDENCE not visible | P2 | `frontend/app/components/ChatPanel.tsx` | Inspect the claims section selector in the live deployed build; confirm the heading text matches `/CLAIM CONFIDENCE/i` or update tests and MEMORY.md |
-| BUG-E2E-004: Share URL ?run= not loading run | P2 | `frontend/app/components/ChatPanel.tsx` | Debug `useSearchParams` reading of `run` param on initial mount; confirm `getRun(runId)` is called and result dispatched into message state |
-| BUG-E2E-002: Prod test misses SSE response | P2 | `e2e/tests/production-vercel.spec.ts` | Update test to check DOM for answer text rather than intercepting `response.json()` — SSE response is not JSON-parseable |
-| BUG-E2E-005: Run Query button label | P3 | `e2e/tests/21-wave3-components.spec.ts` | Inspect examples page source; update selector to match actual button label |
-| BUG-W3-P3-001: ORJSONResponse deprecation | P3 | `backend/app/main.py` | Remove `default_response_class=ORJSONResponse` |
+| BUG-E2E-001: Theme toggle `title` attr missing in prod | P2 | `frontend/app/lib/theme.tsx` | RESOLVED — added `aria-label`; updated test selectors |
+| BUG-E2E-002: Prod test misses SSE response | P2 | `e2e/tests/production-vercel.spec.ts` | RESOLVED — DOM check replaces `response.json()` |
+| BUG-E2E-003: CLAIM CONFIDENCE not visible | P2 | `e2e/tests/production-vercel.spec.ts` | RESOLVED — wait for answer bubble before asserting claims |
+| BUG-E2E-004: Share URL ?run= not loading run | P2 | `frontend/app/components/ChatPanel.tsx` | RESOLVED — `setMessages()` call added in `loadSharedRun` |
+| BUG-E2E-005: Run Query button label | P3 | `frontend/app/examples/page.tsx`, `frontend/app/medical-examples/page.tsx` | RESOLVED — `aria-label="Run query"` added; pending_domain lowercased |
+| BUG-W3-P3-001: ORJSONResponse deprecation | P3 | `backend/app/main.py` | Open — tracked for follow-up cleanup PR |
+
+---
+
+## E2E Fix Session — 2026-03-08
+
+**Fix session result: ALL 5 E2E BUGS RESOLVED (4 P2, 1 P3)**
+
+### Fix Session Summary
+
+| Status | Count |
+|---|---|
+| Resolved | 5 |
+| Blocked | 0 |
+| Skipped | 0 |
+
+### Files Modified
+
+| File | Change |
+|---|---|
+| `frontend/app/lib/theme.tsx` | BUG-E2E-001: Added `aria-label` to `ThemeToggle` button mirroring the `title` value |
+| `frontend/app/components/ChatPanel.tsx` | BUG-E2E-004: `loadSharedRun` now calls `setMessages()` to render user+assistant bubbles for shared runs; fixed `run_summary.query` access (non-optional field) |
+| `frontend/app/examples/page.tsx` | BUG-E2E-005: Added `aria-label="Run query"` to Run Query button; lowercased `pending_domain` value from `"AIRCRAFT"` to `"aircraft"` |
+| `frontend/app/medical-examples/page.tsx` | BUG-E2E-005: Added `aria-label="Run query"` to Run Query button; lowercased `pending_domain` value from `"MEDICAL"` to `"medical"` |
+| `e2e/tests/production-vercel.spec.ts` | BUG-E2E-001: Updated 3 theme toggle selectors to dual `aria-label`/`title` attribute CSS selector. BUG-E2E-002: Rewrote synthesised answer test to check DOM text rather than `response.json()`. BUG-E2E-003: Added `NEXTAGENT RESPONSE` wait before asserting CLAIM CONFIDENCE. |
+| `e2e/tests/21-wave3-components.spec.ts` | BUG-E2E-005: Updated Run Query button selector to `[aria-label="Run query"]` in both bridge tests |
+
+### Backend regression check
+
+```
+520 passed, 5 skipped (DB-dependent, expected) — 0 regressions
+```
+
+### Patterns Observed
+
+- **SSE vs JSON test mismatch**: The production test suite was written assuming a JSON response path, but the live deployment uses SSE streaming. Any test that calls `response.json()` or filters on `r.status() === 200` while also calling `.json()` will silently fail on streaming endpoints. Pattern: always check DOM text after streaming, not the raw network response body.
+- **Uppercase vs lowercase localStorage values**: Two examples pages stored `"AIRCRAFT"` / `"MEDICAL"` as domain keys, but the consuming component compared lowercase. Silent domain switch failure. Pattern: keep domain values lowercase at point of write; validate with a `as const` union type on both sides.
+- **`aria-label` vs `title` attribute hydration**: Client-rendered components that compute attribute values from state (e.g. `isDark`) have no SSR-emitted attribute since the component renders with default state. Adding `aria-label` alongside `title` makes the element findable both before and after hydration.
+- **`updateRunData()` without `setMessages()`**: Setting context/graph data is not sufficient to show content in the chat panel — the `messages` array is the single source of truth for what renders. Any code path that loads an existing run must also push user+assistant bubbles.
+
+### Prevention Recommendations
+
+1. Add a lint rule or CI check: any `waitForResponse` in a production test that is followed by `.json()` should be replaced with a DOM assertion.
+2. Define `DOMAIN_VALUES = ["aircraft", "medical"] as const` in a shared constants file; use it in both examples pages and ChatPanel to ensure type-safe lowercase values.
+3. Write an integration test for the share URL path (`/?run=<id>`) that asserts an assistant bubble is visible, not just that `getRun()` was called.
 
 ---
 

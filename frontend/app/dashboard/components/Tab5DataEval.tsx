@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import { Database, FlaskConical, CheckCircle2, AlertCircle } from "lucide-react";
 import { DATASET_HEALTH, EVAL_METRICS, MEDICAL_DATASET_HEALTH, MEDICAL_EVAL_METRICS } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { useAuth } from "../../lib/auth-context";
 import { getAnalyticsDefects, getAnalyticsDiseases } from "../../lib/api";
 import type { DefectAnalytics, DiseaseAnalytics } from "../../lib/api";
 
@@ -181,6 +182,7 @@ function EvalSummary({ metrics }: { metrics: typeof EVAL_METRICS }) {
 
 export default function Tab5DataEval() {
   const { domain } = useDomain();
+  const { accessToken } = useAuth();
   const isMedical = domain === "medical";
   const evalMetrics = isMedical ? MEDICAL_EVAL_METRICS : EVAL_METRICS;
 
@@ -193,7 +195,9 @@ export default function Tab5DataEval() {
     setHealthLoading(true);
     setLiveHealth(null);
 
-    const fetchData = isMedical ? getAnalyticsDiseases() : getAnalyticsDefects();
+    const fetchData = isMedical
+      ? getAnalyticsDiseases(undefined, undefined, undefined, accessToken ?? undefined)
+      : getAnalyticsDefects(undefined, undefined, undefined, accessToken ?? undefined);
 
     fetchData
       .then((rows) => {
@@ -226,7 +230,7 @@ export default function Tab5DataEval() {
       .finally(() => { if (!cancelled) setHealthLoading(false); });
 
     return () => { cancelled = true; };
-  }, [isMedical]);
+  }, [isMedical, accessToken]);
 
   // Merge live counts at the top of the static dataset health list
   const staticHealth  = isMedical ? MEDICAL_DATASET_HEALTH : DATASET_HEALTH;
