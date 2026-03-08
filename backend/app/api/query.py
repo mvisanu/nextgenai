@@ -5,13 +5,18 @@ GET /runs/{run_id} — retrieve a previously stored agent run.
 T-17: orchestrator.run() is now natively async — run_in_threadpool is no longer
 needed. The route handler calls await orchestrator.run(...) directly.
 The sync run_in_threadpool import is retained as a comment for traceability.
+
+W3-008/W3-009: SSE streaming variant added. POST /query with Accept: text/event-stream
+header triggers SSE synthesis streaming. Gated by STREAMING_ENABLED env var (default true).
 """
 from __future__ import annotations
 
 import json
-from typing import Any
+import os
+from typing import Any, AsyncGenerator
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
 from sqlalchemy import text
 
 from backend.app.agent.orchestrator import AgentOrchestrator
@@ -40,17 +45,49 @@ def _get_orchestrator() -> AgentOrchestrator:
     description=(
         "Submit a natural language question. The agent classifies intent, generates a plan, "
         "executes tools (vector search, SQL, compute), expands the knowledge graph, "
-        "and returns a cited, confidence-scored answer."
+        "and returns a cited, confidence-scored answer.\n\n"
+        "W3-008: Send Accept: text/event-stream to receive SSE streaming synthesis output. "
+        "Gated by STREAMING_ENABLED env var (default true)."
     ),
+    responses={
+        200: {"description": "Successful query response with evidence, claims, and graph path"},
+        500: {"description": "Agent error — LLM or tool failure"},
+        413: {"description": "Request body exceeds 1 MB limit"},
+    },
 )
-async def run_query(body: QueryRequest) -> QueryResponse:
+async def run_query(body: QueryRequest, request: Request):
     logger.info("Query received", extra={"query": body.query[:200]})
 
+    # W3-008/W3-009: Check for SSE streaming request
+    # If the client sends Accept: text/event-stream, route to SSE generator (if enabled).
+    # If STREAMING_ENABLED=false, fall back to SSE-format response (avoids 500 from non-stream path).
+    accept_header = request.headers.get("accept", "")
+    streaming_enabled = os.environ.get("STREAMING_ENABLED", "true").lower() != "false"
+    wants_sse = "text/event-stream" in accept_header
+
+    if wants_sse:
+        # Return SSE regardless of flag — when disabled, generator omits token events
+        # and just emits done/error. This avoids returning 500 on a streaming request.
+        return StreamingResponse(
+            _sse_generator(body, streaming_tokens=streaming_enabled),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "X-Accel-Buffering": "no",
+            },
+        )
+
+    # Non-streaming path (default)
     try:
         orchestrator = _get_orchestrator()
         # T-17: orchestrator.run() is natively async — no run_in_threadpool needed.
-        # T-01 (run_in_threadpool) has been superseded by this full async rewrite.
-        result = await orchestrator.run(body.query, domain=body.domain)
+        # W3-005: pass session_id and conversation_history for conversational memory
+        result = await orchestrator.run(
+            body.query,
+            domain=body.domain,
+            session_id=body.session_id,
+            conversation_history=body.conversation_history,
+        )
         result_dict = result.to_dict()
 
         # Convert to response schema
@@ -59,6 +96,46 @@ async def run_query(body: QueryRequest) -> QueryResponse:
     except Exception as exc:
         logger.error("Query failed", extra={"error": str(exc), "query": body.query[:100]})
         raise HTTPException(status_code=500, detail=f"Agent error: {str(exc)}")
+
+
+async def _sse_generator(body: QueryRequest, streaming_tokens: bool = True) -> AsyncGenerator[str, None]:
+    """
+    W3-008: SSE generator for streaming synthesis.
+    Runs the full agent pipeline, then emits events in SSE format.
+
+    Args:
+        body:             The QueryRequest body.
+        streaming_tokens: When True, emits word-by-word token events before 'done'.
+                          When False (STREAMING_ENABLED=false), emits only 'done'/'error'.
+    """
+    try:
+        orchestrator = _get_orchestrator()
+        result = await orchestrator.run(
+            body.query,
+            domain=body.domain,
+            session_id=body.session_id,
+            conversation_history=body.conversation_history,
+        )
+        result_dict = result.to_dict()
+        response = QueryResponse(**_normalise_result(result_dict))
+
+        # Emit token events when streaming is enabled
+        if streaming_tokens:
+            answer_text = response.answer or ""
+            words = answer_text.split()
+            for i, word in enumerate(words):
+                chunk = word + (" " if i < len(words) - 1 else "")
+                token_event = json.dumps({"type": "token", "text": chunk})
+                yield f"data: {token_event}\n\n"
+
+        # Always emit done event with full run data
+        done_payload = json.dumps({"type": "done", "run": response.model_dump(mode="json")})
+        yield f"data: {done_payload}\n\n"
+
+    except Exception as exc:
+        logger.error("SSE streaming failed", extra={"error": str(exc), "query": body.query[:100]})
+        error_payload = json.dumps({"type": "error", "message": str(exc)})
+        yield f"data: {error_payload}\n\n"
 
 
 @router.get(

@@ -1,9 +1,11 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Database, FlaskConical, CheckCircle2, AlertCircle } from "lucide-react";
 import { DATASET_HEALTH, EVAL_METRICS, MEDICAL_DATASET_HEALTH, MEDICAL_EVAL_METRICS } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { getAnalyticsDefects, getAnalyticsDiseases } from "../../lib/api";
+import type { DefectAnalytics, DiseaseAnalytics } from "../../lib/api";
 
 // ── Styles ────────────────────────────────────────────────────────────────────
 
@@ -180,8 +182,57 @@ function EvalSummary({ metrics }: { metrics: typeof EVAL_METRICS }) {
 export default function Tab5DataEval() {
   const { domain } = useDomain();
   const isMedical = domain === "medical";
-  const datasetHealth = isMedical ? MEDICAL_DATASET_HEALTH : DATASET_HEALTH;
-  const evalMetrics   = isMedical ? MEDICAL_EVAL_METRICS   : EVAL_METRICS;
+  const evalMetrics = isMedical ? MEDICAL_EVAL_METRICS : EVAL_METRICS;
+
+  // Real API — derive live record/type counts for dataset health section
+  const [liveHealth, setLiveHealth] = useState<{ metric: string; value: string }[] | null>(null);
+  const [healthLoading, setHealthLoading] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setHealthLoading(true);
+    setLiveHealth(null);
+
+    const fetchData = isMedical ? getAnalyticsDiseases() : getAnalyticsDefects();
+
+    fetchData
+      .then((rows) => {
+        if (cancelled) return;
+        if (isMedical) {
+          const r = rows as DiseaseAnalytics[];
+          const total = r.reduce((s, x) => s + x.count, 0);
+          const specialties = new Set(r.map((x) => x.specialty).filter(Boolean)).size;
+          const diseases    = new Set(r.map((x) => x.disease).filter(Boolean)).size;
+          setLiveHealth([
+            { metric: "Total Case Records",       value: total.toLocaleString() },
+            { metric: "Unique Specialties",        value: String(specialties) },
+            { metric: "Unique Diagnoses / Conditions", value: String(diseases) },
+          ]);
+        } else {
+          const r = rows as DefectAnalytics[];
+          const total    = r.reduce((s, x) => s + x.count, 0);
+          const products = new Set(r.map((x) => x.product).filter(Boolean)).size;
+          const types    = new Set(r.map((x) => x.defect_type).filter(Boolean)).size;
+          setLiveHealth([
+            { metric: "Total Defect Records",   value: total.toLocaleString() },
+            { metric: "Unique Products / Assets", value: String(products) },
+            { metric: "Unique Defect Types",      value: String(types) },
+          ]);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setLiveHealth(null);
+      })
+      .finally(() => { if (!cancelled) setHealthLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [isMedical]);
+
+  // Merge live counts at the top of the static dataset health list
+  const staticHealth  = isMedical ? MEDICAL_DATASET_HEALTH : DATASET_HEALTH;
+  const datasetHealth = liveHealth
+    ? [...liveHealth, ...staticHealth.filter((r) => !liveHealth.some((l) => l.metric === r.metric))]
+    : staticHealth;
 
   return (
     <div style={{ height: "100%", display: "flex", gap: "8px", padding: "8px 10px 10px", overflow: "hidden" }}>
@@ -193,11 +244,17 @@ export default function Tab5DataEval() {
         icon={Database}
       >
         <TableHeader cols={["METRIC", "VALUE"]} />
-        <div>
-          {datasetHealth.map((row, i) => (
-            <TableRow key={row.metric} metric={row.metric} value={row.value} index={i} />
-          ))}
-        </div>
+        {healthLoading ? (
+          <div style={{ padding: "20px 16px", fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "hsl(210 14% 42%)", letterSpacing: "0.12em" }}>
+            LOADING…
+          </div>
+        ) : (
+          <div>
+            {datasetHealth.map((row, i) => (
+              <TableRow key={row.metric} metric={row.metric} value={row.value} index={i} />
+            ))}
+          </div>
+        )}
       </Section>
 
       {/* Offline Evaluation */}

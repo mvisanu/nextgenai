@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   LineChart, Line, ResponsiveContainer, Legend,
@@ -12,6 +12,8 @@ import {
   DISEASE_BY_TYPE, SEVERITY_BY_SPECIALTY, DISEASE_TREND, CLINICAL_THEMES,
 } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { getAnalyticsDefects, getAnalyticsDiseases } from "../../lib/api";
+import type { DefectAnalytics, DiseaseAnalytics } from "../../lib/api";
 
 // ── Palette ──────────────────────────────────────────────────────────────────
 
@@ -143,18 +145,101 @@ function ChartLegend({ items }: { items: { label: string; color: string }[] }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 
+// ── Loading skeleton ──────────────────────────────────────────────────────────
+
+function ChartSkeleton({ height = 200 }: { height?: number }) {
+  return (
+    <div style={{
+      height,
+      backgroundColor: "hsl(210 22% 13%)",
+      borderRadius: "2px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}>
+      <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: "hsl(210 14% 42%)", letterSpacing: "0.12em" }}>
+        LOADING…
+      </span>
+    </div>
+  );
+}
+
 export default function Tab3DefectAnalytics() {
   const { domain, config } = useDomain();
   const isMedical = domain === "medical";
 
-  const byTypeData     = isMedical ? DISEASE_BY_TYPE       : DEFECT_BY_TYPE;
+  // Real analytics data — fetched on mount and domain change
+  const [apiByType, setApiByType] = useState<{ type: string; count: number }[] | null>(null);
+  const [apiError, setApiError]   = useState<string | null>(null);
+  const [loading, setLoading]     = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setApiError(null);
+    setApiByType(null);
+
+    const fetchData = isMedical
+      ? getAnalyticsDiseases()
+      : getAnalyticsDefects();
+
+    fetchData
+      .then((rows) => {
+        if (cancelled) return;
+        if (isMedical) {
+          // DiseaseAnalytics: group by disease
+          const grouped: Record<string, number> = {};
+          (rows as DiseaseAnalytics[]).forEach((r) => {
+            const key = r.disease ?? "Unknown";
+            grouped[key] = (grouped[key] ?? 0) + r.count;
+          });
+          setApiByType(
+            Object.entries(grouped)
+              .map(([type, count]) => ({ type, count }))
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 10)
+          );
+        } else {
+          // DefectAnalytics: group by defect_type
+          const grouped: Record<string, number> = {};
+          (rows as DefectAnalytics[]).forEach((r) => {
+            const key = r.defect_type ?? "Unknown";
+            grouped[key] = (grouped[key] ?? 0) + r.count;
+          });
+          setApiByType(
+            Object.entries(grouped)
+              .map(([type, count]) => ({ type, count }))
+              .sort((a, b) => b.count - a.count)
+              .slice(0, 10)
+          );
+        }
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setApiError(err instanceof Error ? err.message : "Failed to load analytics");
+        // Fall back to mock on error
+        setApiByType(null);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => { cancelled = true; };
+  }, [isMedical]);
+
+  // Use real API data when available, fall back to mock
+  const byTypeData     = apiByType ?? (isMedical ? DISEASE_BY_TYPE       : DEFECT_BY_TYPE);
   const bySysData      = isMedical ? SEVERITY_BY_SPECIALTY : SEVERITY_BY_SYSTEM;
   const trendData      = isMedical ? DISEASE_TREND         : DEFECT_TREND;
   const themesData     = isMedical ? CLINICAL_THEMES       : INCIDENT_THEMES;
 
+  // Derive live total from API data when available
+  const liveTotal = apiByType ? apiByType.reduce((sum, r) => sum + r.count, 0) : null;
+  const liveTotalStr = liveTotal !== null ? liveTotal.toLocaleString() : (isMedical ? "183" : "168");
+
   const kpi1 = isMedical
-    ? { label: "TOTAL CASES (YTD)",    value: "183", sub: "across 5 specialties · 15 weeks", color: "var(--col-cyan)" }
-    : { label: "TOTAL DEFECTS (YTD)",  value: "168", sub: "across 5 systems · 15 weeks",     color: "var(--col-cyan)" };
+    ? { label: "TOTAL CASES (YTD)",    value: liveTotalStr, sub: "across 5 specialties · 15 weeks", color: "var(--col-cyan)" }
+    : { label: "TOTAL DEFECTS (YTD)",  value: liveTotalStr, sub: "across 5 systems · 15 weeks",     color: "var(--col-cyan)" };
   const kpi2 = isMedical
     ? { label: "CRITICAL SEVERITY",    value: "19",  sub: "10.4% of total · ↑ 4 from prev. period", color: "var(--col-red)" }
     : { label: "CRITICAL DEFECTS",     value: "15",  sub: "8.9% of total · ↑ 2 from prev. period",  color: "var(--col-red)" };
@@ -174,6 +259,22 @@ export default function Tab3DefectAnalytics() {
     <ScrollArea className="h-full">
       <div style={{ padding: "8px 10px 12px", display: "flex", flexDirection: "column", gap: "10px" }}>
 
+        {/* API error notice */}
+        {apiError && (
+          <div style={{
+            padding: "7px 12px",
+            border: "1px solid hsl(var(--col-amber) / 0.4)",
+            borderLeft: "2px solid hsl(var(--col-amber))",
+            borderRadius: "2px",
+            backgroundColor: "hsl(var(--col-amber) / 0.06)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            color: "hsl(var(--col-amber))",
+          }}>
+            API unavailable — showing sample data. {apiError}
+          </div>
+        )}
+
         {/* KPI row */}
         <div style={{ display: "flex", gap: "8px" }}>
           <KpiCard label={kpi1.label} value={kpi1.value} sub={kpi1.sub} color={kpi1.color} icon={Tag} />
@@ -186,23 +287,27 @@ export default function Tab3DefectAnalytics() {
 
           {/* 1. By type — vertical bar */}
           <ChartPanel title={chart1Title} accentVar={isMedical ? "--col-cyan" : "--col-green"}>
-            <ResponsiveContainer width="100%" height={200}>
-              <BarChart data={byTypeData} margin={{ top: 4, right: 8, bottom: 30, left: 0 }}>
-                <CartesianGrid vertical={false} stroke={C.grid} strokeDasharray="2 4" />
-                <XAxis
-                  dataKey="type"
-                  tick={{ ...axisFont }}
-                  axisLine={{ stroke: C.grid }}
-                  tickLine={false}
-                  angle={-35}
-                  textAnchor="end"
-                  interval={0}
-                />
-                <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
-                <Tooltip content={<DarkTooltip />} />
-                <Bar dataKey="count" name="Count" fill={isMedical ? C.cyan : C.green} radius={[2, 2, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
+            {loading ? (
+              <ChartSkeleton height={200} />
+            ) : (
+              <ResponsiveContainer width="100%" height={200}>
+                <BarChart data={byTypeData} margin={{ top: 4, right: 8, bottom: 30, left: 0 }}>
+                  <CartesianGrid vertical={false} stroke={C.grid} strokeDasharray="2 4" />
+                  <XAxis
+                    dataKey="type"
+                    tick={{ ...axisFont }}
+                    axisLine={{ stroke: C.grid }}
+                    tickLine={false}
+                    angle={-35}
+                    textAnchor="end"
+                    interval={0}
+                  />
+                  <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<DarkTooltip />} />
+                  <Bar dataKey="count" name="Count" fill={isMedical ? C.cyan : C.green} radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            )}
           </ChartPanel>
 
           {/* 2. Severity distribution — stacked bar */}

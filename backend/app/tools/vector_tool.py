@@ -3,8 +3,10 @@ VectorSearchTool — agent-callable tool that embeds a query and
 retrieves the top-k most similar incident chunks from pgvector.
 
 T-17: run_async() added. CPU-bound embedding is offloaded to a thread
-via asyncio.get_event_loop().run_in_executor so the event loop is not
+via asyncio.get_running_loop().run_in_executor so the event loop is not
 blocked. The pgvector query uses the async DB session.
+
+CR-007: run_async() now uses asyncio.get_running_loop() (not the deprecated variant).
 """
 from __future__ import annotations
 
@@ -166,7 +168,7 @@ class VectorSearchTool:
 
         try:
             # Offload CPU-bound embedding to thread pool
-            loop = asyncio.get_event_loop()
+            loop = asyncio.get_running_loop()
             model = EmbeddingModel.get()
             cached = await loop.run_in_executor(
                 None, model.encode_single_cached, query_text

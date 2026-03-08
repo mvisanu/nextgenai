@@ -7,7 +7,7 @@
 // ============================================================
 
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home, Building2 } from "lucide-react";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
 import {
   DropdownMenu,
@@ -27,8 +27,9 @@ export const NAV_ITEMS = [
   { href: "/dashboard",        label: "DASHBOARD", icon: LayoutDashboard,accent: "--col-cyan"   },
   { href: "/data",             label: "DATA",      icon: Database,       accent: "--col-amber"  },
   { href: "/review",           label: "REVIEW",    icon: GraduationCap,  accent: "--col-purple" },
-  { href: "/examples",         label: "EXAMPLES",  icon: FlaskConical,   accent: "--col-green"  },
-  { href: "/medical-examples", label: "MED-EX",    icon: Stethoscope,    accent: "--col-cyan"   },
+  { href: "/examples",              label: "EXAMPLES",   icon: FlaskConical, accent: "--col-green"  },
+  { href: "/medical-examples",      label: "MED-EX",     icon: Stethoscope,  accent: "--col-cyan"   },
+  { href: "/examples?tab=industries", label: "INDUSTRIES", icon: Building2,   accent: "--col-purple" },
   { href: "/agent",            label: "AGENT",     icon: Bot,            accent: "--col-pink"   },
   { href: "/diagram",          label: "DIAGRAM",   icon: GitBranch,      accent: "--col-cyan"   },
   { href: "/faq",              label: "FAQ",       icon: HelpCircle,     accent: "--col-cyan"   },

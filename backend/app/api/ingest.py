@@ -5,9 +5,8 @@ Returns 202 Accepted immediately; pipeline runs asynchronously.
 from __future__ import annotations
 
 import threading
-from typing import Any
 
-from fastapi import APIRouter, BackgroundTasks, HTTPException
+from fastapi import APIRouter, HTTPException
 
 from backend.app.ingest.medical_pipeline import run_medical_ingest_pipeline
 from backend.app.ingest.pipeline import is_ingest_running, run_ingest_pipeline
@@ -39,7 +38,6 @@ def _run_pipeline_in_thread() -> None:
 )
 async def trigger_ingest(
     body: IngestRequest | None = None,
-    background_tasks: BackgroundTasks = BackgroundTasks(),
 ) -> IngestResponse:
     if is_ingest_running():
         raise HTTPException(

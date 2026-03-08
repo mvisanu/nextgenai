@@ -8,11 +8,12 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   ArrowLeft, ChevronDown, ChevronUp, Activity,
   DollarSign, Clock, TrendingDown, AlertTriangle,
   Heart, Brain, Wind, Stethoscope, Microscope,
-  FlaskConical, BookOpen, GitBranch, Copy, Check,
+  FlaskConical, BookOpen, GitBranch, Copy, Check, Play,
 } from "lucide-react";
 import { NavDropdown } from "../components/AppHeader";
 
@@ -446,12 +447,24 @@ function ExampleCard({ ex }: { ex: MedExample }) {
   const [phdOpen, setPhdOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const accent = INTENT_COLORS[ex.intent];
+  const router = useRouter();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(ex.query);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleRunQuery = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      localStorage.setItem("pending_query", ex.query);
+      localStorage.setItem("pending_domain", "medical");
+    } catch {
+      // localStorage unavailable
+    }
+    router.push("/");
   };
 
   return (
@@ -579,6 +592,35 @@ function ExampleCard({ ex }: { ex: MedExample }) {
             : <Copy size={13} />}
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.52rem", letterSpacing: "0.08em" }}>
             {copied ? "COPIED" : "COPY"}
+          </span>
+        </button>
+
+        {/* Run Query button */}
+        <button
+          onClick={handleRunQuery}
+          title="Run this query in the agent"
+          aria-label="Run query"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "4px",
+            padding: "0 14px",
+            background: "none",
+            border: "none",
+            borderLeft: `1px solid hsl(var(${accent}) / 0.15)`,
+            cursor: "pointer",
+            color: `hsl(var(--col-green))`,
+            transition: "color 0.15s, background 0.15s",
+            minWidth: "52px",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.08)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+        >
+          <Play size={13} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.52rem", letterSpacing: "0.08em" }}>
+            RUN
           </span>
         </button>
       </div>

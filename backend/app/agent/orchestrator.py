@@ -164,7 +164,13 @@ class AgentOrchestrator:
     # Primary async path (T-17)
     # ------------------------------------------------------------------
 
-    async def run(self, query: str, domain: str = "aircraft") -> AgentRunResult:
+    async def run(
+        self,
+        query: str,
+        domain: str = "aircraft",
+        session_id: str | None = None,
+        conversation_history: list[dict] | None = None,
+    ) -> AgentRunResult:
         """
         Execute the full agentic loop asynchronously.
 
@@ -177,9 +183,16 @@ class AgentOrchestrator:
             complete_async() — non-blocking HTTP.
           - Synthesise and verify remain sequential (verify depends on synthesis).
 
+        W3-005 — Epic 1: Conversational Memory
+          - session_id stored in agent_runs for history retrieval
+          - conversation_history injected into synthesis prompt (max 5 turns)
+          - Gated by CONVERSATIONAL_MEMORY_ENABLED env var (default true)
+
         Args:
-            query:  Natural language question from the user.
-            domain: "aircraft" or "medical".
+            query:                Natural language question from the user.
+            domain:               "aircraft" or "medical".
+            session_id:           Client session UUID for multi-turn context (optional).
+            conversation_history: Prior turns [{role, content} or {query, answer_summary}] (optional).
 
         Returns:
             AgentRunResult with full structured output.
@@ -503,12 +516,41 @@ class AgentOrchestrator:
         _t_synthesise_start = time.perf_counter()
         evidence_for_synthesis = _build_evidence_context(vector_hits, sql_rows)
 
+        # W3-005: Conversational Memory — inject prior turns into synthesis context
+        # Gated by CONVERSATIONAL_MEMORY_ENABLED env var (default: true)
+        import os as _os
+        _memory_enabled = _os.environ.get("CONVERSATIONAL_MEMORY_ENABLED", "true").lower() != "false"
+        _history_context = ""
+        if _memory_enabled and conversation_history:
+            # Truncate to last 5 turns; format each as "Prior turn N: Q: ... | A: ..."
+            recent_turns = conversation_history[-5:]
+            prior_lines = []
+            for i, turn in enumerate(recent_turns, 1):
+                # Support both {role/content} and {query/answer_summary} shapes
+                if "query" in turn and "answer_summary" in turn:
+                    q_text = turn["query"]
+                    a_text = turn["answer_summary"]
+                else:
+                    role = turn.get("role", "")
+                    content = turn.get("content", "")
+                    if role == "user":
+                        q_text = content
+                        a_text = ""
+                    else:
+                        q_text = ""
+                        a_text = content
+                if q_text or a_text:
+                    prior_lines.append(f"Prior turn {i}: Q: {q_text} | A: {a_text}")
+            if prior_lines:
+                _history_context = "\n\nConversation history (most recent turns):\n" + "\n".join(prior_lines) + "\n"
+
         synthesis_prompt = (
             f"User query: {query}\n\n"
             f"Intent: {intent}\n\n"
             f"Execution plan: {plan_text}\n\n"
-            f"Evidence from search:\n{evidence_for_synthesis}\n\n"
-            f"Synthesise a comprehensive answer."
+            f"Evidence from search:\n{evidence_for_synthesis}"
+            + _history_context
+            + "\n\nSynthesise a comprehensive answer."
         )
 
         system_prompt = (
@@ -624,17 +666,27 @@ class AgentOrchestrator:
         )
 
         # Persist to agent_runs table (async session)
+        # W3-005: store session_id for conversational memory / history sidebar
         try:
+            import uuid as _uuid
+            _session_uuid = None
+            if session_id:
+                try:
+                    _session_uuid = _uuid.UUID(session_id)
+                except (ValueError, AttributeError):
+                    _session_uuid = None
+
             async with get_session() as session:
                 await session.execute(
                     text(
-                        "INSERT INTO agent_runs (run_id, query, result) "
-                        "VALUES (:run_id, :query, :result)"
+                        "INSERT INTO agent_runs (run_id, query, result, session_id) "
+                        "VALUES (:run_id, :query, :result, :session_id)"
                     ),
                     {
                         "run_id": run_id,
                         "query": query,
                         "result": json.dumps(result.to_dict()),
+                        "session_id": _session_uuid,
                     },
                 )
             _state_timings["save_ms"] = round((time.perf_counter() - _t_save_start) * 1000, 1)

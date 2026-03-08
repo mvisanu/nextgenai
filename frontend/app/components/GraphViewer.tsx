@@ -7,7 +7,7 @@
 // dark dot-grid background, glowing edges
 // ============================================================
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import {
   ReactFlow,
   Background,
@@ -27,6 +27,7 @@ import {
 } from "@xyflow/react";
 // Note: @xyflow/react/dist/style.css is imported globally in layout.tsx
 
+import { Search, Crosshair } from "lucide-react";
 import {
   Popover,
   PopoverContent,
@@ -325,13 +326,21 @@ function computeLayout(
 
   const rfEdges: Edge[] = graphEdges.map((e) => {
     const colour = EDGE_COLOURS[e.type] ?? "#4f93f4";
+    const isSimilarity = e.type === "similarity";
     return {
       id: e.id,
       source: e.from_node,
       target: e.to_node,
       type: "smoothstep",
-      // No inline labels — they overlap when many edges share the same path.
-      // Edge type + weight visible in the legend and on node click.
+      // Show weight label on hover for similarity/SIMILAR_TO edges
+      label: isSimilarity && e.weight != null ? e.weight.toFixed(2) : undefined,
+      labelStyle: {
+        fontFamily: "var(--font-mono, monospace)",
+        fontSize: "9px",
+        fill: colour,
+        opacity: 0,
+      },
+      labelShowBg: false,
       style: {
         stroke: colour,
         strokeWidth: 2,
@@ -468,6 +477,9 @@ function NodeDetailPopover({
 // GraphViewer
 // ---------------------------------------------------------------------------
 
+const POPOVER_WIDTH = 288;  // px  (w-72 = 18rem = 288px)
+const POPOVER_HEIGHT = 320; // px  approximate
+
 export default function GraphViewer() {
   const { runData } = useRunContext();
   const { domain } = useDomain();
@@ -486,6 +498,9 @@ export default function GraphViewer() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [popoverAnchor, setPopoverAnchor] = useState<{ x: number; y: number } | null>(null);
 
+  // Search state — Epic 8
+  const [searchQuery, setSearchQuery] = useState("");
+
   // Priority order for graph data:
   //  1. Real graph returned by backend (nodes.length > 0) — always query-specific
   //  2. Synthetic graph built from vector hits — query-specific, shown after a query
@@ -500,7 +515,31 @@ export default function GraphViewer() {
   const hasSyntheticGraph = !hasRealGraph && vectorHitsForGraph.length > 0;
 
   const graphPath: GraphPath = React.useMemo(() => {
-    if (hasRealGraph) return runData!.graph_path;
+    if (hasRealGraph) {
+      // Supplement real graph with any vector hits not already present as chunk nodes
+      const realGraph = runData!.graph_path;
+      const existingChunkIds = new Set(
+        realGraph.nodes
+          .filter((n) => n.type === "chunk")
+          .map((n) => n.id.startsWith("chunk:") ? n.id.slice("chunk:".length) : n.id)
+      );
+      const missingHits = vectorHitsForGraph.filter(
+        (h) => !existingChunkIds.has(h.chunk_id)
+      );
+      if (missingHits.length === 0) return realGraph;
+      const extraNodes: GraphNode[] = missingHits.map((h) => ({
+        id: `chunk:${h.chunk_id}`,
+        type: "chunk" as const,
+        label: h.excerpt.slice(0, 80) || h.chunk_id,
+        properties: {
+          incident_id: h.incident_id,
+          score: h.score,
+          severity: h.metadata.severity ?? null,
+          event_date: h.metadata.event_date ?? null,
+        },
+      }));
+      return { nodes: [...realGraph.nodes, ...extraNodes], edges: realGraph.edges };
+    }
     if (hasSyntheticGraph) return buildSyntheticGraph(vectorHitsForGraph);
     return isMedical ? MEDICAL_GRAPH : AIRCRAFT_GRAPH;
   }, [hasRealGraph, hasSyntheticGraph, vectorHitsForGraph, isMedical, runData]);
@@ -535,12 +574,55 @@ export default function GraphViewer() {
     setRfInstance(instance);
   }, []);
 
+  // Memoised list of node IDs matching the search query
+  const matchingNodeIds = useMemo(() => {
+    if (!searchQuery.trim()) return null; // null = no filter active
+    const q = searchQuery.toLowerCase();
+    return new Set(
+      graphPath.nodes
+        .filter((n) => (n.label ?? n.id).toLowerCase().includes(q))
+        .map((n) => n.id)
+    );
+  }, [searchQuery, graphPath]);
+
+  // Apply opacity to nodes based on search filter
+  const filteredNodes = useMemo<Node<NodeData>[]>(() => {
+    if (!matchingNodeIds) return nodes;
+    return nodes.map((n) => {
+      const isMatch = matchingNodeIds.has(n.id);
+      return {
+        ...n,
+        style: {
+          ...n.style,
+          opacity: isMatch ? 1 : 0.2,
+          outline: isMatch ? "2px solid white" : "none",
+          outlineOffset: "2px",
+        },
+      };
+    });
+  }, [nodes, matchingNodeIds]);
+
+  const handleFitToSelection = useCallback(() => {
+    if (!rfInstance || !matchingNodeIds || matchingNodeIds.size === 0) return;
+    const matchingRfNodes = nodes.filter((n) => matchingNodeIds.has(n.id));
+    if (matchingRfNodes.length > 0) {
+      rfInstance.fitView({ nodes: matchingRfNodes, duration: 300, padding: 0.3 });
+    }
+  }, [rfInstance, matchingNodeIds, nodes]);
+
   const handleNodeClick = useCallback(
     (event: React.MouseEvent, rfNode: Node) => {
       const nodeData = graphPath.nodes.find((n) => n.id === rfNode.id);
       if (!nodeData) return;
       setSelectedNode(nodeData);
-      setPopoverAnchor({ x: event.clientX, y: event.clientY });
+      // Viewport-aware popover positioning
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      let x = event.clientX + 10;
+      let y = event.clientY + 10;
+      if (x + POPOVER_WIDTH > vw) x = event.clientX - POPOVER_WIDTH - 10;
+      if (y + POPOVER_HEIGHT > vh) y = event.clientY - POPOVER_HEIGHT - 10;
+      setPopoverAnchor({ x, y });
       setPopoverOpen(true);
     },
     [graphPath]
@@ -548,8 +630,75 @@ export default function GraphViewer() {
 
   return (
     <div style={{ position: "relative", width: "100%", height: "100%" }}>
+      {/* Search input — top right */}
+      <div style={{
+        position: "absolute",
+        top: 8,
+        right: 8,
+        zIndex: 10,
+        display: "flex",
+        alignItems: "center",
+        gap: "4px",
+      }}>
+        <div style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "4px",
+          backgroundColor: "hsl(var(--bg-surface) / 0.92)",
+          border: "1px solid hsl(var(--border-base))",
+          borderRadius: "2px",
+          padding: "3px 7px",
+        }}>
+          <Search size={10} style={{ color: "hsl(var(--text-dim))", flexShrink: 0 }} />
+          <input
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="search nodes…"
+            style={{
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.62rem",
+              color: "hsl(var(--text-secondary))",
+              width: "100px",
+            }}
+          />
+        </div>
+        {matchingNodeIds && matchingNodeIds.size > 0 && (
+          <button
+            onClick={handleFitToSelection}
+            title="Fit to matching nodes"
+            aria-label="Fit to selection"
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "3px",
+              padding: "3px 7px",
+              backgroundColor: "hsl(var(--col-cyan) / 0.1)",
+              border: "1px solid hsl(var(--col-cyan) / 0.4)",
+              borderRadius: "2px",
+              cursor: "pointer",
+              color: "hsl(var(--col-cyan))",
+              fontFamily: "var(--font-mono)",
+              fontSize: "0.6rem",
+              transition: "all 0.15s",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-cyan) / 0.18)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-cyan) / 0.1)";
+            }}
+          >
+            <Crosshair size={10} />
+            FIT
+          </button>
+        )}
+      </div>
+
       <ReactFlow
-        nodes={nodes}
+        nodes={filteredNodes}
         edges={edges}
         onNodesChange={onNodesChange}
         onEdgesChange={onEdgesChange}

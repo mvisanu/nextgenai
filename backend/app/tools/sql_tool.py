@@ -157,6 +157,20 @@ _NAMED_QUERIES: dict[str, str] = {
         GROUP BY system
         ORDER BY total_cases DESC
     """,
+
+    # W3-020 — Epic 9: Medical Domain Parity
+    # Monthly medical case trends by specialty (Tab 4 analytics parity)
+    # Uses inspection_date column (actual column name in disease_records ORM model)
+    "medical_case_trends": """
+        SELECT
+            DATE_TRUNC('month', inspection_date) AS month,
+            specialty,
+            COUNT(*) AS case_count
+        FROM disease_records
+        WHERE inspection_date >= CURRENT_DATE - INTERVAL ':days days'
+        GROUP BY month, specialty
+        ORDER BY month
+    """,
 }
 
 

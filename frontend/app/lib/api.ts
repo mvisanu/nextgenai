@@ -20,6 +20,7 @@ export interface Claim {
   confidence: number; // 0.0–1.0
   citations: Citation[];
   conflict_note: string | null;
+  conflict_flagged?: boolean;
 }
 
 export interface VectorHit {
@@ -27,6 +28,7 @@ export interface VectorHit {
   incident_id: string;
   score: number;
   excerpt: string;
+  source?: "bm25" | "vector" | "hybrid";
   metadata: {
     asset_id: string | null;
     system: string | null;
@@ -85,6 +87,13 @@ export interface RunSummary {
   tools_used: string[];
   total_latency_ms: number;
   halted_at_step_limit: boolean;
+  cached?: boolean;
+  state_timings_ms?: Record<string, number>;
+}
+
+export interface ConversationTurn {
+  query: string;
+  answer_summary: string;
 }
 
 export interface QueryRequest {
@@ -95,6 +104,43 @@ export interface QueryRequest {
     severity?: string;
     date_range?: [string, string];
   } | null;
+  session_id?: string | null;
+  conversation_history?: ConversationTurn[] | null;
+}
+
+// Wave 3 — History & Favourites
+export interface HistoryRunSummary {
+  id: string;
+  query: string;
+  intent: string;
+  created_at: string | null;
+  cached: boolean;
+  latency_ms: number;
+  is_favourite: boolean;
+}
+
+export interface RunListResponse {
+  items: HistoryRunSummary[];
+  total: number;
+}
+
+// Wave 3 — Analytics
+export interface DefectAnalytics {
+  product: string | null;
+  defect_type: string | null;
+  count: number;
+}
+
+export interface MaintenanceTrend {
+  month: string | null;
+  event_type: string | null;
+  count: number;
+}
+
+export interface DiseaseAnalytics {
+  specialty: string | null;
+  disease: string | null;
+  count: number;
 }
 
 export interface QueryResponse {
@@ -213,9 +259,17 @@ async function apiFetch<T>(
 export async function postQuery(
   query: string,
   domain: "aircraft" | "medical" = "aircraft",
-  filters?: QueryRequest["filters"]
+  filters?: QueryRequest["filters"],
+  sessionId?: string | null,
+  conversationHistory?: ConversationTurn[] | null
 ): Promise<QueryResponse> {
-  const body: QueryRequest = { query, domain, filters: filters ?? null };
+  const body: QueryRequest = {
+    query,
+    domain,
+    filters: filters ?? null,
+    session_id: sessionId ?? null,
+    conversation_history: conversationHistory ?? null,
+  };
   return apiFetch<QueryResponse>("/query", {
     method: "POST",
     body: JSON.stringify(body),
@@ -283,4 +337,90 @@ export async function getDocs(params?: {
  */
 export async function triggerIngest(): Promise<IngestResponse> {
   return apiFetch<IngestResponse>("/ingest", { method: "POST" });
+}
+
+// ---------------------------------------------------------------------------
+// Wave 3 — History & Favourites (Epic 2)
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /runs?limit=&offset= — Paginated list of run summaries (favourites first).
+ */
+export async function getRuns(
+  limit = 20,
+  offset = 0
+): Promise<RunListResponse> {
+  const qs = new URLSearchParams({ limit: String(limit), offset: String(offset) });
+  return apiFetch<RunListResponse>(`/runs?${qs.toString()}`);
+}
+
+/**
+ * GET /runs/{run_id} — Retrieve full QueryResponse for a single run.
+ */
+export async function getRun(runId: string): Promise<QueryResponse> {
+  const record = await apiFetch<RunRecord>(`/runs/${encodeURIComponent(runId)}`);
+  return record.result;
+}
+
+/**
+ * PATCH /runs/{run_id}/favourite — Toggle is_favourite; returns updated HistoryRunSummary.
+ */
+export async function patchFavourite(
+  runId: string,
+  isFavourite: boolean
+): Promise<HistoryRunSummary> {
+  return apiFetch<HistoryRunSummary>(`/runs/${encodeURIComponent(runId)}/favourite`, {
+    method: "PATCH",
+    body: JSON.stringify({ is_favourite: isFavourite }),
+  });
+}
+
+// ---------------------------------------------------------------------------
+// Wave 3 — Analytics (Epic 4)
+// ---------------------------------------------------------------------------
+
+/**
+ * GET /analytics/defects — Defect counts by product and defect type.
+ */
+export async function getAnalyticsDefects(
+  from?: string,
+  to?: string,
+  domain?: "aircraft" | "medical"
+): Promise<DefectAnalytics[]> {
+  const qs = new URLSearchParams();
+  if (from) qs.set("from", from);
+  if (to) qs.set("to", to);
+  if (domain) qs.set("domain", domain);
+  const q = qs.toString();
+  return apiFetch<DefectAnalytics[]>(`/analytics/defects${q ? `?${q}` : ""}`);
+}
+
+/**
+ * GET /analytics/maintenance — Maintenance event trends by month.
+ */
+export async function getAnalyticsMaintenance(
+  from?: string,
+  to?: string
+): Promise<MaintenanceTrend[]> {
+  const qs = new URLSearchParams();
+  if (from) qs.set("from", from);
+  if (to) qs.set("to", to);
+  const q = qs.toString();
+  return apiFetch<MaintenanceTrend[]>(`/analytics/maintenance${q ? `?${q}` : ""}`);
+}
+
+/**
+ * GET /analytics/diseases — Disease counts by specialty.
+ */
+export async function getAnalyticsDiseases(
+  from?: string,
+  to?: string,
+  specialty?: string
+): Promise<DiseaseAnalytics[]> {
+  const qs = new URLSearchParams();
+  if (from) qs.set("from", from);
+  if (to) qs.set("to", to);
+  if (specialty) qs.set("specialty", specialty);
+  const q = qs.toString();
+  return apiFetch<DiseaseAnalytics[]>(`/analytics/diseases${q ? `?${q}` : ""}`);
 }

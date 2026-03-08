@@ -6,13 +6,15 @@
 // matters, measurable ROI, and cross-industry applicability.
 // ============================================================
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   ArrowLeft, ChevronDown, ChevronUp, Activity,
   DollarSign, Clock, TrendingDown, Zap, Shield,
   Heart, Plane, Factory, Cpu, Truck, FlaskConical,
-  Building2, Leaf, CheckCircle2, Copy, Check,
+  Building2, Leaf, CheckCircle2, Copy, Check, Play,
+  Mail, Calendar, ArrowRight, Sparkles,
 } from "lucide-react";
 import { NavDropdown } from "../components/AppHeader";
 
@@ -419,12 +421,24 @@ function ExampleCard({ ex }: { ex: Example }) {
   const [open, setOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const accent = INTENT_COLORS[ex.intent];
+  const router = useRouter();
 
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
     await navigator.clipboard.writeText(ex.query);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleRunQuery = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    try {
+      localStorage.setItem("pending_query", ex.query);
+      localStorage.setItem("pending_domain", "aircraft");
+    } catch {
+      // localStorage unavailable
+    }
+    router.push("/");
   };
 
   return (
@@ -551,6 +565,35 @@ function ExampleCard({ ex }: { ex: Example }) {
             : <Copy size={13} />}
           <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.52rem", letterSpacing: "0.08em" }}>
             {copied ? "COPIED" : "COPY"}
+          </span>
+        </button>
+
+        {/* Run Query button */}
+        <button
+          onClick={handleRunQuery}
+          title="Run this query in the agent"
+          aria-label="Run query"
+          style={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: "4px",
+            padding: "0 14px",
+            background: "none",
+            border: "none",
+            borderLeft: `1px solid hsl(var(${accent}) / 0.15)`,
+            cursor: "pointer",
+            color: `hsl(var(--col-green))`,
+            transition: "color 0.15s, background 0.15s",
+            minWidth: "52px",
+          }}
+          onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "hsl(var(--col-green) / 0.08)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = "transparent"; }}
+        >
+          <Play size={13} />
+          <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.52rem", letterSpacing: "0.08em" }}>
+            RUN
           </span>
         </button>
       </div>
@@ -794,8 +837,16 @@ function IndustryCard({ ind }: { ind: Industry }) {
 
 // ── Page ─────────────────────────────────────────────────────────────────────
 
-export default function ExamplesPage() {
-  const [activeTab, setActiveTab] = useState<"examples" | "industries">("examples");
+function ExamplesPageInner() {
+  const searchParams = useSearchParams();
+  const [activeTab, setActiveTab] = useState<"examples" | "industries">(
+    searchParams.get("tab") === "industries" ? "industries" : "examples"
+  );
+
+  // Sync tab from URL param changes (e.g. nav link clicked while page is open)
+  useEffect(() => {
+    if (searchParams.get("tab") === "industries") setActiveTab("industries");
+  }, [searchParams]);
 
   const totalTimeSaved = "2 min → 2 days per query";
   const totalMoneySaved = "$36K–$5M per use case";
@@ -1072,9 +1123,196 @@ export default function ExamplesPage() {
                 The same codebase, adapted with domain-specific data connectors, addresses all of them.
               </p>
             </div>
+
+            {/* ── CLIENT CTA ── */}
+            <div style={{
+              marginTop: "40px",
+              border: "1px solid hsl(var(--col-cyan) / 0.3)",
+              borderTop: "3px solid hsl(var(--col-cyan))",
+              borderRadius: "2px",
+              background: "linear-gradient(135deg, hsl(var(--bg-surface)) 0%, hsl(var(--bg-void)) 100%)",
+              padding: "36px 40px",
+              position: "relative",
+              overflow: "hidden",
+            }}>
+              {/* Background glow */}
+              <div style={{
+                position: "absolute", top: 0, right: 0,
+                width: "300px", height: "300px",
+                background: "radial-gradient(circle, hsl(var(--col-cyan) / 0.06) 0%, transparent 70%)",
+                pointerEvents: "none",
+              }} />
+
+              <div style={{ display: "flex", alignItems: "flex-start", gap: "16px", marginBottom: "28px" }}>
+                <div style={{
+                  width: "44px", height: "44px", flexShrink: 0,
+                  backgroundColor: "hsl(var(--col-cyan) / 0.12)",
+                  border: "1px solid hsl(var(--col-cyan) / 0.4)",
+                  borderRadius: "2px",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <Sparkles size={20} style={{ color: "hsl(var(--col-cyan))" }} />
+                </div>
+                <div>
+                  <div style={{
+                    fontFamily: "var(--font-mono)", fontSize: "0.6rem", fontWeight: 700,
+                    letterSpacing: "0.2em", color: "hsl(var(--col-cyan))", marginBottom: "6px",
+                  }}>
+                    // PILOT PROGRAMME — AVAILABLE NOW
+                  </div>
+                  <h2 style={{
+                    fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 900,
+                    letterSpacing: "0.06em", color: "hsl(var(--text-primary))",
+                    lineHeight: 1.2, margin: 0,
+                  }}>
+                    BRING THIS TO YOUR INDUSTRY
+                  </h2>
+                </div>
+              </div>
+
+              <p style={{
+                fontFamily: "var(--font-body)", fontSize: "1rem",
+                color: "hsl(var(--text-secondary))", lineHeight: 1.75,
+                maxWidth: "640px", margin: "0 0 32px",
+              }}>
+                NextAgentAI is a production-ready agentic RAG platform. Your data — your domain.
+                A new vertical can be onboarded in <strong style={{ color: "hsl(var(--text-primary))" }}>2–4 weeks</strong> using
+                your existing incident reports, maintenance logs, and structured records.
+                No infrastructure rebuild. No retraining. Just connect, ingest, and query.
+              </p>
+
+              {/* Value pills */}
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "10px", marginBottom: "36px" }}>
+                {[
+                  { label: "Live demo in 30 min",   col: "--col-green"  },
+                  { label: "Your data, your cloud",  col: "--col-cyan"   },
+                  { label: "2–4 week pilot",         col: "--col-amber"  },
+                  { label: "Full source code",       col: "--col-purple" },
+                  { label: "No vendor lock-in",      col: "--col-pink"   },
+                ].map(({ label, col }) => (
+                  <span key={label} style={{
+                    fontFamily: "var(--font-mono)", fontSize: "0.65rem", letterSpacing: "0.08em",
+                    color: `hsl(var(${col}))`,
+                    border: `1px solid hsl(var(${col}) / 0.35)`,
+                    backgroundColor: `hsl(var(${col}) / 0.08)`,
+                    padding: "5px 14px", borderRadius: "2px",
+                  }}>
+                    ✓ {label}
+                  </span>
+                ))}
+              </div>
+
+              {/* CTA buttons */}
+              <div style={{ display: "flex", gap: "12px", flexWrap: "wrap", alignItems: "center" }}>
+                <a
+                  href="mailto:contact@nextagentai.com?subject=Industry Pilot Enquiry&body=Hi, I'm interested in a pilot for [your industry]. Please get in touch."
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "11px 22px",
+                    fontFamily: "var(--font-display)", fontSize: "0.68rem", fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    backgroundColor: "hsl(var(--col-cyan))",
+                    color: "hsl(var(--bg-void))",
+                    border: "none", borderRadius: "2px",
+                    textDecoration: "none", cursor: "pointer",
+                    transition: "all 0.15s",
+                    boxShadow: "0 0 16px hsl(var(--col-cyan) / 0.3)",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 28px hsl(var(--col-cyan) / 0.55)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 16px hsl(var(--col-cyan) / 0.3)"; }}
+                >
+                  <Mail size={13} />
+                  REQUEST A PILOT
+                </a>
+
+                <a
+                  href="https://nextgenai-seven.vercel.app"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{
+                    display: "flex", alignItems: "center", gap: "8px",
+                    padding: "11px 22px",
+                    fontFamily: "var(--font-display)", fontSize: "0.68rem", fontWeight: 700,
+                    letterSpacing: "0.12em",
+                    backgroundColor: "transparent",
+                    color: "hsl(var(--col-green))",
+                    border: "1px solid hsl(var(--col-green) / 0.4)",
+                    borderRadius: "2px",
+                    textDecoration: "none", cursor: "pointer",
+                    transition: "all 0.15s",
+                  }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "hsl(var(--col-green))"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 0 12px hsl(var(--col-green) / 0.2)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.borderColor = "hsl(var(--col-green) / 0.4)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}
+                >
+                  <Play size={12} />
+                  TRY THE LIVE DEMO
+                </a>
+
+                <span style={{
+                  fontFamily: "var(--font-mono)", fontSize: "0.62rem",
+                  color: "hsl(var(--text-dim))", letterSpacing: "0.06em",
+                }}>
+                  or scroll up to run a query now <ArrowRight size={11} style={{ display: "inline", verticalAlign: "middle" }} />
+                </span>
+              </div>
+
+              {/* Onboarding steps */}
+              <div style={{
+                marginTop: "36px",
+                paddingTop: "28px",
+                borderTop: "1px solid hsl(var(--border-base))",
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+                gap: "16px",
+              }}>
+                {[
+                  { step: "01", label: "Data Audit",      desc: "We review your incident report, defect, and operational data schemas — 1 day." },
+                  { step: "02", label: "Ingest & Embed",  desc: "Chunk, embed, and load your data into the vector + SQL layer — 3–5 days." },
+                  { step: "03", label: "Domain Tuning",   desc: "Configure domain prompts, named queries, and intent classifier — 3–5 days." },
+                  { step: "04", label: "Live Pilot",      desc: "Your team queries your data through the agent — with full transparency." },
+                ].map(({ step, label, desc }) => (
+                  <div key={step} style={{
+                    backgroundColor: "hsl(var(--bg-void))",
+                    border: "1px solid hsl(var(--border-base))",
+                    borderRadius: "2px",
+                    padding: "14px 16px",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
+                      <span style={{
+                        fontFamily: "var(--font-mono)", fontSize: "0.6rem", fontWeight: 700,
+                        color: "hsl(var(--col-cyan))", letterSpacing: "0.1em",
+                      }}>
+                        STEP {step}
+                      </span>
+                      <span style={{
+                        fontFamily: "var(--font-display)", fontSize: "0.65rem", fontWeight: 700,
+                        letterSpacing: "0.1em", color: "hsl(var(--text-primary))",
+                      }}>
+                        {label.toUpperCase()}
+                      </span>
+                    </div>
+                    <p style={{
+                      fontFamily: "var(--font-body)", fontSize: "0.82rem",
+                      color: "hsl(var(--text-secondary))", lineHeight: 1.55, margin: 0,
+                    }}>
+                      {desc}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+            {/* ── END CLIENT CTA ── */}
           </div>
         )}
       </div>
     </div>
+  );
+}
+
+export default function ExamplesPage() {
+  return (
+    <React.Suspense fallback={null}>
+      <ExamplesPageInner />
+    </React.Suspense>
   );
 }

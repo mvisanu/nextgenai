@@ -9,7 +9,7 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import ORJSONResponse
 from sqlalchemy import text
 
-from backend.app.db.session import check_db_health, get_sync_session
+from backend.app.db.session import check_db_health, get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import ChunkResponse, DocListItem, HealthResponse
 
@@ -82,8 +82,8 @@ async def list_docs(
     """)
 
     try:
-        with get_sync_session() as session:
-            result = session.execute(sql, params)
+        async with get_session() as session:
+            result = await session.execute(sql, params)
             rows = result.fetchall()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
@@ -110,6 +110,9 @@ async def list_docs(
         "Returns the full text of a specific embedding chunk, including character offsets "
         "for highlighting cited spans in the frontend Citations drawer."
     ),
+    responses={
+        404: {"description": "Chunk or document not found"},
+    },
 )
 async def get_chunk(doc_id: str, chunk_id: str) -> ChunkResponse:
     sql = text("""
@@ -131,8 +134,8 @@ async def get_chunk(doc_id: str, chunk_id: str) -> ChunkResponse:
     """)
 
     try:
-        with get_sync_session() as session:
-            result = session.execute(sql, {"doc_id": doc_id, "chunk_id": chunk_id})
+        async with get_session() as session:
+            result = await session.execute(sql, {"doc_id": doc_id, "chunk_id": chunk_id})
             row = result.fetchone()
     except Exception as exc:
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")

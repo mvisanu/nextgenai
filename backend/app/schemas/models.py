@@ -1,11 +1,18 @@
 """
 Pydantic request/response schemas for the NextAgentAI FastAPI application.
 These define the typed API contracts for all endpoints.
+
+Wave 3 additions:
+  - QueryRequest: session_id, conversation_history (W3-003)
+  - HistoryRunSummary: lightweight run list item (W3-004)
+  - RunListResponse: pagination wrapper for GET /runs (W3-004)
+  - VectorHit.source: retrieval path label (W3-029)
+  - Claim.conflict_flagged: conflict detection flag (W3-017)
 """
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from pydantic import BaseModel, Field
 
@@ -27,6 +34,8 @@ class Claim(BaseModel):
     confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence score 0.0–1.0")
     citations: list[Citation] = Field(default_factory=list)
     conflict_note: str | None = Field(None, description="Note if conflicting evidence was detected")
+    # W3-017 — Epic 6: conflict flag propagated from graph scorer → verifier → claim
+    conflict_flagged: bool = Field(False, description="True if graph scorer detected contradictory evidence")
 
 
 class VectorHit(BaseModel):
@@ -35,6 +44,11 @@ class VectorHit(BaseModel):
     score: float = Field(..., ge=0.0, le=1.0)
     excerpt: str
     metadata: dict[str, Any] = Field(default_factory=dict)
+    # W3-029 — Epic 10: source label added during hybrid merge in retrieval.py
+    source: Literal["bm25", "vector", "hybrid"] | None = Field(
+        None,
+        description="Which retrieval path produced this hit: 'bm25', 'vector', or 'hybrid' (RRF fused).",
+    )
 
 
 class SqlResult(BaseModel):
@@ -113,6 +127,20 @@ class QueryRequest(BaseModel):
         None,
         description="Optional metadata filters: {system, severity, date_range: [from, to]}",
     )
+    # W3-003 — Epic 1: Conversational Memory
+    session_id: str | None = Field(
+        None,
+        description="Client-generated UUID for the current conversation session. "
+                    "Stored in agent_runs.session_id. Pass the same value on follow-up "
+                    "queries within the same session.",
+    )
+    conversation_history: list[dict] | None = Field(
+        None,
+        description="Prior turns in this session. Each dict: "
+                    '{"role": str, "content": str} or {"query": str, "answer_summary": str}. '
+                    "Max 5 most-recent turns are used in synthesis. "
+                    "Backend enforces the limit — client may send more.",
+    )
 
 
 class IngestRequest(BaseModel):
@@ -121,6 +149,25 @@ class IngestRequest(BaseModel):
         False,
         description="If true, re-ingest even if data already exists",
     )
+
+
+# W3-004 — Epic 2: Query History & Favourites
+# Distinct from RunSummary (which is the execution trace inside QueryResponse).
+# HistoryRunSummary is the lightweight list-item shape returned by GET /runs.
+class HistoryRunSummary(BaseModel):
+    id: str = Field(..., description="run_id UUID")
+    query: str
+    intent: str = Field("unknown", description="Classified intent: hybrid, semantic, sql_only, compute")
+    created_at: datetime | None = None
+    cached: bool = False
+    latency_ms: float = 0.0
+    is_favourite: bool = False
+
+
+class RunListResponse(BaseModel):
+    """Pagination wrapper for GET /runs."""
+    items: list[HistoryRunSummary]
+    total: int
 
 
 # ---------------------------------------------------------------------------

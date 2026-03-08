@@ -25,7 +25,7 @@ from sqlalchemy import (
     Text,
     func,
 )
-from sqlalchemy.dialects.postgresql import JSONB
+from sqlalchemy.dialects.postgresql import JSONB, UUID
 from sqlalchemy.orm import DeclarativeBase, relationship
 
 
@@ -197,6 +197,10 @@ class AgentRun(Base):
     """
     Persistent record of every agent invocation.
     Stores full JSON output for /runs/{run_id} retrieval.
+
+    Wave 3 additions (W3-001, W3-002):
+      - session_id: nullable UUID for conversational memory (Epic 1)
+      - is_favourite: boolean for query favourites sidebar (Epic 2)
     """
     __tablename__ = "agent_runs"
 
@@ -204,6 +208,10 @@ class AgentRun(Base):
     query: str | None = Column(Text, nullable=True)
     result: dict[str, Any] = Column(JSONB, nullable=True)   # Full AgentRunResult schema
     created_at: datetime = Column(DateTime, nullable=False, server_default=func.now())
+    # W3-001 — Epic 1: Conversational Memory — nullable, no default (existing rows get NULL)
+    session_id = Column(UUID(as_uuid=True), nullable=True)
+    # W3-002 — Epic 2: Query History & Favourites — NOT NULL DEFAULT FALSE
+    is_favourite = Column(Boolean, nullable=False, server_default="false", default=False)
 
 
 # ── Medical domain models ──────────────────────────────────────────────────────

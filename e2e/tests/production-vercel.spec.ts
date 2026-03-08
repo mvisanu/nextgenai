@@ -233,7 +233,11 @@ test.describe("Homepage — main UI structure", () => {
   });
 
   test("theme toggle button is present", async ({ page }) => {
-    const toggle = page.getByTitle(/Switch to (light|dark) mode/i);
+    // Accept both title and aria-label — the ThemeToggle sets both attributes.
+    // aria-label is the more reliable selector because it survives SSR hydration.
+    const toggle = page.locator(
+      '[aria-label*="Switch to" i][aria-label*="mode" i], [title*="Switch to" i][title*="mode" i]'
+    ).first();
     await expect(toggle).toBeVisible({ timeout: 10_000 });
   });
 
@@ -332,7 +336,9 @@ test.describe("Theme toggle — light / dark mode", () => {
   });
 
   test("theme toggle button is clickable and toggles theme class", async ({ page }) => {
-    const toggle = page.getByTitle(/Switch to (light|dark) mode/i);
+    const toggle = page.locator(
+      '[aria-label*="Switch to" i][aria-label*="mode" i], [title*="Switch to" i][title*="mode" i]'
+    ).first();
     await expect(toggle).toBeVisible({ timeout: 10_000 });
     const htmlBefore = await page.locator("html").getAttribute("class") ?? "";
     await toggle.click();
@@ -346,7 +352,9 @@ test.describe("Theme toggle — light / dark mode", () => {
   });
 
   test("theme persists in localStorage", async ({ page }) => {
-    const toggle = page.getByTitle(/Switch to (light|dark) mode/i);
+    const toggle = page.locator(
+      '[aria-label*="Switch to" i][aria-label*="mode" i], [title*="Switch to" i][title*="mode" i]'
+    ).first();
     await toggle.click();
     await page.waitForTimeout(300);
     const theme = await page.evaluate(() => localStorage.getItem("theme"));
@@ -400,22 +408,33 @@ test.describe("Chat panel — live query submission", () => {
     const btn = page.getByRole("button", { name: /submit query/i });
     await btn.click();
 
-    // Wait for /query response
-    const queryResponse = await page.waitForResponse(
-      r => r.url().includes("/query") && r.status() === 200,
+    // The live endpoint uses SSE streaming (Content-Type: text/event-stream) rather
+    // than a single JSON response, so response.json() throws on the event-stream body.
+    // Instead we wait for the /query network request to fire, then check the DOM for
+    // the rendered answer text — that works for both streaming and non-streaming paths.
+    await page.waitForResponse(
+      r => r.url().includes("/query"),
       { timeout: QUERY_TIMEOUT }
     ).catch(() => null);
 
-    if (queryResponse) {
-      const body = await queryResponse.json();
-      expect(body.answer).toBeTruthy();
-      expect(body.answer.length).toBeGreaterThan(50);
+    // Wait for the NEXTAGENT RESPONSE label which appears once the assistant bubble renders
+    const responseLabel = page.getByText(/NEXTAGENT RESPONSE/i).first();
+    const appeared = await responseLabel.waitFor({ state: "visible", timeout: QUERY_TIMEOUT })
+      .then(() => true).catch(() => false);
 
-      // Verify it's not the fallback "Found N similar incidents" synthetic response
-      const isFallback = /^Found \d+ similar incident/i.test(body.answer.trim());
+    if (appeared) {
+      // Check that the answer bubble has meaningful content (>50 chars)
+      const answerBubble = page.locator(
+        '[class*="prose"], [class*="answer"], [class*="response"], [class*="message"]'
+      ).first();
+      const text = await answerBubble.textContent().catch(() => "");
+      const isMeaningful = (text?.length ?? 0) > 50;
+      const isFallback = /^Found \d+ similar incident/i.test((text ?? "").trim());
+      console.log("Synthesised answer length:", text?.length, "isFallback:", isFallback);
+      expect(isMeaningful).toBe(true);
       expect(isFallback).toBe(false);
     } else {
-      // DB down — response may have failed; check for graceful error message in UI
+      // DB down or streaming timeout — check for graceful error message in UI
       const errorText = page.getByText(/(error|failed|unavailable|try again)/i).first();
       const visible = await errorText.isVisible().catch(() => false);
       console.warn("Query failed (likely DB down) — checking for graceful error UI:", visible);
@@ -460,14 +479,20 @@ test.describe("Chat panel — live query submission", () => {
     const btn = page.getByRole("button", { name: /submit query/i });
     await btn.click();
 
+    // The live endpoint uses SSE streaming — wait for any /query response (not JSON-parseable)
+    // then wait for the answer bubble to appear in the DOM before checking for CLAIM CONFIDENCE.
     await page.waitForResponse(
-      r => r.url().includes("/query") && r.status() === 200,
+      r => r.url().includes("/query"),
       { timeout: QUERY_TIMEOUT }
     ).catch(() => null);
 
+    // Wait for the assistant answer bubble to finish rendering before checking for claims
+    const responseLabel = page.getByText(/NEXTAGENT RESPONSE/i).first();
+    await responseLabel.waitFor({ state: "visible", timeout: QUERY_TIMEOUT }).catch(() => null);
+
     // Wait for claim confidence section
     const claimSection = page.getByText(/CLAIM CONFIDENCE/i).first();
-    const visible = await claimSection.isVisible({ timeout: 10_000 }).catch(() => false);
+    const visible = await claimSection.isVisible({ timeout: 15_000 }).catch(() => false);
 
     if (!visible) {
       // Check if it's rendered under a different label

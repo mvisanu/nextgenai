@@ -4,8 +4,11 @@ Restricts builtins and blocks dangerous module imports.
 
 T-17: run_async() added. The sandboxed execution uses a daemon thread internally
 (see run()), which already keeps the calling thread unblocked. run_async() wraps
-run() in asyncio.get_event_loop().run_in_executor so it does not tie up the event
+run() in asyncio.get_running_loop().run_in_executor so it does not tie up the event
 loop while waiting for the thread timeout.
+
+CR-007: run_async() now uses asyncio.get_running_loop() (not the deprecated variant)
+to avoid DeprecationWarning on Python 3.10+ and RuntimeError on Python 3.12+.
 """
 from __future__ import annotations
 
@@ -207,5 +210,5 @@ class PythonComputeTool:
 
         Args and return value are identical to run().
         """
-        loop = asyncio.get_event_loop()
+        loop = asyncio.get_running_loop()
         return await loop.run_in_executor(None, self.run, code, context)

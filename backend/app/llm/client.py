@@ -16,7 +16,7 @@ import json
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, AsyncIterator
 
 import anthropic
 from anthropic import AsyncAnthropic
@@ -94,6 +94,34 @@ class LLMClient(ABC):
             Model response as a string.
         """
         ...
+
+    async def stream(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 4096,
+    ) -> AsyncIterator[str]:
+        """
+        W3-007 — Epic 3: Streaming synthesis output.
+
+        Streams text tokens from the LLM as an async iterator.
+        Only valid on the Sonnet synthesis client; Haiku clients
+        do not use this method.
+
+        Subclasses that support streaming should override this method.
+        Default implementation falls back to yielding complete_async() result in one chunk.
+
+        Args:
+            prompt:     The user-turn message.
+            system:     Optional system prompt.
+            max_tokens: Maximum tokens to generate.
+
+        Yields:
+            Text token chunks as strings.
+        """
+        # Default fallback: yield full response as one chunk
+        text = await self.complete_async(prompt, system=system, max_tokens=max_tokens)
+        yield text
 
 
 class ClaudeClient(LLMClient):
@@ -294,6 +322,52 @@ class ClaudeClient(LLMClient):
             },
         )
         return text
+
+
+    async def stream(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 4096,
+    ) -> AsyncIterator[str]:
+        """
+        W3-007 — Epic 3: Streaming synthesis output via AsyncAnthropic.messages.stream().
+
+        Yields text tokens as they arrive from the API.
+        Use the synthesis Sonnet client only; Haiku clients do not need this.
+
+        Args:
+            prompt:     The user-turn message.
+            system:     Optional system prompt.
+            max_tokens: Maximum tokens to generate.
+
+        Yields:
+            Text token strings.
+        """
+        messages = [{"role": "user", "content": prompt}]
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        if system:
+            kwargs["system"] = system
+
+        logger.info(
+            "LLM stream request",
+            extra={"model": self.model, "prompt_chars": len(prompt)},
+        )
+
+        try:
+            async with self._async_client.messages.stream(**kwargs) as stream_ctx:
+                async for text_chunk in stream_ctx.text_stream:
+                    yield text_chunk
+        except anthropic.APIStatusError as exc:
+            logger.warning(
+                "LLM stream API error",
+                extra={"model": self.model, "status_code": exc.status_code, "error": str(exc)[:200]},
+            )
+            raise
 
 
 # ---------------------------------------------------------------------------

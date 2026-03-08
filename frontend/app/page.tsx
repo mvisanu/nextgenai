@@ -80,8 +80,8 @@ export default function Home() {
 
   return (
     <div
-      className="app-shell flex flex-col h-screen w-screen overflow-hidden grid-bg"
-      style={{ backgroundColor: "hsl(var(--bg-void))" }}
+      className="app-shell flex flex-col overflow-hidden grid-bg"
+      style={{ height: "calc(100vh - 46px)", width: "100%", backgroundColor: "hsl(var(--bg-void))" }}
     >
       <main
         className="main-panel-grid"

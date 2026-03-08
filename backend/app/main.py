@@ -11,10 +11,10 @@ import os
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, ORJSONResponse
+from fastapi.responses import JSONResponse
 from starlette.middleware.gzip import GZipMiddleware
 
-from backend.app.api import docs, ingest, query
+from backend.app.api import analytics, docs, ingest, query, runs
 from backend.app.db.session import dispose_async_engine, get_async_engine
 from backend.app.observability.logging import get_logger
 
@@ -78,7 +78,6 @@ def create_app() -> FastAPI:
         redoc_url="/api/redoc",     # ReDoc
         openapi_url="/api/openapi.json",
         lifespan=lifespan,
-        default_response_class=ORJSONResponse,
     )
 
     # ------------------------------------------------------------------ CORS
@@ -118,6 +117,8 @@ def create_app() -> FastAPI:
     app.include_router(ingest.router, tags=["Ingestion"])
     app.include_router(query.router, tags=["Query"])
     app.include_router(docs.router, tags=["Documents"])
+    app.include_router(runs.router, tags=["Runs"])
+    app.include_router(analytics.router, tags=["Analytics"])
 
     # Root redirect to docs
     @app.get("/", include_in_schema=False)

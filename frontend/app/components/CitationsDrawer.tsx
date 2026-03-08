@@ -7,7 +7,7 @@
 // ============================================================
 
 import React, { useEffect, useState } from "react";
-import { AlertTriangle, BookOpen, X, FileText } from "lucide-react";
+import { AlertTriangle, BookOpen, X, FileText, ChevronLeft, ChevronRight } from "lucide-react";
 
 import {
   Sheet,
@@ -173,11 +173,23 @@ export default function CitationsDrawer({
   const [chunkData, setChunkData] = useState<ChunkResponse | null>(null);
   const [isFetching, setIsFetching] = useState(false);
   const [fetchError, setFetchError] = useState<string | null>(null);
+  // Index into activeCitation.citations[] for Prev/Next navigation
+  const [citationNavIndex, setCitationNavIndex] = useState(0);
+
+  // Reset nav index when a new citation is opened
+  useEffect(() => {
+    setCitationNavIndex(0);
+  }, [activeCitation, open]);
+
+  const totalCitations = activeCitation?.citations.length ?? 0;
+  const currentCitation = activeCitation?.citations[citationNavIndex];
 
   useEffect(() => {
     if (!open || !activeCitation || activeCitation.citations.length === 0) return;
 
-    const citation = activeCitation.citations[0];
+    const citation = currentCitation;
+    if (!citation) return;
+    const { incident_id, chunk_id } = citation;
     let cancelled = false;
 
     async function fetchChunk() {
@@ -186,7 +198,7 @@ export default function CitationsDrawer({
       setChunkData(null);
 
       try {
-        const data = await getChunk(citation.incident_id, citation.chunk_id);
+        const data = await getChunk(incident_id, chunk_id);
         if (!cancelled) setChunkData(data);
       } catch (err) {
         if (!cancelled)
@@ -200,7 +212,7 @@ export default function CitationsDrawer({
 
     void fetchChunk();
     return () => { cancelled = true; };
-  }, [open, activeCitation]);
+  }, [open, activeCitation, citationNavIndex, currentCitation]);
 
   useEffect(() => {
     if (!open) {
@@ -257,6 +269,53 @@ export default function CitationsDrawer({
               </SheetTitle>
             </div>
 
+            {/* Prev/Next navigation when multiple citations */}
+            {totalCitations > 1 && (
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <button
+                  onClick={() => setCitationNavIndex((i) => Math.max(0, i - 1))}
+                  disabled={citationNavIndex === 0}
+                  aria-label="Previous citation"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid hsl(var(--border-base))",
+                    borderRadius: "2px",
+                    cursor: citationNavIndex === 0 ? "not-allowed" : "pointer",
+                    color: citationNavIndex === 0 ? "hsl(var(--text-dim))" : "hsl(var(--col-cyan))",
+                    padding: "3px 5px",
+                    display: "flex", alignItems: "center",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  <ChevronLeft size={11} />
+                </button>
+                <span style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: "0.68rem",
+                  color: "hsl(var(--text-secondary))",
+                }}>
+                  {citationNavIndex + 1} of {totalCitations}
+                </span>
+                <button
+                  onClick={() => setCitationNavIndex((i) => Math.min(totalCitations - 1, i + 1))}
+                  disabled={citationNavIndex === totalCitations - 1}
+                  aria-label="Next citation"
+                  style={{
+                    background: "transparent",
+                    border: "1px solid hsl(var(--border-base))",
+                    borderRadius: "2px",
+                    cursor: citationNavIndex === totalCitations - 1 ? "not-allowed" : "pointer",
+                    color: citationNavIndex === totalCitations - 1 ? "hsl(var(--text-dim))" : "hsl(var(--col-cyan))",
+                    padding: "3px 5px",
+                    display: "flex", alignItems: "center",
+                    transition: "all 0.15s",
+                  }}
+                >
+                  <ChevronRight size={11} />
+                </button>
+              </div>
+            )}
+
             {activeCitation && (
               <>
                 {/* Claim text */}
@@ -273,8 +332,29 @@ export default function CitationsDrawer({
                   {activeCitation.text}
                 </p>
 
-                {/* Confidence meter */}
-                <ConfidenceMeter confidence={activeCitation.confidence} />
+                {/* Confidence meter + conflict badge */}
+                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                  <div style={{ flex: 1 }}>
+                    <ConfidenceMeter confidence={activeCitation.confidence} />
+                  </div>
+                  {activeCitation.conflict_flagged && (
+                    <span style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "0.52rem",
+                      fontWeight: 700,
+                      letterSpacing: "0.1em",
+                      padding: "2px 6px",
+                      borderRadius: "2px",
+                      border: "1px solid hsl(var(--col-amber) / 0.5)",
+                      color: "hsl(var(--col-amber))",
+                      backgroundColor: "hsl(var(--col-amber) / 0.08)",
+                      flexShrink: 0,
+                      whiteSpace: "nowrap",
+                    }}>
+                      CONFLICT
+                    </span>
+                  )}
+                </div>
 
                 {/* Conflict note */}
                 {activeCitation.conflict_note && (
@@ -468,11 +548,11 @@ export default function CitationsDrawer({
                   </p>
                 </div>
 
-                {activeCitation && activeCitation.citations.length > 0 ? (
+                {activeCitation && currentCitation ? (
                   <HighlightedChunkText
                     chunkText={chunkData.chunk_text}
-                    charStart={activeCitation.citations[0].char_start}
-                    charEnd={activeCitation.citations[0].char_end}
+                    charStart={currentCitation.char_start}
+                    charEnd={currentCitation.char_end}
                   />
                 ) : (
                   <p

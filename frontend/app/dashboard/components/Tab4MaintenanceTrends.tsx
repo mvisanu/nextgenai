@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
+  LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip,
   ReferenceLine, ResponsiveContainer, Label,
 } from "recharts";
 import { Settings2 } from "lucide-react";
@@ -13,6 +13,8 @@ import {
   type MaintenancePoint,
 } from "../mock-data";
 import { useDomain } from "../../lib/domain-context";
+import { getAnalyticsMaintenance } from "../../lib/api";
+import type { MaintenanceTrend } from "../../lib/api";
 
 // ── Palette ────────────────────────────────────────────────────────────────
 
@@ -96,6 +98,41 @@ export default function Tab4MaintenanceTrends() {
   // Reset when domain changes
   React.useEffect(() => { setAssetId(isMedical ? "COHORT-CARDIAC" : "ASSET-001"); }, [isMedical]);
 
+  // Real API — aggregate maintenance events by month
+  const [apiTrend, setApiTrend]     = useState<{ month: string; count: number }[] | null>(null);
+  const [apiLoading, setApiLoading] = useState(false);
+  const [apiError, setApiError]     = useState<string | null>(null);
+
+  useEffect(() => {
+    // Only aircraft domain has maintenance data in current API
+    if (isMedical) { setApiTrend(null); return; }
+    let cancelled = false;
+    setApiLoading(true);
+    setApiError(null);
+
+    getAnalyticsMaintenance()
+      .then((rows: MaintenanceTrend[]) => {
+        if (cancelled) return;
+        // Aggregate by month across all event types
+        const grouped: Record<string, number> = {};
+        rows.forEach((r) => {
+          const key = r.month ?? "Unknown";
+          grouped[key] = (grouped[key] ?? 0) + r.count;
+        });
+        const sorted = Object.entries(grouped)
+          .map(([month, count]) => ({ month, count }))
+          .sort((a, b) => a.month.localeCompare(b.month));
+        setApiTrend(sorted);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        setApiError(err instanceof Error ? err.message : "Failed to load maintenance data");
+      })
+      .finally(() => { if (!cancelled) setApiLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [isMedical]);
+
   const data: MaintenancePoint[] = metricsMap[assetId] ?? [];
   const metricLabel = metricLabelMap[assetId] ?? "Metric Value";
   const eventPoint = data.find((d) => d.event);
@@ -113,6 +150,51 @@ export default function Tab4MaintenanceTrends() {
   return (
     <ScrollArea className="h-full">
       <div style={{ padding: "8px 10px 12px", display: "flex", flexDirection: "column", gap: "10px" }}>
+
+        {/* API error notice */}
+        {apiError && (
+          <div style={{
+            padding: "7px 12px",
+            border: "1px solid hsl(var(--col-amber) / 0.4)",
+            borderLeft: "2px solid hsl(var(--col-amber))",
+            borderRadius: "2px",
+            backgroundColor: "hsl(var(--col-amber) / 0.06)",
+            fontFamily: "var(--font-mono)",
+            fontSize: "0.62rem",
+            color: "hsl(var(--col-amber))",
+          }}>
+            API unavailable — asset detail uses sample data. {apiError}
+          </div>
+        )}
+
+        {/* API — Events by Month (aircraft only) */}
+        {!isMedical && (
+          <ChartPanel title="MAINTENANCE EVENTS BY MONTH" accentVar="--col-green">
+            {apiLoading ? (
+              <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: C.tick, letterSpacing: "0.12em" }}>
+                  LOADING…
+                </span>
+              </div>
+            ) : apiTrend && apiTrend.length > 0 ? (
+              <ResponsiveContainer width="100%" height={180}>
+                <BarChart data={apiTrend} margin={{ top: 4, right: 16, bottom: 4, left: 0 }}>
+                  <CartesianGrid vertical={false} stroke={C.grid} strokeDasharray="2 4" />
+                  <XAxis dataKey="month" tick={{ ...axisFont }} axisLine={{ stroke: C.grid }} tickLine={false} />
+                  <YAxis tick={{ ...axisFont }} axisLine={false} tickLine={false} />
+                  <Tooltip content={<DarkTooltip />} />
+                  <Bar dataKey="count" name="Events" fill={C.green} radius={[2, 2, 0, 0]} />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ height: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.6rem", color: C.tick, letterSpacing: "0.12em" }}>
+                  NO DATA
+                </span>
+              </div>
+            )}
+          </ChartPanel>
+        )}
 
         {/* Asset selector + stats row */}
         <div style={{
