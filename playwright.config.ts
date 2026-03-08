@@ -119,6 +119,11 @@ export default defineConfig({
         env: {
           // Point the frontend at the mocked/live API URL
           NEXT_PUBLIC_API_URL: process.env.PLAYWRIGHT_API_URL ?? "http://localhost:8000",
+          // Wave 4 — Supabase Auth: placeholder values allow auth pages to render
+          // in CI/local without a live Supabase project. Real values go in .env.local.
+          NEXT_PUBLIC_SUPABASE_URL: process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://placeholder.supabase.co",
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ?? "placeholder-anon-key-for-e2e-tests",
+          NEXT_PUBLIC_SITE_URL: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3005",
         },
       },
 });

@@ -11,12 +11,17 @@ import json
 from typing import Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Request
+from pydantic import BaseModel
 from sqlalchemy import text
 
 from backend.app.auth.jwt import get_current_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import HistoryRunSummary, RunListResponse, RunRecord
+
+
+class FavouriteRequest(BaseModel):
+    is_favourite: bool
 
 logger = get_logger(__name__)
 router = APIRouter()
@@ -93,15 +98,16 @@ async def get_runs(
 @router.patch(
     "/runs/{run_id}/favourite",
     response_model=HistoryRunSummary,
-    summary="Toggle favourite status for a run",
-    description="Toggles is_favourite on the specified run and returns the updated summary.",
+    summary="Set favourite status for a run",
+    description="Sets is_favourite to the provided value and returns the updated summary.",
 )
 async def toggle_favourite(
     run_id: str,
+    body: FavouriteRequest,
     current_user: dict = Depends(get_current_user),
 ) -> HistoryRunSummary:
     """
-    Toggle is_favourite on an agent_run.
+    Set is_favourite on an agent_run to the value provided in the request body.
     Returns 404 if run_id not found or belongs to a different user (W4-007).
     """
     user_id = current_user.get("sub")
@@ -125,12 +131,15 @@ async def toggle_favourite(
             if row_user_id and row_user_id != user_id:
                 raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
 
-            # Toggle the value
-            new_value = not bool(row.is_favourite)
+            # Use the desired value from the request body
+            new_value = body.is_favourite
 
             await session.execute(
-                text("UPDATE agent_runs SET is_favourite = :val WHERE run_id = :run_id"),
-                {"val": new_value, "run_id": run_id},
+                text(
+                    "UPDATE agent_runs SET is_favourite = :desired "
+                    "WHERE run_id = :run_id AND user_id = :user_id::uuid"
+                ),
+                {"desired": new_value, "run_id": run_id, "user_id": user_id},
             )
 
     except HTTPException:

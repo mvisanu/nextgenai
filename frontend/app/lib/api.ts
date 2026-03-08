@@ -285,14 +285,6 @@ export async function postQuery(
 }
 
 /**
- * GET /runs/{run_id} — Retrieve a previously executed agent run by ID.
- */
-export async function getRunById(runId: string): Promise<QueryResponse> {
-  const record = await apiFetch<RunRecord>(`/runs/${encodeURIComponent(runId)}`);
-  return record.result;
-}
-
-/**
  * GET /docs/{doc_id}/chunks/{chunk_id} — Fetch a specific chunk for citation display.
  * Used by CitationsDrawer to show highlighted source text.
  */
