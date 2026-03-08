@@ -285,7 +285,10 @@ def _generate_synthetic_cases(n: int = 200) -> list[dict[str, Any]]:
             severity = "Low"
 
         event_date = today - timedelta(days=rng.randint(1, 730))
-        case_id = str(uuid.uuid4())
+        # Use rng for UUID so the same 200 case_ids are generated every run.
+        # uuid.uuid4() (unseeded) would create new UUIDs on each restart,
+        # causing ON CONFLICT DO NOTHING to insert duplicates and grow medical_cases unboundedly.
+        case_id = str(uuid.UUID(int=rng.getrandbits(128)))
 
         records.append({
             "case_id": case_id,

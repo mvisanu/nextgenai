@@ -88,7 +88,24 @@ except Exception as e:
     cd /workspace && python -m backend.src.cli ingest --config backend/config.yaml || echo "[entrypoint] Ingest warning (non-fatal): check logs"
 } || echo "[entrypoint] Existing aircraft data found — skipping auto-ingest."
 
-# --- Seed medical data (only on first run if medical_cases or medical_embeddings is empty) ---
+# --- Start FastAPI early so Render port-binding check passes immediately ---
+# Seeding runs AFTER uvicorn is up to avoid OOM-before-port-bind restart loops.
+echo "[entrypoint] Starting uvicorn on port 8000..."
+cd /workspace
+uvicorn backend.app.main:app \
+    --host 0.0.0.0 \
+    --port 8000 \
+    --log-level info \
+    --no-access-log &
+UVICORN_PID=$!
+echo "[entrypoint] uvicorn started (PID ${UVICORN_PID})"
+
+# --- Seed medical data (only on first run if medical_cases is empty) ---
+# NOTE: we check medical_cases only, NOT medical_embeddings.
+# If cases exist but embeddings are absent (e.g. a prior OOM mid-embed),
+# we skip the ingest — the embedding step can be re-triggered manually.
+# Checking emb_count caused an infinite loop: each OOM restart added 200 new
+# cases (unseeded UUIDs), making the next embedding batch ever larger.
 echo "[entrypoint] Checking if medical seed data is needed..."
 python -c "
 import os, sys
@@ -101,17 +118,15 @@ try:
     cur = conn.cursor()
     cur.execute('SELECT COUNT(*) FROM medical_cases')
     case_count = cur.fetchone()[0]
-    cur.execute('SELECT COUNT(*) FROM medical_embeddings')
-    emb_count = cur.fetchone()[0]
     conn.close()
-    if case_count == 0 or emb_count == 0:
+    if case_count == 0:
         print('MEDICAL_SEED_NEEDED')
     else:
-        print(f'Medical data exists ({case_count} cases, {emb_count} embeddings). Skipping auto-seed.')
+        print(f'Medical cases exist ({case_count} rows). Skipping auto-seed.')
 except Exception as e:
     print(f'Could not check medical row count: {e}')
 " | grep -q "MEDICAL_SEED_NEEDED" && {
-    echo "[entrypoint] No medical data found — triggering medical ingest pipeline..."
+    echo "[entrypoint] No medical cases found — triggering medical ingest pipeline..."
     cd /workspace && python -c "
 from backend.app.ingest.medical_pipeline import run_medical_ingest_pipeline
 result = run_medical_ingest_pipeline()
@@ -119,11 +134,5 @@ print(f'Medical ingest complete: {result}')
 " || echo "[entrypoint] Medical ingest warning (non-fatal): check logs"
 } || echo "[entrypoint] Existing medical data found — skipping medical auto-ingest."
 
-# --- Start FastAPI ---
-echo "[entrypoint] Starting uvicorn on port 8000..."
-cd /workspace
-exec uvicorn backend.app.main:app \
-    --host 0.0.0.0 \
-    --port 8000 \
-    --log-level info \
-    --no-access-log
+# Keep container alive — wait for uvicorn to exit
+wait $UVICORN_PID

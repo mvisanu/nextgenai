@@ -36,7 +36,7 @@ export default function SignUp() {
         email,
         password,
         options: {
-          emailRedirectTo: (process.env.NEXT_PUBLIC_SITE_URL ?? "") + "/sign-in",
+          emailRedirectTo: (process.env.NEXT_PUBLIC_SITE_URL ?? "") + "/auth/callback?next=/",
         },
       });
 
