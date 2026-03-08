@@ -30,7 +30,7 @@ cd frontend && npm run dev        # http://localhost:3005
 
 # ── Backend tests — ALWAYS use the venv ────────────────────────────────────────
 cd backend
-.venv/Scripts/python -m pytest tests/              # full suite (525 tests)
+.venv/Scripts/python -m pytest tests/              # full suite (560 tests)
 .venv/Scripts/python -m pytest tests/test_wave3_*.py  # Wave 3 tests only
 .venv/Scripts/python -m pytest tests/test_sql_guardrails.py  # single file
 .venv/Scripts/python -m pytest -k "test_router"    # single test
@@ -50,7 +50,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 |---|---|---|
 | `agent/` | `orchestrator.py`, `intent.py`, `planner.py`, `verifier.py` | Intent classification → plan → tool loop → verify |
 | `api/` | `query.py`, `runs.py`, `analytics.py`, `ingest.py`, `docs.py` | FastAPI routers: `POST /query`, `GET /runs`, `GET /analytics/*`, `POST /ingest`, `GET /healthz` |
-| `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` FastAPI dependency |
+| `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` (hard, raises 401) + `get_optional_user` (soft, returns `None` for anonymous) FastAPI dependencies |
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema + Wave 3 columns, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
 | `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
@@ -172,10 +172,12 @@ Key frontend files:
 - **Feature flags**: orchestrator-touching epics gated by env vars — `CONVERSATIONAL_MEMORY_ENABLED` (session history), `STREAMING_ENABLED` (SSE synthesis)
 - **Wave 4 Auth — Supabase**: uses `@supabase/ssr` (not deprecated `@supabase/auth-helpers-nextjs`); `createBrowserClient` for client components, `createServerClient` for RSC/middleware
 - **Wave 4 Auth — middleware**: `supabase.auth.getUser()` MUST be called (not `getSession()`) — verifies token server-side and triggers cookie refresh; protected routes: `/`, `/dashboard`, `/data`, `/review`, `/examples`, `/medical-examples`, `/agent`, `/diagram`, `/faq`; public routes: `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`
-- **Wave 4 Auth — JWT**: backend validates Supabase JWTs locally via `python-jose` HS256 using `SUPABASE_JWT_SECRET`; no outbound Supabase API call per request; `user_id = claims["sub"]` stored on `agent_runs`
+- **Wave 4 Auth — JWT**: backend validates Supabase JWTs locally via `python-jose` HS256 using `SUPABASE_JWT_SECRET`; no outbound Supabase API call per request; `user_id = claims["sub"]` stored on `agent_runs`; use `get_optional_user` on read/query endpoints (anonymous allowed), `get_current_user` only on write endpoints that strictly require identity
 - **Wave 4 Auth — open redirect**: `?next=` param must start with `/` and not contain `://` or start with `//`; invalid values default to `/`
 - **Wave 4 Auth — secrets**: `SUPABASE_JWT_SECRET` is backend-only — never in `NEXT_PUBLIC_` env vars or frontend code; Supabase anon key is safe to expose client-side (public by design)
 - **Wave 4 Auth — `apiFetch`**: accepts optional third param `accessToken?: string`; injects `Authorization: Bearer <token>` when present; `getHealth()` never receives a token — must stay CORS simple request
+- **Wave 4 Auth — graceful degradation**: `auth-context.tsx` wraps `supabase.auth.getUser()` in `.catch()` so a missing/placeholder anon key never crashes the app — user stays `null`, `loading` resolves to `false`, app renders in anonymous mode; `supabase.ts` defensive fallbacks prevent `createBrowserClient(undefined, undefined)` crash
+- **Wave 4 Auth — anonymous queries**: `POST /query`, `GET /runs`, `GET /runs/{id}` use `get_optional_user` — requests without a Bearer token are accepted (user_id=null); `PATCH /runs/{id}/favourite` raises 401 when unauthenticated
 - **Frontend dev mode — webpack only**: `npm run dev` uses `--webpack` flag. Next.js 16.1.6 Turbopack panics with `OptionAppProject no longer exists` when building the `/_app` Pages Router endpoint inside an App Router project. Do NOT switch to `--turbo` or remove `--webpack`; production `next build` (webpack) is unaffected.
 - **ExportModal SSR constraint**: `ExportModal` must always be imported via `dynamic(() => import("./ExportModal"), { ssr: false })` — never as a static import. `@react-pdf/renderer` calls `StyleSheet.create()` (which uses browser canvas APIs) at module load time; static import crashes Next.js SSR with a `ReferenceError`.
 - **Domain session isolation**: `ChatPanel` uses three React refs for per-domain state: `domainSnapshotsRef` (stores `{messages, sessionId, conversationHistory, runData}` per domain key), `currentStateRef` (updated every render to avoid stale closure in the domain-switch effect), and `prevDomainRef` (detects domain change). On domain switch, the effect saves current state into the previous domain's snapshot and restores the new domain's snapshot. `updateRunData` wrapper calls `setRunData` AND writes to the current domain's snapshot so graph/timeline restore correctly.
@@ -203,8 +205,8 @@ Key frontend files:
 
 ## Test Suite
 
-- **Total tests**: 525 (344 pre-Wave 3 + 181 Wave 3)
-- **Status**: 520 passed, 5 skipped (DB-dependent, expected without live PostgreSQL)
+- **Total tests**: 560 (344 pre-Wave 3 + 181 Wave 3 + 35 Wave 4)
+- **Status**: 556 passed, 4 skipped (DB-dependent, expected without live PostgreSQL)
 - **Run with**: `.venv/Scripts/python -m pytest tests/` from `backend/` — bare `pytest` will fail with missing native module errors
 - **Wave 3 test files**: `backend/tests/test_wave3_schemas.py`, `test_wave3_runs_api.py`, `test_wave3_analytics_api.py`, `test_wave3_streaming.py`, `test_wave3_conversational_memory.py`, `test_wave3_compute_tool.py`, `test_wave3_retrieval_source.py`, `test_wave3_sql_queries.py`, `test_wave3_frontend_inspection.py`
 - **Anthropic stub**: `backend/tests/stubs/anthropic/__init__.py` — contains both `Anthropic` (sync) and `AsyncAnthropic` (async) stub classes; loaded via `conftest.py`
@@ -217,7 +219,7 @@ Key frontend files:
 | `tasks2.md` | 31 atomic Wave 3 tasks (W3-001 → W3-031) with file paths and acceptance criteria |
 | `backend2.md` | Backend handoff — full code for all new/modified backend files |
 | `frontend.md` | Frontend handoff — all component changes, new components, npm packages |
-| `TEST_REPORT.md` | Test results: 520/525 passing; 14 bugs found and resolved; P3 ORJSONResponse deprecation tracked |
+| `TEST_REPORT.md` | Test results: 556/560 passing (4 skipped); Wave 4 auth bugs BUG-AUTH-001/002 resolved; E2E Wave 4 auth pages all passing |
 | `upgrade.md` | Master implementation prompt — Phase 4 UX & Intelligence epics |
 | `optimize.md` | Performance analysis — Wave 1/2 optimisations applied |
 

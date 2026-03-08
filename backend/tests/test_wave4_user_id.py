@@ -241,8 +241,12 @@ class TestAuthDependencyRegistration:
 
     def test_query_router_imports_get_current_user(self):
         content = self._read_api_file("query.py")
-        assert "get_current_user" in content, (
-            "W4-007: query.py does not import or use get_current_user."
+        # get_optional_user is the correct dependency for /query — it validates
+        # tokens when present but allows anonymous requests through (no 401 for
+        # missing token). get_current_user (hard-required) is also accepted for
+        # backwards compatibility.
+        assert "get_optional_user" in content or "get_current_user" in content, (
+            "W4-007: query.py does not import or use get_optional_user/get_current_user."
         )
 
     def test_query_router_passes_user_id_to_orchestrator(self):
@@ -253,8 +257,12 @@ class TestAuthDependencyRegistration:
 
     def test_runs_router_imports_get_current_user(self):
         content = self._read_api_file("runs.py")
-        assert "get_current_user" in content, (
-            "W4-007: runs.py does not import or use get_current_user."
+        # get_optional_user is the correct dependency for read endpoints — it
+        # validates tokens when present but returns an empty list for anonymous
+        # requests rather than 401. Write endpoints (PATCH favourite) still
+        # require authentication via the explicit None check inside the handler.
+        assert "get_optional_user" in content or "get_current_user" in content, (
+            "W4-007: runs.py does not import or use get_optional_user/get_current_user."
         )
 
     def test_runs_router_filters_by_user_id(self):

@@ -26,8 +26,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Populate initial auth state from the current session.
+    // Wrapped in try/catch because the Supabase JS client internally decodes
+    // the JWT to read its payload. When NEXT_PUBLIC_SUPABASE_ANON_KEY is the
+    // placeholder value (malformed signature), decode throws a TypeError
+    // ("Cannot read properties of undefined (reading 'payload')") which
+    // would otherwise surface as an uncaught promise rejection.
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user ?? null);
+      setLoading(false);
+    }).catch(() => {
+      // Auth unavailable (misconfigured Supabase env vars or network error).
+      // Resolve loading so the app renders in anonymous mode.
+      setUser(null);
       setLoading(false);
     });
 

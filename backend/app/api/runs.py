@@ -14,7 +14,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from pydantic import BaseModel
 from sqlalchemy import text
 
-from backend.app.auth.jwt import get_current_user
+from backend.app.auth.jwt import get_optional_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import HistoryRunSummary, RunListResponse, RunRecord
@@ -36,14 +36,21 @@ router = APIRouter()
 async def get_runs(
     limit: int = Query(20, ge=1, le=100, description="Number of runs to return"),
     offset: int = Query(0, ge=0, description="Pagination offset"),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict | None = Depends(get_optional_user),
 ) -> RunListResponse:
     """
-    Paginated list of agent runs from agent_runs table, filtered to the
-    authenticated user's runs only (W4-007: WHERE user_id = :user_id).
+    Paginated list of agent runs from agent_runs table.
+    When authenticated (W4-007), filtered to the requesting user's runs only.
+    When anonymous (no token), returns an empty list rather than 401.
     Returns HistoryRunSummary items sorted by created_at DESC.
     """
-    user_id = current_user.get("sub")
+    user_id = current_user.get("sub") if current_user else None
+
+    # Anonymous requests have no user_id — return empty list immediately
+    # rather than attempting a ::uuid cast on NULL.
+    if not user_id:
+        return RunListResponse(items=[], total=0)
+
     try:
         async with get_session() as session:
             # Get total count for this user's runs
@@ -104,12 +111,15 @@ async def get_runs(
 async def toggle_favourite(
     run_id: str,
     body: FavouriteRequest,
-    current_user: dict = Depends(get_current_user),
+    current_user: dict | None = Depends(get_optional_user),
 ) -> HistoryRunSummary:
     """
     Set is_favourite on an agent_run to the value provided in the request body.
+    Returns 401 if unauthenticated (write operation requires identity).
     Returns 404 if run_id not found or belongs to a different user (W4-007).
     """
+    if not current_user:
+        raise HTTPException(status_code=401, detail="Authentication required.")
     user_id = current_user.get("sub")
     try:
         async with get_session() as session:

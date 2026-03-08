@@ -1,5 +1,5 @@
 # TEST_REPORT.md — NextAgentAI Wave 4 (current) / Wave 3 (archived)
-**Last updated:** 2026-03-08 | **Latest session:** Wave 4 Supabase Auth
+**Last updated:** 2026-03-08 | **Latest session:** Post-signin auth bug fix
 **Tester:** claude-sonnet-4-6 | **Wave 3 date:** 2026-03-07
 
 ---
@@ -10,15 +10,39 @@
 |--------|-------|
 | Pre-existing tests (baseline) | 344 |
 | New Wave 3 tests written | 181 |
-| **Total tests run** | **525** |
-| Passed | 520 |
+| New Wave 4 tests written | 37 (test_auth_jwt + test_wave4_user_id) |
+| **Total tests run** | **560** |
+| Passed | 556 |
 | Failed | **0** |
-| Skipped (no DB) | 5 |
-| Existing test regression | **None — 344/344 still pass** |
+| Skipped (no DB) | 4 |
+| Existing test regression | **None** |
 
-**Fix session result: ALL 14 BUGS RESOLVED**
+**Fix session result: 2 post-signin bugs RESOLVED (BUG-AUTH-001, BUG-AUTH-002)**
 
-All P0/P1/P2 backend bugs fixed. 520/525 tests pass; 5 skipped are legitimately DB-dependent.
+556/560 tests pass; 4 skipped are legitimately DB-dependent.
+
+---
+
+## Bug Fix Session — 2026-03-08 (Post-Signin Auth)
+
+### P1 — High
+
+**[RESOLVED] BUG-AUTH-001: TypeError "Cannot read properties of undefined (reading 'payload')" on sign-in**
+- Root cause: `auth-context.tsx` called `supabase.auth.getUser()` without a `.catch()`. When `NEXT_PUBLIC_SUPABASE_ANON_KEY` is the placeholder value (malformed `.placeholder` signature segment), the Supabase JS client internally decodes the JWT to extract its payload — `jwt_decode` throws a `TypeError` because the placeholder JWT's payload is `undefined`. This bubbled up as an uncaught promise rejection.
+- Fixed in: `frontend/app/lib/auth-context.tsx`
+- Resolution: Added `.catch()` to the `getUser()` promise chain. On error, `user` stays `null` and `loading` resolves to `false`, putting the app into anonymous mode gracefully.
+- Note: `NEXT_PUBLIC_SUPABASE_URL` and `NEXT_PUBLIC_SUPABASE_ANON_KEY` must be set in the Vercel dashboard for production auth to work. Without them, the placeholder client is used and auth silently fails — the fix ensures this is non-fatal.
+
+**[RESOLVED] BUG-AUTH-002: POST /query returns 401 (Unauthorized) after sign-in failure**
+- Root cause: `backend/app/api/query.py` used `get_current_user` (hard dependency that raises 401 when no Authorization header is present). When auth is misconfigured, `ChatPanel` has `accessToken = null` and calls `postQuery` without a Bearer header — the backend 401s. The same issue affected `GET /runs` and `PATCH /runs/{id}/favourite`.
+- Fixed in: `backend/app/auth/jwt.py`, `backend/app/api/query.py`, `backend/app/api/runs.py`
+- Resolution:
+  - Added `get_optional_user(request) -> dict | None` to `jwt.py`. Returns `None` when no Authorization header is present; still raises 401 on a *present but invalid* token.
+  - Changed `POST /query` and `GET /runs/{run_id}` in `query.py` to `Depends(get_optional_user)`. `user_id` is `None` for anonymous requests (run stored without owner).
+  - Changed `GET /runs` in `runs.py` to `get_optional_user`; anonymous requests return `{items:[], total:0}` immediately (avoids NULL uuid cast error).
+  - Changed `PATCH /runs/{id}/favourite` in `runs.py` to `get_optional_user`; handler explicitly raises 401 when `current_user` is `None` (write operations still require identity).
+  - Updated two `test_wave4_user_id.py` assertions that were checking for the literal string `get_current_user` — updated to accept either `get_optional_user` or `get_current_user`.
+- Tests: All 556 tests pass (was 520 before Wave 4 test files added).
 
 ---
 

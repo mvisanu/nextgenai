@@ -109,3 +109,38 @@ def get_current_user(request: Request) -> dict:
         )
 
     return verify_token(token)
+
+
+def get_optional_user(request: Request) -> dict | None:
+    """
+    FastAPI dependency: extract and verify the Bearer JWT from the request,
+    but return None (instead of raising 401) when the Authorization header is
+    absent or empty.
+
+    Use this on endpoints that should work both for authenticated users (token
+    present and valid → user dict returned) and anonymous users (no token →
+    None returned).  A *present but invalid* token still raises HTTPException(401)
+    so that callers don't silently ignore bad credentials.
+
+    Usage in a route:
+        @router.post("/query")
+        async def run_query(current_user: dict | None = Depends(get_optional_user)):
+            user_id = current_user["sub"] if current_user else None
+    """
+    auth_header = request.headers.get("Authorization") or request.headers.get("authorization")
+
+    # No header at all → anonymous request
+    if not auth_header:
+        return None
+
+    if not auth_header.startswith("Bearer "):
+        raise HTTPException(
+            status_code=401,
+            detail="Authorization header must use Bearer scheme.",
+        )
+
+    token = auth_header[len("Bearer "):].strip()
+    if not token:
+        return None
+
+    return verify_token(token)
