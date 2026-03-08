@@ -219,7 +219,7 @@ Connect the GitHub repo to Vercel. Required environment variable:
 | `/diagram` | Architecture diagrams: MVP stack and enterprise scale (Mermaid) |
 | `/data` | Kaggle dataset showcase with schema details |
 | `/review` | Architecture review and learning guide |
-| `/examples` | Pre-built example queries (aircraft domain) |
+| `/examples` | Pre-built example queries (aircraft domain) + Industry Use Cases with client CTA |
 | `/medical-examples` | 14 clinical example queries (medical domain) |
 | `/faq` | Frequently asked questions |
 
@@ -229,10 +229,10 @@ Connect the GitHub repo to Vercel. Required environment variable:
 
 Every page shares a global `AppHeader` rendered by `layout.tsx`. It contains:
 - NEXTAGENTAI branding and tool status indicators (VECTOR / SQL / GRAPH)
-- **NAVIGATE** dropdown — links to all pages (HOME, DASHBOARD, DATA, REVIEW, EXAMPLES, MED-EX, AGENT, DIAGRAM, FAQ)
+- **NAVIGATE** dropdown — links to all pages (HOME, DASHBOARD, DATA, REVIEW, EXAMPLES, MED-EX, **INDUSTRIES**, AGENT, DIAGRAM, FAQ)
 - **Domain switcher** — toggle between Aircraft and Medical modes
 
-Each page's own sub-header contains only page-specific content (back link, subtitle, status info). The NAVIGATE dropdown is also present in each sub-header for convenience.
+Each page's own sub-header contains only page-specific content (back link, subtitle, status info). The NAVIGATE dropdown and DomainSwitcher are **not** duplicated in sub-headers — only in the global AppHeader.
 
 ---
 
@@ -247,6 +247,8 @@ The domain toggle (aircraft / medical) appears in the global header. Switching d
 - **Backend routing** — queries POST to `/query` or `/query/medical` based on active domain
 
 Domain selection is persisted to `localStorage`.
+
+Each domain maintains its own isolated session. Switching between Aircraft and Medical restores the previous conversation, session ID, conversation history, and knowledge graph for that domain — no data bleeds across domains.
 
 ---
 
@@ -272,3 +274,7 @@ Domain selection is persisted to `localStorage`.
 - **Clear button**: Trash2 icon appears in the input row once messages exist. Resets chat, graph, timeline, and input in one click.
 - **Stale cache skip**: `orchestrator._check_query_cache()` skips cached entries with `claims: []` — ensures degraded responses cached during DB outages are replaced on next query.
 - **Shared AppHeader**: `layout.tsx` renders `<AppHeader />` above all pages. The dashboard outer container uses `height: calc(100vh - 46px)` (not `100vh`) to stay within viewport. Page sub-headers must not duplicate the global NavDropdown or DomainSwitcher.
+- **Domain session isolation**: each domain (aircraft / medical) has its own messages, session ID, conversation history, and run data. Switching domains saves the current state and restores the previous state for the target domain, including graph and timeline.
+- **Graph completeness**: `GraphViewer` supplements the backend `graph_path` with any vector-hit chunk nodes not already present — ensuring all retrieved chunks are visible in the knowledge graph.
+- **ExportModal (PDF)**: `ExportModal` is loaded via `next/dynamic` with `ssr: false` because `@react-pdf/renderer` uses browser canvas APIs at module load time and cannot be server-rendered.
+- **Frontend dev mode**: `npm run dev` uses `--webpack` due to a Turbopack panic in Next.js 16 when `/_app` is resolved in an App Router project. Production `next build` is unaffected.
