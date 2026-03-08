@@ -352,7 +352,7 @@ function ChatPanelInner() {
   const pendingQueryProcessed = useRef(false);
   const streamingMessageId = useRef<string | null>(null);
 
-  // Wake up Render free-tier backend on mount
+  // Wake up Render backend on mount
   useEffect(() => {
     let cancelled = false;
     let retryCount = 0;
@@ -1055,7 +1055,7 @@ function ChatPanelInner() {
             <span style={{ fontFamily: "var(--font-mono)", fontSize: "0.72rem", color: `hsl(var(${apiStatus === "checking" ? "--col-cyan" : "--col-amber"}))`, letterSpacing: "0.08em" }}>
               {apiStatus === "checking"
                 ? "CONNECTING TO BACKEND…"
-                : "BACKEND WARMING UP — Render free-tier cold start (~60s). Your query will work once it's ready."}
+                : "BACKEND WARMING UP — Server cold start in progress. Your query will work once it's ready."}
             </span>
           </div>
         )}
