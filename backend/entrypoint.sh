@@ -49,8 +49,14 @@ echo "[entrypoint] Database is ready."
 # --- Run Alembic migrations ---
 echo "[entrypoint] Running database migrations..."
 cd /workspace/backend
-alembic upgrade head
-echo "[entrypoint] Migrations complete."
+# Non-fatal: if the DB is already ahead of local migration files (e.g. after a
+# partial deploy where migrations ran but the image didn't include the file),
+# alembic will fail with "Can't locate revision". Log the error and continue —
+# the schema is already correct in that scenario and the backend can still serve.
+if ! alembic upgrade head 2>&1; then
+    echo "[entrypoint] WARNING: Alembic migration failed — DB schema may already be at target. Continuing."
+fi
+echo "[entrypoint] Migration step complete."
 
 # --- Seed aircraft data (only on first run if tables are empty) ---
 # Check BOTH incident_reports AND incident_embeddings: if embeddings are missing

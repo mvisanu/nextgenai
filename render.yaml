@@ -8,7 +8,6 @@ services:
     runtime: docker
     dockerfilePath: ./backend/Dockerfile
     dockerContext: ./backend
-    plan: free
     healthCheckPath: /healthz
     envVars:
       - key: PG_DSN
