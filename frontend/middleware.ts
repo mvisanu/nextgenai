@@ -48,12 +48,16 @@ export async function middleware(request: NextRequest) {
   // Always pass through: auth routes, Next internals, static assets, API docs, favicon
   if (
     isPublicPath(pathname) ||
-    pathname.startsWith('/(auth)/') ||
     pathname.startsWith('/_next/') ||
     pathname.startsWith('/api/docs') ||
     pathname.startsWith('/api/openapi') ||
     pathname.startsWith('/favicon')
   ) {
+    return NextResponse.next({ request })
+  }
+
+  // If Supabase env vars are not configured, skip auth entirely (local dev without Supabase)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
     return NextResponse.next({ request })
   }
 
