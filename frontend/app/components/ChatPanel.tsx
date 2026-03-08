@@ -387,7 +387,7 @@ function ChatPanelInner() {
           updateRunData(fullRun);
           // Populate ChatPanel with the shared run's content as message bubbles
           setMessages([
-            { id: crypto.randomUUID(), role: "user", content: fullRun.run_summary.query },
+            { id: crypto.randomUUID(), role: "user", content: fullRun.query },
             { id: crypto.randomUUID(), role: "assistant", content: fullRun.answer, response: fullRun },
           ]);
           // Clear the ?run= param from URL without reload
