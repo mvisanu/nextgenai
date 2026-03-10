@@ -35,8 +35,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       supabase.auth.getUser(),
       supabase.auth.getSession(),
     ]).then(([{ data: userData }, { data: sessionData }]) => {
-      setUser(userData.user ?? null);
-      setAccessToken(sessionData.session?.access_token ?? null);
+      const verifiedUser = userData.user ?? null;
+      setUser(verifiedUser);
+      // Only use the access token when getUser() confirmed the session is valid.
+      // getSession() reads from local storage without server validation and can
+      // return a stale/expired token after a page refresh. Sending that expired
+      // token to the backend triggers 401 even on get_optional_user endpoints.
+      setAccessToken(verifiedUser ? (sessionData.session?.access_token ?? null) : null);
       setLoading(false);
     }).catch(() => {
       // Auth unavailable (misconfigured Supabase env vars or network error).

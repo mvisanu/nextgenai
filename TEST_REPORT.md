@@ -6,6 +6,42 @@
 
 ---
 
+## Live Site Bug Fix (2026-03-10)
+
+### BUG-LIVE-001 — POST /query returns 401 on live Vercel site
+
+**Status:** [RESOLVED]
+**Priority:** P0 Critical — core feature non-functional
+
+**Root causes (two, both fixed):**
+
+**Root cause 1 — `get_optional_user` raised 401 when `SUPABASE_JWT_SECRET` absent**
+`verify_token()` raises `HTTPException(401)` when `SUPABASE_JWT_SECRET` is not set. `get_optional_user` called `verify_token()` for any request carrying a Bearer token, including requests from signed-in users on Vercel. If the env var was not yet set on Render (or was wrong/placeholder), every request from an authenticated user got 401. The correct behaviour for an optional-auth endpoint is to fall back to anonymous when auth is unconfigured.
+
+**Root cause 2 — Stale expired access token sent from frontend**
+`auth-context.tsx` called both `supabase.auth.getUser()` (server-validated) and `supabase.auth.getSession()` (local storage, no server validation) in parallel, then set `accessToken` from session data regardless of whether `getUser()` confirmed the session was valid. After a page refresh, `getSession()` can return an expired access_token from local storage while `getUser()` returns `null`. The frontend then sent `Authorization: Bearer <expired-token>`, which hit `get_optional_user`'s present-but-invalid path and raised 401 via `ExpiredSignatureError`.
+
+**Files changed:**
+- `backend/app/auth/jwt.py` — `get_optional_user`: added early `os.environ.get("SUPABASE_JWT_SECRET")` check; if secret is absent, returns `None` (anonymous) instead of calling `verify_token()` which would raise 401. `verify_token()` itself is unchanged — still raises 401 on missing secret (used by `get_current_user` / hard auth).
+- `frontend/app/lib/auth-context.tsx` — Initial auth state population: `accessToken` now only set from session data when `getUser()` confirmed a valid user. Stale/expired session tokens are discarded.
+
+**Verification:**
+- `tests/test_auth_jwt.py` — 12/12 pass; `test_missing_env_secret_raises_401` still passes (tests `verify_token()` directly, unaffected by change)
+- `tests/test_wave4_user_id.py` — 23/23 pass
+- `tests/test_wave3_runs_api.py` — 15 pass, 1 skipped (DB-dependent, expected)
+- `tests/test_wave3_analytics_api.py` — 17 pass, 3 skipped (DB-dependent, expected)
+- Total: 68 passed, 4 skipped, 0 failed
+
+**How to verify on live site:**
+1. Open https://nextgenai-seven.vercel.app while signed out (anonymous).
+2. Submit a query — should succeed (no 401).
+3. Sign in, submit a query — should succeed with user_id stored.
+4. Refresh the page, submit a query immediately (before session refresh completes) — should succeed (no 401 from stale token).
+
+**Operational note:** Ensure `SUPABASE_JWT_SECRET` is set correctly on the Render dashboard (Settings → Environment → `SUPABASE_JWT_SECRET`). With this fix, a missing secret degrades gracefully to anonymous mode; once the secret is set, signed-in users get their `user_id` persisted on runs.
+
+---
+
 ## 1. Executive Summary
 
 | Metric | Value |

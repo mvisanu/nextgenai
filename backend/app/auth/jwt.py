@@ -143,4 +143,12 @@ def get_optional_user(request: Request) -> dict | None:
     if not token:
         return None
 
+    # If SUPABASE_JWT_SECRET is not configured, we cannot verify any token.
+    # For the optional-auth dependency, treat this as anonymous rather than
+    # raising 401 — the app must remain functional even when auth is not yet
+    # configured on the deployment host (e.g. Render env var not yet set).
+    secret = os.environ.get("SUPABASE_JWT_SECRET")
+    if not secret:
+        return None
+
     return verify_token(token)
