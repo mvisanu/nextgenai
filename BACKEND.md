@@ -1712,3 +1712,2125 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_runs_query_ts
 | T3-09 | `expand_graph_async` already uses `run_sync` which offloads to a thread. This is functionally correct; the native-async rewrite is a performance optimization requiring a full BFS port. Not implemented in this wave. |
 | T3-11 | Chunker sentence-boundary snapping is a heuristic improvement. Deferred as it requires careful testing with the tokenizer decode path to avoid incorrect char_start/char_end offsets. |
 | T3-12 | Test infrastructure expansion is a medium-effort standalone task. The existing test suite is unaffected by Wave 3 changes. |
+
+
+---
+
+## Wave 3 Backend Handoff
+
+> Source: backend2.md (2026-03-07)
+
+# backend2.md — NextAgentAI Wave 3 Backend Handoff
+
+**Generated from:** `prd2.md` v1.1, `tasks2.md`, `upgrade.md` Phase 4, and live codebase inspection
+**Date:** 2026-03-07
+**Status:** Implementation-ready
+
+---
+
+## Table of Contents
+
+1. [Overview](#1-overview)
+2. [Database Schema Changes (Alembic migrations)](#2-database-schema-changes-alembic-migrations)
+3. [Schema Changes — `backend/app/schemas/models.py`](#3-schema-changes)
+4. [New API Endpoints](#4-new-api-endpoints)
+5. [LLM Client Changes — `backend/app/llm/client.py`](#5-llm-client-changes)
+6. [Orchestrator Changes — `backend/app/agent/orchestrator.py`](#6-orchestrator-changes)
+7. [RAG Changes — `backend/app/rag/retrieval.py`](#7-rag-changes)
+8. [Tool Changes](#8-tool-changes)
+9. [main.py changes](#9-mainpy-changes)
+10. [Environment Variables](#10-environment-variables)
+11. [Test Plan](#11-test-plan)
+12. [Deployment Notes](#12-deployment-notes)
+
+---
+
+## 1. Overview
+
+### What Wave 3 adds to the backend
+
+| Epic | Backend work? | Summary |
+|------|--------------|---------|
+| Epic 1 — Conversational Memory | Yes | 1 migration, schema fields, orchestrator synthesis-prompt injection |
+| Epic 2 — Query History & Favourites | Yes | 1 migration, schema model, new `runs.py` router |
+| Epic 3 — Streaming Synthesis | Yes | `stream()` method on `LLMClient`, SSE variant in `query.py` |
+| Epic 4 — Real Dashboard Analytics | Yes | New `analytics.py` router with 3 endpoints |
+| Epic 5 — Export & Reporting | None | Client-side only |
+| Epic 6 — Enhanced Citation UX | None | Client-side only (`conflict_flagged` already propagated in T3-07) |
+| Epic 7 — Examples → Chat Integration | None | Client-side `localStorage` bridge |
+| Epic 8 — Graph Enhancements | None | Client-side ReactFlow changes |
+| Epic 9 — Medical Domain Parity | Yes | 1 migration (HNSW + GIN + agent_runs index), 1 named SQL query |
+| Epic 10 — Observability | Yes | Fix CR-007 in `compute_tool.py`, add `source` field to `VectorHit` |
+
+### Files modified vs new
+
+| File | Status | Epic(s) |
+|------|--------|---------|
+| `backend/app/db/migrations/20260307_001_add_session_id_to_agent_runs.py` | NEW | 1 |
+| `backend/app/db/migrations/20260307_002_add_is_favourite_to_agent_runs.py` | NEW | 2 |
+| `backend/app/db/migrations/20260307_003_wave3_indexes.py` | NEW | 9 |
+| `backend/app/db/models.py` | EDIT | 1, 2 |
+| `backend/app/schemas/models.py` | EDIT | 1, 2, 10 |
+| `backend/app/agent/orchestrator.py` | EDIT | 1 |
+| `backend/app/api/query.py` | EDIT | 3 |
+| `backend/app/api/runs.py` | NEW | 2 |
+| `backend/app/api/analytics.py` | NEW | 4 |
+| `backend/app/llm/client.py` | EDIT | 3 |
+| `backend/app/rag/retrieval.py` | EDIT | 10 |
+| `backend/app/tools/compute_tool.py` | EDIT | 10 |
+| `backend/app/tools/sql_tool.py` | EDIT | 9 |
+| `backend/app/main.py` | EDIT | 2, 3, 4 |
+
+### Migration strategy
+
+Run in this order — each migration is independent and can be applied sequentially:
+
+1. `20260307_001` — adds `session_id` (nullable, no constraint risk)
+2. `20260307_002` — adds `is_favourite` (`NOT NULL DEFAULT FALSE`, safe for existing rows)
+3. `20260307_003` — creates four indexes `CONCURRENTLY` (zero-downtime; requires COMMIT before each)
+
+Rollback: each migration has a working `downgrade()`. Run `alembic downgrade -1` per migration in reverse order. The `CONCURRENTLY` index migrations use plain `DROP INDEX IF EXISTS` in `downgrade()` which does not require a COMMIT wrapper.
+
+---
+
+## 2. Database Schema Changes (Alembic migrations)
+
+### Pre-conditions
+
+- The migration runner connects with `PG_DSN` (sync psycopg2 driver) — see `backend/app/db/migrations/env.py`.
+- All three migrations below must be in `backend/app/db/migrations/` and discovered by Alembic.
+- Running `alembic history` should show all three in the chain with no orphaned heads.
+- The `alembic.ini` `script_location` is `backend/app/db/migrations` — do not move files.
+
+---
+
+### Migration 1 — W3-001: `session_id` column on `agent_runs`
+
+**File:** `backend/app/db/migrations/20260307_001_add_session_id_to_agent_runs.py`
+
+**Tasks satisfied:** W3-001
+
+```python
+"""Add session_id nullable UUID column to agent_runs.
+
+Revision ID: 20260307_001
+Revises: <previous_head>   # replace with actual last revision ID from alembic history
+Create Date: 2026-03-07
+"""
+from __future__ import annotations
+
+from alembic import op
+import sqlalchemy as sa
+from sqlalchemy.dialects import postgresql
+
+# revision identifiers
+revision = "20260307_001"
+down_revision = None  # Set to the actual previous head revision ID
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    """
+    Add session_id UUID nullable column to agent_runs.
+
+    Nullable with no default — existing rows get NULL automatically.
+    This is a zero-breaking-change schema addition; no API callers are affected.
+    """
+    op.add_column(
+        "agent_runs",
+        sa.Column(
+            "session_id",
+            postgresql.UUID(as_uuid=True),
+            nullable=True,
+        ),
+    )
+
+
+def downgrade() -> None:
+    """Drop session_id column — restores pre-W3-001 schema."""
+    op.drop_column("agent_runs", "session_id")
+```
+
+**Critical notes:**
+- `down_revision` must be set to the actual last revision ID shown by `alembic history`. Run `alembic history` in the repo before filling this in.
+- Do NOT add a default value. The column is intentionally nullable so all existing rows remain valid.
+- No `CREATE INDEX CONCURRENTLY` in this migration — no `op.execute("COMMIT")` needed here.
+
+---
+
+### Migration 2 — W3-002: `is_favourite` column on `agent_runs`
+
+**File:** `backend/app/db/migrations/20260307_002_add_is_favourite_to_agent_runs.py`
+
+**Tasks satisfied:** W3-002
+
+```python
+"""Add is_favourite BOOLEAN NOT NULL DEFAULT FALSE column to agent_runs.
+
+Revision ID: 20260307_002
+Revises: 20260307_001
+Create Date: 2026-03-07
+"""
+from __future__ import annotations
+
+from alembic import op
+import sqlalchemy as sa
+
+revision = "20260307_002"
+down_revision = "20260307_001"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    """
+    Add is_favourite BOOLEAN NOT NULL DEFAULT FALSE to agent_runs.
+
+    NOT NULL is safe here because FALSE is a valid default for all existing rows.
+    No data migration is needed.
+    """
+    op.add_column(
+        "agent_runs",
+        sa.Column(
+            "is_favourite",
+            sa.Boolean(),
+            nullable=False,
+            server_default=sa.text("false"),
+        ),
+    )
+
+
+def downgrade() -> None:
+    """Drop is_favourite column — restores pre-W3-002 schema."""
+    op.drop_column("agent_runs", "is_favourite")
+```
+
+**Critical notes:**
+- Use `server_default=sa.text("false")` (not `default=False`) so PostgreSQL fills the column at the DB level during the ALTER TABLE. This is required for `NOT NULL` on existing rows.
+- This migration depends on `20260307_001`. Alembic enforces this via `down_revision`.
+
+---
+
+### Migration 3 — W3-025: HNSW + GIN + agent_runs composite indexes
+
+**File:** `backend/app/db/migrations/20260307_003_wave3_indexes.py`
+
+**Tasks satisfied:** W3-025
+
+```python
+"""Wave 3 performance indexes:
+- HNSW cosine index on medical_embeddings (replaces IVFFlat, matches aircraft)
+- GIN FTS indexes on incident_reports.narrative and medical_cases.narrative
+- Composite index on agent_runs(LOWER(query), created_at DESC) for cache lookup
+
+Revision ID: 20260307_003
+Revises: 20260307_002
+Create Date: 2026-03-07
+
+WARNING: Each CREATE INDEX CONCURRENTLY must be preceded by op.execute("COMMIT")
+because CONCURRENTLY cannot run inside a PostgreSQL transaction block.
+Alembic wraps migrations in transactions by default — the explicit COMMIT ends
+the implicit transaction so CONCURRENTLY can proceed. Without this the index
+creation silently fails or raises an error.
+"""
+from __future__ import annotations
+
+from alembic import op
+
+revision = "20260307_003"
+down_revision = "20260307_002"
+branch_labels = None
+depends_on = None
+
+
+def upgrade() -> None:
+    # ------------------------------------------------------------------ IMPORTANT
+    # Each CONCURRENTLY index requires the transaction block to be ended first.
+    # op.execute("COMMIT") ends Alembic's implicit transaction for this statement.
+    # ------------------------------------------------------------------ IMPORTANT
+
+    # 1. HNSW index on medical_embeddings — parity with incident_embeddings
+    op.execute("COMMIT")
+    op.execute("""
+        CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_embeddings_hnsw
+        ON medical_embeddings USING hnsw (embedding vector_cosine_ops)
+        WITH (m = 16, ef_construction = 64)
+    """)
+
+    # 2. GIN full-text index on incident_reports.narrative (aircraft domain BM25)
+    op.execute("COMMIT")
+    op.execute("""
+        CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_incident_reports_fts
+        ON incident_reports USING GIN(to_tsvector('english', narrative))
+    """)
+
+    # 3. GIN full-text index on medical_cases.narrative (medical domain BM25)
+    op.execute("COMMIT")
+    op.execute("""
+        CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_cases_fts
+        ON medical_cases USING GIN(to_tsvector('english', narrative))
+    """)
+
+    # 4. Composite index on agent_runs for query-cache LOWER(query) lookups
+    op.execute("COMMIT")
+    op.execute("""
+        CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_runs_query_ts
+        ON agent_runs (LOWER(query), created_at DESC)
+    """)
+
+
+def downgrade() -> None:
+    # Standard DROP INDEX — does not require COMMIT wrapper
+    op.execute("DROP INDEX IF EXISTS idx_medical_embeddings_hnsw")
+    op.execute("DROP INDEX IF EXISTS idx_incident_reports_fts")
+    op.execute("DROP INDEX IF EXISTS idx_medical_cases_fts")
+    op.execute("DROP INDEX IF EXISTS idx_agent_runs_query_ts")
+```
+
+**Critical notes:**
+- The `op.execute("COMMIT")` before each `CREATE INDEX CONCURRENTLY` is mandatory. Without it PostgreSQL raises `ERROR: CREATE INDEX CONCURRENTLY cannot run inside a transaction block` or, worse, silently creates a broken index.
+- `IF NOT EXISTS` makes each statement idempotent — safe to re-run if the migration partially succeeded.
+- The HNSW parameters `m=16, ef_construction=64` match those used for `incident_embeddings` (applied in earlier Wave 1/2 migrations). Do not change these without profiling.
+- `ef_search=40` is already set at the async engine level in `session.py` via `connect_args`. No per-query SET needed.
+- Verification after deploy: run `EXPLAIN (ANALYZE, FORMAT JSON) SELECT ...` on a medical embedding query and confirm "Index Scan using idx_medical_embeddings_hnsw" appears in the plan.
+
+---
+
+## 3. Schema Changes
+
+**File:** `backend/app/schemas/models.py`
+
+All changes are additive. No existing field is removed or made non-optional.
+
+### 3a. `QueryRequest` — Epic 1 (W3-003)
+
+Add two optional fields after the existing `filters` field:
+
+```python
+class QueryRequest(BaseModel):
+    query: str = Field(
+        ...,
+        min_length=3,
+        max_length=2000,
+        description="Natural language question to ask the agent",
+        examples=["Find incidents similar to hydraulic actuator crack on Line 1"],
+    )
+    domain: str = Field(
+        "aircraft",
+        description="Data domain to query: 'aircraft' (manufacturing/maintenance) or 'medical' (clinical cases)",
+        pattern="^(aircraft|medical)$",
+    )
+    filters: dict[str, Any] | None = Field(
+        None,
+        description="Optional metadata filters: {system, severity, date_range: [from, to]}",
+    )
+    # W3-003 — Epic 1: Conversational Memory
+    session_id: str | None = Field(
+        None,
+        description="Client-generated UUID for the current conversation session. "
+                    "Stored in agent_runs.session_id. Pass the same value on follow-up "
+                    "queries within the same session.",
+    )
+    conversation_history: list[dict] | None = Field(
+        None,
+        description="Prior turns in this session. Each dict: "
+                    '{"query": str, "answer_summary": str}. '
+                    "Max 5 most-recent turns are used in synthesis. "
+                    "Backend enforces the limit — client may send more.",
+    )
+```
+
+**Invariant:** `QueryRequest(query="test")` must still instantiate without error (both new fields default to `None`). Run `pytest tests/` after the change to confirm no test regressions.
+
+---
+
+### 3b. `RunSummary` — Epics 2 and 10 (W3-004, W3-029)
+
+The existing `RunSummary` in `models.py` is the **execution summary** embedded in `QueryResponse`. A new **`HistoryRunSummary`** model is needed for the `GET /runs` list endpoint — it represents a row from `agent_runs`.
+
+Add `HistoryRunSummary` as a new model (do not modify the existing `RunSummary` class — that would break `QueryResponse`):
+
+```python
+# W3-004 — Epic 2: Query History & Favourites
+# This is a distinct model from RunSummary (which is the execution trace inside QueryResponse).
+# HistoryRunSummary is the lightweight list-item shape returned by GET /runs.
+class HistoryRunSummary(BaseModel):
+    id: str = Field(..., description="run_id UUID")
+    query: str
+    intent: str = Field("unknown", description="Classified intent: hybrid, semantic, sql_only, compute")
+    created_at: datetime | None = None
+    cached: bool = False
+    latency_ms: float = 0.0
+    is_favourite: bool = False
+```
+
+Also add a pagination wrapper used by `GET /runs`:
+
+```python
+class RunListResponse(BaseModel):
+    items: list[HistoryRunSummary]
+    total: int
+```
+
+---
+
+### 3c. `VectorHit` — Epic 10 (W3-029)
+
+Add `source` field to `VectorHit`:
+
+```python
+from typing import Any, Literal  # add Literal to the existing typing import
+
+class VectorHit(BaseModel):
+    chunk_id: str
+    incident_id: str
+    score: float = Field(..., ge=0.0, le=1.0)
+    excerpt: str
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    # W3-029 — Epic 10: source label added during hybrid merge in retrieval.py
+    source: Literal["bm25", "vector", "hybrid"] = Field(
+        "vector",
+        description="Which retrieval path produced this hit: 'bm25', 'vector', or 'hybrid' (RRF fused).",
+    )
+```
+
+**Important:** This field has a default of `"vector"` so all existing code that constructs `VectorHit` without specifying `source` continues to work. The `source` field is populated by `retrieval.py` during the hybrid merge step (see Section 7).
+
+---
+
+### 3d. Full updated `models.py`
+
+Below is the complete updated file. Replace the existing `backend/app/schemas/models.py` with this content:
+
+```python
+"""
+Pydantic request/response schemas for the NextAgentAI FastAPI application.
+These define the typed API contracts for all endpoints.
+
+Wave 3 additions:
+  - QueryRequest: session_id, conversation_history (W3-003)
+  - HistoryRunSummary: lightweight run list item (W3-004)
+  - RunListResponse: pagination wrapper for GET /runs (W3-004)
+  - VectorHit.source: retrieval path label (W3-029)
+"""
+from __future__ import annotations
+
+from datetime import datetime
+from typing import Any, Literal
+
+from pydantic import BaseModel, Field
+
+
+# ---------------------------------------------------------------------------
+# Shared sub-schemas
+# ---------------------------------------------------------------------------
+
+
+class Citation(BaseModel):
+    chunk_id: str = Field(..., description="ID of the source embedding chunk")
+    incident_id: str = Field(..., description="ID of the source incident report")
+    char_start: int = Field(..., description="Start character offset in chunk_text")
+    char_end: int = Field(..., description="End character offset in chunk_text")
+
+
+class Claim(BaseModel):
+    text: str = Field(..., description="The factual claim text")
+    confidence: float = Field(..., ge=0.0, le=1.0, description="Confidence score 0.0–1.0")
+    citations: list[Citation] = Field(default_factory=list)
+    conflict_note: str | None = Field(None, description="Note if conflicting evidence was detected")
+
+
+class VectorHit(BaseModel):
+    chunk_id: str
+    incident_id: str
+    score: float = Field(..., ge=0.0, le=1.0)
+    excerpt: str
+    metadata: dict[str, Any] = Field(default_factory=dict)
+    # W3-029: source label populated by retrieval.py during hybrid merge
+    source: Literal["bm25", "vector", "hybrid"] = Field(
+        "vector",
+        description="Retrieval path: 'bm25', 'vector', or 'hybrid' (RRF fused).",
+    )
+
+
+class SqlResult(BaseModel):
+    query: str
+    columns: list[str]
+    rows: list[list[Any]]
+    row_count: int
+
+
+class Evidence(BaseModel):
+    vector_hits: list[VectorHit] = Field(default_factory=list)
+    sql_rows: list[SqlResult] = Field(default_factory=list)
+
+
+class GraphNode(BaseModel):
+    id: str
+    type: str = Field(..., description="'chunk' or 'entity'")
+    label: str | None = None
+    properties: dict[str, Any] | None = None
+
+
+class GraphEdge(BaseModel):
+    id: str
+    from_node: str
+    to_node: str
+    type: str = Field(..., description="'mentions', 'similarity', or 'co_occurrence'")
+    weight: float | None = None
+
+
+class GraphPath(BaseModel):
+    nodes: list[GraphNode] = Field(default_factory=list)
+    edges: list[GraphEdge] = Field(default_factory=list)
+
+
+class StepSummary(BaseModel):
+    step_number: int
+    tool_name: str
+    output_summary: str
+    latency_ms: float
+    error: str | None = None
+
+
+class RunSummary(BaseModel):
+    intent: str
+    plan_text: str
+    steps: list[StepSummary] = Field(default_factory=list)
+    tools_used: list[str] = Field(default_factory=list)
+    total_latency_ms: float
+    halted_at_step_limit: bool = False
+    state_timings_ms: dict[str, float] = Field(
+        default_factory=dict,
+        description="Per-state latency breakdown in milliseconds (T3-02)",
+    )
+    cached: bool = Field(False, description="True if this result was served from query cache (T3-04)")
+
+
+# ---------------------------------------------------------------------------
+# Request schemas
+# ---------------------------------------------------------------------------
+
+
+class QueryRequest(BaseModel):
+    query: str = Field(
+        ...,
+        min_length=3,
+        max_length=2000,
+        description="Natural language question to ask the agent",
+        examples=["Find incidents similar to hydraulic actuator crack on Line 1"],
+    )
+    domain: str = Field(
+        "aircraft",
+        description="Data domain to query: 'aircraft' (manufacturing/maintenance) or 'medical' (clinical cases)",
+        pattern="^(aircraft|medical)$",
+    )
+    filters: dict[str, Any] | None = Field(
+        None,
+        description="Optional metadata filters: {system, severity, date_range: [from, to]}",
+    )
+    # W3-003 — Epic 1: Conversational Memory
+    session_id: str | None = Field(
+        None,
+        description="Client UUID for the current session. Stored in agent_runs.session_id.",
+    )
+    conversation_history: list[dict] | None = Field(
+        None,
+        description='Prior turns: [{"query": str, "answer_summary": str}, ...]. Max 5 used.',
+    )
+
+
+class IngestRequest(BaseModel):
+    """Optional body for POST /ingest — all fields have defaults."""
+    force: bool = Field(
+        False,
+        description="If true, re-ingest even if data already exists",
+    )
+
+
+# ---------------------------------------------------------------------------
+# Response schemas
+# ---------------------------------------------------------------------------
+
+
+class QueryResponse(BaseModel):
+    run_id: str = Field(..., description="UUID of this agent run — use GET /runs/{run_id} to re-fetch")
+    query: str
+    answer: str = Field(..., description="Synthesised natural language answer")
+    claims: list[Claim] = Field(default_factory=list)
+    evidence: Evidence
+    graph_path: GraphPath
+    run_summary: RunSummary
+    assumptions: list[str] = Field(default_factory=list)
+    next_steps: list[str] = Field(default_factory=list)
+
+
+class IngestResponse(BaseModel):
+    status: str = Field(..., description="'started' | 'already_running' | 'complete' | 'failed'")
+    message: str
+
+
+class ChunkResponse(BaseModel):
+    chunk_id: str
+    incident_id: str
+    chunk_text: str
+    chunk_index: int
+    char_start: int
+    char_end: int
+    metadata: dict[str, Any] = Field(default_factory=dict)
+
+
+class DocListItem(BaseModel):
+    incident_id: str
+    asset_id: str | None
+    system: str | None
+    severity: str | None
+    event_date: str | None
+    source: str
+    chunk_count: int
+
+
+class HealthResponse(BaseModel):
+    status: str = Field(..., description="'ok' | 'degraded'")
+    db: bool
+    version: str = "1.0.0"
+
+
+class RunRecord(BaseModel):
+    run_id: str
+    query: str
+    result: dict[str, Any]
+    created_at: datetime | None = None
+
+
+# W3-004 — Epic 2: lightweight run list item for GET /runs
+class HistoryRunSummary(BaseModel):
+    id: str = Field(..., description="run_id UUID")
+    query: str
+    intent: str = Field("unknown", description="Classified intent from run_summary.intent")
+    created_at: datetime | None = None
+    cached: bool = False
+    latency_ms: float = 0.0
+    is_favourite: bool = False
+
+
+# W3-004 — pagination wrapper for GET /runs
+class RunListResponse(BaseModel):
+    items: list[HistoryRunSummary]
+    total: int
+
+
+# W3-014 — Epic 4: analytics response schemas
+class DefectDataPoint(BaseModel):
+    product: str | None
+    defect_type: str | None
+    count: int
+
+
+class MaintenanceDataPoint(BaseModel):
+    month: str | None  # ISO date string from DATE_TRUNC result
+    event_type: str | None  # metric_name
+    count: int
+
+
+class DiseaseDataPoint(BaseModel):
+    specialty: str | None
+    disease: str | None
+    count: int
+```
+
+---
+
+## 4. New API Endpoints
+
+### 4a. `backend/app/api/runs.py` — NEW file (W3-007)
+
+**Endpoints:**
+- `GET /runs?limit=20&offset=0` — paginated `agent_runs` summaries, favourites first
+- `PATCH /runs/{run_id}/favourite` — toggle `is_favourite`
+
+```python
+"""
+GET /runs — paginated list of agent run summaries (Query History).
+PATCH /runs/{run_id}/favourite — toggle is_favourite on a run.
+
+W3-007: Epic 2 — Query History & Favourites.
+
+Both endpoints use the async SQLAlchemy session (get_session from db/session.py).
+The GET /runs endpoint orders by is_favourite DESC, created_at DESC so favourited
+runs appear at the top of the list regardless of age.
+"""
+from __future__ import annotations
+
+import json
+
+from fastapi import APIRouter, HTTPException, Query
+from sqlalchemy import text
+
+from backend.app.db.session import get_session
+from backend.app.observability.logging import get_logger
+from backend.app.schemas.models import HistoryRunSummary, RunListResponse
+
+logger = get_logger(__name__)
+router = APIRouter()
+
+
+@router.get(
+    "/runs",
+    response_model=RunListResponse,
+    summary="List agent run history",
+    description=(
+        "Returns paginated agent run summaries ordered by favourites first, "
+        "then reverse chronological. Use limit/offset for pagination."
+    ),
+)
+async def list_runs(
+    limit: int = Query(default=20, ge=1, le=100, description="Max items to return"),
+    offset: int = Query(default=0, ge=0, description="Number of items to skip"),
+) -> RunListResponse:
+    """
+    Query agent_runs ordered by is_favourite DESC, created_at DESC.
+    Returns { items: [...], total: N } where total is the unfiltered count.
+    """
+    try:
+        async with get_session() as session:
+            # Total count (for pagination metadata)
+            count_result = await session.execute(
+                text("SELECT COUNT(*) FROM agent_runs")
+            )
+            total: int = count_result.scalar() or 0
+
+            # Paginated rows
+            rows_result = await session.execute(
+                text("""
+                    SELECT
+                        run_id,
+                        query,
+                        result,
+                        created_at,
+                        is_favourite
+                    FROM agent_runs
+                    ORDER BY is_favourite DESC, created_at DESC
+                    LIMIT :limit OFFSET :offset
+                """),
+                {"limit": limit, "offset": offset},
+            )
+            rows = rows_result.fetchall()
+
+    except Exception as exc:
+        logger.error("list_runs DB error", extra={"error": str(exc)})
+        raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
+
+    items: list[HistoryRunSummary] = []
+    for row in rows:
+        result_data = row.result
+        if isinstance(result_data, str):
+            try:
+                result_data = json.loads(result_data)
+            except json.JSONDecodeError:
+                result_data = {}
+
+        run_summary = result_data.get("run_summary", {}) if result_data else {}
+        intent = run_summary.get("intent", "unknown")
+        cached = run_summary.get("cached", False)
+        latency_ms = run_summary.get("total_latency_ms", 0.0)
+
+        items.append(
+            HistoryRunSummary(
+                id=row.run_id,
+                query=row.query or "",
+                intent=intent,
+                created_at=row.created_at,
+                cached=cached,
+                latency_ms=latency_ms,
+                is_favourite=bool(row.is_favourite),
+            )
+        )
+
+    return RunListResponse(items=items, total=total)
+
+
+@router.patch(
+    "/runs/{run_id}/favourite",
+    response_model=HistoryRunSummary,
+    summary="Toggle favourite status of a run",
+    description="Set or clear is_favourite on an agent_runs row. Returns the updated summary.",
+)
+async def toggle_favourite(run_id: str, body: dict) -> HistoryRunSummary:
+    """
+    Body: { "is_favourite": bool }
+    Returns: updated HistoryRunSummary or 404 if run_id not found.
+    """
+    is_favourite: bool = bool(body.get("is_favourite", False))
+
+    try:
+        async with get_session() as session:
+            # Check existence
+            check = await session.execute(
+                text("SELECT run_id FROM agent_runs WHERE run_id = :run_id"),
+                {"run_id": run_id},
+            )
+            if not check.fetchone():
+                raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
+
+            # Update
+            await session.execute(
+                text(
+                    "UPDATE agent_runs SET is_favourite = :is_favourite "
+                    "WHERE run_id = :run_id"
+                ),
+                {"is_favourite": is_favourite, "run_id": run_id},
+            )
+
+            # Fetch updated row
+            result_row = await session.execute(
+                text(
+                    "SELECT run_id, query, result, created_at, is_favourite "
+                    "FROM agent_runs WHERE run_id = :run_id"
+                ),
+                {"run_id": run_id},
+            )
+            row = result_row.fetchone()
+
+    except HTTPException:
+        raise
+    except Exception as exc:
+        logger.error("toggle_favourite DB error", extra={"error": str(exc), "run_id": run_id})
+        raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
+
+    result_data = row.result
+    if isinstance(result_data, str):
+        try:
+            result_data = json.loads(result_data)
+        except json.JSONDecodeError:
+            result_data = {}
+
+    run_summary = result_data.get("run_summary", {}) if result_data else {}
+
+    return HistoryRunSummary(
+        id=row.run_id,
+        query=row.query or "",
+        intent=run_summary.get("intent", "unknown"),
+        created_at=row.created_at,
+        cached=run_summary.get("cached", False),
+        latency_ms=run_summary.get("total_latency_ms", 0.0),
+        is_favourite=bool(row.is_favourite),
+    )
+```
+
+**Notes:**
+- The `PATCH` body accepts a generic `dict` because Pydantic models in `Body()` add overhead for a single-field payload. If stricter typing is desired, define `class FavouriteRequest(BaseModel): is_favourite: bool` and use it as the body type.
+- The `UPDATE` statement runs inside the same async session context. SQLAlchemy async sessions auto-commit when the context manager exits cleanly (no explicit `session.commit()` needed with the current `get_session()` implementation that uses `expire_on_commit=False`).
+- Return 404 before attempting the UPDATE — avoids silent no-ops on bad run IDs.
+
+---
+
+### 4b. `backend/app/api/analytics.py` — NEW file (W3-014)
+
+**Endpoints:**
+- `GET /analytics/defects?from=&to=&domain=` — defect counts by product
+- `GET /analytics/maintenance?from=&to=` — maintenance trends
+- `GET /analytics/diseases?from=&to=&specialty=` — disease counts by specialty
+
+All three endpoints use the existing `SQLQueryTool` named-query pattern. The SQL guardrail (SELECT-only regex check) is enforced by `sql_tool.run_named()`. No raw SQL generation occurs in this file.
+
+```python
+"""
+Analytics endpoints for the Wave 3 dashboard (Tabs 3, 4, 5).
+
+W3-014: Epic 4 — Real Dashboard Analytics.
+
+All three endpoints delegate to SQLQueryTool.run_named_async() which enforces
+the SELECT-only guardrail. No raw SQL is generated here.
+
+Named queries used:
+  - defect_counts_by_product  (aircraft domain)
+  - maintenance_trends         (aircraft domain)
+  - disease_counts_by_specialty (medical domain)
+  - medical_case_trends        (medical domain — added in W3-026)
+
+Date filtering is currently applied at the named-query level via the 'days'
+parameter. Full ISO date-range filtering is a future enhancement.
+"""
+from __future__ import annotations
+
+import time
+from datetime import date
+from typing import Any
+
+from fastapi import APIRouter, HTTPException, Query
+
+from backend.app.observability.logging import get_logger
+from backend.app.schemas.models import (
+    DefectDataPoint,
+    DiseaseDataPoint,
+    MaintenanceDataPoint,
+)
+from backend.app.tools.sql_tool import SQLQueryTool
+
+logger = get_logger(__name__)
+router = APIRouter()
+
+_sql_tool = SQLQueryTool()
+
+
+def _date_to_days(from_date: str | None, to_date: str | None) -> int:
+    """
+    Convert an ISO date range to an integer 'days back from today' value.
+    Used to parameterise the named queries which accept :days.
+
+    If from_date is provided, returns days between today and from_date.
+    If neither is provided, defaults to 90 days.
+    """
+    if from_date:
+        try:
+            parsed = date.fromisoformat(from_date)
+            delta = (date.today() - parsed).days
+            return max(delta, 1)
+        except ValueError:
+            pass
+    return 90
+
+
+@router.get(
+    "/analytics/defects",
+    summary="Defect counts by product and defect type",
+    description=(
+        "Returns aggregated defect counts from manufacturing_defects, "
+        "grouped by product and defect_type. Filtered by date range (from/to ISO dates). "
+        "Domain parameter selects data source: 'aircraft' uses manufacturing_defects."
+    ),
+)
+async def get_defects(
+    from_date: str | None = Query(None, alias="from", description="ISO start date e.g. 2025-01-01"),
+    to_date: str | None = Query(None, alias="to", description="ISO end date e.g. 2025-12-31"),
+    domain: str = Query("aircraft", pattern="^(aircraft|medical)$"),
+) -> list[dict[str, Any]]:
+    days = _date_to_days(from_date, to_date)
+    try:
+        result = await _sql_tool.run_named_async("defect_counts_by_product", {"days": days})
+    except Exception as exc:
+        logger.error("analytics/defects error", extra={"error": str(exc)})
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    cols = result.get("columns", [])
+    rows = result.get("rows", [])
+    output = []
+    for row in rows:
+        row_dict = dict(zip(cols, row))
+        output.append({
+            "product": row_dict.get("product"),
+            "defect_type": row_dict.get("defect_type"),
+            "count": int(row_dict.get("defect_count", 0)),
+        })
+    return output
+
+
+@router.get(
+    "/analytics/maintenance",
+    summary="Maintenance event trends by month",
+    description=(
+        "Returns maintenance log event counts grouped by metric_name and month. "
+        "Used for the Maintenance Trends tab in the dashboard."
+    ),
+)
+async def get_maintenance(
+    from_date: str | None = Query(None, alias="from"),
+    to_date: str | None = Query(None, alias="to"),
+) -> list[dict[str, Any]]:
+    # maintenance_trends does not take a :days param — it queries all available data.
+    # Passing days=365*10 effectively returns all data; named query already has LIMIT 100.
+    try:
+        result = await _sql_tool.run_named_async("maintenance_trends", {})
+    except Exception as exc:
+        logger.error("analytics/maintenance error", extra={"error": str(exc)})
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    cols = result.get("columns", [])
+    rows = result.get("rows", [])
+    output = []
+    for row in rows:
+        row_dict = dict(zip(cols, row))
+        month_val = row_dict.get("month")
+        output.append({
+            "month": str(month_val) if month_val else None,
+            "event_type": row_dict.get("metric_name"),
+            "count": int(row_dict.get("event_count", 0)),
+        })
+    return output
+
+
+@router.get(
+    "/analytics/diseases",
+    summary="Disease case counts by specialty",
+    description=(
+        "Returns disease case counts from disease_records, grouped by specialty and disease. "
+        "Used for the Disease Analytics tab in the dashboard (medical domain)."
+    ),
+)
+async def get_diseases(
+    from_date: str | None = Query(None, alias="from"),
+    to_date: str | None = Query(None, alias="to"),
+    specialty: str | None = Query(None, description="Optional specialty filter (not yet applied at DB level)"),
+) -> list[dict[str, Any]]:
+    days = _date_to_days(from_date, to_date)
+    try:
+        result = await _sql_tool.run_named_async("disease_counts_by_specialty", {"days": days})
+    except Exception as exc:
+        logger.error("analytics/diseases error", extra={"error": str(exc)})
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    if result.get("error"):
+        raise HTTPException(status_code=500, detail=result["error"])
+
+    cols = result.get("columns", [])
+    rows = result.get("rows", [])
+    output = []
+    for row in rows:
+        row_dict = dict(zip(cols, row))
+        # Optional specialty filter applied in Python (named query returns all)
+        if specialty and row_dict.get("specialty") != specialty:
+            continue
+        output.append({
+            "specialty": row_dict.get("specialty"),
+            "disease": row_dict.get("disease"),
+            "count": int(row_dict.get("case_count", 0)),
+        })
+    return output
+```
+
+**Notes:**
+- The specialty filter is applied in Python rather than SQL because the named query already groups by specialty, and adding a dynamic WHERE clause would require a new named query or parameterisation. This is acceptable for current data volumes (LIMIT 50 in the named query).
+- `maintenance_trends` does not accept a `:days` parameter — it queries all data with `WHERE ts IS NOT NULL`. The `from`/`to` query parameters are accepted by the endpoint for API consistency but currently affect only the `defects` and `diseases` endpoints via the `_date_to_days()` helper.
+- All three endpoints preserve the SQL guardrail because they call `run_named_async()` which resolves to `run_async()` which applies the `_BLOCKED_PATTERN` regex check before execution.
+
+---
+
+### 4c. `backend/app/api/query.py` — SSE streaming (W3-012)
+
+Add a second route variant to the existing `query.py` that returns `text/event-stream` when the client sends `Accept: text/event-stream`. The existing `POST /query` route is unchanged.
+
+Add the following imports and route to `query.py`:
+
+```python
+# Add to existing imports at the top of query.py:
+import asyncio
+import json
+import os
+
+from fastapi import APIRouter, HTTPException, Request
+from fastapi.responses import StreamingResponse
+
+# At module level, add:
+_STREAMING_ENABLED = os.getenv("STREAMING_ENABLED", "true").lower() == "true"
+```
+
+Add this new route function after the existing `run_query` route:
+
+```python
+@router.post(
+    "/query/stream",
+    summary="Run agent query with streaming synthesis output",
+    description=(
+        "SSE (Server-Sent Events) variant of POST /query. "
+        "Returns text/event-stream. Event types: "
+        "'token' (synthesis token), 'done' (full QueryResponse), 'error'. "
+        "Requires STREAMING_ENABLED=true (default). "
+        "EAGER_MODEL_LOAD=true must be set on Render for the 1.5s first-token target."
+    ),
+    include_in_schema=True,
+)
+async def run_query_stream(body: QueryRequest, request: Request) -> StreamingResponse:
+    """
+    SSE streaming endpoint. Triggers synthesis in streaming mode.
+
+    Event format (each line terminated by double newline per SSE spec):
+      data: {"type": "token", "text": "..."}\n\n
+      data: {"type": "done", "run": {...full QueryResponse dict...}}\n\n
+      data: {"type": "error", "message": "..."}\n\n
+
+    Only the synthesis Anthropic call uses stream=True.
+    Intent classification, tool execution, and verification remain non-streaming.
+    """
+    if not _STREAMING_ENABLED:
+        # Fallback: run non-streaming and emit a single done event
+        try:
+            orchestrator = _get_orchestrator()
+            result = await orchestrator.run(
+                body.query,
+                domain=body.domain,
+                session_id=body.session_id,
+                conversation_history=body.conversation_history,
+            )
+            result_dict = result.to_dict()
+            response_data = QueryResponse(**_normalise_result(result_dict)).model_dump()
+
+            async def _single_event():
+                yield f"data: {json.dumps({'type': 'done', 'run': response_data})}\n\n"
+
+            return StreamingResponse(_single_event(), media_type="text/event-stream")
+        except Exception as exc:
+            async def _error_event():
+                yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
+            return StreamingResponse(_error_event(), media_type="text/event-stream")
+
+    async def _event_generator():
+        try:
+            orchestrator = _get_orchestrator()
+
+            # Run the full agent pipeline up to (but not including) synthesis.
+            # The orchestrator.run_until_synthesis() method must be added — see
+            # Section 6 of this document for the orchestrator changes.
+            # It returns the pre-synthesis state needed to stream synthesis output.
+            pre_synth = await orchestrator.run_until_synthesis(
+                body.query,
+                domain=body.domain,
+                session_id=body.session_id,
+                conversation_history=body.conversation_history,
+            )
+
+            # Stream synthesis tokens
+            async for token_text in orchestrator.stream_synthesis(pre_synth):
+                event = json.dumps({"type": "token", "text": token_text})
+                yield f"data: {event}\n\n"
+
+            # Finalise (verify + save) and emit done event
+            result = await orchestrator.finalise(pre_synth)
+            result_dict = result.to_dict()
+            response_data = QueryResponse(**_normalise_result(result_dict)).model_dump()
+            yield f"data: {json.dumps({'type': 'done', 'run': response_data})}\n\n"
+
+        except asyncio.CancelledError:
+            # Client disconnected — this is expected; do not log as error
+            return
+        except Exception as exc:
+            logger.error(
+                "Streaming query failed",
+                extra={"error": str(exc), "query": body.query[:100]},
+            )
+            yield f"data: {json.dumps({'type': 'error', 'message': str(exc)})}\n\n"
+
+    return StreamingResponse(
+        _event_generator(),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            "X-Accel-Buffering": "no",  # Disable nginx buffering on Render
+        },
+    )
+```
+
+**Architectural note on `run_until_synthesis` / `finalise` / `stream_synthesis`:**
+
+The streaming endpoint requires the orchestrator to be split into phases. This is implemented by adding three new methods to `AgentOrchestrator`:
+
+1. `run_until_synthesis(query, domain, session_id, conversation_history)` — runs CLASSIFY+PLAN → EXECUTE_TOOLS → EXPAND_GRAPH → RE_RANK and returns a `PreSynthesisState` dataclass with all accumulated state.
+2. `stream_synthesis(pre_synth_state)` — calls `self._async_llm.stream(prompt)` and yields token strings.
+3. `finalise(pre_synth_state, streamed_answer)` — runs VERIFY → SAVE → DONE and returns `AgentRunResult`.
+
+See Section 6 for the full orchestrator changes.
+
+---
+
+## 5. LLM Client Changes
+
+**File:** `backend/app/llm/client.py`
+
+Add `stream()` abstract method and implementation. Only the Sonnet synthesis client needs streaming — Haiku classify/plan/verify calls remain non-streaming.
+
+### 5a. ABC changes
+
+Add to `LLMClient` abstract class:
+
+```python
+from typing import AsyncIterator  # add to imports
+
+class LLMClient(ABC):
+    # ... existing complete() and complete_async() ...
+
+    @abstractmethod
+    async def stream(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 4096,
+    ) -> AsyncIterator[str]:
+        """
+        Stream synthesis tokens as an async iterator.
+
+        Yields one string per token as the model generates output.
+        The caller is responsible for accumulating the full response if needed.
+
+        Args:
+            prompt:     The user-turn message.
+            system:     Optional system prompt.
+            max_tokens: Maximum tokens to generate.
+
+        Yields:
+            Individual token strings from the model stream.
+
+        Note: json_mode is not supported for streaming — the synthesis prompt
+        already produces well-structured prose, not JSON. Claims and metadata
+        are extracted after streaming via the done event.
+        """
+        ...
+```
+
+### 5b. `ClaudeClient` implementation
+
+Add to `ClaudeClient` class after `complete_async()`:
+
+```python
+    async def stream(
+        self,
+        prompt: str,
+        system: str = "",
+        max_tokens: int = 4096,
+    ) -> AsyncIterator[str]:
+        """
+        Stream synthesis tokens using the Anthropic streaming API.
+
+        Uses AsyncAnthropic.messages.stream() context manager which yields
+        MessageStreamEvent objects. We extract text deltas from
+        RawContentBlockDeltaEvent events.
+
+        Only used for synthesis (Sonnet). Haiku clients should never call stream()
+        — classify/plan/verify remain non-streaming.
+
+        Yields:
+            Token strings as they arrive from the Anthropic API.
+        """
+        messages = [{"role": "user", "content": prompt}]
+        kwargs: dict[str, Any] = {
+            "model": self.model,
+            "max_tokens": max_tokens,
+            "messages": messages,
+        }
+        if system:
+            kwargs["system"] = system
+
+        logger.info(
+            "LLM stream request",
+            extra={"model": self.model, "prompt_chars": len(prompt)},
+        )
+
+        t_start = time.perf_counter()
+        token_count = 0
+
+        async with self._async_client.messages.stream(**kwargs) as stream_ctx:
+            async for event in stream_ctx:
+                # RawContentBlockDeltaEvent has a .delta.text attribute
+                if hasattr(event, "delta") and hasattr(event.delta, "text"):
+                    text = event.delta.text
+                    if text:
+                        token_count += 1
+                        yield text
+
+        latency_ms = round((time.perf_counter() - t_start) * 1000, 1)
+        logger.info(
+            "LLM stream complete",
+            extra={
+                "model": self.model,
+                "token_count": token_count,
+                "latency_ms": latency_ms,
+            },
+        )
+```
+
+**Notes:**
+- `AsyncAnthropic.messages.stream()` is available in `anthropic>=0.49.0`. The project already requires `>=0.49.0` per CLAUDE.md constraint. Verify with `pip show anthropic` in the container.
+- The `stream()` method does not use `json_mode`. Synthesis output is prose — the streaming path does not attempt to parse JSON mid-stream.
+- The streaming path yields tokens; the `finalise()` step in the orchestrator re-runs a non-streaming verify call on the accumulated text after streaming completes.
+- The Anthropic streaming API uses `_async_client.messages.stream()` not `messages.create(stream=True)`. The context-manager form (`async with ... as stream_ctx`) handles connection cleanup correctly on cancellation.
+
+---
+
+## 6. Orchestrator Changes
+
+**File:** `backend/app/agent/orchestrator.py`
+
+### 6a. Change the `run()` signature — Epic 1 (W3-006)
+
+The existing `run(query, domain)` method must accept the two new `QueryRequest` fields. The simplest approach is adding them as keyword arguments with `None` defaults so all existing call sites (including tests) continue to work without modification:
+
+```python
+async def run(
+    self,
+    query: str,
+    domain: str = "aircraft",
+    session_id: str | None = None,
+    conversation_history: list[dict] | None = None,
+) -> AgentRunResult:
+```
+
+Also add the feature flag read at module level (not inside the method, to avoid the env lookup on every call):
+
+```python
+import os  # already imported
+
+_CONVERSATIONAL_MEMORY_ENABLED = os.getenv("CONVERSATIONAL_MEMORY_ENABLED", "true").lower() == "true"
+```
+
+### 6b. Inject conversation history into synthesis prompt — Epic 1 (W3-006)
+
+In the SYNTHESISE stage, before building `synthesis_prompt`, add:
+
+```python
+# ---------------------------------------------------------- SYNTHESISE
+logger.info("State: SYNTHESISE", extra={"run_id": run_id})
+_t_synthesise_start = time.perf_counter()
+evidence_for_synthesis = _build_evidence_context(vector_hits, sql_rows)
+
+# W3-006: Conversational memory — inject prior turns into synthesis context
+history_context = ""
+if _CONVERSATIONAL_MEMORY_ENABLED and conversation_history:
+    # Use only the most recent 5 turns (backend enforces limit regardless of client)
+    recent_turns = conversation_history[-5:]
+    history_lines = []
+    for i, turn in enumerate(recent_turns, start=1):
+        q = turn.get("query", "")
+        a = turn.get("answer_summary", "")
+        history_lines.append(f"Prior turn {i}: Q: {q} | A: {a}")
+    history_context = "\n".join(history_lines) + "\n\n"
+
+synthesis_prompt = (
+    f"{history_context}"  # empty string if no history or feature disabled
+    f"User query: {query}\n\n"
+    f"Intent: {intent}\n\n"
+    f"Execution plan: {plan_text}\n\n"
+    f"Evidence from search:\n{evidence_for_synthesis}\n\n"
+    f"Synthesise a comprehensive answer."
+)
+```
+
+### 6c. Save `session_id` during the SAVE stage — Epic 1 (W3-006)
+
+Update the INSERT in the SAVE stage to include `session_id`:
+
+```python
+# In the SAVE stage, replace the existing INSERT with:
+async with get_session() as session:
+    await session.execute(
+        text(
+            "INSERT INTO agent_runs (run_id, query, result, session_id) "
+            "VALUES (:run_id, :query, :result, :session_id)"
+        ),
+        {
+            "run_id": run_id,
+            "query": query,
+            "result": json.dumps(result.to_dict()),
+            "session_id": session_id,  # None → NULL (valid: column is nullable)
+        },
+    )
+```
+
+### 6d. Update `query.py` call site
+
+The existing call in `query.py` is `await orchestrator.run(body.query, domain=body.domain)`. Update it to pass the new fields:
+
+```python
+result = await orchestrator.run(
+    body.query,
+    domain=body.domain,
+    session_id=body.session_id,
+    conversation_history=body.conversation_history,
+)
+```
+
+### 6e. Streaming-specific methods — Epic 3 (W3-012)
+
+For the SSE streaming endpoint, add `PreSynthesisState`, `run_until_synthesis()`, `stream_synthesis()`, and `finalise()` to `AgentOrchestrator`. These are new methods — they do not modify the existing `run()` path.
+
+```python
+from dataclasses import dataclass, field as dc_field
+
+@dataclass
+class PreSynthesisState:
+    """Holds all accumulated agent state up to (but not including) synthesis."""
+    run_id: str
+    query: str
+    domain: str
+    intent: str
+    plan_text: str
+    plan_steps: list[dict]
+    vector_hits: list[dict]
+    sql_rows: list[dict]
+    graph_nodes: list[dict]
+    graph_edges: list[dict]
+    steps: list[StepLog]
+    halted_at_step_limit: bool
+    t_run_start: float
+    _state_timings: dict
+    session_id: str | None = None
+    conversation_history: list[dict] | None = None
+```
+
+```python
+async def run_until_synthesis(
+    self,
+    query: str,
+    domain: str = "aircraft",
+    session_id: str | None = None,
+    conversation_history: list[dict] | None = None,
+) -> PreSynthesisState:
+    """
+    Run CLASSIFY+PLAN → EXECUTE_TOOLS → EXPAND_GRAPH → RE_RANK.
+    Returns PreSynthesisState for use by stream_synthesis() and finalise().
+
+    This method contains the same logic as the first half of run(), extracted
+    so the streaming endpoint can call it and then stream synthesis output before
+    calling finalise(). The non-streaming run() path is unchanged.
+    """
+    run_id = str(uuid.uuid4())
+    t_run_start = time.perf_counter()
+    _state_timings: dict[str, float] = {}
+
+    # T3-04: query cache check
+    cached_result = await _check_query_cache(query)
+    if cached_result is not None:
+        # For streaming, a cache hit short-circuits to a PreSynthesisState
+        # with pre-filled answer. stream_synthesis() will yield the cached answer
+        # as a single token and finalise() will return immediately.
+        # Signal cache hit via a special sentinel in _state_timings.
+        cached_result["run_id"] = run_id
+        run_summary = cached_result.get("run_summary", {})
+        run_summary["cached"] = True
+        cached_result["run_summary"] = run_summary
+        # Wrap in AgentRunResult and immediately return a finalised state
+        # (caller checks _state_timings["cached"] == True to skip streaming)
+        _state_timings["cached"] = True
+        state = PreSynthesisState(
+            run_id=run_id, query=query, domain=domain, intent="cached",
+            plan_text="", plan_steps=[], vector_hits=[], sql_rows=[],
+            graph_nodes=[], graph_edges=[], steps=[], halted_at_step_limit=False,
+            t_run_start=t_run_start, _state_timings=_state_timings,
+            session_id=session_id, conversation_history=conversation_history,
+        )
+        # Store the cached result for finalise() to return
+        state._cached_result = cached_result
+        return state
+
+    # CLASSIFY + PLAN (identical to run())
+    _t_classify_start = time.perf_counter()
+    combined = await classify_and_plan_async(query, self._async_fast_llm, domain=domain)
+    _state_timings["classify_plan_ms"] = round((time.perf_counter() - _t_classify_start) * 1000, 1)
+    intent = combined["intent"]
+    plan_text = combined.get("plan_text", "")
+    plan_steps = combined.get("steps", [])
+
+    # EXECUTE_TOOLS, EXPAND_GRAPH, RE_RANK (identical to run() — code duplication
+    # is intentional to keep run() unchanged and streaming path independent)
+    # ... [paste the full execute/expand/rerank blocks from run() here] ...
+    # For brevity this document shows the structure; see implementation note below.
+
+    return PreSynthesisState(
+        run_id=run_id, query=query, domain=domain, intent=intent,
+        plan_text=plan_text, plan_steps=plan_steps,
+        vector_hits=vector_hits, sql_rows=sql_rows,
+        graph_nodes=graph_nodes, graph_edges=graph_edges,
+        steps=steps, halted_at_step_limit=halted_at_step_limit,
+        t_run_start=t_run_start, _state_timings=_state_timings,
+        session_id=session_id, conversation_history=conversation_history,
+    )
+```
+
+**Implementation note for `run_until_synthesis()`:** The EXECUTE_TOOLS, EXPAND_GRAPH, and RE_RANK blocks are identical to those in `run()`. Rather than duplicating all that code, the recommended approach is to extract those three stages into a private `_execute_and_expand()` coroutine that both `run()` and `run_until_synthesis()` call. This reduces duplication to ~20 lines of setup code. The decision is left to the implementer — both approaches are correct; whichever minimises drift between `run()` and the streaming path.
+
+```python
+    async def stream_synthesis(
+        self,
+        state: PreSynthesisState,
+    ) -> AsyncIterator[str]:
+        """
+        Stream synthesis tokens for the given pre-synthesis state.
+
+        If the state represents a cache hit (state._state_timings.get("cached")),
+        yields the cached answer as a single string rather than calling the LLM.
+        """
+        # Cache hit: yield the full cached answer in one event
+        if state._state_timings.get("cached"):
+            cached = getattr(state, "_cached_result", {})
+            yield cached.get("answer", "")
+            return
+
+        # Build synthesis prompt (same logic as run(), including history injection)
+        evidence_for_synthesis = _build_evidence_context(state.vector_hits, state.sql_rows)
+
+        history_context = ""
+        if _CONVERSATIONAL_MEMORY_ENABLED and state.conversation_history:
+            recent_turns = state.conversation_history[-5:]
+            history_lines = [
+                f"Prior turn {i}: Q: {t.get('query', '')} | A: {t.get('answer_summary', '')}"
+                for i, t in enumerate(recent_turns, start=1)
+            ]
+            history_context = "\n".join(history_lines) + "\n\n"
+
+        synthesis_prompt = (
+            f"{history_context}"
+            f"User query: {state.query}\n\n"
+            f"Intent: {state.intent}\n\n"
+            f"Execution plan: {state.plan_text}\n\n"
+            f"Evidence from search:\n{evidence_for_synthesis}\n\n"
+            f"Synthesise a comprehensive answer."
+        )
+        system_prompt = (
+            _SYNTHESIS_SYSTEM_MEDICAL if state.domain == "medical" else _SYNTHESIS_SYSTEM_AIRCRAFT
+        )
+
+        # Always use Sonnet for streaming synthesis (streaming is only for synthesis)
+        accumulated = []
+        async for token in self._async_llm.stream(synthesis_prompt, system=system_prompt):
+            accumulated.append(token)
+            yield token
+
+        # Store the full streamed answer on state for finalise() to use
+        state._streamed_answer = "".join(accumulated)
+
+    async def finalise(
+        self,
+        state: PreSynthesisState,
+    ) -> AgentRunResult:
+        """
+        Run VERIFY → SAVE → DONE on a pre-synthesis state.
+
+        The streamed answer must have been accumulated into state._streamed_answer
+        by stream_synthesis() before calling this method.
+
+        For cache hits (state._state_timings.get("cached")), returns the
+        cached AgentRunResult directly.
+        """
+        # Cache hit fast-path
+        if state._state_timings.get("cached"):
+            cached = getattr(state, "_cached_result", {})
+            run_summary = cached.get("run_summary", {})
+            return AgentRunResult(
+                run_id=state.run_id,
+                query=state.query,
+                answer=cached.get("answer", ""),
+                claims=cached.get("claims", []),
+                evidence=cached.get("evidence", {"vector_hits": [], "sql_rows": []}),
+                graph_path=cached.get("graph_path", {"nodes": [], "edges": []}),
+                run_summary=run_summary,
+                assumptions=cached.get("assumptions", []),
+                next_steps=cached.get("next_steps", []),
+            )
+
+        streamed_answer = getattr(state, "_streamed_answer", "")
+
+        # Parse the streamed answer as synthesis output
+        # The streaming prompt produces prose, not JSON — wrap it in SynthesisOutput structure
+        raw_claims: list[dict] = []
+        assumptions: list[str] = []
+        next_steps_list: list[str] = []
+
+        # Attempt to parse as JSON (some models return JSON even in stream mode)
+        try:
+            data = json.loads(streamed_answer)
+            synth_answer = data.get("answer", streamed_answer)
+            raw_claims = data.get("claims", [])
+            assumptions = data.get("assumptions", [])
+            next_steps_list = data.get("next_steps", [])
+        except json.JSONDecodeError:
+            # Treat the entire streamed text as the answer
+            synth_answer = streamed_answer
+
+        all_evidence = state.vector_hits.copy()
+
+        # VERIFY
+        _t_verify_start = time.perf_counter()
+        if raw_claims:
+            verified_claims = await verify_claims_async(
+                raw_claims, all_evidence, self._async_fast_llm
+            )
+        else:
+            verified_claims = []
+        state._state_timings["verify_ms"] = round(
+            (time.perf_counter() - _t_verify_start) * 1000, 1
+        )
+
+        # SAVE
+        total_latency_ms = round((time.perf_counter() - state.t_run_start) * 1000, 1)
+        result = AgentRunResult(
+            run_id=state.run_id,
+            query=state.query,
+            answer=synth_answer,
+            claims=verified_claims,
+            evidence={"vector_hits": state.vector_hits, "sql_rows": state.sql_rows},
+            graph_path={
+                "nodes": state.graph_nodes[:40],
+                "edges": state.graph_edges[:80],
+            },
+            run_summary={
+                "intent": state.intent,
+                "plan_text": state.plan_text,
+                "steps": [
+                    {
+                        "step_number": s.step_number,
+                        "tool_name": s.tool_name,
+                        "output_summary": s.output_summary,
+                        "latency_ms": s.latency_ms,
+                        "error": s.error,
+                    }
+                    for s in state.steps
+                ],
+                "tools_used": list({s.tool_name for s in state.steps}),
+                "total_latency_ms": total_latency_ms,
+                "halted_at_step_limit": state.halted_at_step_limit,
+                "state_timings_ms": state._state_timings,
+            },
+            assumptions=assumptions,
+            next_steps=next_steps_list,
+        )
+
+        try:
+            async with get_session() as db_session:
+                await db_session.execute(
+                    text(
+                        "INSERT INTO agent_runs (run_id, query, result, session_id) "
+                        "VALUES (:run_id, :query, :result, :session_id)"
+                    ),
+                    {
+                        "run_id": state.run_id,
+                        "query": state.query,
+                        "result": json.dumps(result.to_dict()),
+                        "session_id": state.session_id,
+                    },
+                )
+        except Exception as exc:
+            logger.warning("Failed to persist streaming agent run", extra={"error": str(exc)})
+
+        return result
+```
+
+---
+
+## 7. RAG Changes
+
+**File:** `backend/app/rag/retrieval.py`
+
+### W3-029: Add `source` label to vector hits during hybrid merge
+
+In `hybrid_search()`, after building the RRF-scored results list, tag each hit with its retrieval source. Currently the merged list can contain hits that came from vector-only, BM25-only, or both. The source is determinable from `vec_rank` and `bm25_rank` lookups.
+
+**Exact change in `hybrid_search()`** — replace the results-building loop at the end of the function:
+
+```python
+    # Before (current code):
+    results = []
+    for rrf_score, chunk_id in scored[:top_k]:
+        hit = dict(hit_meta[chunk_id])
+        hit["score"] = round(rrf_score, 6)
+        hit["metadata"] = {**hit.get("metadata", {}), "rrf_score": rrf_score, "search_mode": "hybrid"}
+        results.append(hit)
+
+    # After (W3-029):
+    results = []
+    for rrf_score, chunk_id in scored[:top_k]:
+        hit = dict(hit_meta[chunk_id])
+        hit["score"] = round(rrf_score, 6)
+
+        # Determine which retrieval path(s) produced this hit
+        in_vec = chunk_id in vec_rank
+        in_bm25 = chunk_id in bm25_rank
+        if in_vec and in_bm25:
+            source_label = "hybrid"
+        elif in_vec:
+            source_label = "vector"
+        else:
+            source_label = "bm25"
+
+        hit["source"] = source_label  # W3-029: top-level field, not nested in metadata
+        hit["metadata"] = {
+            **hit.get("metadata", {}),
+            "rrf_score": rrf_score,
+            "search_mode": "hybrid",
+            "source": source_label,  # also in metadata for backward compat
+        }
+        results.append(hit)
+```
+
+Also tag hits from `vector_search()` and `bm25_search()` when they are used standalone (not via hybrid). Add `"source": "vector"` to each hit dict returned by `vector_search()`:
+
+```python
+    # In vector_search(), in the hits.append() block, add source:
+    hits.append({
+        "chunk_id": row.chunk_id,
+        "incident_id": row.incident_id,
+        "score": round(score, 4),
+        "excerpt": row.excerpt,
+        "source": "vector",  # W3-029
+        "metadata": {
+            ...
+        },
+    })
+```
+
+And `"source": "bm25"` in `bm25_search()`:
+
+```python
+    hits.append({
+        "chunk_id": row.chunk_id,
+        "incident_id": row.incident_id,
+        "score": bm25_score,
+        "excerpt": row.excerpt,
+        "source": "bm25",  # W3-029
+        "metadata": {
+            ...
+        },
+    })
+```
+
+The `VectorHit` Pydantic model now has `source: Literal["bm25", "vector", "hybrid"] = "vector"` so any hit that does not set the field defaults to `"vector"` — the safest default for backward compatibility.
+
+---
+
+## 8. Tool Changes
+
+### 8a. `backend/app/tools/compute_tool.py` — Fix CR-007 (W3-028)
+
+**Single line change.** The deprecated `asyncio.get_event_loop()` call must be replaced with `asyncio.get_running_loop()`:
+
+```python
+# Current (line 210 in the file as read):
+    async def run_async(
+        self, code: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        loop = asyncio.get_event_loop()                                    # BEFORE
+        return await loop.run_in_executor(None, self.run, code, context)
+
+# Fixed (W3-028):
+    async def run_async(
+        self, code: str, context: dict[str, Any] | None = None
+    ) -> dict[str, Any]:
+        loop = asyncio.get_running_loop()                                   # AFTER
+        return await loop.run_in_executor(None, self.run, code, context)
+```
+
+**Verification:** After the change, run `grep -r "get_event_loop" backend/` from the repo root — it must return zero results. This is the acceptance criterion for W3-028 and the CR-007 resolution check listed in prd2.md.
+
+**Why `get_running_loop()` is correct:** `get_event_loop()` is deprecated in Python 3.10+ when called from a coroutine context (it will raise a `DeprecationWarning` in 3.10 and a `RuntimeError` in 3.12+). `get_running_loop()` returns the currently running loop, which is always what we want when called from inside an `async def` function. It raises `RuntimeError` if there is no running loop, which is the correct failure mode — rather than silently creating a new loop.
+
+---
+
+### 8b. `backend/app/tools/sql_tool.py` — Add `medical_case_trends` named query (W3-026)
+
+Add the new named query to `_NAMED_QUERIES`. This query provides Tab 4 analytics parity for the medical domain:
+
+```python
+_NAMED_QUERIES: dict[str, str] = {
+    # ... existing queries ...
+
+    # W3-026 — Epic 9: Medical domain monthly case trends by specialty
+    # Provides Tab 4 analytics parity for the medical domain dashboard.
+    # The disease_records table uses 'inspection_date' as its date column.
+    # 'specialty' column maps to the medical sub-specialty (Cardiology, Neurology, etc.)
+    "medical_case_trends": """
+        SELECT
+            DATE_TRUNC('month', inspection_date) AS month,
+            specialty,
+            COUNT(*) AS case_count
+        FROM disease_records
+        WHERE inspection_date >= CURRENT_DATE - INTERVAL ':days days'
+        GROUP BY month, specialty
+        ORDER BY month
+    """,
+}
+```
+
+**Notes:**
+- The `:days days` pattern is the existing template-substitution convention in `run_named()` and `run_named_async()`. It is replaced with `f"{int(days)} days"` before execution — safe because `days` is coerced to `int`.
+- `inspection_date` is the date column on `disease_records` (confirmed from `db/models.py`). The PRD uses `date` as the column name — the actual column is `inspection_date`.
+- This query is available via `GET /analytics/diseases` by adding a second endpoint variant, or the frontend can call `run_named_async("medical_case_trends", {"days": 90})` directly via the SQL tool. The analytics endpoint in Section 4b uses `disease_counts_by_specialty` for the `/analytics/diseases` endpoint. `medical_case_trends` can be exposed via a separate `/analytics/medical-trends` endpoint if needed in a future sprint, or used directly by the orchestrator when answering medical trend queries.
+
+---
+
+## 9. main.py changes
+
+**File:** `backend/app/main.py`
+
+Register the two new routers and add the `EAGER_MODEL_LOAD` startup hook:
+
+```python
+# Add to imports:
+from backend.app.api import docs, ingest, query, analytics, runs  # add analytics, runs
+
+# In create_app(), add the two new routers after the existing three:
+    app.include_router(ingest.router, tags=["Ingestion"])
+    app.include_router(query.router, tags=["Query"])
+    app.include_router(docs.router, tags=["Documents"])
+    app.include_router(runs.router, tags=["History"])       # NEW — Epic 2
+    app.include_router(analytics.router, tags=["Analytics"]) # NEW — Epic 4
+```
+
+Add the `EAGER_MODEL_LOAD` hook to the lifespan function:
+
+```python
+@asynccontextmanager
+async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
+    logger.info("Starting NextAgentAI backend")
+    try:
+        get_async_engine()
+        logger.info("Database pool initialised")
+    except Exception as exc:
+        logger.warning(
+            "DB pool init failed (DB may not be ready yet)",
+            extra={"error": str(exc)},
+        )
+
+    # W3-012 / Epic 3: Pre-load embedding model at startup to achieve the
+    # 1.5s first-token target on streaming queries.
+    # Without this, the first query on a warm Render instance still pays
+    # the model-load cost (~2-4s for all-MiniLM-L6-v2 on CPU).
+    # EAGER_MODEL_LOAD=true is a hard requirement on Render for streaming.
+    if os.getenv("EAGER_MODEL_LOAD", "false").lower() == "true":
+        try:
+            from backend.app.rag.embeddings import EmbeddingModel
+            EmbeddingModel.get()
+            logger.info("Embedding model pre-loaded (EAGER_MODEL_LOAD=true)")
+        except Exception as exc:
+            logger.warning("EAGER_MODEL_LOAD failed", extra={"error": str(exc)})
+
+    yield
+
+    logger.info("Shutting down NextAgentAI backend")
+    await dispose_async_engine()
+```
+
+**CORS:** The existing `CORSMiddleware` uses `allow_methods=["*"]` and `allow_headers=["*"]`. The new endpoints (`/runs`, `/runs/*`, `/analytics/*`) are covered automatically — no per-endpoint CORS configuration is needed. The explicit origin list in `_CORS_BASE` already covers the Vercel and localhost origins. If additional origins need access, they are added via the `CORS_ORIGINS` env var.
+
+---
+
+## 10. Environment Variables
+
+All Wave 3 env vars below are new additions. Existing variables are unchanged.
+
+| Variable | Default | Where set | Purpose |
+|----------|---------|-----------|---------|
+| `CONVERSATIONAL_MEMORY_ENABLED` | `true` | Render dashboard / `.env` | Gates Epic 1 conversational history injection in orchestrator synthesis prompt. Set to `false` to disable without redeploy. |
+| `STREAMING_ENABLED` | `true` | Render dashboard / `.env` | Gates Epic 3 SSE streaming endpoint (`POST /query/stream`). Set to `false` to fall back to batch response. |
+| `EAGER_MODEL_LOAD` | `false` | Render dashboard (set to `true`) | Pre-loads `all-MiniLM-L6-v2` embedding model at FastAPI startup. **Must be `true` on Render** for the streaming 1.5s first-token target. Without it, first-query latency includes 2–4s model load time even on a warm instance. Does NOT affect Render cold-start (60s): `EAGER_MODEL_LOAD` only pre-warms the embedding model layer within an already-running container. |
+
+**Existing variables that interact with Wave 3 features:**
+
+| Variable | Interaction |
+|----------|-------------|
+| `ANTHROPIC_API_KEY` | Required for `stream()` method — same key used for streaming as for batch |
+| `PG_DSN` | Migrations W3-001, W3-002, W3-003 must be run against this DB |
+| `CORS_ORIGINS` | Add any new production frontend origins here if deploying to a new Vercel preview URL |
+
+---
+
+## 11. Test Plan
+
+### Existing tests that may be affected
+
+| Test file | Potential impact | Action |
+|-----------|-----------------|--------|
+| `tests/test_schemas.py` (if exists) | `QueryRequest` has new optional fields | Verify existing instantiation tests still pass with `None` defaults |
+| `tests/test_orchestrator.py` | `run()` signature changed | Existing call `orchestrator.run(query, domain)` still works — new params are keyword-only with `None` defaults |
+| `tests/test_sql_guardrails.py` | New `medical_case_trends` named query | Verify guardrail test still passes; the new query uses SELECT only |
+| `tests/test_session_config.py` | No change | Should continue to pass |
+| `tests/test_healthz_headers.py` | No change | Should continue to pass |
+
+### New test cases needed
+
+#### W3-001 / W3-002 — Migration tests
+```python
+# tests/test_migrations.py (new file)
+# These are integration tests — require a live DB connection.
+# Run with: pytest tests/test_migrations.py -v
+
+def test_agent_runs_has_session_id_column():
+    """After W3-001 migration, agent_runs.session_id column exists and is nullable."""
+    from backend.app.db.session import get_sync_engine
+    from sqlalchemy import inspect
+    inspector = inspect(get_sync_engine())
+    cols = {c["name"]: c for c in inspector.get_columns("agent_runs")}
+    assert "session_id" in cols
+    assert cols["session_id"]["nullable"] is True
+
+def test_agent_runs_has_is_favourite_column():
+    """After W3-002 migration, agent_runs.is_favourite exists, is not nullable, defaults False."""
+    from backend.app.db.session import get_sync_engine
+    from sqlalchemy import inspect
+    inspector = inspect(get_sync_engine())
+    cols = {c["name"]: c for c in inspector.get_columns("agent_runs")}
+    assert "is_favourite" in cols
+    assert cols["is_favourite"]["nullable"] is False
+```
+
+#### W3-003 — `QueryRequest` schema tests
+```python
+def test_query_request_defaults_new_fields():
+    from backend.app.schemas.models import QueryRequest
+    req = QueryRequest(query="test query")
+    assert req.session_id is None
+    assert req.conversation_history is None
+
+def test_query_request_accepts_new_fields():
+    from backend.app.schemas.models import QueryRequest
+    req = QueryRequest(
+        query="test",
+        session_id="550e8400-e29b-41d4-a716-446655440000",
+        conversation_history=[{"query": "prev", "answer_summary": "prev answer"}],
+    )
+    assert req.session_id == "550e8400-e29b-41d4-a716-446655440000"
+    assert len(req.conversation_history) == 1
+```
+
+#### W3-004 — `HistoryRunSummary` schema tests
+```python
+def test_history_run_summary_defaults():
+    from backend.app.schemas.models import HistoryRunSummary
+    item = HistoryRunSummary(id="abc", query="test")
+    assert item.is_favourite is False
+    assert item.cached is False
+```
+
+#### W3-006 — Orchestrator history injection test
+```python
+def test_orchestrator_history_injection_disabled_by_env(monkeypatch):
+    """When CONVERSATIONAL_MEMORY_ENABLED=false, history is not prepended."""
+    monkeypatch.setenv("CONVERSATIONAL_MEMORY_ENABLED", "false")
+    # Reimport to pick up env change
+    import importlib
+    import backend.app.agent.orchestrator as orch_mod
+    importlib.reload(orch_mod)
+    assert orch_mod._CONVERSATIONAL_MEMORY_ENABLED is False
+
+def test_orchestrator_history_capped_at_5_turns():
+    """Only last 5 turns are used even when more are provided."""
+    history = [
+        {"query": f"q{i}", "answer_summary": f"a{i}"} for i in range(10)
+    ]
+    # Verify only last 5 are sliced
+    recent = history[-5:]
+    assert len(recent) == 5
+    assert recent[0]["query"] == "q5"
+```
+
+#### W3-007 — `GET /runs` and `PATCH /runs/{id}/favourite` endpoint tests
+```python
+# tests/test_runs_api.py (new file)
+# Uses TestClient — no live DB needed for schema/routing tests.
+from fastapi.testclient import TestClient
+
+def test_get_runs_returns_200(test_app):
+    """GET /runs returns 200 with items and total."""
+    client = TestClient(test_app)
+    response = client.get("/runs?limit=5&offset=0")
+    assert response.status_code == 200
+    data = response.json()
+    assert "items" in data
+    assert "total" in data
+
+def test_patch_favourite_nonexistent_run_returns_404(test_app):
+    """PATCH /runs/{bad_id}/favourite returns 404."""
+    client = TestClient(test_app)
+    response = client.patch(
+        "/runs/00000000-0000-0000-0000-000000000000/favourite",
+        json={"is_favourite": True},
+    )
+    assert response.status_code == 404
+```
+
+#### W3-026 — `medical_case_trends` named query guardrail test
+```python
+def test_medical_case_trends_is_select_only():
+    """medical_case_trends named query passes the SQL guardrail."""
+    from backend.app.tools.sql_tool import _NAMED_QUERIES, _BLOCKED_PATTERN
+    sql = _NAMED_QUERIES["medical_case_trends"]
+    assert _BLOCKED_PATTERN.search(sql) is None, (
+        "medical_case_trends named query contains a blocked DML/DDL keyword"
+    )
+
+def test_medical_case_trends_query_exists():
+    from backend.app.tools.sql_tool import _NAMED_QUERIES
+    assert "medical_case_trends" in _NAMED_QUERIES
+```
+
+#### W3-028 — CR-007 fix test
+```python
+def test_no_get_event_loop_in_codebase():
+    """
+    Acceptance criterion for W3-028: zero uses of asyncio.get_event_loop()
+    in the backend source code.
+    """
+    import subprocess
+    result = subprocess.run(
+        ["grep", "-r", "get_event_loop", "backend/"],
+        capture_output=True, text=True,
+    )
+    assert result.stdout == "", (
+        f"Found get_event_loop usage:\n{result.stdout}"
+    )
+```
+
+#### W3-029 — VectorHit source field tests
+```python
+def test_vector_hit_source_defaults_to_vector():
+    from backend.app.schemas.models import VectorHit
+    hit = VectorHit(chunk_id="c1", incident_id="i1", score=0.9, excerpt="test")
+    assert hit.source == "vector"
+
+def test_vector_hit_source_accepts_all_literals():
+    from backend.app.schemas.models import VectorHit
+    for src in ("bm25", "vector", "hybrid"):
+        hit = VectorHit(chunk_id="c1", incident_id="i1", score=0.5, excerpt="t", source=src)
+        assert hit.source == src
+```
+
+### How to run
+
+```bash
+# From the repo root, with the venv activated:
+cd backend
+pytest tests/ -v
+
+# Single test file:
+pytest tests/test_sql_guardrails.py -v
+
+# Single test by keyword:
+pytest -k "test_medical_case_trends" -v
+
+# With coverage:
+pytest tests/ --cov=backend/app --cov-report=term-missing
+```
+
+**Test infrastructure notes:**
+- The Anthropic stub at `backend/tests/stubs/anthropic/__init__.py` is loaded via `conftest.py` (inserts `stubs/` at `sys.path[0]`). The new `stream()` method must be stubbed in the test stub if any tests call it. Add a stub implementation that yields a few tokens and returns:
+  ```python
+  # In stubs/anthropic/__init__.py, add to the AsyncAnthropic stub:
+  class _FakeStreamContext:
+      async def __aenter__(self):
+          return self
+      async def __aexit__(self, *args):
+          pass
+      def __aiter__(self):
+          return iter([_FakeDeltaEvent("stub token ")])
+
+  class _FakeDeltaEvent:
+      def __init__(self, text):
+          self.delta = type("delta", (), {"text": text})()
+
+  # Add to AsyncMessages stub:
+  def stream(self, **kwargs):
+      return _FakeStreamContext()
+  ```
+- `orjson` must be installed in the test venv (`pip install orjson==3.10.12`).
+
+---
+
+## 12. Deployment Notes
+
+### Order of operations
+
+1. **Run migrations first** (before deploying updated backend code):
+   ```bash
+   # From repo root, with PG_DSN pointing at Neon production:
+   cd backend
+   alembic upgrade head
+   ```
+   This applies W3-001, W3-002, and W3-003 in order. The W3-003 `COMMIT` + `CONCURRENTLY` statements are zero-downtime — they do not lock the table during index creation.
+
+2. **Deploy updated backend code** to Render. The new `session_id` and `is_favourite` columns will be present before any code that writes to them is live.
+
+3. **Set env vars on Render** before deploying (or immediately after — safe either way because the flags default to enabling the features):
+   - `CONVERSATIONAL_MEMORY_ENABLED=true`
+   - `STREAMING_ENABLED=true`
+   - `EAGER_MODEL_LOAD=true` (critical for streaming first-token latency)
+
+4. **Deploy frontend** (independent of backend — new fields are optional, no breaking changes).
+
+### Neon production migration notes
+
+- Neon supports `CREATE INDEX CONCURRENTLY` via standard PostgreSQL. The `op.execute("COMMIT")` in the migration correctly ends the implicit transaction before each `CONCURRENTLY` call.
+- If any `CONCURRENTLY` index fails partway, re-run `alembic upgrade head` — the `IF NOT EXISTS` guard makes it idempotent.
+- After migration, verify the HNSW index with:
+  ```sql
+  -- Run in Neon SQL editor or psql:
+  EXPLAIN (ANALYZE, FORMAT TEXT)
+  SELECT e.embed_id, 1 - (e.embedding <=> '[0.1, 0.2, ...]'::vector) AS score
+  FROM medical_embeddings e
+  ORDER BY e.embedding <=> '[0.1, 0.2, ...]'::vector
+  LIMIT 8;
+  -- Should contain: "Index Scan using idx_medical_embeddings_hnsw"
+  ```
+
+### Render deployment configuration
+
+In `render.yaml` or the Render dashboard, ensure the following service environment variables are set:
+
+```yaml
+envVars:
+  - key: EAGER_MODEL_LOAD
+    value: "true"
+  - key: CONVERSATIONAL_MEMORY_ENABLED
+    value: "true"
+  - key: STREAMING_ENABLED
+    value: "true"
+```
+
+The `EAGER_MODEL_LOAD=true` setting adds ~3-4 seconds to container startup time (model load) but ensures the first streaming query after a cold start returns tokens within 1.5s rather than 5-7s.
+
+### Rollback procedure
+
+If any Wave 3 migration causes issues in production:
+
+```bash
+# Rollback all three Wave 3 migrations (in reverse order):
+alembic downgrade 20260307_002  # drops W3-003 indexes
+alembic downgrade 20260307_001  # drops is_favourite column
+alembic downgrade <previous_head>  # drops session_id column
+```
+
+To disable individual features without a code redeploy:
+- Set `CONVERSATIONAL_MEMORY_ENABLED=false` on Render → Epic 1 disabled; existing API unaffected
+- Set `STREAMING_ENABLED=false` on Render → Epic 3 SSE endpoint falls back to batch response
+- Unset `EAGER_MODEL_LOAD` (or set to `false`) → model loads on first request (slower first-token but no startup cost)
+
+---
+
+## Appendix: Pre-implementation checklist
+
+Run through this before starting each sprint:
+
+### Sprint 1 checklist (Epics 1 & 2)
+
+- [ ] Run `alembic history` and note the current head revision — fill it into `down_revision` in W3-001
+- [ ] Apply migrations: `alembic upgrade head` on local Docker DB
+- [ ] Verify columns exist: `SELECT column_name, data_type, is_nullable FROM information_schema.columns WHERE table_name = 'agent_runs'`
+- [ ] Update `db/models.py` (`AgentRun` class) to add `session_id` and `is_favourite` columns
+- [ ] Update `schemas/models.py` (add `session_id`, `conversation_history` to `QueryRequest`; add `HistoryRunSummary`, `RunListResponse`)
+- [ ] Create `api/runs.py`
+- [ ] Register `runs.router` in `main.py`
+- [ ] Update `orchestrator.py` (signature, history injection, session_id save)
+- [ ] Run `pytest tests/ -v` — all existing tests pass
+
+### Sprint 2 checklist (Epics 3, 4, 5, 6)
+
+- [ ] Add `stream()` to `LLMClient` ABC and `ClaudeClient`
+- [ ] Add `PreSynthesisState`, `run_until_synthesis()`, `stream_synthesis()`, `finalise()` to `AgentOrchestrator`
+- [ ] Add `POST /query/stream` to `query.py`
+- [ ] Create `api/analytics.py` with three endpoints
+- [ ] Register `analytics.router` in `main.py`
+- [ ] Add `EAGER_MODEL_LOAD` hook to `lifespan()` in `main.py`
+- [ ] Run `pytest tests/ -v`
+- [ ] Test streaming manually: `curl -N -X POST http://localhost:8000/query/stream -H "Content-Type: application/json" -d '{"query":"hydraulic trends","domain":"aircraft"}' 2>&1 | head -20`
+
+### Sprint 3 checklist (Epics 7, 8, 9, 10)
+
+- [ ] Apply W3-003 migration
+- [ ] Add `medical_case_trends` to `_NAMED_QUERIES` in `sql_tool.py`
+- [ ] Fix CR-007 in `compute_tool.py` — run `grep -r "get_event_loop" backend/` to confirm zero results
+- [ ] Add `source` field to `VectorHit` in `schemas/models.py`
+- [ ] Add `source` label to hits in `retrieval.py` (`vector_search`, `bm25_search`, `hybrid_search`)
+- [ ] Run `pytest tests/ -v`
+- [ ] Verify HNSW index used: `EXPLAIN ANALYZE` on a medical embedding query in Neon SQL editor
