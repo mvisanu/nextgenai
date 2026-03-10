@@ -50,7 +50,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 |---|---|---|
 | `agent/` | `orchestrator.py`, `intent.py`, `planner.py`, `verifier.py` | Intent classification → plan → tool loop → verify |
 | `api/` | `query.py`, `runs.py`, `analytics.py`, `ingest.py`, `docs.py` | FastAPI routers: `POST /query`, `GET /runs`, `GET /analytics/*`, `POST /ingest`, `GET /healthz` |
-| `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` (hard, raises 401) + `get_optional_user` (soft, returns `None` for anonymous) FastAPI dependencies |
+| `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` (hard, raises 401) + `get_optional_user` (soft, returns `None` for anonymous) FastAPI dependencies — **currently inactive**: all API routes are fully public (no `Depends(get_current_user/get_optional_user)` applied); module retained for future re-enablement |
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema + Wave 3 columns, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
 | `ingest/` | `pipeline.py`, `kaggle_loader.py`, `synthetic.py` | Load Kaggle CSVs or generate synthetic data, chunk & embed |
@@ -64,13 +64,13 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/query` | Main agent query — returns `QueryResponse`; supports SSE streaming via `Accept: text/event-stream` — **requires Bearer token** |
-| `GET` | `/runs` | Paginated run history — `?limit=20&offset=0` — **requires Bearer token**; filters by `user_id` |
-| `GET` | `/runs/{run_id}` | Single run full response — **requires Bearer token**; returns 404 for another user's run |
-| `PATCH` | `/runs/{run_id}/favourite` | Toggle `is_favourite` on a run — **requires Bearer token**; returns 404 for another user's run |
-| `GET` | `/analytics/defects` | Defect aggregates — `?from=&to=&domain=` — **requires Bearer token** |
-| `GET` | `/analytics/maintenance` | Maintenance trends — `?from=&to=` — **requires Bearer token** |
-| `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` — **requires Bearer token** |
+| `POST` | `/query` | Main agent query — returns `QueryResponse`; supports SSE streaming via `Accept: text/event-stream` — **public** |
+| `GET` | `/runs` | Paginated run history — `?limit=20&offset=0` — **public**; returns all runs (no user filter) |
+| `GET` | `/runs/{run_id}` | Single run full response — **public** |
+| `PATCH` | `/runs/{run_id}/favourite` | Toggle `is_favourite` on a run — **public** |
+| `GET` | `/analytics/defects` | Defect aggregates — `?from=&to=&domain=` — **public** |
+| `GET` | `/analytics/maintenance` | Maintenance trends — `?from=&to=` — **public** |
+| `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` — **public** |
 | `POST` | `/ingest` | Ingest documents — public |
 | `GET` | `/healthz` | Health check — `Cache-Control: no-store` — public |
 

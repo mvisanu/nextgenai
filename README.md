@@ -111,16 +111,19 @@ Data is seeded automatically on first container start if tables are empty (aircr
 
 ## API Endpoints
 
+All endpoints are public — no authentication token required.
+
 | Method | Path | Description |
 |---|---|---|
-| `POST` | `/query` | Run agent query (aircraft domain), returns cited answer |
-| `POST` | `/query/medical` | Run agent query (medical domain), returns cited answer |
-| `GET` | `/runs/{run_id}` | Retrieve stored run by ID |
-| `GET` | `/docs` | List ingested incident documents |
-| `GET` | `/docs/{doc_id}/chunks/{chunk_id}` | Fetch specific chunk for citation display |
-| `POST` | `/ingest` | Trigger aircraft ingest pipeline |
-| `POST` | `/ingest/medical` | Trigger medical ingest pipeline |
-| `GET` | `/healthz` | Liveness + DB health check |
+| `POST` | `/query` | Run agent query (aircraft or medical domain via `domain` field), returns cited `QueryResponse`; supports SSE streaming via `Accept: text/event-stream` |
+| `GET` | `/runs` | Paginated run history — `?limit=20&offset=0` |
+| `GET` | `/runs/{run_id}` | Single stored run by ID |
+| `PATCH` | `/runs/{run_id}/favourite` | Toggle `is_favourite` flag on a run |
+| `GET` | `/analytics/defects` | Defect aggregates — `?from=&to=&domain=` |
+| `GET` | `/analytics/maintenance` | Maintenance trends — `?from=&to=` |
+| `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` |
+| `POST` | `/ingest` | Trigger ingest pipeline |
+| `GET` | `/healthz` | Liveness + DB health check (`Cache-Control: no-store`) |
 | `GET` | `/api/docs` | Swagger UI |
 
 ---
@@ -146,10 +149,13 @@ PG_DSN=postgresql://postgres:postgres@localhost:5432/nextai
 DATABASE_URL=postgresql://postgres:postgres@localhost:5432/nextai
 ```
 
-Create `frontend/.env.local`:
+Create `frontend/.env.local` (see `frontend/.env.local.example` for all vars):
 
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
+NEXT_PUBLIC_SUPABASE_URL=https://<project>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+NEXT_PUBLIC_SITE_URL=http://localhost:3005
 ```
 
 ### 2. Start the backend
@@ -176,11 +182,12 @@ Frontend available at `http://localhost:3005`.
 
 ```bash
 cd backend
-pip install -r requirements.txt
-pytest tests/
-pytest tests/test_sql_guardrails.py    # single file
-pytest -k "test_router"               # single test
+.venv/Scripts/python -m pytest tests/                       # full suite (~560 tests)
+.venv/Scripts/python -m pytest tests/test_sql_guardrails.py # single file
+.venv/Scripts/python -m pytest -k "test_router"             # single test
 ```
+
+> **Always use `.venv/Scripts/python -m pytest`** (not bare `pytest`) — the venv contains `pgvector`, `psycopg2`, and `asyncpg` native modules that bare pytest cannot find.
 
 ---
 
@@ -195,17 +202,21 @@ The `render.yaml` blueprint deploys via Docker. Required environment variables i
 | `PG_DSN` | `postgresql://user:pass@host.neon.tech/neondb?sslmode=require` |
 | `DATABASE_URL` | `postgresql+asyncpg://user:pass@host.neon.tech/neondb?ssl=require` |
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (`sk-ant-api03-...`) |
+| `SUPABASE_JWT_SECRET` | From Supabase dashboard → Settings → API → JWT Settings |
 | `CORS_ORIGINS` | Additional allowed origins, comma-separated (optional) |
 
 > **DSN format**: `PG_DSN` uses psycopg2 syntax (`sslmode=require`); `DATABASE_URL` uses asyncpg syntax (`postgresql+asyncpg://` prefix + `ssl=require`). Both require `?` before query params — a missing `?` produces `"db":false` in `/healthz`.
 
 ### Frontend → Vercel
 
-Connect the GitHub repo to Vercel. Required environment variable:
+Connect the GitHub repo to Vercel. Required environment variables:
 
 | Variable | Value |
 |---|---|
 | `NEXT_PUBLIC_API_URL` | `https://nextgenai-5bf8.onrender.com` |
+| `NEXT_PUBLIC_SUPABASE_URL` | `https://<project>.supabase.co` |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase anon/public key (safe to expose) |
+| `NEXT_PUBLIC_SITE_URL` | `https://nextgenai-seven.vercel.app` |
 
 ---
 
@@ -222,6 +233,10 @@ Connect the GitHub repo to Vercel. Required environment variable:
 | `/examples` | Pre-built example queries (aircraft domain) + Industry Use Cases with client CTA |
 | `/medical-examples` | 14 clinical example queries (medical domain) |
 | `/faq` | Frequently asked questions |
+| `/sign-in` | Supabase auth — sign in |
+| `/sign-up` | Supabase auth — create account |
+| `/forgot-password` | Supabase auth — request password reset email |
+| `/reset-password` | Supabase auth — set new password (PKCE flow via `/auth/callback`) |
 
 ---
 
