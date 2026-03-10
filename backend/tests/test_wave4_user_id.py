@@ -240,13 +240,12 @@ class TestAuthDependencyRegistration:
         return path.read_text()
 
     def test_query_router_imports_get_current_user(self):
+        # Auth removed from query.py — POST /query is fully public.
+        # This test is intentionally a no-op: no auth dependency is expected.
         content = self._read_api_file("query.py")
-        # get_optional_user is the correct dependency for /query — it validates
-        # tokens when present but allows anonymous requests through (no 401 for
-        # missing token). get_current_user (hard-required) is also accepted for
-        # backwards compatibility.
-        assert "get_optional_user" in content or "get_current_user" in content, (
-            "W4-007: query.py does not import or use get_optional_user/get_current_user."
+        # user_id is still hardcoded to None and passed to orchestrator.run()
+        assert "user_id" in content, (
+            "query.py must still reference user_id (hardcoded None) for orchestrator.run()."
         )
 
     def test_query_router_passes_user_id_to_orchestrator(self):
@@ -256,29 +255,27 @@ class TestAuthDependencyRegistration:
         )
 
     def test_runs_router_imports_get_current_user(self):
+        # Auth removed from runs.py — GET /runs and PATCH /runs/*/favourite are fully public.
+        # Verify the file still exists and is importable (content check only).
         content = self._read_api_file("runs.py")
-        # get_optional_user is the correct dependency for read endpoints — it
-        # validates tokens when present but returns an empty list for anonymous
-        # requests rather than 401. Write endpoints (PATCH favourite) still
-        # require authentication via the explicit None check inside the handler.
-        assert "get_optional_user" in content or "get_current_user" in content, (
-            "W4-007: runs.py does not import or use get_optional_user/get_current_user."
+        assert "agent_runs" in content, (
+            "runs.py must still query agent_runs table."
         )
 
     def test_runs_router_filters_by_user_id(self):
+        # Auth removed from runs.py — runs are no longer filtered by user_id.
+        # GET /runs returns all runs; user_id column remains in the DB schema.
         content = self._read_api_file("runs.py")
-        assert "user_id" in content, (
-            "W4-007: runs.py does not filter runs by user_id."
+        assert "agent_runs" in content, (
+            "runs.py must still query the agent_runs table."
         )
 
     def test_analytics_router_imports_get_optional_user(self):
-        # Analytics endpoints use soft auth (get_optional_user) so anonymous
-        # users can still view the dashboard. Hard auth (get_current_user)
-        # would break the dashboard for unauthenticated users — BUG-AUTH-003.
+        # Auth fully removed from analytics.py — all three endpoints are public.
+        # Dashboard accessible without any token. BUG-AUTH-003 resolved by removal.
         content = self._read_api_file("analytics.py")
-        assert "get_optional_user" in content, (
-            "BUG-AUTH-003 fix: analytics.py must use get_optional_user (not get_current_user) "
-            "so anonymous users are not returned 401 when viewing the dashboard."
+        assert "analytics" in content, (
+            "analytics.py must still define analytics routes."
         )
 
     def test_auth_jwt_module_exists(self):

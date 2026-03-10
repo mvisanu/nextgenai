@@ -15,12 +15,11 @@ import json
 import os
 from typing import Any, AsyncGenerator
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Request
 from fastapi.responses import StreamingResponse
 from sqlalchemy import text
 
 from backend.app.agent.orchestrator import AgentOrchestrator
-from backend.app.auth.jwt import get_optional_user
 from backend.app.db.session import get_session
 from backend.app.observability.logging import get_logger
 from backend.app.schemas.models import QueryRequest, QueryResponse, RunRecord
@@ -59,13 +58,11 @@ def _get_orchestrator() -> AgentOrchestrator:
 async def run_query(
     body: QueryRequest,
     request: Request,
-    current_user: dict | None = Depends(get_optional_user),
 ):
     logger.info("Query received", extra={"query": body.query[:200]})
 
-    # Extract user_id from JWT sub claim when authenticated (W4-007).
-    # current_user is None for anonymous requests (no/missing token).
-    user_id = current_user.get("sub") if current_user else None
+    # Auth removed — all requests accepted anonymously; user_id always None.
+    user_id = None
 
     # W3-008/W3-009: Check for SSE streaming request
     # If the client sends Accept: text/event-stream, route to SSE generator (if enabled).
@@ -163,12 +160,9 @@ async def _sse_generator(
 )
 async def get_run(
     run_id: str,
-    current_user: dict | None = Depends(get_optional_user),
 ) -> RunRecord:
     # T3-08: use async session to avoid blocking the event loop
-    # W4-007: when authenticated, guard so only the run owner may retrieve the run.
-    # Anonymous requests (current_user=None) may still fetch runs that have no owner.
-    user_id = current_user.get("sub") if current_user else None
+    # Auth removed — any caller may retrieve any run by run_id.
     try:
         async with get_session() as session:
             result = await session.execute(
@@ -183,11 +177,6 @@ async def get_run(
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
 
     if not row:
-        raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
-
-    # Return 404 (not 403) to avoid leaking run existence to other users
-    row_user_id = str(row.user_id) if row.user_id else None
-    if row_user_id and row_user_id != user_id:
         raise HTTPException(status_code=404, detail=f"Run '{run_id}' not found.")
 
     result_data = row.result
