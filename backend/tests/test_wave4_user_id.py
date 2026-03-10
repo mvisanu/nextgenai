@@ -271,10 +271,14 @@ class TestAuthDependencyRegistration:
             "W4-007: runs.py does not filter runs by user_id."
         )
 
-    def test_analytics_router_imports_get_current_user(self):
+    def test_analytics_router_imports_get_optional_user(self):
+        # Analytics endpoints use soft auth (get_optional_user) so anonymous
+        # users can still view the dashboard. Hard auth (get_current_user)
+        # would break the dashboard for unauthenticated users — BUG-AUTH-003.
         content = self._read_api_file("analytics.py")
-        assert "get_current_user" in content, (
-            "W4-007: analytics.py does not import or use get_current_user."
+        assert "get_optional_user" in content, (
+            "BUG-AUTH-003 fix: analytics.py must use get_optional_user (not get_current_user) "
+            "so anonymous users are not returned 401 when viewing the dashboard."
         )
 
     def test_auth_jwt_module_exists(self):

@@ -16,6 +16,16 @@ export default function ResetPassword() {
   const [expired, setExpired] = useState(false);
 
   useEffect(() => {
+    // With PKCE flow (via /auth/callback), the code exchange completes before
+    // the user lands on this page, so the session is already established.
+    // Read it directly via getSession() rather than waiting for the event.
+    supabase.auth.getSession().then(({ data }) => {
+      if (data.session) {
+        setReady(true);
+      }
+    });
+
+    // Keep onAuthStateChange as a fallback for direct token-in-URL (implicit) links.
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event: AuthChangeEvent) => {
       if (event === "PASSWORD_RECOVERY") {
         setReady(true);

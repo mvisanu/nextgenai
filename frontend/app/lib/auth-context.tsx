@@ -31,8 +31,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // placeholder value (malformed signature), decode throws a TypeError
     // ("Cannot read properties of undefined (reading 'payload')") which
     // would otherwise surface as an uncaught promise rejection.
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user ?? null);
+    Promise.all([
+      supabase.auth.getUser(),
+      supabase.auth.getSession(),
+    ]).then(([{ data: userData }, { data: sessionData }]) => {
+      setUser(userData.user ?? null);
+      setAccessToken(sessionData.session?.access_token ?? null);
       setLoading(false);
     }).catch(() => {
       // Auth unavailable (misconfigured Supabase env vars or network error).
