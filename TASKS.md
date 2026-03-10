@@ -1,1371 +1,1711 @@
-# TASKS.md — NextAgentAI Master Task List
+# NextAgentAI — Task Breakdown
 
-> Consolidated from: TASKS.md (Wave 0 — MVP), TASKS2.md (Wave 1 — Performance), TASKS3.md (Wave 2 — RAG & Agent)
->
-> | Wave | Tasks | Status |
-> |---|---|---|
-> | Wave 0 — MVP Implementation | T-001 to T-045 (48 tasks) | ALL COMPLETE |
-> | Wave 1 — Performance Optimizations | T-01 to T-17 (17 tasks) | ALL COMPLETE |
-> | Wave 2 — RAG & Agent Optimizations | T3-01 to T3-15 (15 tasks) | 12 DONE · 1 SKIPPED · 2 pending |
->
-> **Effort Scale:** XS ≈ 1h | S ≈ 2h | M ≈ 4h | L ≈ 8h | XL ≈ 2d
+This file consolidates all wave task breakdowns into a single reference.
 
 ---
 
-## Wave 0 — MVP Implementation
-
-**Generated:** 2026-03-04 | **Source PRD:** PRD.md v1.0
-**Owner Roles:** `backend-architect` | `frontend-developer` | `deployment-engineer`
-
-Tasks are numbered in strict dependency order. No task may begin until every task in its **Blocked-by** list is marked complete.
+# tasks2.md — NextAgentAI Wave 3 Task Breakdown
+Generated from prd2.md v1.1 | Date: 2026-03-07
 
 ---
 
-### Phase 0: Infrastructure & Scaffolding
+## Pre-Implementation Warnings (Read Before Starting Any Task)
+
+**Warning 1 — Epic 1 pronoun resolution scope:** "Resolve 'it'/'them' via context" is a hard NLP problem. Implement ONLY as "pass last query's explicit filters forward" — not open-ended pronoun coreference resolution. Full coreference resolution is out of scope.
+
+**Warning 2 — Epic 3 streaming cold start:** `EAGER_MODEL_LOAD=true` is a hard requirement for the 1.5s first-token target, not optional. SSE fixes perceived latency but NOT the 60-second cold start on Render free tier.
+
+**Warning 3 — Alembic CONCURRENTLY transaction:** `CREATE INDEX CONCURRENTLY` cannot run inside a PostgreSQL transaction block. Every migration that uses it must call `op.execute("COMMIT")` immediately before the `CREATE INDEX CONCURRENTLY` statement.
+
+**Rollback rule:** Every Alembic migration must have a working `downgrade()` function.
+
+**Feature flags:** `CONVERSATIONAL_MEMORY_ENABLED` gates Epic 1 orchestrator changes. `STREAMING_ENABLED` gates Epic 3 SSE changes. Both must be env-var-controlled so features can be disabled without a redeploy.
+
+**SQL guardrails:** All new analytics endpoints use the named-query pattern only — no raw SQL generation. SELECT-only enforced.
 
 ---
 
-### T-001 — Initialise repo structure and base configuration files
+## Summary Table
 
-**Owner:** `deployment-engineer` | **Effort:** M
+| Task ID | Title | Epic | Sprint | Priority | Effort | Depends On |
+|---------|-------|------|--------|----------|--------|------------|
+| W3-001 | Alembic migration: add session_id to agent_runs | Epic 1 | 1 | P0 | XS | none |
+| W3-002 | Alembic migration: add is_favourite to agent_runs | Epic 2 | 1 | P0 | XS | none |
+| W3-003 | Add session_id and conversation_history to QueryRequest schema | Epic 1 | 1 | P0 | XS | none |
+| W3-004 | Add is_favourite to RunSummary schema | Epic 2 | 1 | P0 | XS | none |
+| W3-005 | Update agent_runs SQLAlchemy model: session_id + is_favourite columns | Epic 1 & 2 | 1 | P0 | XS | W3-001, W3-002 |
+| W3-006 | Orchestrator: inject conversation_history into synthesis prompt | Epic 1 | 1 | P0 | S | W3-003, W3-005 |
+| W3-007 | Backend: GET /runs and PATCH /runs/{id}/favourite endpoints | Epic 2 | 1 | P0 | S | W3-004, W3-005 |
+| W3-008 | ChatPanel: session UUID, history accumulation, session pill, clear reset | Epic 1 | 1 | P0 | S | W3-003 |
+| W3-009 | Frontend: HistorySidebar component | Epic 2 | 1 | P0 | M | W3-007 |
+| W3-010 | ChatPanel: useSearchParams run loading from ?run= URL | Epic 2 | 1 | P0 | S | W3-007 |
+| W3-011 | Add stream() method to LLMClient in client.py | Epic 3 | 2 | P1 | S | none |
+| W3-012 | Backend SSE streaming endpoint in query.py | Epic 3 | 2 | P1 | M | W3-011 |
+| W3-013 | ChatPanel: streaming renderer with ReadableStream and fallback | Epic 3 | 2 | P1 | M | W3-012 |
+| W3-014 | New analytics.py: /analytics/defects, /maintenance, /diseases endpoints | Epic 4 | 2 | P1 | S | none |
+| W3-015 | Dashboard: wire Tabs 3, 4, 5 to real analytics endpoints | Epic 4 | 2 | P1 | M | W3-014 |
+| W3-016 | New ExportModal.tsx: PDF and JSON export | Epic 5 | 2 | P1 | M | none |
+| W3-017 | ChatPanel: Export button on assistant messages | Epic 5 | 2 | P1 | XS | W3-016 |
+| W3-018 | AgentTimeline: CSV download button on SQL result tables | Epic 5 | 2 | P1 | S | none |
+| W3-019 | CitationsDrawer: Prev/Next nav, "1 of N" counter, offset highlighting, conflict badge | Epic 6 | 2 | P1 | S | none |
+| W3-020 | Examples pages: "Run Query" button + localStorage + navigate to / | Epic 7 | 3 | P2 | S | none |
+| W3-021 | ChatPanel: on-mount localStorage check and auto-submit with debounce | Epic 7 | 3 | P2 | S | W3-020 |
+| W3-022 | GraphViewer: node search input + opacity dimming + fitView to selection | Epic 8 | 3 | P2 | M | none |
+| W3-023 | GraphViewer: viewport-aware popover positioning | Epic 8 | 3 | P2 | S | none |
+| W3-024 | GraphViewer: edge weight labels on SIMILAR_TO edges | Epic 8 | 3 | P2 | XS | none |
+| W3-025 | Alembic migration: HNSW + GIN FTS + agent_runs composite index | Epic 9 | 3 | P2 | S | none |
+| W3-026 | Add medical_case_trends named query to sql_tool.py | Epic 9 | 3 | P2 | XS | none |
+| W3-027 | ChatPanel: persistent medical disclaimer banner | Epic 9 | 3 | P2 | XS | none |
+| W3-028 | Fix CR-007: replace get_event_loop with get_running_loop in compute_tool.py | Epic 10 | 3 | P2 | XS | none |
+| W3-029 | Add source field to VectorHit schema and tag hits in retrieval.py | Epic 10 | 3 | P2 | S | none |
+| W3-030 | AgentTimeline: CACHED badge, timing breakdown bar chart, source labels | Epic 10 | 3 | P2 | S | W3-029 |
+| W3-031 | ChatPanel: collapsible AGENT NOTES section for next_steps and assumptions | Epic 10 | 3 | P2 | XS | none |
+
+---
+
+## Sprint 1 — Epics 1 & 2 (P0, ~6 days)
+
+### Sprint 1 Overview
+
+Sprint 1 establishes the foundational database schema changes (two migrations), the Pydantic schema additions, the orchestrator history injection, the history/favourites API endpoints, and all associated frontend components. The migrations and schema changes have no dependencies and can begin immediately in parallel. Frontend work depends on the API endpoints being defined.
+
+**Parallel work frontier for Sprint 1:** W3-001, W3-002, W3-003, W3-004 can all start simultaneously.
+
+---
+
+### W3-001 · Alembic migration: add session_id column to agent_runs
+
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 1 — Conversational Memory & Multi-turn Queries |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- NEW: `backend/app/db/migrations/<timestamp>_add_session_id_to_agent_runs.py`
 
 **Description:**
-Create the full directory scaffold exactly as specified in the PRD (Section 8). Create placeholder `__init__.py` files, `.gitignore`, `.env.example`, and `config.yaml` with all keys from PRD Section 11. No implementation logic yet — pure structure.
+Create an Alembic migration that adds a nullable `session_id UUID` column to the `agent_runs` table. The column must be nullable with no default value so that existing rows are not affected and existing API callers remain unbroken — this is a zero-breaking-change schema addition. The migration must include a fully working `downgrade()` function that drops the column cleanly. Use `op.add_column("agent_runs", sa.Column("session_id", postgresql.UUID(as_uuid=True), nullable=True))` in `upgrade()`. No data backfill is needed because the column is nullable.
 
 **Acceptance Criteria:**
-- All directories exist: `backend/app/{api,agent,rag,graph,tools,ingest,db,schemas,llm,observability}`, `backend/src/`, `backend/tests/`, `frontend/app/{components,lib}`, `demo/{docs,seed_sql}`, `data/synthetic/`
-- `.env.example` contains: `PG_DSN`, `ANTHROPIC_API_KEY`, `KAGGLE_USERNAME`, `KAGGLE_KEY`
-- `config.yaml` contains all keys from PRD Section 11 with correct default values (model: `claude-sonnet-4-6`, dim: 384, chunk_size_tokens: 400, chunk_overlap_tokens: 75, top_k: 8, k_hop: 2, max_steps: 10)
-- `.gitignore` excludes: `.env`, `data/synthetic/`, `data/kaggle/`, `__pycache__/`, `.venv/`, `node_modules/`
-- `git init` completed and initial commit made
-
-**Blocked-by:** *(none)*
+- [ ] Migration file created in `backend/app/db/migrations/` with a timestamp prefix following the existing naming convention (e.g., `20260307_001_add_session_id_to_agent_runs.py`)
+- [ ] `upgrade()` adds `session_id UUID NULLABLE` to `agent_runs` using `op.add_column()`; existing rows remain unmodified with `session_id = NULL`
+- [ ] `downgrade()` drops the `session_id` column using `op.drop_column("agent_runs", "session_id")`; running `alembic downgrade -1` leaves the table in its pre-migration state
+- [ ] Running `alembic upgrade head` followed by `alembic downgrade -1` followed by `alembic upgrade head` completes without error on a clean test database
+- [ ] `alembic history` shows the new migration in the chain with no orphaned heads
 
 ---
 
-### T-002 — PostgreSQL Docker Compose service (local dev)
+### W3-002 · Alembic migration: add is_favourite column to agent_runs
 
-**Owner:** `deployment-engineer` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 2 — Query History & Favourites |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- NEW: `backend/app/db/migrations/<timestamp>_add_is_favourite_to_agent_runs.py`
 
 **Description:**
-Define the `docker-compose.yml` with the `postgres` service using the `pgvector/pgvector:pg16` image. This service is for **local development only** — production uses Neon (see T-002b). Configure environment variables, health check, and a named volume. The backend and frontend services will be added in T-039; only the DB service is needed here so all other local dev tasks can depend on a running database.
+Create an Alembic migration that adds an `is_favourite BOOLEAN NOT NULL DEFAULT FALSE` column to the `agent_runs` table. Unlike `session_id`, this column can carry a `NOT NULL` constraint because `FALSE` is a safe default for all existing rows — no row will violate the constraint after the migration. The migration must include a fully working `downgrade()` function. This migration is independent of W3-001 and can be authored and run in any order relative to it; both will be applied sequentially at deploy time.
 
 **Acceptance Criteria:**
-- `docker-compose.yml` defines a `postgres` service using image `pgvector/pgvector:pg16`
-- `POSTGRES_DB`, `POSTGRES_USER`, `POSTGRES_PASSWORD` sourced from `.env`
-- Health check: `pg_isready -U ${POSTGRES_USER}` with interval 5s, retries 10
-- Named volume `pgdata` mounted to `/var/lib/postgresql/data`
-- Port `5432` exposed to host
-- Running `docker compose up postgres` starts Postgres and health check passes within 60s
-- A comment at the top of `docker-compose.yml` explicitly states: "LOCAL DEVELOPMENT ONLY — not the production deployment mechanism"
-
-**Blocked-by:** T-001
+- [ ] Migration file created in `backend/app/db/migrations/` with a timestamp prefix that sorts correctly relative to W3-001
+- [ ] `upgrade()` adds `is_favourite BOOLEAN NOT NULL DEFAULT FALSE` to `agent_runs` using `op.add_column()`
+- [ ] All existing rows in `agent_runs` have `is_favourite = FALSE` immediately after `upgrade()` completes
+- [ ] `downgrade()` drops the `is_favourite` column; running `alembic downgrade -1` restores the pre-migration state with no trace of the column
+- [ ] Running `alembic upgrade head` followed by `alembic downgrade -1` completes without error
 
 ---
 
-### T-002b — Neon database provisioning and connection
+### W3-003 · Add session_id and conversation_history optional fields to QueryRequest schema
 
-**Owner:** `deployment-engineer` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 1 — Conversational Memory & Multi-turn Queries |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/schemas/models.py`
 
 **Description:**
-Provision a Neon free-tier PostgreSQL project for external deployment. Neon is a serverless PostgreSQL provider with pgvector support built-in — it replaces the `pgvector/pgvector:pg16` Docker image for the cloud deployment path. Document the connection string format and wire it into `.env.example`.
+Add two optional fields to the `QueryRequest` Pydantic v2 model: `session_id: str | None = None` and `conversation_history: list[dict] | None = None`. Both fields must be fully optional with `None` defaults so that all existing API callers continue to work without any changes to their request payloads. The `conversation_history` field holds a list of prior turn dicts in the format `{"query": str, "answer_summary": str}`. No validation beyond type-checking is needed at the schema level — the orchestrator enforces the max-5-turns limit during synthesis. This change is additive only: no existing field is modified or removed.
 
 **Acceptance Criteria:**
-- Neon free-tier project created (documented in README external deployment section)
-- pgvector extension enabled on the Neon database: `CREATE EXTENSION IF NOT EXISTS vector;` executes without error
-- `DATABASE_URL` environment variable added to `.env.example` in standard `postgresql://user:password@host/dbname?sslmode=require` format
-- `DATABASE_URL` works as the SQLAlchemy connection string (`PG_DSN` in `config.yaml` maps to this var)
-- `alembic upgrade head` runs successfully against the Neon database, creating all tables and indexes
-- Neon connection string documented in README under "External Deployment" with a note to add it as a Render environment secret
-
-**Blocked-by:** T-001
+- [ ] `QueryRequest` in `backend/app/schemas/models.py` has `session_id: str | None = None` field
+- [ ] `QueryRequest` has `conversation_history: list[dict] | None = None` field
+- [ ] Existing test suite passes without modification — no test that constructs `QueryRequest(query="test")` without the new fields should fail
+- [ ] `QueryRequest(query="test")` instantiation (omitting both new fields) succeeds with both fields defaulting to `None`
+- [ ] `QueryRequest.model_json_schema()` shows both new fields as optional (not in the `required` array)
 
 ---
 
-### T-003 — Python virtual environment, `requirements.txt`, and project install
+### W3-004 · Add is_favourite field to RunSummary schema
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 2 — Query History & Favourites |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/schemas/models.py`
 
 **Description:**
-Create `backend/requirements.txt` with all Python dependencies pinned at the minor version. Verify the environment installs cleanly.
+Add `is_favourite: bool = False` to the `RunSummary` Pydantic model (or create `RunSummary` as a new model if it does not yet exist as a distinct class). `RunSummary` is the lightweight response shape returned by `GET /runs` and represents one row from `agent_runs`: fields `id`, `query`, `intent`, `created_at`, `cached`, `latency_ms`, `is_favourite`. If `RunSummary` does not exist, create it in `models.py`. The `is_favourite` field must default to `False` for backward compatibility with any code that constructs a `RunSummary` without providing the field.
 
 **Acceptance Criteria:**
-- `requirements.txt` includes (at minimum): `fastapi`, `uvicorn[standard]`, `sqlalchemy`, `alembic`, `psycopg2-binary`, `pgvector`, `anthropic`, `sentence-transformers`, `kagglehub`, `pydantic`, `pydantic-settings`, `python-dotenv`, `spacy`, `pytest`, `httpx`
-- `pip install -r requirements.txt` completes without errors on Python 3.11+
-- `python -c "import fastapi, sqlalchemy, anthropic, sentence_transformers, kagglehub"` exits 0
-
-**Blocked-by:** T-001
+- [ ] `RunSummary` Pydantic model exists in `backend/app/schemas/models.py` with all seven fields: `id`, `query`, `intent`, `created_at`, `cached`, `latency_ms`, `is_favourite`
+- [ ] `is_favourite: bool = False` is present and defaults correctly when not provided
+- [ ] `RunSummary` can be instantiated without providing `is_favourite` (e.g., `RunSummary(id=..., query=..., ...)` with `is_favourite` omitted)
+- [ ] The model serialises correctly: `RunSummary(...).model_dump()` returns `is_favourite` as a boolean value, not a string
 
 ---
 
-### T-004 — SQLAlchemy ORM models and Alembic migration baseline
+### W3-005 · Update agent_runs SQLAlchemy model: session_id + is_favourite columns
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 1 & 2 |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | XS |
+| **Depends On** | W3-001, W3-002 |
+
+**Files to modify:**
+- EDIT: `backend/app/db/models.py`
 
 **Description:**
-Implement all ORM models in `backend/app/db/models.py` exactly matching the schema in PRD Section 7. Initialise Alembic and create the initial migration that enables the `vector` extension and creates all seven tables with all indexes.
+Update the `AgentRun` SQLAlchemy ORM model class to reflect the two new columns added by migrations W3-001 and W3-002. Add `session_id = Column(UUID(as_uuid=True), nullable=True)` and `is_favourite = Column(Boolean, nullable=False, default=False)`. Import `UUID` from `sqlalchemy.dialects.postgresql` (not Python's built-in `uuid` module) and `Boolean` from `sqlalchemy`. This task depends on W3-001 and W3-002 so the database columns exist before the ORM is mapped against them; without the migrations the columns do not exist in the DB and ORM queries would fail at runtime.
 
 **Acceptance Criteria:**
-- `backend/app/db/models.py` defines ORM classes for: `IncidentReport`, `ManufacturingDefect`, `MaintenanceLog`, `IncidentEmbedding`, `GraphNode`, `GraphEdge`, `AgentRun`
-- `IncidentEmbedding.embedding` typed as `Vector(384)`
-- All foreign key relationships and cascade rules match PRD schema exactly
-- `alembic init` run; `alembic.ini` and `backend/app/db/migrations/` created
-- `alembic upgrade head` against a running Postgres creates all tables and all indexes (verify with `\dt` and `\di`)
-- IVFFlat index `idx_incident_embeddings_vec` created with `lists=100` on `embedding vector_cosine_ops`
-
-**Blocked-by:** T-002, T-003
+- [ ] `AgentRun` SQLAlchemy model in `backend/app/db/models.py` has `session_id = Column(UUID(as_uuid=True), nullable=True)`
+- [ ] `AgentRun` model has `is_favourite = Column(Boolean, nullable=False, default=False)`
+- [ ] Imports at the top of `models.py` include `UUID` from `sqlalchemy.dialects.postgresql` and `Boolean` from `sqlalchemy`
+- [ ] Running `pytest backend/tests/` passes — no ORM mapping errors or import errors introduced
+- [ ] `AgentRun.__table__.columns.keys()` contains both `"session_id"` and `"is_favourite"` when inspected
 
 ---
 
-### T-005 — Database session factory and settings loader
+### W3-006 · Orchestrator: inject conversation_history into synthesis prompt
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 1 — Conversational Memory & Multi-turn Queries |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | S |
+| **Depends On** | W3-003, W3-005 |
+
+**Files to modify:**
+- EDIT: `backend/app/agent/orchestrator.py`
 
 **Description:**
-Implement `backend/app/db/session.py` (async SQLAlchemy session factory) and a Pydantic `Settings` class in `backend/app/schemas/` (or a dedicated `config.py`) that reads all values from `config.yaml` and environment variables.
+Modify `orchestrator.py` to support conversational memory, gated by the `CONVERSATIONAL_MEMORY_ENABLED` environment variable (read via `os.getenv("CONVERSATIONAL_MEMORY_ENABLED", "true").lower() == "true"`). When enabled and `request.conversation_history` is non-empty, prepend up to the last 5 turns to the synthesis prompt context string using the format: `"Prior turn {i}: Q: {turn['query']} | A: {turn['answer_summary']}\n"` for each turn. The history is injected into the synthesis stage only — it does NOT cause the orchestrator to re-run vector search, SQL tools, or any other stage against historical queries. The implementation must not alter the 8-stage state machine structure (CLASSIFY → PLAN → EXECUTE_TOOLS → EXPAND_GRAPH → RE_RANK → SYNTHESISE → VERIFY → SAVE → DONE). Also save `request.session_id` to `AgentRun.session_id` during the SAVE stage. The scope boundary for "context" is: pass explicit filters forward only — not open-ended pronoun or coreference resolution.
 
 **Acceptance Criteria:**
-- `get_session()` yields an async SQLAlchemy session; connection string sourced from `Settings.database.dsn`
-- `Settings` loads `config.yaml` and overrides with env vars; all PRD Section 11 keys accessible as typed attributes
-- `from backend.app.db.session import get_session` succeeds in a running Python interpreter pointed at the test DB
-- Session closes cleanly on context exit; no connection leaks
-
-**Blocked-by:** T-004
+- [ ] When `CONVERSATIONAL_MEMORY_ENABLED=false` (env var set), the orchestrator ignores `conversation_history` entirely and the synthesis prompt is identical to pre-W3-006 behavior
+- [ ] When enabled and `conversation_history` contains entries, the synthesis prompt contains lines in the format `"Prior turn 1: Q: <query> | A: <answer_summary>"` prepended before the main query context
+- [ ] Maximum 5 prior turns are included; if `conversation_history` has more than 5 entries, only the most recent 5 (last 5 in the list) are prepended
+- [ ] `session_id` from `QueryRequest` is written to `AgentRun.session_id` during the SAVE stage; if `session_id` is `None`, the column is written as `NULL`
+- [ ] No new LLM calls are added; no vector or SQL tool calls are triggered by the history injection
+- [ ] Existing tests in `backend/tests/` continue to pass (new fields default to `None`, so existing test fixtures require no changes)
 
 ---
 
-### T-006 — LLM client interface and Claude adapter
+### W3-007 · Backend: GET /runs and PATCH /runs/{id}/favourite endpoints
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 2 — Query History & Favourites |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | S |
+| **Depends On** | W3-004, W3-005 |
+
+**Files to modify:**
+- NEW: `backend/app/api/runs.py`
+- EDIT: `backend/app/main.py` (register the new router with prefix `/runs`)
 
 **Description:**
-Implement `backend/app/llm/client.py`. Define an abstract `LLMClient` base class and a `ClaudeClient` concrete implementation using the `anthropic` SDK targeting `claude-sonnet-4-6`. Must support JSON-mode structured output.
+Create `backend/app/api/runs.py` with two FastAPI route handlers. `GET /runs`: query params `limit: int = Query(default=20, le=100)` and `offset: int = Query(default=0, ge=0)`. Query `agent_runs` ordered by `is_favourite DESC, created_at DESC` and return `{ "items": [RunSummary, ...], "total": int }` where `total` is the total count of all runs (for pagination). `PATCH /runs/{run_id}/favourite`: accepts a request body `{ "is_favourite": bool }`, updates `agent_runs.is_favourite` for the given `run_id`, and returns the updated `RunSummary`. Return HTTP 404 if `run_id` does not exist. Both endpoints use the existing async SQLAlchemy session pattern (import `get_async_session` from `db/session.py`). Register the router in `main.py`. Add `/runs` and `/runs/*` to the CORS allowed-origins configuration — use the explicit origin list, never a wildcard combined with `allow_credentials=True`.
 
 **Acceptance Criteria:**
-- `LLMClient` abstract class defines: `complete(prompt: str, system: str, json_mode: bool) -> str`
-- `ClaudeClient` reads `ANTHROPIC_API_KEY` from env; model defaults to `claude-sonnet-4-6` but is overridable via `config.yaml`
-- `json_mode=True` sets `response_format` appropriately so the model returns parseable JSON
-- `ClaudeClient.complete(...)` called with a simple prompt returns a non-empty string without raising
-- API key missing raises `EnvironmentError` with a clear message
-
-**Blocked-by:** T-003
+- [ ] `GET /runs?limit=20&offset=0` returns HTTP 200 with JSON `{ "items": [...], "total": N }`
+- [ ] Each item in `items` is a valid `RunSummary` with all seven fields: `id`, `query`, `intent`, `created_at`, `cached`, `latency_ms`, `is_favourite`
+- [ ] Favourited runs (` is_favourite=true`) appear before non-favourited runs; within each group, results are in reverse chronological order
+- [ ] `PATCH /runs/{run_id}/favourite` with body `{"is_favourite": true}` returns HTTP 200 with the updated `RunSummary` where `is_favourite === true`
+- [ ] `PATCH /runs/{run_id}/favourite` with a non-existent `run_id` returns HTTP 404
+- [ ] `GET /runs?limit=5&offset=10` returns at most 5 items starting from the 11th record (correct pagination offset)
+- [ ] `GET /healthz` continues to return HTTP 200 after the router is registered (no startup regression)
+- [ ] CORS is configured for the new routes using the explicit origins list (not a wildcard)
 
 ---
 
-### T-007 — Structured JSON logging module
+### W3-008 · ChatPanel: session UUID, history accumulation, session pill, clear reset
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 1 — Conversational Memory & Multi-turn Queries |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | S |
+| **Depends On** | W3-003 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/app/observability/logging.py`. All log entries must be newline-delimited JSON. Logs must not contain API keys or raw PII.
+Update `ChatPanel.tsx` to support conversational memory on the frontend. On the first query submission of a new session, generate a session UUID using `crypto.randomUUID()` and store it in a `useRef` or `useState` (component state only — not localStorage). Pass `session_id` and the accumulated `conversation_history` array in the `POST /query` request body for every query after the first. After each successful assistant response, append `{ query: lastUserQuery, answer_summary: firstSentenceOfAnswer }` to the local `conversationHistory` state array (cap at the last 10 entries client-side — the backend enforces the max-5-turns limit during synthesis). Display a small pill element beneath the input field whenever `conversationHistory.length > 0`, with text "Session active • N turns" where N is `conversationHistory.length`. When the user clicks the Clear (Trash2) button, reset `sessionId` to `null`, clear `conversationHistory` to `[]`, and hide the session pill — the next query starts a fresh session. Scope: this is filter-forwarding only; no pronoun resolution logic is added to the frontend.
 
 **Acceptance Criteria:**
-- `get_logger(name)` returns a logger that emits JSON lines to stdout with fields: `timestamp`, `level`, `logger`, `message`, `extra`
-- A `scrub_secrets(record)` filter strips any field value matching the pattern of the `ANTHROPIC_API_KEY` or `PG_DSN`
-- Logger used in at least one module (e.g., `session.py`) without errors
-- Running `python -c "from backend.app.observability.logging import get_logger; get_logger('test').info('ok')"` emits valid JSON
-
-**Blocked-by:** T-003
-
----
-
-### Phase 1: Data Ingestion Pipeline
+- [ ] First query is submitted with `session_id: null` and `conversation_history: null` (or the fields are omitted from the request body entirely)
+- [ ] Second and subsequent queries in the same session include `session_id` (a valid UUID v4 string) and `conversation_history` as an array of `{ query, answer_summary }` objects
+- [ ] The session pill "Session active • N turns" is visible beneath the input after the first successful response; `N` increments with each completed turn
+- [ ] Clicking the Trash2 (Clear) button resets session state: `sessionId` becomes `null`, `conversationHistory` becomes `[]`, and the session pill disappears immediately
+- [ ] Session ID is stored in component state only — `localStorage` is not used for session management
+- [ ] `crypto.randomUUID()` is called once per session (on the first submission), not on every render cycle
 
 ---
 
-### T-008 — Synthetic incident narrative generator
+### W3-009 · Frontend: HistorySidebar component
 
-**Owner:** `backend-architect` | **Effort:** L
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 2 — Query History & Favourites |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | M |
+| **Depends On** | W3-007 |
+
+**Files to modify:**
+- NEW: `frontend/app/components/HistorySidebar.tsx`
+- EDIT: `frontend/app/page.tsx` (add sidebar toggle button and render `<HistorySidebar />` in the page layout)
 
 **Description:**
-Implement `backend/app/ingest/synthetic.py`. Generate 10,000 synthetic incident report rows as a CSV and optionally insert directly into `incident_reports`.
+Create `HistorySidebar.tsx` as a collapsible left sidebar (240px wide). A Clock icon button in the ChatPanel header area (or in the home page layout) toggles the sidebar open/closed. When opened, the sidebar calls `GET /runs?limit=20&offset=0` and renders the results as a scrollable list. Each history item displays: query text truncated to 60 characters with an ellipsis, an intent badge (e.g., "HYBRID", "SEMANTIC" — styled as a small coloured pill), a relative timestamp ("2 min ago", "3 hours ago", or a date string for items older than 24 hours), and a star icon for favouriting. Favourited items are visually pinned to the top of the list. Clicking the star icon calls `PATCH /runs/{run_id}/favourite` and optimistically updates the UI (star fills immediately; reverts on error). Clicking a history item calls the existing `GET /runs/{run_id}` endpoint to retrieve the full run and passes the result to the parent page's state (AgentTimeline and GraphViewer) without calling `POST /query`. A "Share" icon on each item copies `<window.location.origin>/?run=<run_id>` to the clipboard via `navigator.clipboard.writeText()` with a brief "Copied!" tooltip confirming the action. Show a loading skeleton (3–5 placeholder rows) while fetching and an error state if the endpoint fails. The sidebar must not conflict with the 46px global AppHeader — the sidebar content area should use `height: calc(100vh - 46px)`.
 
 **Acceptance Criteria:**
-- `generate_synthetic_incidents(n=10000, output_path=...) -> pd.DataFrame` produces a DataFrame with all columns: `incident_id`, `asset_id`, `system`, `sub_system`, `event_date`, `location`, `severity`, `narrative`, `corrective_action`, `source='synthetic'`
-- At least 5 distinct values each for `system`, `sub_system`, `severity`
-- `narrative` field averages 80–200 words
-- Output CSV written to path from `config.yaml` (`data/synthetic/incidents_synth.csv`)
-- Function is idempotent: re-running does not raise if file already exists
-- 10,000 rows generated in < 60s on a modern laptop
-
-**Blocked-by:** T-005, T-007
+- [ ] `HistorySidebar` renders as a 240px-wide panel; toggling the Clock icon shows/hides it without a page reload
+- [ ] History items display: query text (max 60 chars, ellipsis), intent badge, relative timestamp, star icon
+- [ ] Favourited items appear at the top of the list separated from non-favourites
+- [ ] Clicking the star icon calls `PATCH /runs/{run_id}/favourite`, optimistically updates the star to filled (or unfilled), and reverts if the API call fails
+- [ ] Clicking a history item loads the run into `AgentTimeline` and `GraphViewer` without triggering any `POST /query` request (verify in browser Network tab: zero `/query` calls on history click)
+- [ ] Clicking the Share icon copies `<origin>/?run=<run_id>` to the clipboard; a brief tooltip or toast confirms the copy
+- [ ] Loading skeleton is shown while `GET /runs` is in flight; error state message is shown if it returns a non-200 response
+- [ ] Sidebar content area uses `height: calc(100vh - 46px)` to account for the global AppHeader; no overflow or scrollbar conflict
 
 ---
 
-### T-009 — Kaggle dataset loader and column mapper
+### W3-010 · ChatPanel: useSearchParams run loading from ?run= URL
 
-**Owner:** `backend-architect` | **Effort:** L
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 2 — Query History & Favourites |
+| **Sprint** | 1 |
+| **Priority** | P0 |
+| **Effort** | S |
+| **Depends On** | W3-007 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/app/ingest/kaggle_loader.py`. Downloads the three Kaggle datasets using `kagglehub`, applies per-dataset column mapping to canonical schema, and returns typed DataFrames. Must fall back to `demo/seed_sql/` CSV fixtures if Kaggle credentials are absent.
+Add `useSearchParams` (from `next/navigation`) to `ChatPanel.tsx`. On component mount, check if the URL contains a `?run=<run_id>` query parameter. If it does, call `GET /runs/{run_id}` (using the existing API client pattern — the `GET /runs/{run_id}` endpoint already exists from the Wave 0 MVP) to retrieve the full cached run result, then hydrate the component state — displaying the answer in the chat message list, populating `AgentTimeline`, and updating `GraphViewer` — all without issuing any request to `POST /query`. This implements the "share URL" feature: a colleague visiting `/?run=<run_id>` sees the exact same result as the original query. After the pre-loaded run is displayed, submitting a new query clears the pre-loaded state and returns to normal operation. Per Next.js App Router requirements, wrap `useSearchParams` usage in a `Suspense` boundary.
 
 **Acceptance Criteria:**
-- `load_manufacturing_defects(config) -> pd.DataFrame` maps `fahmidachowdhury/manufacturing-defects` columns to: `defect_id`, `product`, `defect_type`, `severity`, `inspection_date`, `plant`, `lot_number`, `action_taken`
-- `load_defects_supplemental(config) -> pd.DataFrame` maps `rabieelkharoua/predicting-manufacturing-defects-dataset` to the same canonical schema
-- `load_maintenance_logs(config) -> pd.DataFrame` maps `merishnasuwal/aircraft-historical-maintenance-dataset` to: `log_id`, `asset_id`, `ts`, `metric_name`, `metric_value`, `unit`
-- If `KAGGLE_USERNAME`/`KAGGLE_KEY` are absent, loader reads from `demo/seed_sql/*.csv` fallback fixtures and logs a `WARNING`
-- All three functions raise `ValueError` with column name in message if a required source column is missing
-- `demo/seed_sql/` directory contains at least 3 seed CSV files with ≥ 20 rows each
-
-**Blocked-by:** T-005, T-007
+- [ ] Visiting `/?run=<valid_run_id>` causes `ChatPanel` to display the cached run result (answer text, claims, evidence) without calling `POST /query` (confirm in browser Network tab)
+- [ ] The shared run result populates `AgentTimeline` and `GraphViewer` via the same state path used by a live query
+- [ ] Visiting `/?run=<invalid_run_id>` shows an error message in the chat panel ("Run not found") without crashing the component
+- [ ] After the pre-loaded run is displayed, submitting a new query clears the pre-loaded state and operates normally
+- [ ] If no `?run=` param is present, component mount behavior is identical to pre-W3-010 (no regression)
+- [ ] `useSearchParams` is wrapped in a `Suspense` boundary as required by Next.js App Router — no "missing Suspense boundary" hydration warning
 
 ---
 
-### T-010 — Database bulk-load for all three canonical tables
+## Sprint 2 — Epics 3, 4, 5, 6 (P1, ~13 days)
 
-**Owner:** `backend-architect` | **Effort:** M
+### Sprint 2 Overview
+
+Sprint 2 adds the highest-value P1 features: streaming synthesis (the most complex task this wave), real dashboard analytics, PDF/CSV export, and enhanced citation UX. Epics 3, 4, 5, and 6 are largely independent of each other — Epic 3's backend (W3-011 → W3-012) and frontend (W3-013) form a single chain; Epic 4 (W3-014 → W3-015), Epic 5 (W3-016 → W3-017, W3-018 independent), and Epic 6 (W3-019 independent) can all run in parallel with Epic 3.
+
+**Parallel work frontier for Sprint 2:** W3-011, W3-014, W3-016, W3-018, W3-019 can all start simultaneously.
+
+---
+
+### W3-011 · Add stream() method to LLMClient in client.py
+
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 3 — Streaming Synthesis Output |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/llm/client.py`
 
 **Description:**
-Implement the DB-write step of the ingest pipeline: take typed DataFrames from T-008 and T-009 and upsert them into `incident_reports`, `manufacturing_defects`, and `maintenance_logs` using SQLAlchemy bulk operations.
+Add a `stream(prompt: str) -> AsyncIterator[str]` abstract method to the `LLMClient` ABC and implement it in the concrete `AnthropicLLMClient` class. The implementation uses the Anthropic Python SDK's streaming API (`anthropic>=0.49.0`): `async with self._async_client.messages.stream(model=self._model, max_tokens=self._max_tokens, messages=[{"role": "user", "content": prompt}]) as stream: async for text in stream.text_stream: yield text`. This method is an `async def` generator function (using `yield` inside an `async def` makes it an async generator automatically — no `@asynccontextmanager` needed). Only the synthesis client (`get_async_llm_client()` / Sonnet 4.6) implements this method for Wave 3 — the fast client (Haiku) does not need streaming since classify/plan/verify remain non-streaming batch calls. The existing `complete()` and `complete_async()` methods must be unchanged.
 
 **Acceptance Criteria:**
-- Upsert (insert-or-skip on conflict) so re-running ingest does not duplicate rows
-- `incident_reports` contains ≥ 10,000 rows after a full ingest
-- `manufacturing_defects` contains rows from both Kaggle sources (or seed fallback)
-- `maintenance_logs` populated from aircraft maintenance dataset (or seed fallback)
-- Bulk write for 10k incidents completes in < 30s
-- Any row-level insert error is logged and skipped; overall pipeline does not halt
-
-**Blocked-by:** T-008, T-009
+- [ ] `LLMClient` ABC declares `stream(prompt: str) -> AsyncIterator[str]` as an abstract method (use `@abstractmethod` and `AsyncGenerator` or `AsyncIterator` from `typing`)
+- [ ] `AnthropicLLMClient` implements `stream()` using the Anthropic SDK's `messages.stream()` context manager
+- [ ] `async for token in client.stream("hello"):` yields individual text tokens as strings (not entire sentences)
+- [ ] The stream terminates cleanly when the generator is exhausted (no hanging HTTP connections)
+- [ ] If the Anthropic API returns an error during streaming, the exception propagates to the caller (not silently swallowed)
+- [ ] Existing non-streaming `complete()` and `complete_async()` methods are unchanged; all existing tests continue to pass
 
 ---
 
-### T-011 — Token-aware chunker
+### W3-012 · Backend SSE streaming endpoint in query.py
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 3 — Streaming Synthesis Output |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | M |
+| **Depends On** | W3-011 |
+
+**Files to modify:**
+- EDIT: `backend/app/api/query.py`
 
 **Description:**
-Implement `backend/app/rag/chunker.py`. Split narrative text into overlapping token-window chunks suitable for embedding.
+Modify `POST /query` in `query.py` to detect streaming mode by inspecting the `Accept` request header (`request.headers.get("Accept") == "text/event-stream"`). When streaming is requested and `STREAMING_ENABLED=true` (default), return a `StreamingResponse` (from `starlette.responses`) with `media_type="text/event-stream"`. The async generator driving the response: (1) runs all orchestrator stages up to and including EXECUTE_TOOLS and EXPAND_GRAPH using existing non-streaming calls (no change to those stages), (2) calls `llm_client.stream(synthesis_prompt)` for the SYNTHESISE stage and `yield`s `f'data: {json.dumps({"type": "token", "text": chunk})}\n\n'` for each token chunk, (3) after the stream completes, runs VERIFY and SAVE as normal, then yields `f'data: {json.dumps({"type": "done", "run": response.dict()})}\n\n'`, (4) on any exception, yields `f'data: {json.dumps({"type": "error", "message": str(e)})}\n\n'` and exits the generator. When `STREAMING_ENABLED=false` or the `Accept` header is absent, the endpoint falls through to the existing non-streaming JSON response (no regression).
 
 **Acceptance Criteria:**
-- `chunk_text(text: str, chunk_size: int = 400, overlap: int = 75) -> list[dict]` returns list of `{chunk_index, chunk_text, char_start, char_end}`
-- Chunks respect token boundaries; chunk size 300–600 tokens, overlap 50–100 tokens
-- Overlap windows are consistent: `chunk[i+1]` starts `overlap` tokens before `chunk[i]` ends
-- A 1,000-token document with size=400, overlap=75 produces exactly the expected chunk count
-- No chunk is empty or whitespace-only
-
-**Blocked-by:** T-003
+- [ ] `POST /query` with header `Accept: text/event-stream` returns `Content-Type: text/event-stream` (SSE) response
+- [ ] SSE `token` events arrive progressively — the HTTP response body is not buffered until synthesis completes (verify with `curl -N` or a streaming-aware HTTP client)
+- [ ] SSE `done` event payload is valid JSON that parses to a complete `QueryResponse` (including `claims`, `evidence`, `graph_path`, `citations`)
+- [ ] On mid-stream Anthropic API error, an SSE `error` event is yielded and the connection closes cleanly (no HTTP 500 mid-stream)
+- [ ] When `STREAMING_ENABLED=false` env var is set, `POST /query` with `Accept: text/event-stream` returns a standard JSON `QueryResponse` (non-streaming)
+- [ ] `POST /query` without `Accept: text/event-stream` returns the standard JSON response unchanged (existing behavior preserved)
 
 ---
 
-### T-012 — Local embedding wrapper
+### W3-013 · ChatPanel: streaming renderer with ReadableStream and non-streaming fallback
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 3 — Streaming Synthesis Output |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | M |
+| **Depends On** | W3-012 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/app/rag/embeddings.py`. Wrap `sentence-transformers/all-MiniLM-L6-v2` to produce 384-dimensional vectors. Must be a singleton (model loaded once per process).
+Replace the `postQuery()` API call in `ChatPanel.tsx` with a streaming-first implementation using the native `fetch` API and `ReadableStream`. On submission: (1) call `fetch(apiUrl + "/query", { method: "POST", headers: { "Content-Type": "application/json", "Accept": "text/event-stream" }, body: JSON.stringify(payload) })`, (2) read the response body using `response.body.getReader()` and a `TextDecoder`, (3) accumulate bytes and split on the `\n\n` SSE delimiter, strip the `data: ` prefix from each line, and parse the JSON payload, (4) on `token` events, append the text token to the current assistant message bubble's content in React state — this produces the word-by-word rendering effect, (5) on `done` events, parse the full `QueryResponse` and update `runData`, claims, evidence, and graph state — identical to how the non-streaming response populated state previously, (6) on `error` events, display the error message. Fallback: if the `fetch` throws (network error) or if the connection drops before a `done` event, retry once using the existing non-streaming `postQuery()` method. The fallback shows the existing amber "Connection issue, retrying... (N/3)" banner consistent with the current retry UI. Claims panel, evidence table, and graph panel must render only after the `done` event arrives.
 
 **Acceptance Criteria:**
-- `EmbeddingModel.encode(texts: list[str]) -> np.ndarray` returns array of shape `(n, 384)`
-- Model loaded lazily on first call; subsequent calls reuse the same instance
-- `encode(["test"])` returns a vector of exactly 384 floats
-- Works without internet access once model is cached (offline mode)
-- Encoding 1,000 short texts completes in < 10s on CPU
-
-**Blocked-by:** T-003
+- [ ] Submitting a query causes text to appear in the assistant message bubble incrementally as SSE `token` events arrive — visible word-by-word rendering visible before synthesis completes
+- [ ] Claims panel, evidence table, and graph panel are populated only after the `done` event arrives (not during token streaming)
+- [ ] If the SSE connection drops before a `done` event, `ChatPanel` falls back to the existing non-streaming `POST /query` call and shows the "Connection issue, retrying..." banner
+- [ ] After a successful streaming response, `runData` state is functionally identical to a non-streaming response (graph, claims, evidence, citations all populated)
+- [ ] The existing Clear (Trash2) button, health-check warm-up on mount, 3× retry-on-502 logic, and session pill (from W3-008) are not regressed by this change
+- [ ] If the streaming fetch returns a non-2xx HTTP status code (e.g., 422 validation error), the error is displayed immediately and no retry is attempted (consistent with the existing behavior for 4xx errors)
 
 ---
 
-### T-013 — Chunk embedding and storage
+### W3-014 · New analytics.py: /analytics/defects, /analytics/maintenance, /analytics/diseases
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 4 — Real Dashboard Analytics |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- NEW: `backend/app/api/analytics.py`
+- EDIT: `backend/app/main.py` (register the analytics router with prefix `/analytics`)
 
 **Description:**
-Wire T-011 and T-012 together: for each incident report, chunk the narrative, embed each chunk, and write rows to `incident_embeddings`.
+Create `backend/app/api/analytics.py` with three FastAPI `GET` endpoints. All three must invoke named SQL queries via the existing `sql_tool.py` named-query runner — no raw SQL strings in this file. `GET /analytics/defects?from=&to=&domain=`: invokes the `defect_counts_by_product` named query with optional date-range filtering; returns `List[dict]` where each dict has `{product, defect_type, count}`. `GET /analytics/maintenance?from=&to=`: invokes the `maintenance_trends` named query; returns `List[dict]` with `{month, event_type, count}`. `GET /analytics/diseases?from=&to=&specialty=`: invokes the `disease_counts_by_specialty` named query with optional specialty filter; returns `List[dict]` with `{specialty, disease, count}`. All date parameters are optional ISO date strings (e.g., `from: str | None = Query(default=None)`). Register the router in `main.py`. Add the analytics routes to the CORS configuration using the explicit origins list.
 
 **Acceptance Criteria:**
-- `embed_and_store_incidents(session, config)` processes all rows in `incident_reports`
-- Each chunk produces one row in `incident_embeddings` with: `embed_id` (UUID), `incident_id`, `chunk_index`, `chunk_text`, `embedding` (vector(384))
-- Processes in batches of 256 chunks; batch size configurable
-- Re-running skips incidents already embedded (idempotent)
-- After full ingest: `SELECT COUNT(*) FROM incident_embeddings` returns ≥ 10,000
-- 10k incidents embedded in < 5 minutes on CPU
-
-**Blocked-by:** T-010, T-011, T-012
-
----
-
-### Phase 2: Vector Search & Embeddings
+- [ ] `GET /analytics/defects` returns HTTP 200 with a JSON array; each item contains `product`, `defect_type`, and `count` fields
+- [ ] `GET /analytics/defects?from=2025-01-01&to=2025-12-31` returns results filtered to that date range
+- [ ] `GET /analytics/maintenance` returns HTTP 200 with a JSON array; each item contains `month`, `event_type`, and `count` fields
+- [ ] `GET /analytics/diseases` returns HTTP 200 with a JSON array; each item contains `specialty`, `disease`, and `count` fields
+- [ ] All three endpoints enforce SELECT-only via the named-query pattern (calling the tool's named query runner, not executing raw SQL strings)
+- [ ] `GET /healthz` continues to return HTTP 200 after the analytics router is registered (no startup regression)
+- [ ] All three endpoints are accessible from the frontend origin (CORS correctly configured — no wildcard with credentials)
 
 ---
 
-### T-014 — pgvector IVFFlat index and retrieval module
+### W3-015 · Dashboard: wire Tabs 3, 4, 5 to real analytics endpoints
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 4 — Real Dashboard Analytics |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | M |
+| **Depends On** | W3-014 |
+
+**Files to modify:**
+- EDIT: `frontend/app/dashboard/page.tsx`
 
 **Description:**
-Implement `backend/app/rag/retrieval.py`. Perform cosine similarity search via pgvector, applying optional metadata filters.
+Replace the static mock data arrays in dashboard Tabs 3, 4, and 5 with `useEffect` API calls to the new analytics endpoints. Tab 3 (Defect Analytics): on mount and on date-range change, call `GET /analytics/defects` with `from` and `to` from the existing date-range picker state; pass the current domain (`domain=AIRCRAFT` or `domain=MEDICAL`) to the endpoint. Render the returned data in the existing Recharts bar chart. Tab 4 (Maintenance Trends): call `GET /analytics/maintenance` with date-range params; render in the existing time-series line chart. Tab 5 / medical analytics: call `GET /analytics/diseases` with domain and date params. Initialize chart data state to `null` (not to the old mock array) so there is no flash of stale mock data on load. While the fetch is in-flight, show a loading skeleton — a grey placeholder block at the same height as the chart. If the endpoint returns an error, show an error message with a "Retry" button that re-triggers the `useEffect` fetch. When the domain switcher toggles between AIRCRAFT and MEDICAL, re-fetch all analytics tabs accordingly. The dashboard outer div must maintain `height: calc(100vh - 46px)` throughout.
 
 **Acceptance Criteria:**
-- `vector_search(session, query_embedding, top_k=8, filters={}) -> list[dict]` returns items with: `chunk_id`, `incident_id`, `score`, `excerpt`, `metadata`
-- Supports filters: `system` (exact match), `severity` (exact match), `date_range` (tuple of ISO date strings)
-- Uses `<=>` cosine distance operator via pgvector
-- Results ordered by ascending distance (highest similarity first)
-- Returns results in < 500ms against a 10k-incident dataset
-- Returns empty list (not an error) when no results exceed `similarity_threshold`
-
-**Blocked-by:** T-013
+- [ ] Tab 3 chart values match a direct `SELECT defect_type, COUNT(*) FROM manufacturing_defects GROUP BY defect_type` query on the database (verify by running the SQL in psql)
+- [ ] Changing the date-range picker causes Tab 3 to re-fetch with updated `from`/`to` query params and the chart re-renders with fresh data
+- [ ] Tab 4 shows real data from `maintenance_logs` (at least one data point present, cross-verified against the DB)
+- [ ] Switching domain from AIRCRAFT to MEDICAL causes the analytics tabs to re-fetch with the MEDICAL domain and display disease/clinical data
+- [ ] Loading skeleton (grey placeholder bar at chart height) is visible while any analytics endpoint is in-flight — no flash of old mock data (chart state starts at `null`)
+- [ ] Error state with a "Retry" button appears if an analytics endpoint returns a non-200 response
+- [ ] Dashboard outer div retains `height: calc(100vh - 46px)` — no layout regression or scrollbar introduced
 
 ---
 
-### T-015 — VectorSearchTool wrapper
+### W3-016 · New ExportModal.tsx: PDF and JSON export
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 5 — Export & Reporting |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | M |
+| **Depends On** | none |
+
+**Files to modify:**
+- NEW: `frontend/app/components/ExportModal.tsx`
+- EDIT: `frontend/package.json` (add `@react-pdf/renderer` and `papaparse` dependencies)
 
 **Description:**
-Implement `backend/app/tools/vector_tool.py`. Wraps the retrieval module as a named, callable tool conforming to the agent tool interface.
+Create `ExportModal.tsx`, a modal dialog component that receives a `queryResponse: QueryResponse` prop and offers two export options. PDF export: generated entirely client-side using `@react-pdf/renderer` (no server round-trip). The PDF template has four sections: (1) Header row — "NEXTAGENTAI" title, the query text, the run ID, and a formatted timestamp; (2) "Answer" section — the full synthesis text; (3) "Claims" table — three columns: Claim text | Confidence (rendered as integer %, e.g., "73%") | Citation ID; (4) "Evidence" table — three columns: Source | Excerpt (truncated to 200 chars) | Score (to 3 decimal places). Footer line: "Generated by NextAgentAI | run_id: <id>". JSON export: serialize `JSON.stringify(queryResponse, null, 2)` and trigger a browser download of the result as `run_<id>.json` using a Blob URL (`URL.createObjectURL(new Blob([json], { type: "application/json" }))`). The modal overlay follows the existing SCADA dark theme; the PDF document uses standard fonts (Helvetica/Courier) since custom Orbitron/Rajdhani font registration is out of scope for this task.
 
 **Acceptance Criteria:**
-- Class `VectorSearchTool` with method `run(query_text: str, filters: dict = {}, top_k: int = 8) -> dict`
-- Return value includes: `tool_name`, `results` (list from retrieval), `latency_ms`, `error` (None if successful)
-- Embeds `query_text` using `EmbeddingModel` before calling `vector_search`
-- Raises `ToolTimeoutError` if execution exceeds `agent.tool_timeout_seconds` from config
-- `VectorSearchTool("hydraulic actuator crack").run(...)` returns ≥ 1 result against the seeded dataset
-
-**Blocked-by:** T-014
-
----
-
-### Phase 3: GraphRAG (Graph Build + Query)
+- [ ] `ExportModal` renders as a modal overlay when triggered; it can be dismissed via Escape key or a close button
+- [ ] Clicking "Export PDF" generates and downloads a `.pdf` file with no server API call (verify in browser Network tab — zero new requests on PDF export)
+- [ ] The downloaded PDF contains all four sections: header (query, run ID, timestamp), answer text, claims table, evidence table
+- [ ] Claims confidence in the PDF is rendered as integer percentage (e.g., "73%"), not raw decimal (e.g., "0.73")
+- [ ] Clicking "Export JSON" downloads a file named `run_<id>.json`; the downloaded file parses with `JSON.parse()` without error
+- [ ] The modal closes without triggering any download when dismissed
+- [ ] `@react-pdf/renderer` appears in `frontend/package.json` dependencies after this task
 
 ---
 
-### T-016 — Entity extraction for graph construction
+### W3-017 · ChatPanel: Export button on assistant messages
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 5 — Export & Reporting |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | XS |
+| **Depends On** | W3-016 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement entity extraction logic in `backend/app/graph/builder.py` using spaCy `en_core_web_sm`. Extract entities from incident narratives to be used as graph nodes.
+Add a Download icon button to the action row of each assistant message bubble in `ChatPanel.tsx`. The button is always visible on the message (not just on hover, for consistency with touch/tablet use on the factory floor). Clicking the button opens `<ExportModal>` with the `queryResponse` associated with that specific message passed as props. Use the Lucide `Download` icon consistent with the existing Lucide icon usage in the component. The Export button must only appear on assistant messages that have an associated `queryResponse` with a non-null `run_id` — it must not appear on user messages, on the loading/typing indicator bubble, or on error messages.
 
 **Acceptance Criteria:**
-- `extract_entities(text: str) -> list[dict]` returns entities with: `label`, `type`, `char_start`, `char_end`
-- spaCy model `en_core_web_sm` loaded once as a singleton
-- Entities of type `PRODUCT`, `ORG`, `FAC` mapped to appropriate canonical types; fallback to `other`
-- Custom regex patterns supplement spaCy for domain terms
-- `extract_entities("Hydraulic actuator crack on Line 1 asset ASSET-247")` returns ≥ 2 entities
-
-**Blocked-by:** T-003
+- [ ] A Download icon button appears on each assistant message bubble that has a non-null `run_id`
+- [ ] Clicking the Download button opens `ExportModal` with the correct `queryResponse` data for that specific message (not the most recent message's data)
+- [ ] The Export button does not appear on user messages, loading indicators, or error messages
+- [ ] The button has `aria-label="Export result"` for accessibility
+- [ ] The existing message bubble layout is not disrupted by the button addition (no overflow, no layout shift)
 
 ---
 
-### T-017 — Graph node and edge construction at ingest
+### W3-018 · AgentTimeline: CSV download button on SQL result tables
 
-**Owner:** `backend-architect` | **Effort:** L
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 5 — Export & Reporting |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/AgentTimeline.tsx`
+- EDIT: `frontend/package.json` (add `papaparse` if not already added in W3-016)
 
 **Description:**
-Complete `backend/app/graph/builder.py`. For each chunk: create chunk nodes, extract and create entity nodes, create `mentions` edges (chunk→entity), create `co_occurrence` edges (entity→entity within same chunk), and create `similarity` edges (chunk→chunk where cosine similarity > threshold).
+Add a "CSV" download button to the header row of each SQL result table rendered in the expanded step view within `AgentTimeline.tsx`. When clicked, use `Papa.unparse(rows, { columns: result.columns })` from the `papaparse` library to generate a CSV string from the SQL result rows (up to the first 1000 rows). Trigger a browser file download of the CSV using a Blob URL, with the filename `sql_result_step<N>_<timestamp>.csv`. The column headers come from `result.columns` already present in the SQL step data. The entire operation is client-side — no API call required. Position the "CSV" button in the top-right corner of the SQL result table header, using the Lucide `Download` icon.
 
 **Acceptance Criteria:**
-- `build_graph(session, config)` processes all rows in `incident_embeddings`
-- `graph_node` populated with one row per unique entity and one row per chunk
-- `graph_edge` contains: `mentions`, `co_occurrence`, and `similarity` edges
-- Similarity edges computed in batch using chunk embedding matrix
-- Upsert on conflict: re-running `build_graph` does not create duplicate nodes or edges
-- After full ingest: `SELECT COUNT(*) FROM graph_node` > 0 and `SELECT COUNT(*) FROM graph_edge` > 0
-
-**Blocked-by:** T-013, T-016
+- [ ] A "CSV" download button appears in the header of each SQL result table within an expanded AgentTimeline step
+- [ ] Clicking "CSV" triggers a browser file download of a `.csv` file without any network request
+- [ ] The downloaded CSV file has column headers matching `result.columns` from the step data
+- [ ] The CSV contains the correct data rows (up to 1000) — verify by opening the file in a spreadsheet application and cross-referencing with the on-screen table
+- [ ] The CSV is generated via `Papa.unparse()` — `papaparse` appears in `frontend/package.json`
+- [ ] The CSV button appears only on steps that have SQL result data; it does not appear on vector search steps or compute steps
 
 ---
 
-### T-018 — k-hop graph expander
+### W3-019 · CitationsDrawer: Prev/Next nav, "1 of N" counter, offset highlighting, conflict badge
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 6 — Enhanced Citation UX |
+| **Sprint** | 2 |
+| **Priority** | P1 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/CitationsDrawer.tsx`
 
 **Description:**
-Implement `backend/app/graph/expander.py`. Starting from a set of seed chunk/entity IDs, expand to k-hop neighbours via recursive SQL CTEs or iterative queries.
+Enhance `CitationsDrawer.tsx` with four independent changes. (1) Prev/Next navigation: when a claim has more than one citation, show "< Prev" and "Next >" buttons at the top of the drawer, plus a counter displaying "Citation N of M". Clicking Prev/Next cycles through the citations array by index. (2) Char-offset highlighting: implement and call `function highlightRange(text: string, start: number, end: number): ReactNode { return (<>{text.slice(0, start)}<mark className="bg-amber-400/30 text-amber-200">{text.slice(start, end)}</mark>{text.slice(end)}</>); }` using `citation.char_start` and `citation.char_end` from the citation metadata. If both values are `0` or `char_start === char_end`, render the full text without a `<mark>` element. (3) Conflict badge: if `claim.conflict_flagged === true`, render an amber badge with text "CONFLICT" next to the confidence score in the drawer header. The `conflict_flagged` field is already propagated from the backend (T3-07); this task is display-only. (4) Low-confidence clamp: claims with `confidence < 0.4` have their text clamped to 2 lines via CSS (`overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical`) with a "Read more" chevron button that removes the clamp on click.
 
 **Acceptance Criteria:**
-- `expand_graph(session, seed_ids: list[str], k: int = 2) -> dict` returns `{nodes: list[GraphNode], edges: list[GraphEdge]}`
-- Expansion follows both `mentions` and `co_occurrence` edge types; `similarity` edges included at hop 1 only
-- k=0 returns only seed nodes; k=2 returns up to 2 hops as per config default
-- Expansion of 8 seed nodes with k=2 completes in < 2s against the seeded graph
-
-**Blocked-by:** T-017
+- [ ] When a claim has more than one citation, Prev and Next buttons appear; clicking them cycles through citations and the "Citation N of M" counter updates correctly
+- [ ] When a claim has exactly one citation, Prev/Next buttons are absent
+- [ ] The `<mark>` element wraps exactly the text between `char_start` and `char_end` — verified with a citation that has known non-zero offset values
+- [ ] If `char_start === 0` and `char_end === 0` (or `char_start === char_end`), the full citation text renders without any `<mark>` element
+- [ ] When `claim.conflict_flagged === true`, an amber "CONFLICT" badge is visible in the citations drawer header adjacent to the confidence score
+- [ ] Claims with `confidence < 0.4` are visually clamped to 2 lines with a "Read more" chevron; clicking the chevron expands to the full text
 
 ---
 
-### T-019 — Graph evidence re-ranker
+## Sprint 3 — Epics 7, 8, 9, 10 (P2, ~8 days)
 
-**Owner:** `backend-architect` | **Effort:** M
+### Sprint 3 Overview
+
+Sprint 3 delivers the P2 quality-of-life and domain-parity improvements. Most Sprint 3 tasks are independent of each other (they touch different files and epics). The only intra-sprint dependency chains are W3-020 → W3-021 (Examples localStorage write before ChatPanel reads it) and W3-029 → W3-030 (VectorHit schema must carry the `source` field before the timeline can display it).
+
+**Parallel work frontier for Sprint 3:** W3-020, W3-022, W3-023, W3-024, W3-025, W3-026, W3-027, W3-028, W3-029, W3-031 can all start simultaneously. W3-021 follows W3-020. W3-030 follows W3-029.
+
+---
+
+### W3-020 · Examples pages: "Run Query" button + localStorage + navigate to /
+
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 7 — Examples → Chat Integration |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/examples/page.tsx`
+- EDIT: `frontend/app/medical-examples/page.tsx`
 
 **Description:**
-Implement `backend/app/graph/scorer.py`. Re-rank expanded graph evidence by combining vector similarity score, edge weight, and recency.
+Add a "Run Query" button to every example query card on both the `/examples` and `/medical-examples` pages. When clicked, the handler: (1) calls `localStorage.setItem("pending_query", queryText)` with the full example query string, (2) calls `localStorage.setItem("pending_domain", "AIRCRAFT")` for `/examples` or `"MEDICAL"` for `/medical-examples`, (3) calls `router.push("/")` to navigate to the home page. Use `useRouter` from `next/navigation` for the navigation. The button should use the Lucide `Play` icon and be styled consistently with the existing card action buttons in each page. The pattern is nearly identical on both pages — apply the same change to both files. No other UI elements on the examples pages are modified.
 
 **Acceptance Criteria:**
-- `rank_evidence(vector_hits, graph_nodes, graph_edges, config) -> list[dict]` returns a ranked list
-- Score formula: `0.5 * similarity_score + 0.3 * edge_weight + 0.2 * recency_score`
-- Output items include: `node_id`, `type`, `text_excerpt`, `composite_score`, `source_incident_id`
-- Conflicting sources flagged with `conflict=True` in item metadata
-- Returns at most `top_k * 2` items
-
-**Blocked-by:** T-018
-
----
-
-### Phase 4: SQL Tool & Pre-built Queries
+- [ ] Every example card on `/examples` has a "Run Query" button with a Play icon
+- [ ] Every example card on `/medical-examples` has a "Run Query" button with a Play icon
+- [ ] Clicking "Run Query" on `/examples` writes `localStorage["pending_query"]` = the example text and `localStorage["pending_domain"]` = `"AIRCRAFT"`
+- [ ] Clicking "Run Query" on `/medical-examples` writes `localStorage["pending_domain"]` = `"MEDICAL"`
+- [ ] The page navigates to `/` immediately after setting localStorage (no delay — `router.push("/")` is called synchronously in the click handler)
+- [ ] The existing layout, heading, and all other UI on both examples pages are not modified by this change
 
 ---
 
-### T-020 — SQL guardrail and SQLQueryTool
+### W3-021 · ChatPanel: on-mount localStorage check and auto-submit with 300ms debounce
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 7 — Examples → Chat Integration |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | W3-020 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/app/tools/sql_tool.py`. Enforce SELECT-only access via regex before executing any SQL. Implement four pre-built named queries.
+In `ChatPanel.tsx`, add a `useEffect` with an empty dependency array (runs exactly once on mount) that: (1) calls `localStorage.getItem("pending_query")`; if present, (2) reads `localStorage.getItem("pending_domain")` and sets the domain switcher state to `"AIRCRAFT"` or `"MEDICAL"` accordingly, (3) sets the chat input state to the pending query text, (4) schedules a `setTimeout` for 300ms after which the query is submitted programmatically by calling the same submit handler used for manual input (the 300ms debounce allows the health-check warm-up ping on mount to settle before submitting), (5) immediately after scheduling the timeout (not after it fires) calls `localStorage.removeItem("pending_query")` and `localStorage.removeItem("pending_domain")` so that a page refresh does not re-submit. The `setTimeout` reference is stored in a `useRef` and cleared in the `useEffect` cleanup function to prevent memory leaks. If `pending_query` is absent on mount, the effect exits immediately with no side effects.
 
 **Acceptance Criteria:**
-- `SQLQueryTool.run(sql: str) -> dict` raises `SQLGuardrailError` for any statement matching `\b(DROP|DELETE|UPDATE|INSERT|CREATE|ALTER|TRUNCATE)\b`
-- Returns on success: `{columns, rows, row_count, latency_ms}`
-- Pre-built named queries via `SQLQueryTool.run_named(name, params)`: `defect_counts_by_product`, `severity_distribution`, `maintenance_trends`, `incidents_defects_join`
-- All dangerous patterns blocked; valid SELECT must pass
-
-**Blocked-by:** T-005
+- [ ] Navigating to `/` from an examples page (after W3-020 sets localStorage) causes the query to auto-submit within approximately 300ms of the page becoming interactive
+- [ ] The domain switcher reflects the correct domain (`AIRCRAFT` or `MEDICAL`) before the query is submitted
+- [ ] Both `pending_query` and `pending_domain` are cleared from localStorage immediately after the `setTimeout` is scheduled — a hard page refresh after clicking "Run Query" but before the 300ms fires does NOT re-submit the query
+- [ ] If `ChatPanel` mounts with no `pending_query` in localStorage, all mount behavior is identical to pre-W3-021 (no auto-submit, no domain change)
+- [ ] The `setTimeout` reference is cleaned up in the `useEffect` return function (`return () => clearTimeout(timeoutRef.current)`) — no memory leak if the component unmounts before 300ms
+- [ ] The auto-submit does not fire a second time if the component re-renders within the 300ms window (the effect dependency array is empty — runs once on mount only)
 
 ---
 
-### T-021 — PythonComputeTool (sandboxed execution)
+### W3-022 · GraphViewer: node search input + opacity dimming + fitView to selection
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 8 — Graph Enhancements |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | M |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/GraphViewer.tsx`
 
 **Description:**
-Implement `backend/app/tools/compute_tool.py`. Allow the agent to execute simple Python snippets for arithmetic/statistical computation. Sandbox by restricting builtins and blocking imports of dangerous modules.
+Add a search input box positioned absolutely in the top-right corner of the ReactFlow container in `GraphViewer.tsx`. Track the search term in a `useState<string>("")` hook. Derive `matchingNodeIds: Set<string>` by filtering all nodes whose label includes the search term (case-insensitive, using `node.data.label.toLowerCase().includes(term.toLowerCase())`). Apply opacity overrides: non-matching nodes get `style={{ opacity: 0.2 }}` and matching nodes get `style={{ opacity: 1, boxShadow: "0 0 0 2px white" }}`. These style overrides are set on the `nodes` array passed to the ReactFlow component — not via direct DOM manipulation. Add a "Fit Selection" button adjacent to the search input. Use the `useReactFlow()` hook to access `reactFlowInstance`. When "Fit Selection" is clicked: if search term is non-empty, call `reactFlowInstance.fitView({ nodes: matchingNodes, padding: 0.2 })`; if search term is empty, call `reactFlowInstance.fitView({ padding: 0.2 })`. When the search input is cleared, remove all opacity overrides and ring borders.
 
 **Acceptance Criteria:**
-- `PythonComputeTool.run(code: str, context: dict = {}) -> dict` executes code in a restricted namespace
-- Blocked: `import os`, `import sys`, `import subprocess`, `open(...)`, `__import__`
-- Allowed builtins: `len`, `sum`, `min`, `max`, `round`, `abs`, `sorted`, `enumerate`, `zip`, `range`, `list`, `dict`, `str`, `int`, `float`
-- `context` dict injected as local variables
-- Returns: `{result, stdout, error}`
-- Execution timeout enforced at 5 seconds; raises `ToolTimeoutError` on breach
-- Attempting `import os` raises `ToolSecurityError` (not crashes the process)
-
-**Blocked-by:** T-005
+- [ ] A search input is visible in the top-right corner of the graph panel when the graph is displayed
+- [ ] Typing a term causes nodes whose labels do not contain the term (case-insensitive) to dim to 20% opacity (`opacity: 0.2`)
+- [ ] Matching nodes remain at full opacity and display a white ring border (`boxShadow: "0 0 0 2px white"`)
+- [ ] Clicking "Fit Selection" zooms the ReactFlow viewport so matching nodes fill the view
+- [ ] Clearing the search input restores all nodes to full opacity with no ring border
+- [ ] The search and fitView changes do not trigger any backend calls or modify the graph data structures
+- [ ] The search input and "Fit Selection" button do not visually conflict with the graph panel's existing toggle/close controls
 
 ---
 
-### Phase 5: Agent Orchestrator
+### W3-023 · GraphViewer: viewport-aware popover positioning
 
----
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 8 — Graph Enhancements |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | none |
 
-### T-022 — Intent classifier
-
-**Owner:** `backend-architect` | **Effort:** M
+**Files to modify:**
+- EDIT: `frontend/app/components/GraphViewer.tsx`
 
 **Description:**
-Implement `backend/app/agent/intent.py`. Classify a natural language query into one of four routing intents using the LLM client with a constrained prompt.
+Update the node-click popover in `GraphViewer.tsx` to use viewport-aware positioning. Define `POPOVER_WIDTH = 280` and `POPOVER_HEIGHT = 200` as module-level constants. When a node is clicked, calculate its screen-space coordinates from the node's `positionAbsolute` and the current ReactFlow viewport transform (available via `useReactFlow()` or the `onNodeClick` callback parameters). Apply flip logic: `const flipLeft = (nodeScreenX + POPOVER_WIDTH) > window.innerWidth` — if true, render the popover to the left of the node by offsetting x by `-POPOVER_WIDTH`. `const flipUp = (nodeScreenY + POPOVER_HEIGHT) > window.innerHeight` — if true, render the popover above the node by offsetting y by `-POPOVER_HEIGHT`. The popover content (node label, type, excerpt text) is unchanged by this task.
 
 **Acceptance Criteria:**
-- `classify_intent(query: str, llm: LLMClient) -> str` returns one of: `vector_only`, `sql_only`, `hybrid`, `compute`
-- Uses `json_mode=True`; parses `{"intent": "..."}` from LLM response
-- Falls back to `hybrid` if LLM response cannot be parsed
-- Latency logged via structured logger
-
-**Blocked-by:** T-006, T-007
+- [ ] Clicking a node positioned near the right edge of the browser window causes the popover to appear to the left of the node (not clipped)
+- [ ] Clicking a node positioned near the bottom edge of the browser window causes the popover to open upward (not clipped)
+- [ ] Clicking a node in the center of the graph panel produces the default popover position (right and below the node — unchanged)
+- [ ] The popover content (node label, type, source excerpt) is identical before and after this change
+- [ ] No new npm dependencies are introduced — positioning uses inline arithmetic, not a third-party tooltip library
 
 ---
 
-### T-023 — Planner
+### W3-024 · GraphViewer: edge weight labels on SIMILAR_TO / similarity edges
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 8 — Graph Enhancements |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/GraphViewer.tsx`
 
 **Description:**
-Implement `backend/app/agent/planner.py`. Generate a numbered step-by-step tool execution plan from the intent and query.
+Update the ReactFlow edge array construction in `GraphViewer.tsx` to attach weight labels to similarity edges. When building the `edges` array passed to `<ReactFlow>`, check `edge.type === 'SIMILAR_TO' || edge.type === 'similarity'`. If true and `typeof edge.weight === 'number'`, set the ReactFlow edge's `label` prop to `edge.weight.toFixed(2)`. Also set `labelStyle={{ fontSize: 10, fill: "#888" }}` and `labelBgStyle={{ fill: "rgba(0,0,0,0.5)" }}` on the edge for readability. For all other edge types (`mentions`, `co_occurrence`, etc.), leave `label` undefined. The `weight` field is already present in graph edge data returned by the backend for similarity edges — no backend changes are needed.
 
 **Acceptance Criteria:**
-- `generate_plan(query: str, intent: str, llm: LLMClient) -> list[dict]` returns an ordered list of plan steps
-- Each step: `{step_number, description, tool, tool_inputs}`
-- `vector_only` intent produces a plan with exactly one `VectorSearchTool` step
-- `hybrid` intent produces a plan with at least one vector step and one SQL step
-
-**Blocked-by:** T-022
+- [ ] After a query that returns a graph with similarity edges, those edges display a weight label formatted to 2 decimal places (e.g., "0.87")
+- [ ] Non-similarity edges (`mentions`, `co_occurrence`) do not display weight labels
+- [ ] If `edge.weight` is `null`, `undefined`, or `NaN` on a similarity edge, no label is rendered (no "NaN" or "undefined" text visible in the graph)
+- [ ] Edge labels use a small font and semi-transparent dark background and do not significantly obscure the edge path or node labels
+- [ ] All other graph rendering (node positions, colors, popover, search from W3-022) is unchanged
 
 ---
 
-### T-024 — Claim verifier and confidence scorer
+### W3-025 · Alembic migration: HNSW + GIN FTS + agent_runs composite index
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 9 — Medical Domain Parity |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- NEW: `backend/app/db/migrations/<timestamp>_add_medical_hnsw_and_fts_indexes.py`
 
 **Description:**
-Implement `backend/app/agent/verifier.py`. After synthesis, verify each claim against the evidence set and assign a confidence score.
+Create an Alembic migration that adds four performance indexes. CRITICAL: every `CREATE INDEX CONCURRENTLY` statement must be immediately preceded by `op.execute("COMMIT")` — `CONCURRENTLY` cannot run inside a PostgreSQL transaction block, and without the explicit `COMMIT` the migration silently completes but leaves the index uncreated with no error. The four indexes to create: (1) HNSW index on `medical_embeddings` — `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_embeddings_hnsw ON medical_embeddings USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)`; (2) GIN FTS index — `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_incident_reports_fts ON incident_reports USING GIN(to_tsvector('english', narrative))`; (3) GIN FTS index — `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_cases_fts ON medical_cases USING GIN(to_tsvector('english', narrative))`; (4) composite index — `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_runs_query_ts ON agent_runs (LOWER(query), created_at DESC)`. The `downgrade()` function must drop all four indexes using `DROP INDEX IF EXISTS`. See prd2.md Epic 9 for the exact migration code template including the mandatory `op.execute("COMMIT")` calls.
 
 **Acceptance Criteria:**
-- `verify_claims(claims, evidence, llm) -> list[dict]` returns claims with `confidence` field added/updated
-- Each returned claim: `{text, confidence, citations}`
-- Citation: `{chunk_id, incident_id, char_start, char_end}`
-- Confidence reduced when fewer than 2 evidence items support a claim
-- Conflicting evidence reduces confidence by at least 0.2 and adds `conflict_note`
-- Claims unsupported by any evidence get `confidence ≤ 0.3`
-
-**Blocked-by:** T-019, T-006
+- [ ] Migration file contains `op.execute("COMMIT")` immediately before each of the four `CREATE INDEX CONCURRENTLY` statements (four COMMIT calls total)
+- [ ] Running `alembic upgrade head` on a database without these indexes completes without error
+- [ ] After the migration, running `EXPLAIN (ANALYZE, FORMAT JSON) SELECT embedding <=> '[0.1, ...]' FROM medical_embeddings ORDER BY embedding <=> '[0.1, ...]' LIMIT 10` confirms "Index Scan using idx_medical_embeddings_hnsw" in the plan output
+- [ ] `downgrade()` drops all four indexes with `DROP INDEX IF EXISTS <name>`; running `alembic downgrade -1` leaves no orphaned indexes
+- [ ] All four `CREATE INDEX` statements use `IF NOT EXISTS` — safe to re-run if the index was previously created manually
+- [ ] Running `alembic upgrade head` → `alembic downgrade -1` → `alembic upgrade head` completes without error
 
 ---
 
-### T-025 — Agent orchestrator state machine
+### W3-026 · Add medical_case_trends named query to sql_tool.py
 
-**Owner:** `backend-architect` | **Effort:** XL
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 9 — Medical Domain Parity |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/tools/sql_tool.py`
 
 **Description:**
-Implement `backend/app/agent/orchestrator.py`. The top-level state machine that drives the full agentic loop: classify → plan → execute tools → expand graph → re-rank → synthesise → verify → return structured output.
+Add a new entry `"medical_case_trends"` to the named queries dictionary in `sql_tool.py`. The SQL: `SELECT DATE_TRUNC('month', date) AS month, specialty, COUNT(*) AS case_count FROM disease_records WHERE date >= CURRENT_DATE - INTERVAL ':days days' GROUP BY month, specialty ORDER BY month`. This provides Tab 4 dashboard parity for the medical domain, mirroring the `maintenance_trends` named query that serves the aircraft Tab 4. The `:days` parameter is substituted via the existing named-query parameter injection pattern already used by all other queries in the tool. Named queries are inherently SELECT-only by construction — no guardrail changes needed.
 
 **Acceptance Criteria:**
-- `AgentOrchestrator.run(query: str) -> AgentRunResult` executes the full loop
-- State transitions logged: `intent`, `plan`, `tool_start`, `tool_end`, `graph_expand`, `synthesise`, `verify`
-- Max 10 tool-call steps enforced; if limit reached, agent returns partial result with `run_summary.halted_at_step_limit=true`
-- Output conforms to the full schema: `answer`, `claims`, `evidence`, `graph_path`, `run_summary`, `assumptions`, `next_steps`
-- Run saved to `agent_runs` table with `run_id` (UUID) and full result JSON
-
-**Blocked-by:** T-015, T-020, T-021, T-023, T-024
+- [ ] `sql_tool.py` named queries dictionary contains the key `"medical_case_trends"` with the correct SQL string
+- [ ] Calling `run_named("medical_case_trends", {"days": 90})` returns rows from `disease_records` grouped by month and specialty without raising an exception
+- [ ] If `disease_records` is empty, the query returns an empty list (not an error or exception)
+- [ ] Running `pytest backend/tests/test_sql_guardrails.py` passes — the new named query does not bypass any SQL guardrail
+- [ ] The `:days` parameter placeholder substitutes correctly when executed (no raw `:days` string appears in the final executed SQL)
 
 ---
 
-### Phase 6: FastAPI Backend & CLI
+### W3-027 · ChatPanel: persistent medical disclaimer banner
 
----
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 9 — Medical Domain Parity |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | XS |
+| **Depends On** | none |
 
-### T-026 — FastAPI app factory and Pydantic schemas
-
-**Owner:** `backend-architect` | **Effort:** M
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/app/main.py` (FastAPI app factory with lifespan, CORS, and middleware) and all Pydantic request/response schemas in `backend/app/schemas/`.
+Add a persistent amber warning banner that renders below the chat input field in `ChatPanel.tsx` when the active domain is `MEDICAL`. The banner is a conditionally rendered `<div>` — `{domain === "MEDICAL" && <div ...>...</div>}`. Banner text: "Clinical data is for research only. Not for diagnostic or treatment decisions." Use amber styling consistent with the existing amber banners in the codebase: `className="bg-amber-900/20 border border-amber-500/30 text-amber-400 text-xs px-3 py-2 rounded"`. The banner has no dismiss button — it is permanently visible while the domain is MEDICAL. When the domain switches back to AIRCRAFT, the banner unmounts. The banner must render below the input field row, not above or inside the message list area.
 
 **Acceptance Criteria:**
-- `create_app()` returns a configured FastAPI application
-- CORS allows `http://localhost:3000`
-- Lifespan context manager: initialises DB pool on startup, disposes on shutdown
-- Pydantic schemas defined for: `QueryRequest`, `QueryResponse`, `IngestResponse`, `ChunkResponse`
-- `uvicorn backend.app.main:app --reload` starts without errors
-
-**Blocked-by:** T-005, T-007
+- [ ] When domain is set to `MEDICAL`, the amber disclaimer banner renders below the chat input area with the exact text: "Clinical data is for research only. Not for diagnostic or treatment decisions."
+- [ ] There is no dismiss button or X icon on the banner — it cannot be hidden by the user while in MEDICAL domain
+- [ ] When domain switches to `AIRCRAFT`, the banner is conditionally not rendered (not hidden with CSS visibility — it is absent from the DOM)
+- [ ] The banner does not overlap or displace the input field, send button, session pill, or existing error banners (such as the "Connection issue, retrying..." amber banner)
+- [ ] Styling uses amber colour tokens consistent with other amber UI elements in `ChatPanel.tsx`
 
 ---
 
-### T-027 — Ingest API route (`POST /ingest`)
+### W3-028 · Fix CR-007: replace get_event_loop with get_running_loop in compute_tool.py
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 10 — Developer Experience & Observability |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/tools/compute_tool.py`
 
 **Description:**
-Implement `backend/app/api/ingest.py`. Triggers the full ingestion pipeline as a background task.
+Replace `asyncio.get_event_loop()` with `asyncio.get_running_loop()` in the `run_async()` method of `compute_tool.py`. `asyncio.get_event_loop()` is deprecated since Python 3.10 and emits a `DeprecationWarning` when called from a coroutine running inside an event loop (which is always the case in FastAPI async request handlers). `asyncio.get_running_loop()` is the correct replacement: it returns the currently running event loop and raises `RuntimeError` if called outside a running loop — which is the expected behavior since `run_async()` should only ever be called from async context. The functional behavior of `run_async()` (wrapping the synchronous compute operation in `loop.run_in_executor()`) is unchanged by this fix.
 
 **Acceptance Criteria:**
-- `POST /ingest` returns `202 Accepted` immediately with `{status: "started", message: "..."}`
-- Pipeline runs as a FastAPI `BackgroundTask`
-- Calling `POST /ingest` when ingest is already running returns `409 Conflict`
-
-**Blocked-by:** T-026, T-010, T-013, T-017
+- [ ] `backend/app/tools/compute_tool.py` contains `asyncio.get_running_loop()` and does not contain `asyncio.get_event_loop()`
+- [ ] Running `grep -r "get_event_loop" backend/` returns zero results across the entire backend directory
+- [ ] Running `pytest backend/tests/` passes with no new failures introduced by this change
+- [ ] No `DeprecationWarning` for `asyncio.get_event_loop` is emitted when running the test suite
+- [ ] The behavior of `compute_tool.run_async()` is functionally unchanged (it still wraps the synchronous compute call in `loop.run_in_executor(None, ...)`)
 
 ---
 
-### T-028 — Query API routes (`POST /query`, `GET /runs/{run_id}`)
+### W3-029 · Add source field to VectorHit schema and tag hits in retrieval.py
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | backend-architect |
+| **Epic** | Epic 10 — Developer Experience & Observability |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `backend/app/schemas/models.py`
+- EDIT: `backend/app/rag/retrieval.py`
 
 **Description:**
-Implement `backend/app/api/query.py`. Expose the agent orchestrator via HTTP.
+Add `source: Literal["bm25", "vector", "hybrid"] = "vector"` to the `VectorHit` Pydantic model in `schemas/models.py`. Import `Literal` from `typing` (already used elsewhere in the file). In `retrieval.py`, update the hybrid search merge step (`hybrid_search()` and `mmr_rerank()` if applicable): hits sourced exclusively from the BM25 path receive `source="bm25"`, hits sourced exclusively from the vector path receive `source="vector"`, and hits that appeared in both paths and were merged via RRF receive `source="hybrid"`. The `source` field defaults to `"vector"` so that the non-hybrid `vector_search()` function requires no code change — the default covers it. The `source` field must be included in the JSON serialization of `VectorHit` and will appear in the `evidence` array of the `QueryResponse`.
 
 **Acceptance Criteria:**
-- `POST /query` with body `{"query": "..."}` returns full `QueryResponse` JSON
-- `POST /query` returns `400` if `query` is empty or > 2,000 characters
-- `GET /runs/{run_id}` returns stored agent run; returns `404` if not found
-- `run_id` present in both response bodies and retrievable via `GET /runs/{run_id}`
-- All three demo queries return HTTP 200 with non-empty `answer`
-
-**Blocked-by:** T-025, T-026
+- [ ] `VectorHit` Pydantic model has `source: Literal["bm25", "vector", "hybrid"] = "vector"` field
+- [ ] After a hybrid search (`hybrid_search()`), each `VectorHit` has `source` set to `"bm25"`, `"vector"`, or `"hybrid"` based on which retrieval path(s) produced it — not all hits default to `"vector"`
+- [ ] After a non-hybrid `vector_search()` call, `VectorHit` objects have `source = "vector"` (the default — no code change needed in `vector_search()`)
+- [ ] Existing tests that construct or compare `VectorHit` objects do not fail (the field default handles backward compatibility)
+- [ ] `VectorHit(...).model_dump()` includes the `source` field — it appears in the API response `evidence` array and is therefore visible to the frontend
 
 ---
 
-### T-029 — Docs API routes (`GET /docs`, `GET /docs/{doc_id}/chunks/{chunk_id}`)
+### W3-030 · AgentTimeline: CACHED badge, timing breakdown bar chart, source labels
 
-**Owner:** `backend-architect` | **Effort:** S
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 10 — Developer Experience & Observability |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | S |
+| **Depends On** | W3-029 |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/AgentTimeline.tsx`
 
 **Description:**
-Implement `backend/app/api/docs.py`. Allow the frontend citations drawer to fetch source chunk text.
+Three additions to `AgentTimeline.tsx`. (1) CACHED badge: when `runSummary.cached === true`, render a green pill badge labelled "CACHED" in the AgentTimeline header row adjacent to the latency display. Use `className="bg-green-900/30 border border-green-500/30 text-green-400 text-xs px-2 py-0.5 rounded"`. The badge is absent when `cached === false`. (2) Timing breakdown bar chart: add a collapsible "TIMING BREAKDOWN" section beneath the plan text in the timeline. When expanded, render a horizontal bar chart using inline CSS only (no new charting library). Each stage has a proportional bar: `classify | vector | sql | graph | synthesise | verify`. Bar widths are `(stagems / total_latency_ms) * 100`% of the container width. Render the stage name and ms value as a text label beside each bar. Stages absent from `state_timings_ms` render as a zero-width bar. (3) Source labels: in the expanded vector search step, each vector hit now shows a small colored badge for its `source` field — blue for `"bm25"`, cyan for `"vector"`, purple for `"hybrid"` — adjacent to the existing min-max normalised score bar.
 
 **Acceptance Criteria:**
-- `GET /docs` returns paginated list with `?page=` and `?limit=` query params (max limit 100)
-- `GET /docs/{doc_id}/chunks/{chunk_id}` returns `ChunkResponse` with `chunk_text` and `char_start`/`char_end`
-- Returns `404` with descriptive message if `doc_id` or `chunk_id` not found
-
-**Blocked-by:** T-026
+- [ ] A green "CACHED" badge is visible in the AgentTimeline header when `runSummary.cached === true`; the badge is absent when `cached === false`
+- [ ] The "TIMING BREAKDOWN" section is collapsed by default; clicking the section header expands it to show the bar chart
+- [ ] Bar chart widths are proportional: a stage taking 4000ms out of 6000ms total latency occupies approximately 66.7% of the container width
+- [ ] All six stages appear in the bar chart; stages with `0ms` or absent from `state_timings_ms` render as zero-width bars (not errors or missing rows)
+- [ ] Each vector hit in an expanded AgentTimeline step shows a source badge: blue for `"bm25"`, cyan for `"vector"`, purple for `"hybrid"`
+- [ ] No new chart library is introduced — bar widths are implemented via inline `style={{ width: "X%" }}` on `<div>` elements
 
 ---
 
-### T-030 — CLI entrypoint (`ingest` and `ask` subcommands)
+### W3-031 · ChatPanel: collapsible AGENT NOTES section for next_steps and assumptions
 
-**Owner:** `backend-architect` | **Effort:** M
+| Field | Value |
+|-------|-------|
+| **Owner** | frontend-developer |
+| **Epic** | Epic 10 — Developer Experience & Observability |
+| **Sprint** | 3 |
+| **Priority** | P2 |
+| **Effort** | XS |
+| **Depends On** | none |
+
+**Files to modify:**
+- EDIT: `frontend/app/components/ChatPanel.tsx`
 
 **Description:**
-Implement `backend/src/cli.py`. Developer-facing CLI using `argparse` or `click`.
+Add a collapsible "AGENT NOTES" section beneath the main assistant answer text in `ChatPanel.tsx`. Track the expanded state per-message using a `Set<number>` of expanded message indices in component state (or a per-message boolean). The toggle button uses the Lucide `ChevronDown`/`ChevronUp` icon and the label "AGENT NOTES". When expanded, the section renders two sub-sections: "Next Steps" — an unordered list of items from `queryResponse.next_steps` (or "None" if the array is empty or absent); "Assumptions" — an unordered list from `queryResponse.assumptions` (or "None" if absent). The section is collapsed by default. The "AGENT NOTES" toggle is only rendered when at least one of `next_steps` or `assumptions` is a non-empty array — if both are absent or empty `[]`, the toggle is not shown.
 
 **Acceptance Criteria:**
-- `python -m src.cli ingest --config config.yaml` runs the full ingest pipeline and prints progress to stdout
-- `python -m src.cli ask "<query>"` runs the agent and prints formatted output
-- `python -m src.cli ask --json "<query>"` outputs raw JSON matching the PRD F4 schema
-- `--help` on both subcommands prints usage
-
-**Blocked-by:** T-025
-
----
-
-### Phase 7: Frontend (Next.js + shadcn/ui + React Flow)
+- [ ] The "AGENT NOTES" toggle button appears beneath assistant messages only when `next_steps` or `assumptions` is a non-empty array in the `QueryResponse`
+- [ ] The section is collapsed by default — no bulleted lists are visible until the toggle is clicked
+- [ ] Clicking the toggle expands the section to show both sub-sections; clicking again collapses it
+- [ ] The "Next Steps" sub-section renders each item in `next_steps` as a bullet point
+- [ ] The "Assumptions" sub-section renders each item in `assumptions` as a bullet point
+- [ ] When both `next_steps` and `assumptions` are empty arrays or absent, the "AGENT NOTES" toggle is not rendered at all (not rendered but hidden — it is absent from the DOM)
 
 ---
 
-### T-031-F — Next.js project scaffold and API client
+## Dependency Graph Summary
 
-**Owner:** `frontend-developer` | **Effort:** M
+```
+Sprint 1:
+  W3-001 ──┐
+  W3-002 ──┴──→ W3-005 ──→ W3-006
+  W3-003 ───────────────→ W3-008
+  W3-004 ──→ W3-007 ──→ W3-009
+                      └──→ W3-010
+  (W3-006 also depends on W3-003 via the schema it reads)
 
-**Description:**
-Scaffold the Next.js App Router project in `frontend/`. Install dependencies and create the typed API client in `frontend/app/lib/api.ts`.
+Sprint 2:
+  W3-011 ──→ W3-012 ──→ W3-013
+  W3-014 ──────────────→ W3-015
+  W3-016 ──────────────→ W3-017
+  W3-018  (independent)
+  W3-019  (independent)
 
-**Acceptance Criteria:**
-- `npm run dev` starts Next.js on port 3000 without errors
-- `tsconfig.json` configured with strict mode and path aliases
-- shadcn/ui initialised; at least `Button`, `Card`, `Drawer`, `Badge`, `ScrollArea` components added
-- `frontend/app/lib/api.ts` exports: `postQuery()`, `getRunById()`, `getChunk()`
-- `npm run build` completes without type errors
-
-**Blocked-by:** T-001
-
----
-
-### T-032-F — Four-panel main layout (`page.tsx`)
-
-**Owner:** `frontend-developer` | **Effort:** M
-
-**Description:**
-Implement `frontend/app/page.tsx`. Create the four-panel layout using shadcn/ui `Card` and CSS grid/flexbox.
-
-**Acceptance Criteria:**
-- Layout renders four named panels: **Chat**, **Agent Timeline**, **Graph Viewer**, **Citations**
-- Layout is responsive to viewport height
-- No hardcoded hex colours; all colour references use CSS variables
-
-**Blocked-by:** T-031-F
+Sprint 3:
+  W3-020 ──→ W3-021
+  W3-029 ──→ W3-030
+  W3-022, W3-023, W3-024, W3-025, W3-026, W3-027, W3-028, W3-031 (all independent)
+```
 
 ---
 
-### T-033-F — ChatPanel component
+## Parallel Work Waves
 
-**Owner:** `frontend-developer` | **Effort:** M
+**Sprint 1 Wave A (no blockers):** W3-001, W3-002, W3-003, W3-004
+**Sprint 1 Wave B:** W3-005 (after W3-001 + W3-002), W3-008 (after W3-003)
+**Sprint 1 Wave C:** W3-006 (after W3-003 + W3-005), W3-007 (after W3-004 + W3-005)
+**Sprint 1 Wave D:** W3-009 (after W3-007), W3-010 (after W3-007)
 
-**Description:**
-Implement `frontend/app/components/ChatPanel.tsx`. Chat input + message history with query submission wired to the API client.
+**Sprint 2 Wave A (no blockers):** W3-011, W3-014, W3-016, W3-018, W3-019
+**Sprint 2 Wave B:** W3-012 (after W3-011), W3-015 (after W3-014), W3-017 (after W3-016)
+**Sprint 2 Wave C:** W3-013 (after W3-012)
 
-**Acceptance Criteria:**
-- Text input with submit button (keyboard shortcut: Enter)
-- On submit: calls `postQuery`, shows a loading spinner
-- On success: renders `answer` text in a message bubble with markdown rendering
-- On error: shows an error alert with the error message
-- Query input disabled while a request is in flight
-
-**Blocked-by:** T-032-F
+**Sprint 3 Wave A (no blockers):** W3-020, W3-022, W3-023, W3-024, W3-025, W3-026, W3-027, W3-028, W3-029, W3-031
+**Sprint 3 Wave B:** W3-021 (after W3-020), W3-030 (after W3-029)
 
 ---
 
-### T-034-F — AgentTimeline component
+## Environment Variables (Wave 3 Additions)
 
-**Owner:** `frontend-developer` | **Effort:** M
-
-**Description:**
-Implement `frontend/app/components/AgentTimeline.tsx`. Render the `run_summary.steps` array as a vertical timeline.
-
-**Acceptance Criteria:**
-- Each step rendered as a timeline item: step number, tool name (with icon/badge), latency (ms), status (success/error)
-- Error steps highlighted in red
-- Tool names rendered as `Badge` components with colour coding per tool type
-
-**Blocked-by:** T-032-F
+| Variable | Default | Purpose | Render Requirement |
+|----------|---------|---------|-------------------|
+| `CONVERSATIONAL_MEMORY_ENABLED` | `true` | Gates Epic 1 session context injection in orchestrator; set to `false` to disable without redeploy | Optional |
+| `STREAMING_ENABLED` | `true` | Gates Epic 3 SSE streaming synthesis endpoint; set to `false` to disable without redeploy | Optional |
+| `EAGER_MODEL_LOAD` | `false` | Must be set to `true` on Render for 1.5s first-token target | **Hard requirement** for Epic 3 first-token SLA |
 
 ---
 
-### T-035-F — GraphViewer component (React Flow)
+## Key Constraints Checklist
 
-**Owner:** `frontend-developer` | **Effort:** L
+Every developer must verify these constraints before merging any Wave 3 task:
 
-**Description:**
-Implement `frontend/app/components/GraphViewer.tsx`. Render the `graph_path` from the agent response using React Flow.
-
-**Acceptance Criteria:**
-- Renders `graph_path.nodes` and `graph_path.edges` as a React Flow graph
-- Node types styled differently: `entity` nodes (circular, purple), `chunk` nodes (rectangular, teal)
-- Clicking a node opens a tooltip or side-drawer showing: node label, type, and up to 3 linked chunk excerpts
-- Graph auto-fits to the panel on load (`fitView`)
-
-**Blocked-by:** T-032-F
-
----
-
-### T-036-F — CitationsDrawer component
-
-**Owner:** `frontend-developer` | **Effort:** M
-
-**Description:**
-Implement `frontend/app/components/CitationsDrawer.tsx`. Clicking any citation in the answer opens a drawer with the source chunk text and highlighted cited span.
-
-**Acceptance Criteria:**
-- `claims` array rendered as inline citation links (`[1]`, `[2]`)
-- Clicking a citation link opens a shadcn/ui `Drawer` from the right
-- Drawer fetches chunk via `getChunk(doc_id, chunk_id)` and highlights cited span
-- `confidence` score displayed as a `Badge` with colour: green ≥ 0.7, yellow 0.4–0.69, red < 0.4
-- Drawer closes on Escape key or outside click
-
-**Blocked-by:** T-033-F, T-035-F
+- [ ] All new `QueryRequest` fields are optional with `None` defaults — existing API callers send no new fields and continue to work unchanged
+- [ ] No modifications to the orchestrator's 8-stage state machine structure (CLASSIFY → PLAN → EXECUTE_TOOLS → EXPAND_GRAPH → RE_RANK → SYNTHESISE → VERIFY → SAVE → DONE)
+- [ ] All new analytics endpoints use the named-query pattern only — no raw SQL strings in `analytics.py`
+- [ ] Every Alembic migration (W3-001, W3-002, W3-025) has a fully working `downgrade()` function verified by running it locally
+- [ ] Every `CREATE INDEX CONCURRENTLY` statement in W3-025 is immediately preceded by `op.execute("COMMIT")`
+- [ ] `graph_path` is always returned from the backend (never null); `GraphViewer` 3-tier fallback (real graph → synthetic → mock) is not regressed
+- [ ] No new duplicate `<AppHeader>`, `DomainSwitcher`, or second `NavDropdown` added to any page sub-header
+- [ ] Dashboard outer div retains `height: calc(100vh - 46px)` after any dashboard changes (W3-015)
+- [ ] `<html suppressHydrationWarning>` in `layout.tsx` is not removed; no new SSR-breaking class names introduced
+- [ ] CORS: new routes (`/analytics/*`, `/runs`, `PATCH /runs/*/favourite`) are added to the explicit origins list — never `allow_origins=["*"]` combined with `allow_credentials=True`
+- [ ] Epic 1 scope boundary respected: conversation context is filter-forwarding only — no open-ended coreference or pronoun resolution logic added anywhere
 
 ---
 
-### Phase 8: Docker & Deployment
+## Verification Checklist (run before marking Wave 3 complete)
+
+1. **Multi-turn:** Submit "hydraulic leak last 30 days" → then "show only critical severity" → confirm second query request payload in Network tab includes `conversation_history` array and `session_id`. Verify the response reflects filtered context.
+
+2. **History:** Submit 3 queries → all appear in HistorySidebar in reverse chronological order → star one → persists on page refresh → click history item → result loads with zero `/query` calls (verify in Network tab).
+
+3. **Streaming:** Submit any hybrid query on a warm Render instance (`EAGER_MODEL_LOAD=true`) → first tokens appear in UI within 1.5s → claims and graph panel load only after `type:done` event → disable SSE (set `STREAMING_ENABLED=false`) → confirm fallback to non-streaming works.
+
+4. **Dashboard:** Navigate to Tab 3 → confirm chart values match `SELECT defect_type, COUNT(*) FROM manufacturing_defects GROUP BY defect_type` run in psql → change date range → chart re-fetches → switch domain to MEDICAL → Tab 3 updates to disease data.
+
+5. **Export:** Submit a query → click Export → PDF → open PDF → verify all four sections present (header with run_id, answer, claims table with integer % confidence, evidence table with scores) → Export → JSON → `JSON.parse()` succeeds without error.
+
+6. **Citations:** Find a claim with `citations.length > 1` → open CitationsDrawer → verify Prev/Next and "1 of N" counter work → verify `<mark>` wraps exactly `char_start` to `char_end` → find `conflict_flagged === true` claim → verify amber CONFLICT badge appears.
+
+7. **Examples:** Navigate to `/examples` → click "Run Query" on any example → redirects to `/` → query auto-submits with domain AIRCRAFT → both localStorage keys cleared after submission (verify in DevTools Application → Local Storage).
+
+8. **Graph search:** Submit a hybrid query → type a term in GraphViewer search box → non-matching nodes dim to 20% opacity → click "Fit to selection" → viewport zooms to matching nodes → clear search → all nodes return to full opacity.
+
+9. **Medical HNSW:** Run `EXPLAIN (ANALYZE, FORMAT JSON) SELECT ...` on a medical embedding cosine query → confirm "Index Scan using idx_medical_embeddings_hnsw" in the plan. Verify medical disclaimer banner visible when MEDICAL domain active and absent when AIRCRAFT.
+
+10. **CR-007 + observability:** Run `grep -r "get_event_loop" backend/` → zero results. Submit a query twice → CACHED badge renders on second response. Expand "TIMING BREAKDOWN" in AgentTimeline → bar widths proportional to timings. Expand a vector step → source badges present per hit.
 
 ---
 
-### T-037 — Backend Dockerfile
+## Task Count Summary
 
-**Owner:** `deployment-engineer` | **Effort:** M
+| Metric | Value |
+|--------|-------|
+| Total tasks | 31 |
+| Sprint 1 (P0) tasks | 10 (W3-001 to W3-010) |
+| Sprint 2 (P1) tasks | 9 (W3-011 to W3-019) |
+| Sprint 3 (P2) tasks | 12 (W3-020 to W3-031) |
+| backend-architect tasks | 14 (W3-001–W3-007, W3-011, W3-012, W3-014, W3-025, W3-026, W3-028, W3-029) |
+| frontend-developer tasks | 17 (W3-008–W3-010, W3-013, W3-015–W3-024, W3-027, W3-030, W3-031) |
+| XL tasks | 0 (no task was rated XL; all were decomposed to M or smaller) |
 
-**Description:**
-Write `backend/Dockerfile`. Multi-stage build: install dependencies, copy source, expose port 8000.
+**Critical path (longest dependency chain):**
+`W3-011 → W3-012 → W3-013` (streaming: 3 tasks, M+M effort) is the longest chain within a sprint. Across the full wave, the Sprint 1 backend chain `W3-001/W3-002 → W3-005 → W3-007 → W3-009` (4 levels deep) is the longest end-to-end dependency chain.
 
-**Acceptance Criteria:**
-- Base image: `python:3.11-slim`
-- `sentence-transformers/all-MiniLM-L6-v2` model pre-downloaded during build
-- `spacy` model `en_core_web_sm` downloaded during build
-- Entrypoint: `uvicorn backend.app.main:app --host 0.0.0.0 --port 8000`
-- `docker run` with correct env vars starts the API and `GET /healthz` returns `{"status": "ok"}`
-
-**Blocked-by:** T-028, T-030
-
----
-
-### T-038 — Frontend Dockerfile
-
-**Owner:** `deployment-engineer` | **Effort:** S
-
-**Description:**
-Write `frontend/Dockerfile`. Multi-stage build: install deps and build Next.js static output, then serve with a minimal Node image.
-
-**Acceptance Criteria:**
-- Build stage: `node:20-alpine`, runs `npm ci` and `npm run build`
-- Runtime stage: `node:20-alpine`, copies `.next/` output and runs `npm start`
-- `NEXT_PUBLIC_API_URL` build arg wired to Next.js env
-- Port 3000 exposed
-
-**Blocked-by:** T-036-F
 
 ---
 
-### T-039 — Complete `docker-compose.yml` with all three services (LOCAL DEV ONLY)
+# tasks3.md — NextAgentAI Wave 4: Supabase Auth
 
-**Owner:** `deployment-engineer` | **Effort:** M
-
-**Description:**
-Extend `docker-compose.yml` (started in T-002) to add `backend` and `frontend` services. This file is **local development only**.
-
-**Acceptance Criteria:**
-- Three services: `postgres`, `backend`, `frontend`
-- `backend` depends_on `postgres` with `condition: service_healthy`
-- `backend` service runs Alembic migrations before starting Uvicorn
-- `docker compose up --build` from a fresh clone: all three services start, health checks pass
-- `docker compose down -v` cleanly removes containers and volumes
-
-**Blocked-by:** T-002, T-037, T-038
+> Generated from: `auth_prompt.md` + `prd3.md`
+> Generated on: 2026-03-08
+> Total tasks: 28
 
 ---
 
-### T-039b — Render deployment configuration (external backend)
+## Summary
 
-**Owner:** `deployment-engineer` | **Effort:** M
-
-**Description:**
-Create `render.yaml` (Render Blueprint file) at the repo root to define the backend web service on Render's free tier.
-
-**Acceptance Criteria:**
-- `render.yaml` present at repo root, defining one `web` service pointing to the `backend/Dockerfile`
-- Health check path set to `/healthz` in `render.yaml`
-- `ANTHROPIC_API_KEY` and `DATABASE_URL` documented as Render environment secrets
-- `GET /healthz` returns `{"status": "ok"}` on the public Render URL
-
-**Blocked-by:** T-037
+| Phase | Name | Tasks | Earliest Start |
+|---|---|---|---|
+| 1 | Backend Auth Infrastructure | W4-001 → W4-009 | Immediately (no frontend dependency) |
+| 2 | Frontend Auth Infrastructure | W4-010 → W4-015 | Immediately (parallel with Phase 1) |
+| 3 | Auth Pages | W4-016 → W4-019 | After W4-013 (AuthProvider) |
+| 4 | AppHeader + API Client Integration | W4-020 → W4-025 | After W4-013, W4-014, W4-015 |
+| 5 | Environment, Deployment & Docs | W4-026 → W4-028 | After all Phase 4 tasks |
 
 ---
 
-### T-039c — Vercel deployment configuration (external frontend)
+## Parallel Work Waves
 
-**Owner:** `deployment-engineer` | **Effort:** S
+**Wave 1 (no blockers):**
+W4-001, W4-010
 
-**Description:**
-Configure the Vercel project for the Next.js frontend. Set `NEXT_PUBLIC_API_URL` as a Vercel environment variable pointing to the Render backend URL.
+**Wave 2:**
+W4-002 (after W4-001), W4-011 (after W4-010)
 
-**Acceptance Criteria:**
-- `NEXT_PUBLIC_API_URL` set as a Vercel environment variable
-- Frontend deploys successfully on `git push`
-- All panels render correctly on the Vercel URL; no CORS errors
+**Wave 3:**
+W4-003, W4-004 (after W4-002); W4-012, W4-013 (after W4-011)
 
-**Blocked-by:** T-038
+**Wave 4:**
+W4-005 (after W4-003, W4-004); W4-014 (after W4-013); W4-015 (after W4-013)
 
----
+**Wave 5:**
+W4-006 (after W4-005); W4-016, W4-017, W4-018, W4-019 (after W4-014, W4-015)
 
-### T-040 — Ingest-on-startup entrypoint script and seed data
+**Wave 6:**
+W4-007 (after W4-006); W4-020 (after W4-013); W4-021 (after W4-013, W4-015)
 
-**Owner:** `deployment-engineer` | **Effort:** M
+**Wave 7:**
+W4-008 (after W4-007); W4-022 (after W4-021); W4-023 (after W4-021); W4-024 (after W4-021); W4-025 (after W4-022, W4-023, W4-024)
 
-**Description:**
-Create a Docker entrypoint script that: runs Alembic migrations, then runs `python -m src.cli ingest` on first boot (skipping if data already present), then starts Uvicorn.
+**Wave 8:**
+W4-009 (after W4-008); W4-026, W4-027 (after W4-008, W4-025)
 
-**Acceptance Criteria:**
-- `backend/entrypoint.sh` script: `alembic upgrade head`, checks if `incident_reports` has rows; if empty runs ingest, then starts Uvicorn
-- `demo/seed_sql/` fixtures allow ingest to complete without Kaggle credentials
-- Second startup (data already present): skips ingest and starts API immediately (< 15s)
-
-**Blocked-by:** T-039, T-030
-
----
-
-### T-041 — Health check endpoint and README
-
-**Owner:** `deployment-engineer` | **Effort:** M
-
-**Description:**
-Add `GET /healthz` to the FastAPI app and write `README.md` with full setup and demo instructions.
-
-**Acceptance Criteria:**
-- `GET /healthz` returns `{"status": "ok", "db": "connected", "embeddings_loaded": true}` when healthy
-- Returns `{"status": "degraded", ...}` with 503 if DB is unreachable
-- `README.md` contains: overview, prerequisites, Local Dev quickstart, External Deployment steps, three demo queries with expected outputs
-
-**Blocked-by:** T-039, T-039b, T-039c
+**Wave 9:**
+W4-028 (after W4-026, W4-027)
 
 ---
 
-### Phase 9: Tests & Validation
+## Dependency Graph Summary
+
+```
+Phase 1 (Backend)           Phase 2 (Frontend Infra)
+    |                               |
+    W4-001                       W4-010
+    W4-002                       W4-011
+    W4-003, W4-004               W4-012, W4-013
+    W4-005                       W4-014, W4-015
+    W4-006                            |
+    W4-007               Phase 3 (Auth Pages)
+    W4-008               W4-016, W4-017, W4-018, W4-019
+    W4-009                            |
+         \               Phase 4 (Integration)
+          \              W4-020, W4-021
+           \             W4-022, W4-023, W4-024, W4-025
+            \                         |
+             +----> Phase 5 (Env & Deploy)
+                    W4-026, W4-027, W4-028
+```
+
+Phases 1 and 2 are fully independent and may be implemented in parallel. Phase 3 requires the `AuthProvider` and Supabase browser client (W4-013, W4-014). Phase 4 requires `AuthContext` + `apiFetch` + middleware. Phase 5 requires all code tasks complete.
 
 ---
 
-### T-042 — SQL guardrail unit tests
+## Key Constraints (from CLAUDE.md and prd3.md)
 
-**Owner:** `backend-architect` | **Effort:** S
-
-**Description:**
-Implement `backend/tests/test_sql_guardrails.py`. Covers all dangerous statement patterns and valid SELECT cases.
-
-**Acceptance Criteria:**
-- Tests for all seven blocked keywords: `DROP`, `DELETE`, `UPDATE`, `INSERT`, `CREATE`, `ALTER`, `TRUNCATE`
-- Tests use mixed case and inline whitespace
-- Tests for valid SELECTs: simple `SELECT *`, `SELECT COUNT(*)`, multi-line SELECT with JOIN
-- All tests pass with `pytest backend/tests/test_sql_guardrails.py`
-
-**Blocked-by:** T-020
-
----
-
-### T-043 — Vector retrieval unit tests
-
-**Owner:** `backend-architect` | **Effort:** S
-
-**Description:**
-Implement `backend/tests/test_vector_retrieval.py`. Validates that `VectorSearchTool` returns meaningful results against the seeded dataset.
-
-**Blocked-by:** T-015
+- **No `asyncio.get_event_loop()`** — any changes to `orchestrator.py` must use `asyncio.get_running_loop()` (CR-007). Verify with `grep -r "get_event_loop" backend/app/`.
+- **`@supabase/ssr` only** — `@supabase/auth-helpers-nextjs` is deprecated and must not be used.
+- **`tsc --noEmit` must pass** — run `npx tsc --noEmit` from `frontend/` before declaring Phase 4 complete.
+- **525 existing tests must not regress** — run `backend/.venv/Scripts/python -m pytest tests/` after every backend change; target: 525+ passed, 5 skipped.
+- **Alembic CONCURRENTLY pattern** — `op.execute("COMMIT")` must precede every `CREATE INDEX CONCURRENTLY`. Follow `0005_wave3_indexes.py` exactly.
+- **AppHeader: additive only** — no second `DomainSwitcher`, `NavDropdown`, or logo. Auth additions go to the right side only.
+- **Dashboard height unchanged** — `height: calc(100vh - 46px)` on dashboard outer div; do not alter.
+- **`ORJSONResponse` default** — auth error responses from FastAPI use `ORJSONResponse` automatically; no special handling needed.
+- **Open redirect protection** — `?next=` param must be validated: starts with `/`, does not contain `://`, does not start with `//`.
+- **No new UI libraries** — all auth page styling uses existing Tailwind + inline SCADA CSS vars (no component library additions).
+- **`SUPABASE_JWT_SECRET` stays backend-only** — never in `NEXT_PUBLIC_` env vars or frontend code.
+- **Test runner** — always `backend/.venv/Scripts/python -m pytest tests/` from `backend/`; bare `pytest` will fail.
 
 ---
 
-### T-044 — Agent intent router unit tests
-
-**Owner:** `backend-architect` | **Effort:** S
-
-**Description:**
-Implement `backend/tests/test_agent_router.py`. Validates the intent classifier routes correctly for the three canonical query patterns.
-
-**Blocked-by:** T-022
+## Tasks
 
 ---
 
-### T-045 — End-to-end demo validation
+### W4-001: Add `python-jose[cryptography]` to backend requirements
 
-**Owner:** `backend-architect` | **Effort:** M
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: none
+**Files**:
+- `backend/requirements.txt` — modify
 
-**Description:**
-Manually execute and verify all three demo queries from PRD Section 14 against the fully running system — both locally via Docker Compose and externally via the public Vercel URL.
+**Acceptance criteria**:
+- [ ] `python-jose[cryptography]>=3.3.0` is present in `backend/requirements.txt`.
+- [ ] No duplicate or conflicting `jose` entries in the file.
+- [ ] `pip install -r requirements.txt` completes without error in the backend venv.
 
-**Acceptance Criteria:**
-- Demo query 1 (vector-only): returns ≥ 3 incident excerpts with `score > 0.5` and cited `chunk_id`
-- Demo query 2 (sql_only): returns a SQL result with ≥ 2 product rows
-- Demo query 3 (hybrid): executes both vector and SQL tools, returns answer with ≥ 1 claim having `confidence ≥ 0.6`
-- All three queries complete in < 30s wall-clock time
-
-**Blocked-by:** T-040, T-041, T-039b, T-039c, T-042, T-043, T-044, T-036-F
+**Key constraints**: Do not add any other new Python packages not required by auth.
 
 ---
 
-### Wave 0 Phase Summary
+### W4-002: Create `backend/app/auth/` package skeleton
 
-| Phase | Tasks | Total Effort |
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-001
+**Files**:
+- `backend/app/auth/__init__.py` — create (empty or minimal exports)
+
+**Acceptance criteria**:
+- [ ] `backend/app/auth/__init__.py` exists.
+- [ ] `from backend.app.auth import jwt` imports without error inside the venv.
+- [ ] No circular imports introduced (verify by importing `main.py` in a dry run).
+
+**Key constraints**: The `__init__.py` may be empty; the actual logic lives in `jwt.py` (W4-003).
+
+---
+
+### W4-003: Implement `backend/app/auth/jwt.py` — JWT verification
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-002
+**Files**:
+- `backend/app/auth/jwt.py` — create
+
+**Acceptance criteria**:
+- [ ] `verify_token(token: str) -> dict` decodes a valid Supabase HS256 JWT using `SUPABASE_JWT_SECRET` from `os.environ` and returns the claims dict.
+- [ ] `verify_token` raises `HTTPException(status_code=401)` for: expired token, wrong signature, missing `sub` claim, malformed token.
+- [ ] `get_current_user(request: Request) -> dict` extracts the `Authorization: Bearer <token>` header, calls `verify_token`, returns claims. Raises `HTTPException(401)` if the header is absent.
+- [ ] `SUPABASE_JWT_SECRET` is never logged or included in exception detail strings.
+- [ ] Module imports cleanly: `from backend.app.auth.jwt import get_current_user`.
+
+**Key constraints**: Algorithm must be `HS256`. Use `jose.jwt.decode()` from `python-jose`. Do not call the Supabase API on each request.
+
+---
+
+### W4-004: Add `user_id` column to `AgentRun` ORM model
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-002
+**Files**:
+- `backend/app/db/models.py` — modify
+
+**Acceptance criteria**:
+- [ ] `AgentRun` ORM class has `user_id = Column(PGUUID(as_uuid=True), nullable=True, index=True)`.
+- [ ] Import `from sqlalchemy.dialects.postgresql import UUID as PGUUID` is present (or reuses the existing import if already present).
+- [ ] `nullable=True` — existing rows are unaffected.
+- [ ] Existing tests that construct `AgentRun` objects do not fail (`pytest tests/` passes).
+
+**Key constraints**: Do not change any other columns. `PGUUID(as_uuid=True)` must match the migration type used in W4-005.
+
+---
+
+### W4-005: Write Alembic migration `0006_add_user_id_to_agent_runs.py`
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-003, W4-004
+**Files**:
+- `backend/app/db/migrations/versions/0006_add_user_id_to_agent_runs.py` — create
+
+**Acceptance criteria**:
+- [ ] `revision = "0006_add_user_id"`, `down_revision = "0005_wave3_indexes"`.
+- [ ] `upgrade()` adds `user_id UUID NULLABLE` column to `agent_runs` via `op.add_column`.
+- [ ] `upgrade()` calls `op.execute("COMMIT")` immediately before `CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_runs_user_id ON agent_runs (user_id, created_at DESC)`.
+- [ ] `downgrade()` drops the index with `DROP INDEX IF EXISTS` then drops the column.
+- [ ] Migration file follows the exact structure and comment style of `0005_wave3_indexes.py`.
+- [ ] `alembic history` shows the new revision in the chain (local Docker DB).
+
+**Key constraints**: The CONCURRENTLY pattern is mandatory — see `0005_wave3_indexes.py`. Do not skip `op.execute("COMMIT")` or Neon will error. `downgrade()` must be a working reverse.
+
+---
+
+### W4-006: Thread `user_id` through `orchestrator.run()` and `_save_run()`
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-005
+**Files**:
+- `backend/app/agent/orchestrator.py` — modify
+
+**Acceptance criteria**:
+- [ ] `orchestrator.run()` signature gains `user_id: str | None = None` as an optional keyword parameter after the existing `conversation_history` param.
+- [ ] `_save_run()` (or equivalent internal save method) includes `user_id` in the `agent_runs` INSERT.
+- [ ] When `user_id=None`, the INSERT stores `NULL` for `user_id` (preserves backward compatibility).
+- [ ] No use of `asyncio.get_event_loop()` — `asyncio.get_running_loop()` only (CR-007). Verify with `grep -r "get_event_loop" backend/app/`.
+- [ ] All existing 525 tests continue to pass after the change.
+
+**Key constraints**: The `run()` method is `async`; `_save_run()` must also remain async or sync-in-executor as appropriate. Do not change the return type `AgentRunResult`.
+
+---
+
+### W4-007: Add `Depends(get_current_user)` to protected API routers
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-006
+**Files**:
+- `backend/app/api/query.py` — modify
+- `backend/app/api/runs.py` — modify
+- `backend/app/api/analytics.py` — modify
+
+**Acceptance criteria**:
+- [ ] `POST /query`: receives `current_user: dict = Depends(get_current_user)`; extracts `user_id = current_user["sub"]`; passes `user_id` to `orchestrator.run()`.
+- [ ] `GET /runs`: receives `Depends(get_current_user)`; adds `WHERE user_id = :user_id` filter so users see only their own runs.
+- [ ] `GET /runs/{run_id}`: receives `Depends(get_current_user)`; adds `AND user_id = :user_id` guard; returns HTTP 404 if run belongs to a different user.
+- [ ] `PATCH /runs/{run_id}/favourite`: receives `Depends(get_current_user)`; adds `AND user_id = :user_id` guard; returns HTTP 404 for another user's run.
+- [ ] `GET /analytics/*`: receives `Depends(get_current_user)`; analytics results are not user-scoped (shared data) but auth is required.
+- [ ] `GET /healthz`, `POST /ingest`, `GET /docs` remain public — no `Depends` added.
+- [ ] `curl -X POST /query` without an `Authorization` header returns HTTP 401.
+
+**Key constraints**: Import `get_current_user` from `backend.app.auth.jwt`. Do not apply auth globally in `main.py` — apply per-router so public endpoints stay public.
+
+---
+
+### W4-008: Write `backend/tests/test_auth_jwt.py`
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-007
+**Files**:
+- `backend/tests/test_auth_jwt.py` — create
+
+**Acceptance criteria**:
+- [ ] Test `verify_token` with a validly signed HS256 JWT → returns claims dict with `sub` key.
+- [ ] Test `verify_token` with an expired JWT → `HTTPException` with `status_code=401`.
+- [ ] Test `verify_token` with a wrong-secret JWT → `HTTPException` with `status_code=401`.
+- [ ] Test `get_current_user` with a missing `Authorization` header → `HTTPException` 401.
+- [ ] Test `get_current_user` with a malformed `Authorization` header (no "Bearer" prefix) → `HTTPException` 401.
+- [ ] All tests run via `backend/.venv/Scripts/python -m pytest tests/test_auth_jwt.py` without requiring a live database.
+- [ ] No real `SUPABASE_JWT_SECRET` in test code — use a test secret to sign/verify test tokens.
+
+**Key constraints**: Use the existing Anthropic stub pattern from `conftest.py` as a model for environment patching. Use `python-jose` directly in the test to mint test JWTs.
+
+---
+
+### W4-009: Write `backend/tests/test_wave4_user_id.py` and verify full suite
+
+**Phase**: 1 — Backend Auth Infrastructure
+**Depends on**: W4-008
+**Files**:
+- `backend/tests/test_wave4_user_id.py` — create
+
+**Acceptance criteria**:
+- [ ] Tests verify that `orchestrator.run(user_id="some-uuid")` stores `user_id` on the resulting `AgentRunResult` or equivalent output.
+- [ ] Tests verify that `orchestrator.run()` with no `user_id` stores `None` without error.
+- [ ] Full suite run: `backend/.venv/Scripts/python -m pytest tests/` reports 527+ passed, 5 skipped (original 525 + 2 new test files, net of any skipped).
+- [ ] No regressions in any previously passing test.
+
+**Key constraints**: Use mocks/stubs for DB and Anthropic calls — same pattern as existing orchestrator tests.
+
+---
+
+### W4-010: Install `@supabase/supabase-js` and `@supabase/ssr` in frontend
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: none
+**Files**:
+- `frontend/package.json` — modified by npm
+- `frontend/package-lock.json` — modified by npm
+
+**Acceptance criteria**:
+- [ ] `npm install @supabase/supabase-js @supabase/ssr` completes without error from `frontend/` directory.
+- [ ] `@supabase/supabase-js` v2.x appears in `frontend/package.json` `dependencies`.
+- [ ] `@supabase/ssr` latest stable appears in `frontend/package.json` `dependencies`.
+- [ ] `@supabase/auth-helpers-nextjs` is NOT added (deprecated — not permitted).
+- [ ] If peer dependency conflicts arise, `--legacy-peer-deps` may be used; document the flag if used.
+
+**Key constraints**: `@supabase/ssr` only, never `@supabase/auth-helpers-nextjs`. Do not install any form/UI component libraries.
+
+---
+
+### W4-011: Create `frontend/app/lib/supabase.ts` — browser Supabase client
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: W4-010
+**Files**:
+- `frontend/app/lib/supabase.ts` — create
+
+**Acceptance criteria**:
+- [ ] Exports a singleton `supabase` via `createBrowserClient(NEXT_PUBLIC_SUPABASE_URL, NEXT_PUBLIC_SUPABASE_ANON_KEY)` from `@supabase/ssr`.
+- [ ] Uses `process.env.NEXT_PUBLIC_SUPABASE_URL!` and `process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!` — no hardcoded values.
+- [ ] TypeScript: `npx tsc --noEmit` passes with this file present (even if env vars are undefined at build time).
+- [ ] File contains no server-only imports (no `next/headers`, no `cookies()`).
+
+**Key constraints**: This file is imported by client components and `auth-context.tsx`. Must be safe to import in `"use client"` context.
+
+---
+
+### W4-012: Create `frontend/app/lib/supabase-server.ts` — server Supabase client factory
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: W4-011
+**Files**:
+- `frontend/app/lib/supabase-server.ts` — create
+
+**Acceptance criteria**:
+- [ ] Exports an async `createClient()` factory function using `createServerClient` from `@supabase/ssr`.
+- [ ] Uses `cookies()` from `next/headers` with read-only `getAll` access pattern for reading session cookies.
+- [ ] Returns a properly typed Supabase client usable in Server Components and Route Handlers.
+- [ ] Must not be imported in `"use client"` components — contains server-only APIs.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: This factory is used by `middleware.ts` (W4-015) with a different cookie pattern (read+write). The server component version is read-only. Do not export a singleton — it must be a factory called per-request.
+
+---
+
+### W4-013: Create `frontend/app/lib/auth-context.tsx` — `AuthProvider` and `useAuth()`
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: W4-011
+**Files**:
+- `frontend/app/lib/auth-context.tsx` — create
+
+**Acceptance criteria**:
+- [ ] `"use client"` directive at the top.
+- [ ] `AuthContextValue` interface has: `user: User | null`, `accessToken: string | null`, `loading: boolean`, `signOut: () => Promise<void>`. The `User` type is imported from `@supabase/supabase-js` — no `any` casts.
+- [ ] `AuthContext` created with `createContext<AuthContextValue | null>(null)`.
+- [ ] `AuthProvider` on mount: calls `supabase.auth.getUser()` to populate `user`; sets `loading = false` when complete.
+- [ ] `AuthProvider` subscribes to `supabase.auth.onAuthStateChange()` — handles `SIGNED_IN`, `SIGNED_OUT`, `TOKEN_REFRESHED`, `PASSWORD_RECOVERY` events to keep `user` and `accessToken` in sync.
+- [ ] `signOut()` calls `supabase.auth.signOut()` then `router.push('/sign-in')`.
+- [ ] `useAuth()` hook throws a descriptive error if called outside `AuthProvider`.
+- [ ] Structural pattern matches `frontend/app/lib/context.tsx` (`RunContext`) exactly — same file organisation, same `createContext` / `useContext` pattern.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `loading = true` guard prevents flash of unauthenticated content during SSR hydration. Import `supabase` singleton from `./supabase` (W4-011), not re-create it.
+
+---
+
+### W4-014: Update `frontend/app/layout.tsx` — add `<AuthProvider>`
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: W4-013
+**Files**:
+- `frontend/app/layout.tsx` — modify
+
+**Acceptance criteria**:
+- [ ] `AuthProvider` is imported from `./lib/auth-context`.
+- [ ] Provider nesting order (outermost to innermost): `ThemeProvider` → `AuthProvider` → `DomainProvider` → `RunProvider` → `AppHeader` + `{children}`.
+- [ ] No other changes to `layout.tsx` — existing `suppressHydrationWarning`, `AppHeader`, and provider structure untouched.
+- [ ] Dev server starts without error: `npm run dev` on port 3005.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `AuthProvider` must wrap `DomainProvider` and `RunProvider` so `useAuth()` is available everywhere. Do not add a second `<AppHeader />`.
+
+---
+
+### W4-015: Create `frontend/middleware.ts` — session refresh and route protection
+
+**Phase**: 2 — Frontend Auth Infrastructure
+**Depends on**: W4-013
+**Files**:
+- `frontend/middleware.ts` — create (at `frontend/middleware.ts`, NOT inside `app/`)
+
+**Acceptance criteria**:
+- [ ] Creates a `createServerClient` instance with full `getAll`/`setAll` cookie access on the request/response pair (read from `request.cookies`, write to `response.cookies`).
+- [ ] Calls `await supabase.auth.getUser()` — NOT `getSession()`. This verifies the token and triggers automatic cookie refresh.
+- [ ] Protected paths: `/`, `/dashboard`, `/data`, `/review`, `/examples`, `/medical-examples`, `/agent`, `/diagram`, `/faq`.
+- [ ] Public paths allowed without auth: `/sign-in`, `/sign-up`, `/forgot-password`, `/reset-password`, and any path under `/(auth)/`.
+- [ ] Unauthenticated request to a protected path redirects to `/sign-in?next=<original-path>`.
+- [ ] `next` query param validated: value must start with `/` and must not contain `://` or start with `//`. Invalid values default to `/`.
+- [ ] `export const config = { matcher: ['/((?!_next/static|_next/image|favicon|api/docs|api/openapi).*)'] }` is present.
+- [ ] Visiting `http://localhost:3005/` without a session cookie redirects to `/sign-in?next=/`.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `supabase.auth.getUser()` is mandatory (not `getSession()`). Middleware runs on every matched request — keep it fast. The file must be at `frontend/middleware.ts`, not `frontend/app/middleware.ts`.
+
+---
+
+### W4-016: Create `frontend/app/(auth)/sign-in/page.tsx`
+
+**Phase**: 3 — Auth Pages
+**Depends on**: W4-014, W4-015
+**Files**:
+- `frontend/app/(auth)/sign-in/page.tsx` — create
+
+**Acceptance criteria**:
+- [ ] `"use client"` directive present.
+- [ ] Form fields: Email, Password. Both required.
+- [ ] On submit: calls `supabase.auth.signInWithPassword({ email, password })`. Button is disabled and shows a spinner while in-flight.
+- [ ] Error mapping: `"Invalid login credentials"` → "Invalid email or password." | `"Email not confirmed"` → "Please confirm your email before signing in." | rate-limit error → "Too many attempts. Please wait before trying again."
+- [ ] On success: reads `searchParams.get('next')`; validates the value (starts with `/`, no `://`, no `//`); calls `router.push(validNext ?? '/')`.
+- [ ] If `searchParams.get('message') === 'password-updated'`: shows cyan info banner "Your password has been updated."
+- [ ] Footer links: "Don't have an account? SIGN UP" → `/sign-up`; "Forgot password?" → `/forgot-password`.
+- [ ] Full-height container: `height: calc(100vh - 46px)`, `background: hsl(var(--bg-void))`.
+- [ ] Form card: `background: hsl(var(--bg-surface))`, border `hsl(var(--border-base))`, `border-radius: 2px`, `max-width: 420px`, centred.
+- [ ] Heading uses Orbitron (`var(--font-display)`), colour `hsl(var(--col-green))`.
+- [ ] Error display uses `AlertCircle` (lucide-react), colour `hsl(var(--col-red))`, matches ChatPanel error banner style exactly.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: No new UI component libraries. Reuse `.panel-hdr`, `.panel-dot` CSS classes from `globals.css`. If `--col-red` is absent from `globals.css`, add it with HSL `0 84% 60%` (see W4-019 for the check). All inline styles match prd3.md § 4.7 spec exactly.
+
+---
+
+### W4-017: Create `frontend/app/(auth)/sign-up/page.tsx`
+
+**Phase**: 3 — Auth Pages
+**Depends on**: W4-014, W4-015
+**Files**:
+- `frontend/app/(auth)/sign-up/page.tsx` — create
+
+**Acceptance criteria**:
+- [ ] `"use client"` directive present.
+- [ ] Form fields: Email, Password (min 8 chars), Confirm Password. Client-side validation: passwords must match before submit.
+- [ ] On submit: calls `supabase.auth.signUp({ email, password, options: { emailRedirectTo: NEXT_PUBLIC_SITE_URL + '/sign-in' } })`. Button disabled + spinner while in-flight.
+- [ ] If `data.user && !data.session`: shows cyan message "Check your email for a confirmation link." — no redirect.
+- [ ] If `data.session` is present (email confirm disabled): `router.push('/')`.
+- [ ] Error: duplicate email → "An account with this email already exists." | weak password → "Password must be at least 8 characters."
+- [ ] Footer link: "Already have an account? SIGN IN" → `/sign-in`.
+- [ ] Same card/heading/error styling as W4-016.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `emailRedirectTo` uses `process.env.NEXT_PUBLIC_SITE_URL` — must never be hardcoded. Confirm Password field is client-side only validation, not sent to Supabase.
+
+---
+
+### W4-018: Create `frontend/app/(auth)/forgot-password/page.tsx`
+
+**Phase**: 3 — Auth Pages
+**Depends on**: W4-014, W4-015
+**Files**:
+- `frontend/app/(auth)/forgot-password/page.tsx` — create
+
+**Acceptance criteria**:
+- [ ] `"use client"` directive present.
+- [ ] Form field: Email only.
+- [ ] On submit: calls `supabase.auth.resetPasswordForEmail(email, { redirectTo: NEXT_PUBLIC_SITE_URL + '/reset-password' })`. Button disabled + spinner while in-flight.
+- [ ] On success (regardless of whether the email is registered): shows cyan message "If that email is registered, a reset link has been sent." — no email enumeration.
+- [ ] Rate-limit error → "Too many attempts. Please wait."
+- [ ] Footer link: back to `/sign-in`.
+- [ ] Same card/heading/error styling as W4-016.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: The success message must always appear after submit — never reveal whether the email exists. `redirectTo` uses `NEXT_PUBLIC_SITE_URL` env var.
+
+---
+
+### W4-019: Create `frontend/app/(auth)/reset-password/page.tsx` and ensure `--col-red` CSS var
+
+**Phase**: 3 — Auth Pages
+**Depends on**: W4-014, W4-015
+**Files**:
+- `frontend/app/(auth)/reset-password/page.tsx` — create
+- `frontend/app/globals.css` — modify only if `--col-red` is absent
+
+**Acceptance criteria**:
+- [ ] `"use client"` directive present.
+- [ ] On mount: subscribes to `supabase.auth.onAuthStateChange`. When event is `PASSWORD_RECOVERY`, enables the new-password form.
+- [ ] `createBrowserClient` is initialised before `onAuthStateChange` listener is registered to avoid missed events.
+- [ ] Form field: New Password (min 8 chars, validated client-side before submit).
+- [ ] On submit: calls `supabase.auth.updateUser({ password: newPassword })`. Button disabled + spinner while in-flight.
+- [ ] On success: `router.push('/sign-in?message=password-updated')`.
+- [ ] If token is expired or invalid (auth state change event delivers error): shows error "This reset link has expired. Please request a new one." with link to `/forgot-password`.
+- [ ] `globals.css` check: if `--col-red` is not defined, add `--col-red: 0 84% 60%;` in the `:root` or `.dark` block consistent with existing colour var style.
+- [ ] Same card/heading/error styling as W4-016.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `PASSWORD_RECOVERY` event is the gate — the form must be disabled until that event fires. Do not attempt to parse the `#access_token` hash manually; let Supabase JS handle it via the auth state change listener.
+
+---
+
+### W4-020: Update `frontend/app/components/AppHeader.tsx` — user pill and SIGN OUT button
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-013
+**Files**:
+- `frontend/app/components/AppHeader.tsx` — modify
+
+**Acceptance criteria**:
+- [ ] `useAuth()` imported from `../lib/auth-context`.
+- [ ] When `loading === true`: auth slot renders nothing (prevents hydration flash).
+- [ ] When `user !== null` and `!loading`: renders a user email pill (font-mono, 0.6rem, `color: hsl(var(--text-dim))`, max-width 160px, `overflow: hidden`, `text-overflow: ellipsis`, `white-space: nowrap`, full email in `title` attribute).
+- [ ] SIGN OUT button appears after the email pill: identical border/font style to the existing `NAVIGATE` dropdown trigger; uses `LogOut` lucide icon at size 10; colour changes to `hsl(var(--col-cyan))` on hover; calls `signOut()` from `useAuth()`.
+- [ ] Auth slot is placed after the existing `DomainSwitcher` separator — no second `NavDropdown`, no second `DomainSwitcher`, no logo duplication.
+- [ ] Existing AppHeader controls (VECTOR/SQL/GRAPH status dots, NavDropdown, DomainSwitcher) are untouched.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `AppHeader` is already `"use client"` — no directive change needed. The 46px header height must not change. Follow exact inline style pattern of existing header buttons.
+
+---
+
+### W4-021: Update `frontend/app/lib/api.ts` — add `accessToken` to `apiFetch` and protected functions
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-013, W4-015
+**Files**:
+- `frontend/app/lib/api.ts` — modify
+
+**Acceptance criteria**:
+- [ ] `apiFetch<T>(path: string, options?: RequestInit, accessToken?: string): Promise<T>` — new third parameter `accessToken?: string`.
+- [ ] When `accessToken` is truthy, adds `Authorization: Bearer <accessToken>` to request headers. When absent or `undefined`, no `Authorization` header is added (backward compatible).
+- [ ] The following exported functions gain an `accessToken?: string` parameter (last param, optional) and forward it to `apiFetch`: `postQuery`, `getRuns`, `getRun`, `patchFavourite`, `getAnalyticsDefects`, `getAnalyticsMaintenance`, `getAnalyticsDiseases`.
+- [ ] Functions without auth requirement (`getHealth`, `getDocs`, `getChunk`, `triggerIngest`, `getRunById`) remain unchanged.
+- [ ] All updated function signatures remain backward-compatible — `accessToken` is always the last, optional parameter.
+- [ ] `npx tsc --noEmit` passes with zero errors — `accessToken` typed as `string | undefined`, no `any` casts.
+
+**Key constraints**: Do not break the existing CORS simple-request optimisation on `getHealth()`. Do not add `Authorization` header to `GET /healthz`. The `Content-Type` conditional logic for GET/HEAD requests must remain intact.
+
+---
+
+### W4-022: Update `frontend/app/components/ChatPanel.tsx` — pass `accessToken` to `postQuery()`
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-021
+**Files**:
+- `frontend/app/components/ChatPanel.tsx` — modify
+
+**Acceptance criteria**:
+- [ ] `useAuth()` imported from `../lib/auth-context`; `accessToken` destructured.
+- [ ] All calls to `postQuery(...)` include `accessToken` as the final argument.
+- [ ] No other ChatPanel functionality is altered (retry logic, SSE streaming, session_id, conversation_history, clear button, health-check warm-up, citations, examples bridge).
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: `accessToken` may be `null` initially (during `loading`); pass it as `accessToken ?? undefined` to match the `string | undefined` type in `postQuery`. Do not add loading gates that block existing ChatPanel behaviour.
+
+---
+
+### W4-023: Update `frontend/app/components/HistorySidebar.tsx` — pass `accessToken` to history API calls
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-021
+**Files**:
+- `frontend/app/components/HistorySidebar.tsx` — modify
+
+**Acceptance criteria**:
+- [ ] `useAuth()` imported; `accessToken` destructured.
+- [ ] All calls to `getRuns(...)` include `accessToken`.
+- [ ] All calls to `patchFavourite(...)` include `accessToken`.
+- [ ] Existing favourites-pinned ordering, share URL, and sidebar collapse behaviour unchanged.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: Pass `accessToken ?? undefined` to handle `null` during initialisation.
+
+---
+
+### W4-024: Update dashboard tab components — pass `accessToken` to analytics API calls
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-021
+**Files**:
+- `frontend/app/dashboard/components/Tab3DefectAnalytics.tsx` — modify
+- `frontend/app/dashboard/components/Tab4MaintenanceTrends.tsx` — modify
+- `frontend/app/dashboard/components/Tab5DataEval.tsx` — modify (if it calls analytics API)
+
+**Acceptance criteria**:
+- [ ] `useAuth()` imported in each modified tab component; `accessToken` destructured.
+- [ ] All calls to `getAnalyticsDefects(...)`, `getAnalyticsMaintenance(...)`, `getAnalyticsDiseases(...)` include `accessToken`.
+- [ ] Dashboard outer div `height: calc(100vh - 46px)` is not altered.
+- [ ] Tabs 1 and 2 (`Tab1AgentQuery.tsx`, `Tab2IncidentExplorer.tsx`) are checked: if they call protected API functions, update them; otherwise leave untouched.
+- [ ] `npx tsc --noEmit` passes.
+
+**Key constraints**: Pass `accessToken ?? undefined` to handle `null` during initialisation. Do not change chart data processing, date filter logic, or component layout.
+
+---
+
+### W4-025: TypeScript full check — `npx tsc --noEmit`
+
+**Phase**: 4 — AppHeader + API Client Integration
+**Depends on**: W4-022, W4-023, W4-024
+**Files**:
+- No file changes — verification task
+
+**Acceptance criteria**:
+- [ ] `npx tsc --noEmit` run from `frontend/` exits with code 0 and zero type errors.
+- [ ] Any type errors found must be fixed before this task is marked complete (fix in the relevant Phase 4 task file).
+- [ ] `User` type from `@supabase/supabase-js` is used throughout — no `any` casts on `user` or `accessToken`.
+- [ ] All `apiFetch` callers pass correctly typed arguments.
+
+**Key constraints**: This is a gate task — Phase 5 must not start until this passes.
+
+---
+
+### W4-026: Document environment variables — frontend `.env.local.example` and backend `.env.example`
+
+**Phase**: 5 — Environment, Deployment & Docs
+**Depends on**: W4-008, W4-025
+**Files**:
+- `frontend/.env.local.example` — create (or update if it already exists)
+- `backend/.env.example` — create (or update if it already exists)
+
+**Acceptance criteria**:
+- [ ] `frontend/.env.local.example` contains all three new Wave 4 vars with placeholder values and comments:
+  - `NEXT_PUBLIC_SUPABASE_URL=https://your-project-ref.supabase.co`
+  - `NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...`
+  - `NEXT_PUBLIC_SITE_URL=http://localhost:3005`
+- [ ] Existing `NEXT_PUBLIC_API_URL` line is preserved in the example file.
+- [ ] `backend/.env.example` contains `SUPABASE_JWT_SECRET=your-supabase-jwt-secret` with a comment explaining where to find it (Supabase dashboard → Settings → API → JWT Settings).
+- [ ] Neither file contains real secrets — only placeholder values.
+- [ ] `SUPABASE_JWT_SECRET` does NOT appear in any `NEXT_PUBLIC_` variable or any frontend file.
+
+**Key constraints**: These are documentation/example files only — they must be safe to commit to the repository. Real values go in `.env.local` and `.env` which are gitignored.
+
+---
+
+### W4-027: Update `CLAUDE.md` with Wave 4 auth constraints
+
+**Phase**: 5 — Environment, Deployment & Docs
+**Depends on**: W4-008, W4-025
+**Files**:
+- `CLAUDE.md` — modify
+
+**Acceptance criteria**:
+- [ ] API endpoint table updated: `POST /query`, `GET /runs`, `GET /runs/{run_id}`, `PATCH /runs/{run_id}/favourite`, `GET /analytics/*` descriptions note "requires Bearer token".
+- [ ] Environment variables table includes the four new Wave 4 vars: `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` (frontend), `SUPABASE_JWT_SECRET` (backend).
+- [ ] Key Constraints section gains auth constraints: `@supabase/ssr` only; `supabase.auth.getUser()` in middleware (not `getSession()`); `SUPABASE_JWT_SECRET` backend-only; `next` param validation pattern.
+- [ ] Database table row for `agent_runs` updated to mention `user_id UUID nullable`.
+- [ ] New module `backend/app/auth/jwt.py` added to the backend modules architecture table.
+- [ ] No existing constraints are removed — only additions and amendments.
+
+**Key constraints**: Follow the exact formatting, heading style, and table structure already in `CLAUDE.md`. Do not restructure sections.
+
+---
+
+### W4-028: Supabase dashboard configuration checklist and smoke test sign-off
+
+**Phase**: 5 — Environment, Deployment & Docs
+**Depends on**: W4-026, W4-027
+**Files**:
+- No code files — operational verification task
+
+**Acceptance criteria**:
+- [ ] Supabase dashboard → Auth → URL Configuration → Site URL set to `https://nextgenai-seven.vercel.app`.
+- [ ] Supabase dashboard → Auth → URL Configuration → Redirect URLs includes: `https://nextgenai-seven.vercel.app/**` and `http://localhost:3005/**`.
+- [ ] Supabase dashboard → Auth → Email → Confirm email: enabled for production.
+- [ ] `SUPABASE_JWT_SECRET` added to Render dashboard environment variables (not committed to repo).
+- [ ] `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `NEXT_PUBLIC_SITE_URL` added to Vercel project environment variables.
+- [ ] Migration `0006_add_user_id_to_agent_runs.py` applied to Neon production database.
+- [ ] Smoke test — prod sign-up flow: new email → confirmation received → sign in → query submitted → history shows single run → sign out → redirected to `/sign-in`.
+- [ ] Smoke test — prod route guard: visit `https://nextgenai-seven.vercel.app/dashboard` while signed out → redirected to `/sign-in?next=/dashboard`.
+- [ ] Smoke test — prod API auth: `curl -X POST https://nextgenai-5bf8.onrender.com/query` without token → HTTP 401.
+- [ ] Smoke test — `PATCH /runs/{id}/favourite` with another user's run_id → HTTP 404.
+
+**Key constraints**: Neon migration must use the CONCURRENTLY pattern. If JWT secret is rotated in Supabase, Render env var must be updated and backend redeployed. Document any production-only differences in `upgrade.md` or `DEPLOY.md`.
+
+---
+
+## Agent Assignment Reference
+
+All tasks in this plan use the default agent roles from the project's `.claude/agents/` directory:
+
+| Agent | Tasks | Scope |
 |---|---|---|
-| 0 — Infrastructure & Scaffolding | T-001 to T-007, T-002b | ~2.5d |
-| 1 — Data Ingestion Pipeline | T-008 to T-013 | ~3d |
-| 2 — Vector Search & Embeddings | T-014, T-015 | ~6h |
-| 3 — GraphRAG | T-016 to T-019 | ~1.5d |
-| 4 — SQL Tool & Pre-built Queries | T-020, T-021 | ~8h |
-| 5 — Agent Orchestrator | T-022 to T-025 | ~2.5d |
-| 6 — FastAPI Backend & CLI | T-026 to T-030 | ~1.5d |
-| 7 — Frontend | T-031-F to T-036-F | ~2.5d |
-| 8 — Docker & Deployment | T-037 to T-041, T-039b, T-039c | ~2d |
-| 9 — Tests & Validation | T-042 to T-045 | ~1d |
-| **Total** | **48 tasks** | **~18 working days** |
-
----
-
-## Wave 1 — Performance Optimizations
-
-> Generated from: optimize.md | Generated on: 2026-03-06 | Total tasks: 17 | **ALL COMPLETE**
-
-### Assumptions & Clarifications
-
-- The IVFFlat index is assumed to exist in production. Verify with `\d incident_embeddings` in psql before the HNSW migration is run.
-- The Render deployment is assumed to run a single instance. Pool sizing values assume a single-process deployment.
-- Neon's support for `CREATE INDEX CONCURRENTLY` must be validated on a dev database before applying to production.
-- `anthropic==0.40.0` includes `AsyncAnthropic` (available since ~0.20.0).
-- The graph expander's string-interpolated `IN (...)` SQL assumes node IDs are internal UUIDs and do not originate from user input.
-- `orjson` is not currently in `requirements.txt`; T-07 must add it explicitly since the project does not use `fastapi[all]`.
-
----
-
-### Wave 1 Summary Table
-
-| Task | Description | Owner | Effort | Blocked by |
-|---|---|---|---|---|
-| T-01 | Wrap `orchestrator.run()` in `run_in_threadpool` to unblock event loop | backend-architect | XS | none |
-| T-02 | Add LRU embedding cache in `EmbeddingModel` | backend-architect | S | none |
-| T-03 | Update `VectorSearchTool` to use the LRU embedding cache | backend-architect | XS | T-02 |
-| T-04 | Tune sync DB engine pool settings and add `pool_recycle` to both engines | backend-architect | XS | none |
-| T-05 | Add early-exit guard for empty claims before `verify_claims` | backend-architect | XS | none |
-| T-06 | Add module-level singleton caching to `get_fast_llm_client()` | backend-architect | XS | none |
-| T-07 | Add `ORJSONResponse` as default response class and add `orjson` to requirements | backend-architect | XS | none |
-| T-08 | Add `GZipMiddleware` to FastAPI app | backend-architect | XS | none |
-| T-09 | Add `Cache-Control: no-store` header to `/healthz` endpoint | backend-architect | XS | none |
-| T-10 | Write Alembic migration: drop IVFFlat, create HNSW indexes for both domains | deployment-engineer | M | none |
-| T-11 | Remove `SET ivfflat.probes` and add `hnsw.ef_search` in `retrieval.py` + session engine | backend-architect | XS | T-10 |
-| T-12 | Write Alembic migration: composite indexes on `graph_edge(from_node, type)` and `(to_node, type)` | deployment-engineer | S | none |
-| T-13 | Refactor graph expander to use parameterized `ANY(:array)` and merge outgoing+incoming edge queries | backend-architect | S | T-12 |
-| T-14 | Add TTL-based named query result cache to `SQLQueryTool` | backend-architect | S | none |
-| T-15 | Bulk `executemany` upserts in ingest pipeline for rows and embeddings; batch commits in graph builder | backend-architect | M | none |
-| T-16 | Add `AsyncAnthropic` async variant (`complete_async`) to `ClaudeClient` | backend-architect | M | none |
-| T-17 | Merge classify+plan into a single Haiku call; convert orchestrator to async; convert tools to async | backend-architect | XL | T-01, T-16 |
-
-### Parallel Work Waves
-
-**Wave 1 (no blockers):** T-01, T-02, T-04, T-05, T-06, T-07, T-08, T-09, T-10, T-12, T-14, T-15, T-16
-**Wave 2 (blocked by Wave 1):** T-03 (→T-02), T-11 (→T-10), T-13 (→T-12)
-**Wave 3 (blocked by Wave 2):** T-17 (→T-01, T-16)
-
----
-
-### T-01 · Wrap `orchestrator.run()` in `run_in_threadpool`
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-`query.py`'s `async def run_query` calls the synchronous `orchestrator.run()` directly without `await` or `run_in_executor`. This blocks the uvicorn event loop for the full 3–8 second agent duration.
-
-**Acceptance Criteria:**
-- `run_query` calls `await run_in_threadpool(orchestrator.run, body.query, domain=body.domain)`
-- `from fastapi.concurrency import run_in_threadpool` is imported in `query.py`
-
----
-
-### T-02 · Add LRU embedding cache (`encode_single_cached`)
-
-**Owner:** backend-architect | **Effort:** S | **Blocked by:** none
-
-Every vector search triggers a full 384-dim inference pass (~20–80 ms on CPU). An `lru_cache(maxsize=512)` keyed on the query string eliminates this for cache hits.
-
-**Acceptance Criteria:**
-- `EmbeddingModel` has `encode_single_cached(self, text: str) -> tuple` decorated with `@functools.lru_cache(maxsize=512)`
-- Returns a `tuple` of floats (hashable, required by `lru_cache`)
-- Calling `encode_single_cached` with the same string twice does not invoke `self.encode()` on the second call
-
----
-
-### T-03 · Update `VectorSearchTool` to call the LRU-cached embedding method
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** T-02
-
-**Acceptance Criteria:**
-- `VectorSearchTool.run()` calls `model.encode_single_cached(query_text)` and wraps the result with `np.array(cached, dtype=np.float32)`
-
----
-
-### T-04 · Tune sync DB engine pool settings
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-Under 3–5 concurrent requests, the 5-connection sync pool is exhausted. Neon also closes idle connections; `pool_recycle=1800` prevents stale-connection errors after Render cold starts.
-
-**Acceptance Criteria:**
-- Sync engine explicitly sets `pool_size=10`, `max_overflow=10`, `pool_timeout=30`, `pool_recycle=1800`
-- Async engine adds `pool_recycle=1800` and `pool_timeout=30`
-
----
-
-### T-05 · Add early-exit guard for empty `raw_claims` before `verify_claims`
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-**Acceptance Criteria:**
-- Orchestrator checks `if raw_claims:` before calling `verify_claims`; when false, sets `verified_claims = []` without calling the LLM
-
----
-
-### T-06 · Add module-level singleton to `get_fast_llm_client()`
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-**Acceptance Criteria:**
-- Module-level `_fast_llm_singleton: LLMClient | None = None` added to `client.py`
-- `get_fast_llm_client()` initializes and caches the singleton on first call
-
----
-
-### T-07 · Set `ORJSONResponse` as FastAPI default response class
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `orjson==3.10.12` added to `backend/requirements.txt`
-- `FastAPI(...)` constructor includes `default_response_class=ORJSONResponse`
-
----
-
-### T-08 · Add `GZipMiddleware` to the FastAPI app
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `app.add_middleware(GZipMiddleware, minimum_size=1000, compresslevel=4)` called before CORS middleware
-
----
-
-### T-09 · Add `Cache-Control: no-store` header to `/healthz`
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `/healthz` route returns `ORJSONResponse({"status": "ok"}, headers={"Cache-Control": "no-store"})`
-
----
-
-### T-10 · Write Alembic migration: replace IVFFlat with HNSW indexes
-
-**Owner:** deployment-engineer | **Effort:** M | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `upgrade()` drops IVFFlat index and creates HNSW indexes using `USING hnsw (embedding vector_cosine_ops) WITH (m = 16, ef_construction = 64)` via `CREATE INDEX CONCURRENTLY`
-- Applied to both `incident_embeddings` and `medical_embeddings`
-- `downgrade()` drops both HNSW indexes
-
----
-
-### T-11 · Replace `SET ivfflat.probes` with `hnsw.ef_search`
-
-**Owner:** backend-architect | **Effort:** XS | **Blocked by:** T-10
-
-**Acceptance Criteria:**
-- `retrieval.py` no longer contains `SET ivfflat.probes`
-- Async engine in `session.py` includes `connect_args={"server_settings": {"hnsw.ef_search": "40"}}`
-
----
-
-### T-12 · Write Alembic migration: composite indexes on `graph_edge`
-
-**Owner:** deployment-engineer | **Effort:** S | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `upgrade()` creates `idx_graph_edge_from_type ON graph_edge (from_node, type)` via `CREATE INDEX CONCURRENTLY`
-- `upgrade()` creates `idx_graph_edge_to_type ON graph_edge (to_node, type)` via `CREATE INDEX CONCURRENTLY`
-- `downgrade()` drops both indexes
-
----
-
-### T-13 · Refactor graph expander: parameterized `ANY(:array)`, merged edge query
-
-**Owner:** backend-architect | **Effort:** S | **Blocked by:** T-12
-
-**Acceptance Criteria:**
-- f-string `placeholders = ", ".join(f"'{nid}'" for nid in chunk)` pattern removed
-- Edge lookup uses `WHERE (from_node = ANY(:node_ids) OR to_node = ANY(:node_ids)) AND type = ANY(:edge_types)` with bound parameters
-- Separate outgoing and incoming query loops merged into a single query per chunk/hop
-
----
-
-### T-14 · Add TTL-based named query result cache to `SQLQueryTool`
-
-**Owner:** backend-architect | **Effort:** S | **Blocked by:** none
-
-**Acceptance Criteria:**
-- Module-level `_named_query_cache: dict[str, tuple[float, dict]] = {}` and `CACHE_TTL_SECONDS = 300` added
-- `SQLQueryTool` exposes `run_named_cached(name, params)` method with TTL-based cache
-
----
-
-### T-15 · Replace row-by-row inserts with bulk `executemany`
-
-**Owner:** backend-architect | **Effort:** M | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `_upsert_dataframe_sync()` passes a list of row dicts to `session.execute(sql, [list_of_dicts])`
-- `_embed_and_store_sync()` similarly uses bulk `executemany` for embedding insertions
-- `graph/builder.py` commits only every 500 rows (or at loop end)
-
----
-
-### T-16 · Add `AsyncAnthropic` and `complete_async()` to `ClaudeClient`
-
-**Owner:** backend-architect | **Effort:** M | **Blocked by:** none
-
-**Acceptance Criteria:**
-- `from anthropic import AsyncAnthropic` imported in `client.py`
-- `ClaudeClient.__init__` instantiates `self._async_client = AsyncAnthropic(api_key=key)`
-- `ClaudeClient.complete_async(prompt, system, json_mode, max_tokens)` implemented as `async def`
-
----
-
-### T-17 · Merge classify+plan into one Haiku call; convert orchestrator and tools to async
-
-**Owner:** backend-architect | **Effort:** XL | **Blocked by:** T-01, T-16
-
-**Note:** Encompasses (a) new `classify_and_plan()` function, (b) full async conversion of `orchestrator.run()` with `asyncio.gather`, and (c) async conversion of all tool implementations.
-
-**Acceptance Criteria:**
-- New `classify_and_plan_async(query, fast_llm_client, domain)` returns `{"intent": ..., "steps": [...]}` in a single Haiku API call
-- `orchestrator.run()` converted to `async def run(...)` using `asyncio.gather` for parallel tool execution
-- All tool `run()` methods converted to `async def run(...)` using async session
-- CPU-bound embedding inference wrapped in `asyncio.get_running_loop().run_in_executor(None, ...)`
-
----
-
-## Wave 2 — RAG & Agent Optimizations
-
-> Generated: 2026-03-06 | Based on code analysis of post-TASKS2 codebase state (all T-01–T-17 applied, BUG-001–BUG-008 fixed).
-
-All 17 Wave 1 items have been implemented and all eight findings.md bugs have been patched. What remains are retrieval quality gaps, observability gaps, structured-output gaps, and several smaller correctness issues.
-
-### Wave 2 Summary Table
-
-| Task | Priority | Effort | Status | Impact |
-|---|---|---|---|---|
-| T3-01 | High | M | DONE | Prevents silent claim degradation on malformed LLM output |
-| T3-02 | High | M | DONE | Token cost visibility + per-stage latency for diagnosis |
-| T3-03 | High | L | DONE | BM25+vector hybrid — improves keyword query recall significantly |
-| T3-04 | High | M | DONE | Eliminates redundant agent loops for repeated example queries |
-| T3-05 | Medium | S | SKIPPED | Removes string serialization overhead on every vector search |
-| T3-06 | Medium | S | DONE | Reduces duplicate evidence in synthesis, improves answer breadth |
-| T3-07 | Medium | S | DONE | Conflict signal now reaches verifier; fallback confidence ranked |
-| T3-08 | Medium | S | DONE | Fixes blocking sync call in async GET /runs/{run_id} handler |
-| T3-09 | Medium | M | DONE | Graph expansion no longer occupies thread via run_sync |
-| T3-10 | Medium | S | DONE | Transient API errors retry before falling back to degraded answer |
-| T3-11 | Medium | M | DONE | Citation char offsets are correct; sentence-boundary chunking |
-| T3-12 | Medium | M | DONE | Async orchestrator path has integration test coverage |
-| T3-13 | Medium | M | DONE | Medical domain queries return results (currently zero hits) |
-| T3-14 | Low | S | DONE | Async tool hangs are time-bounded on all platforms |
-| T3-15 | Low | XS | DONE | Removes tqdm ANSI noise from Render server logs |
-
-### Parallel Work Waves
-
-**Wave 1 (no blockers):** T3-01, T3-02, T3-03, T3-05, T3-06, T3-07, T3-08, T3-09, T3-10, T3-11, T3-13, T3-14, T3-15
-**Wave 2 (blocked by Wave 1):** T3-04 (→T3-01), T3-12 (benefits from T3-01)
-
----
-
-### T3-01: Add Pydantic validation + one-shot retry for all LLM structured outputs [DONE]
-
-**Priority:** High | **Effort:** M | **Dependencies:** none
-
-Every LLM call that expects JSON does a raw `json.loads(response)` and then accesses dict keys with `.get()`. If the model returns structurally valid JSON but with wrong field names or wrong value types, the error is silently swallowed.
-
-**Specific locations:**
-- `backend/app/agent/orchestrator.py` — `synthesis = json.loads(synthesis_response)` — no schema validation
-- `backend/app/agent/verifier.py` — `data = json.loads(response)` then `data.get("verified_claims", [])` — no structural check
-- `backend/app/agent/intent.py` — `data = json.loads(response)` — no validation that `steps` entries contain `tool`, `tool_inputs`, `step_number`
-- `backend/app/llm/client.py` `_parse_response_text()` — logs a warning on invalid JSON but returns the raw string
-
-**Implementation:**
-- Define three Pydantic models: `ClassifyPlanOutput`, `SynthesisOutput`, `VerifyOutput` in `backend/app/schemas/llm_outputs.py`
-- In each caller, wrap `json.loads` result in `Model.model_validate(data)`. On `ValidationError`, issue exactly one retry with error-correction prefix, then validate again. If retry also fails, fall through to existing fallback.
-- Add a test that injects a mock LLM returning structurally invalid JSON and asserts the retry fires exactly once.
-
----
-
-### T3-02: Token usage tracking and per-stage latency histograms [DONE]
-
-**Priority:** High | **Effort:** M | **Dependencies:** none
-
-The LLM logs in `client.py` record `prompt_chars` and `output_chars` but not token counts. The Anthropic SDK response object at `response.usage` already contains `input_tokens` and `output_tokens` — these are never logged.
-
-**Implementation:**
-- In `client.py` `complete()` and `complete_async()`: add `input_tokens`, `output_tokens`, and `estimated_cost_usd` to the LLM response log entry.
-- In `orchestrator.py` `run()`: add `_state_timings: dict[str, float]` dict. Record `time.perf_counter()` at the start and end of each named state block (CLASSIFY+PLAN, EXECUTE_TOOLS, EXPAND_GRAPH, SYNTHESISE, VERIFY, SAVE).
-- Extend `RunSummary` Pydantic schema to include `state_timings_ms: dict[str, float] = Field(default_factory=dict)`.
-
----
-
-### T3-03: Hybrid BM25 + vector search (sparse-dense fusion) [DONE]
-
-**Priority:** High | **Effort:** L | **Dependencies:** none
-
-`retrieval.py` uses pure cosine similarity over dense embeddings. BM25 excels on exact-keyword queries where the dense model under-performs — for example, "find defect_id BOLT-2847" or "show incidents mentioning hydraulic pump part number 4792".
-
-**Implementation:**
-- Write a new Alembic migration adding GIN full-text indexes on `incident_reports.narrative` and `medical_cases.narrative`.
-- Add `bm25_search(session, query_text, top_k, domain)` function in `retrieval.py`.
-- Add `hybrid_search(session, query_embedding, query_text, top_k, alpha, domain)` using Reciprocal Rank Fusion (RRF): `score = 1/(k + rank_vector) + 1/(k + rank_bm25)` where `k=60`.
-- Update `VectorSearchTool.run_async()` to accept `search_mode: Literal["vector", "hybrid"] = "vector"`.
-- Update `orchestrator.py` to pass `search_mode="hybrid"` for `hybrid` and `compute` intents.
-- `alpha` parameter from `config.yaml` with default `0.7`.
-
----
-
-### T3-04: Semantic query cache (skip full agent loop for near-duplicate queries) [DONE]
-
-**Priority:** High | **Effort:** M | **Dependencies:** T3-01
-
-The `agent_runs` table persists every query result. However, the orchestrator never checks it before running. The frontend example queries fire the same ~14 fixed queries repeatedly, each costing 3-8 seconds and ~$0.003.
-
-**Implementation:**
-- Add `async def _check_cache(query, domain, ttl_seconds=300)` in `query.py`. Queries `agent_runs` for the same `(query, domain)` pair within 5 minutes.
-- In `run_query()`: call `_check_cache()` before `orchestrator.run()`. On a hit, skip the agent loop entirely.
-- Add Alembic migration: `CREATE INDEX CONCURRENTLY idx_agent_runs_query_domain_ts ON agent_runs (query, domain, created_at DESC)`.
-- Encode domain in the query key as `f"{domain}::{query}"` (simpler, no migration needed).
-
----
-
-### T3-05: Fix embedding serialisation anti-pattern in retrieval.py [SKIPPED]
-
-**Priority:** Medium | **Effort:** S | **Dependencies:** none
-
-`retrieval.py` line 70 converts the 384-dim numpy array to a Python list string before binding it to the SQL query: `"embedding": str(query_embedding.tolist())`. The `pgvector` Python package provides native numpy array binding via `register_vector()`.
-
-*Skipped — deferred to future wave; string binding works correctly, performance impact is low.*
-
----
-
-### T3-06: MMR (Maximal Marginal Relevance) deduplication of vector hits [DONE]
-
-**Priority:** Medium | **Effort:** S | **Dependencies:** none
-
-The current `vector_search()` returns the top-k chunks by cosine similarity. When multiple chunks from the same incident are retrieved, the synthesis prompt contains near-duplicate text.
-
-**Implementation:**
-- Add `mmr_rerank(hits: list[dict], query_embedding: np.ndarray, lambda_: float = 0.7, top_k: int = 8) -> list[dict]` in `retrieval.py`.
-- Call `mmr_rerank()` in `VectorSearchTool.run_async()` after `vector_search()` returns. Fetch `top_k * 2` from DB, then MMR-select `top_k`.
-- `lambda_` configurable via `config.yaml` (default `0.7` = 70% relevance, 30% diversity).
-
----
-
-### T3-07: Verifier — expose conflict_note and reduce fallback confidence correctly [DONE]
-
-**Priority:** Medium | **Effort:** S | **Dependencies:** none
-
-1. `conflict=True` from `scorer.py` never reaches `verifier.py` — the verifier passes `evidence[:5]` without their `conflict` flag.
-2. `_fallback_verification()` assigns identical `base_confidence` to every claim regardless of support.
-
-**Implementation:**
-- In `verify_claims_async()` and `verify_claims()`: include `conflict_flagged: item.get("conflict", False)` in `evidence_summary`.
-- In `_fallback_verification()`: assign confidence proportional to claim position (first claim = `base_confidence`, each subsequent = `base_confidence - 0.05 * idx`, floored at 0.2).
-
----
-
-### T3-08: GET /runs/{run_id} uses sync session inside async handler [DONE]
-
-**Priority:** Medium | **Effort:** S | **Dependencies:** none
-
-`query.py` `get_run()` is declared `async def` but calls `get_sync_session()` directly inside the handler body. This blocks the event loop for the duration of the DB round-trip (~5-20 ms per Neon connection).
-
-**Implementation:**
-- Change `get_run()` to use `async with get_session() as session:` with `await session.execute(...)`.
-- Remove the `get_sync_session` import from `query.py` if no longer used.
-
----
-
-### T3-09: graph/expander.py expand_graph_async uses run_sync [DONE]
-
-**Priority:** Medium | **Effort:** M | **Dependencies:** none
-
-`expand_graph_async()` uses `await session.run_sync(lambda sync_session: expand_graph(...))`. This means every graph expansion occupies a thread for its full duration (50-200 ms).
-
-**Implementation:**
-- Write `_expand_graph_async_native(session: AsyncSession, seed_ids, k)` that replicates the BFS loop using `await session.execute()` for each SQL query.
-- Update `expand_graph_async()` to use `_expand_graph_async_native()` directly without `run_sync`.
-- Sync `expand_graph()` unchanged.
-
----
-
-### T3-10: Add LLM call retry with exponential backoff for transient API errors [DONE]
-
-**Priority:** Medium | **Effort:** S | **Dependencies:** none
-
-`ClaudeClient.complete()` and `complete_async()` have no retry logic. Anthropic's API returns HTTP 529 ("overloaded") and HTTP 500 errors during peak load on Render free tier.
-
-**Implementation:**
-- In `ClaudeClient.__init__()`, set `max_retries=3` explicitly on both `self._client` and `self._async_client`.
-- Add logging before the API call that includes a `call_attempt` counter.
-- Wrap `complete_async()` in a `try/except anthropic.APIStatusError` block with retry logging.
-
----
-
-### T3-11: Chunker — fix char_start=-1 silent fallback and add sentence-boundary awareness [DONE]
-
-**Priority:** Medium | **Effort:** M | **Dependencies:** none
-
-`chunker.py` `_find_char_offset()` uses `source.find(target)` which returns `-1` when the target string is not found. The caller clamps `max(char_start, 0)` — so both offsets become 0, meaning the citation points to the beginning of the document regardless of where the chunk actually is.
-
-**Implementation:**
-- Fix `_find_char_offset()`: when `source.find(target)` returns `-1`, try with the first 100 characters of `target` (stripped). If even the fallback fails, return `(-1, -1)` explicitly and let the caller store `NULL` rather than `0, 0`.
-- Add sentence-boundary snapping to `chunk_text()`: after computing the token window, check if the chunk starts mid-sentence and trim back to the nearest period/newline if so.
-
----
-
-### T3-12: Add structured test infrastructure for async orchestrator and LLM mock [DONE]
-
-**Priority:** Medium | **Effort:** M | **Dependencies:** none
-
-`backend/tests/` has no tests that exercise the async `orchestrator.run()` path end-to-end. The T-17 async orchestrator, `classify_and_plan_async()`, and `verify_claims_async()` are all untested at the integration level.
-
-**Implementation:**
-- Create `backend/tests/stubs/llm_mock.py`: a `MockLLMClient(LLMClient)` with pre-programmed JSON responses.
-- Update `backend/tests/conftest.py` to provide a `mock_llm` fixture.
-- Write `backend/tests/test_orchestrator_async.py` with four test cases: `test_vector_only_query`, `test_hybrid_query_parallel_tools`, `test_synthesis_json_invalid_triggers_retry`, `test_max_steps_fallback`.
-
----
-
-### T3-13: Ingest pipeline — medical domain embed_and_store not implemented [DONE]
-
-**Priority:** Medium | **Effort:** M | **Dependencies:** none
-
-`pipeline.py` `_embed_and_store_sync()` only processes `incident_reports` → `incident_embeddings`. The `medical_embeddings` table is never populated, so every medical-domain query returns zero hits.
-
-**Implementation:**
-- Add `_embed_and_store_medical_sync(session, chunk_size=400, overlap=75, batch_size=256)` in `pipeline.py` following the same pattern as `_embed_and_store_sync()` but targeting `medical_cases` → `medical_embeddings`.
-- Call `_embed_and_store_medical_sync()` in `run_ingest_pipeline()` after the existing `_embed_and_store_sync()` call.
-- Add `medical_chunks_embedded` key to the `summary` dict returned by `run_ingest_pipeline()`.
-
----
-
-### T3-14: Add per-tool asyncio timeout using asyncio.wait_for in orchestrator [DONE]
-
-**Priority:** Low | **Effort:** S | **Dependencies:** none
-
-The async `run_async()` methods on all tools have **no timeout enforcement at all**. If pgvector or the embedding model hangs, the async path has no timeout — the request will hang indefinitely.
-
-**Implementation:**
-- In `orchestrator.py`, wrap each tool `await` call with `asyncio.wait_for(..., timeout=self.tool_timeout_seconds)`.
-- Handle `asyncio.TimeoutError` specifically — log at WARNING level with `tool_name` and `timeout_seconds`, then treat the step as an error. Do not re-raise.
-
----
-
-### T3-15: show_progress_bar suppressed — add isatty() check [DONE]
-
-**Priority:** Low | **Effort:** XS | **Dependencies:** none
-
-`embeddings.py` line 77: `show_progress_bar=len(texts) > 500`. On the Render server, this emits tqdm progress bars to stderr for batches >500 texts, adding ANSI noise to the log stream.
-
-**Implementation:**
-- Change to: `show_progress_bar=len(texts) > 500 and sys.stderr.isatty()`
-- Add `import sys` to `embeddings.py` if not already present.
+| `backend-architect` | W4-001 → W4-009 | Python deps, JWT module, ORM model, Alembic migration, orchestrator threading, router guards, tests |
+| `frontend-developer` | W4-010 → W4-025 | npm install, Supabase clients, AuthContext, layout, middleware, auth pages, AppHeader, api.ts, ChatPanel, HistorySidebar, dashboard tabs, TypeScript check |
+| `deployment-engineer` | W4-026 → W4-028 | Env var docs, CLAUDE.md update, Supabase dashboard config, Render/Vercel env vars, Neon migration, smoke tests |
+
+**Total: 28 tasks**
+- `backend-architect`: 9 tasks (W4-001 to W4-009)
+- `frontend-developer`: 16 tasks (W4-010 to W4-025)
+- `deployment-engineer`: 3 tasks (W4-026 to W4-028)
+
+**Critical path** (longest dependency chain):
+W4-001 → W4-002 → W4-003 → W4-005 → W4-006 → W4-007 → W4-008 → W4-009 → W4-026 → W4-028
+(10 tasks deep on the backend side, all sequential)
+
+Frontend critical path:
+W4-010 → W4-011 → W4-013 → W4-015 → W4-016 → (W4-021 via W4-015) → W4-022 → W4-025 → W4-026 → W4-028
+(10 tasks deep on the frontend side)
