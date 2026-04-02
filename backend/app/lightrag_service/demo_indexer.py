@@ -7,7 +7,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
-from app.lightrag_service.rag_instance import get_lightrag
+from backend.app.lightrag_service.rag_instance import get_lightrag
 
 logger = logging.getLogger(__name__)
 
