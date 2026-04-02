@@ -12,6 +12,7 @@ const PROTECTED_PATHS = [
   '/agent',
   '/diagram',
   '/faq',
+  '/lightrag',
 ]
 
 const PUBLIC_PATHS = [
