@@ -15,6 +15,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.gzip import GZipMiddleware
 
 from backend.app.api import analytics, docs, ingest, query, runs
+from backend.app.api.lightrag import router as lightrag_router
 from backend.app.db.session import dispose_async_engine, get_async_engine
 from backend.app.observability.logging import get_logger
 
@@ -119,6 +120,7 @@ def create_app() -> FastAPI:
     app.include_router(docs.router, tags=["Documents"])
     app.include_router(runs.router, tags=["Runs"])
     app.include_router(analytics.router, tags=["Analytics"])
+    app.include_router(lightrag_router, prefix="/lightrag", tags=["lightrag"])
 
     # Root redirect to docs
     @app.get("/", include_in_schema=False)
