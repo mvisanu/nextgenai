@@ -1,0 +1,1171 @@
+<?xml version='1.0' encoding='utf-8'?>
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d13" for="edge" attr.name="truncate" attr.type="string" />
+  <key id="d12" for="edge" attr.name="created_at" attr.type="long" />
+  <key id="d11" for="edge" attr.name="file_path" attr.type="string" />
+  <key id="d10" for="edge" attr.name="source_id" attr.type="string" />
+  <key id="d9" for="edge" attr.name="keywords" attr.type="string" />
+  <key id="d8" for="edge" attr.name="description" attr.type="string" />
+  <key id="d7" for="edge" attr.name="weight" attr.type="double" />
+  <key id="d6" for="node" attr.name="truncate" attr.type="string" />
+  <key id="d5" for="node" attr.name="created_at" attr.type="long" />
+  <key id="d4" for="node" attr.name="file_path" attr.type="string" />
+  <key id="d3" for="node" attr.name="source_id" attr.type="string" />
+  <key id="d2" for="node" attr.name="description" attr.type="string" />
+  <key id="d1" for="node" attr.name="entity_type" attr.type="string" />
+  <key id="d0" for="node" attr.name="entity_id" attr.type="string" />
+  <graph edgedefault="undirected">
+    <node id="NCR Report: INC-648887DB">
+      <data key="d0">NCR Report: INC-648887DB</data>
+      <data key="d1">content</data>
+      <data key="d2">NCR Report INC-648887DB is a non-conformance report documenting maintenance findings and corrective actions for a fuel system component.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Fuel System">
+      <data key="d0">Fuel System</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Fuel System is the system subject to scheduled maintenance that revealed anomalous wear patterns and contamination issues.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Asset HYD-222">
+      <data key="d0">Asset HYD-222</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Asset HYD-222 is the specific fuel system component inspected at Bay C that exhibited corrosion and fatigue loading wear.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Bay C">
+      <data key="d0">Bay C</data>
+      <data key="d1">location</data>
+      <data key="d2">Bay C is the maintenance facility location where the scheduled out-of-phase maintenance was performed on Asset HYD-222.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Bracket">
+      <data key="d0">Bracket</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Bracket is the component within the fuel system that displayed anomalous wear patterns and corrosion consistent with fatigue loading.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Work Order WO-81763">
+      <data key="d0">Work Order WO-81763</data>
+      <data key="d1">data</data>
+      <data key="d2">Work Order WO-81763 is the authorization document for the corrective action initiated in response to the non-conformance findings.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169267</data>
+      <data key="d6" />
+    </node>
+    <node id="Corrosion">
+      <data key="d0">Corrosion</data>
+      <data key="d1">data</data>
+      <data key="d2">Corrosion is the deterioration condition found on the bracket, consistent with fatigue loading damage.&lt;SEP&gt;Corrosion consistent with thermal cycling identified on the switch component during visual inspection.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095&lt;SEP&gt;chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169269</data>
+      <data key="d6" />
+    </node>
+    <node id="Contamination">
+      <data key="d0">Contamination</data>
+      <data key="d1">concept</data>
+      <data key="d2">Contamination is the presence of foreign material detected at the aft attachment point during inspection.&lt;SEP&gt;Contamination is an anomalous condition noted at the forward bulkhead during the inspection.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095&lt;SEP&gt;chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Post-Maintenance Functional Test">
+      <data key="d0">Post-Maintenance Functional Test</data>
+      <data key="d1">method</data>
+      <data key="d2">Post-Maintenance Functional Test is the verification procedure conducted after component replacement to ensure proper system operation.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Scheduled Out-Of-Phase Maintenance">
+      <data key="d0">Scheduled Out-Of-Phase Maintenance</data>
+      <data key="d1">event</data>
+      <data key="d2">Scheduled out-of-phase maintenance is the maintenance event performed on the Fuel System at Bay C that revealed anomalous wear patterns and contamination.&lt;SEP&gt;Scheduled Out-Of-Phase Maintenance is the maintenance event conducted on the Avionics system at Bay A that revealed the anomalous wear pattern on the regulator.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095&lt;SEP&gt;chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Visual Inspection">
+      <data key="d0">Visual Inspection</data>
+      <data key="d1">method</data>
+      <data key="d2">Visual inspection is the inspection method used to confirm corrosion and fatigue loading on the bracket component.&lt;SEP&gt;The inspection method used to confirm corrosion and identify the micro-crack indication on the switch component.&lt;SEP&gt;Visual Inspection is the examination technique used to confirm the delamination and anomalous wear pattern on the regulator component.&lt;SEP&gt;Visual Inspection is the inspection method used to confirm surface damage and identify defects on the Hydraulics System.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095&lt;SEP&gt;chunk-c3dae68a7b53635586ac56b2c7a0e752&lt;SEP&gt;chunk-ecb51acaeb83a4650a7c25bb48021048&lt;SEP&gt;chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Aft Attachment Point">
+      <data key="d0">Aft Attachment Point</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Aft attachment point is the location on Asset HYD-222 where contamination was detected during maintenance inspection.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Fatigue Loading">
+      <data key="d0">Fatigue Loading</data>
+      <data key="d1">concept</data>
+      <data key="d2">Fatigue loading is the mechanical stress condition responsible for the corrosion pattern observed on the bracket.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Unserviceable Component">
+      <data key="d0">Unserviceable Component</data>
+      <data key="d1">concept</data>
+      <data key="d2">Unserviceable component is the status assigned to Asset HYD-222 after inspection revealed defects.&lt;SEP&gt;Unserviceable Component is the status designation applied to the regulator after inspection confirmed delamination and manufacturing variance.</data>
+      <data key="d3">chunk-0bdf2417781acafaa10b011ecd70d095&lt;SEP&gt;chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="NCR Report INC-7C5EA02D">
+      <data key="d0">NCR Report INC-7C5EA02D</data>
+      <data key="d1">content</data>
+      <data key="d2">An NCR report documenting an anomalous wear pattern discovered during scheduled phase maintenance on a propulsion system component.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Propulsion System">
+      <data key="d0">Propulsion System</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The propulsion system identified as asset AVION-760 that underwent scheduled phase maintenance and revealed anomalous wear patterns.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Asset AVION-760">
+      <data key="d0">Asset AVION-760</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The specific propulsion system asset that experienced anomalous wear, corrosion, and micro-crack indication during maintenance inspection.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Receiving Dock">
+      <data key="d0">Receiving Dock</data>
+      <data key="d1">location</data>
+      <data key="d2">The location where scheduled phase maintenance on the propulsion system was conducted.&lt;SEP&gt;Receiving Dock is the location where post-repair inspection of FRAME-255 was conducted.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752&lt;SEP&gt;chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Switch">
+      <data key="d0">Switch</data>
+      <data key="d1">artifact</data>
+      <data key="d2">A component of the propulsion system that exhibited anomalous wear pattern and corrosion consistent with thermal cycling.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Micro-Crack Indication">
+      <data key="d0">Micro-Crack Indication</data>
+      <data key="d1">data</data>
+      <data key="d2">A defect identified at the root fitting of the switch component during visual inspection.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Thermal Cycling">
+      <data key="d0">Thermal Cycling</data>
+      <data key="d1">concept</data>
+      <data key="d2">The identified cause of corrosion observed on the switch component.&lt;SEP&gt;Thermal Cycling is a process involving repeated temperature changes that caused surface damage to the Cylinder component.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752&lt;SEP&gt;chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Work Order WO-72829">
+      <data key="d0">Work Order WO-72829</data>
+      <data key="d1">content</data>
+      <data key="d2">The work order under which corrective action was initiated following the discovery of component defects.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Maintenance Manual">
+      <data key="d0">Maintenance Manual</data>
+      <data key="d1">content</data>
+      <data key="d2">The reference document used to determine the corrective action of adjusted clearances.&lt;SEP&gt;Maintenance Manual is the technical reference document containing procedures for adjusting clearances on the Avionics system.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752&lt;SEP&gt;chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Corrective Action">
+      <data key="d0">Corrective Action</data>
+      <data key="d1">concept</data>
+      <data key="d2">The remedial measures taken to address the identified defects, including adjusted clearances and documentation.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169268</data>
+      <data key="d6" />
+    </node>
+    <node id="Anomalous Wear Pattern">
+      <data key="d0">Anomalous Wear Pattern</data>
+      <data key="d1">concept</data>
+      <data key="d2">An anomalous wear pattern discovered on the switch component during scheduled phase maintenance inspection.&lt;SEP&gt;Anomalous Wear Pattern is the irregular wear condition identified on the Cylinder during visual inspection.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752&lt;SEP&gt;chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Root Fitting">
+      <data key="d0">Root Fitting</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The root fitting of the switch component where a micro-crack indication was identified.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169269</data>
+      <data key="d6" />
+    </node>
+    <node id="Scheduled Phase Maintenance">
+      <data key="d0">Scheduled Phase Maintenance</data>
+      <data key="d1">event</data>
+      <data key="d2">The scheduled maintenance event conducted on the propulsion system at the Receiving Dock on 2025-12-31.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169269</data>
+      <data key="d6" />
+    </node>
+    <node id="Medium Severity">
+      <data key="d0">Medium Severity</data>
+      <data key="d1">data</data>
+      <data key="d2">The severity classification assigned to the NCR report indicating a medium level of concern.</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169269</data>
+      <data key="d6" />
+    </node>
+    <node id="Unserviceable Status">
+      <data key="d0">Unserviceable Status</data>
+      <data key="d3">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d2">The switch was tagged as unserviceable due to identified defects.</data>
+      <data key="d1">UNKNOWN</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169269</data>
+      <data key="d6" />
+    </node>
+    <node id="NCR Report INC-7128F761">
+      <data key="d0">NCR Report INC-7128F761</data>
+      <data key="d1">content</data>
+      <data key="d2">NCR Report INC-7128F761 is a non-conformance report documenting scheduled maintenance findings and corrective actions for an avionics system dated 2025-12-31.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Avionics System">
+      <data key="d0">Avionics System</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Avionics System is an aircraft system identified as asset ENG-924 that underwent scheduled out-of-phase maintenance at Bay A.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Bay A">
+      <data key="d0">Bay A</data>
+      <data key="d1">location</data>
+      <data key="d2">Bay A is the maintenance facility location where the scheduled out-of-phase maintenance on the Avionics system was performed.&lt;SEP&gt;Bay A is the location where the scheduled maintenance on the Hydraulics System was performed.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048&lt;SEP&gt;chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Regulator">
+      <data key="d0">Regulator</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Regulator is a component of the Avionics system that exhibited anomalous wear pattern and delamination consistent with manufacturing variance.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Work Order WO-59488">
+      <data key="d0">Work Order WO-59488</data>
+      <data key="d1">data</data>
+      <data key="d2">Work Order WO-59488 is the authorization document for the corrective action initiated as a result of the NCR findings.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Manufacturing Variance">
+      <data key="d0">Manufacturing Variance</data>
+      <data key="d1">concept</data>
+      <data key="d2">Manufacturing variance is the identified root cause of the delamination observed on the regulator component.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Delamination">
+      <data key="d0">Delamination</data>
+      <data key="d1">concept</data>
+      <data key="d2">Delamination is a structural failure condition observed on the regulator component, characterized by separation of material layers consistent with manufacturing variance.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Forward Bulkhead">
+      <data key="d0">Forward Bulkhead</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Forward Bulkhead is a structural component of the aircraft where contamination was noted during the scheduled maintenance inspection.&lt;SEP&gt;Forward Bulkhead is a structural component at which the Loose Fastener was found during inspection.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048&lt;SEP&gt;chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Asset ENG-924">
+      <data key="d0">Asset ENG-924</data>
+      <data key="d1">data</data>
+      <data key="d2">Asset ENG-924 is the identification designation for the Avionics system that underwent maintenance.</data>
+      <data key="d3">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="NCR Report: INC-BEC46687">
+      <data key="d0">NCR Report: INC-BEC46687</data>
+      <data key="d1">content</data>
+      <data key="d2">NCR Report INC-BEC46687 is a nonconformance report documenting critical maintenance findings from a hydraulics system inspection.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Hydraulics System">
+      <data key="d0">Hydraulics System</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The Hydraulics System is an asset identified as ENG-800 that underwent scheduled 500-hour maintenance at Bay A.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Cylinder">
+      <data key="d0">Cylinder</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The Cylinder is a component of the Hydraulics System that exhibited anomalous wear pattern and surface damage consistent with thermal cycling.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Loose Fastener">
+      <data key="d0">Loose Fastener</data>
+      <data key="d1">artifact</data>
+      <data key="d2">The Loose Fastener is a component found at the forward bulkhead during inspection, identified as a defect requiring corrective action.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Metallurgical Analysis">
+      <data key="d0">Metallurgical Analysis</data>
+      <data key="d1">method</data>
+      <data key="d2">Metallurgical Analysis is the inspection method submitted for the damaged component to determine the cause and nature of wear.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Work Order WO-49945">
+      <data key="d0">Work Order WO-49945</data>
+      <data key="d1">data</data>
+      <data key="d2">Work Order WO-49945 is the work order identifier under which corrective action was initiated for the Hydraulics System defect.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Serviceable Spare">
+      <data key="d0">Serviceable Spare</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Serviceable Spare is the replacement component installed in place of the unserviceable cylinder.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="Surface Damage">
+      <data key="d0">Surface Damage</data>
+      <data key="d1">concept</data>
+      <data key="d2">Surface Damage is the deterioration condition observed on the Cylinder, consistent with thermal cycling effects.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="500-Hour Maintenance">
+      <data key="d0">500-Hour Maintenance</data>
+      <data key="d1">event</data>
+      <data key="d2">500-Hour Maintenance is the scheduled maintenance event performed on the Hydraulics System at Bay A.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="ENG-800">
+      <data key="d0">ENG-800</data>
+      <data key="d1">data</data>
+      <data key="d2">ENG-800 is the asset identifier for the Hydraulics System that underwent scheduled maintenance.</data>
+      <data key="d3">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169280</data>
+      <data key="d6" />
+    </node>
+    <node id="NCR Report INC-F828ED92">
+      <data key="d0">NCR Report INC-F828ED92</data>
+      <data key="d1">content</data>
+      <data key="d2">NCR Report INC-F828ED92 is a non-conformance report documenting findings related to pneumatics system inspection and repair.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="FRAME-255">
+      <data key="d0">FRAME-255</data>
+      <data key="d1">artifact</data>
+      <data key="d2">FRAME-255 is a pneumatics system component with a seal that underwent scheduled overhaul and post-repair inspection at the Receiving Dock.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Residual Vibration">
+      <data key="d0">Residual Vibration</data>
+      <data key="d1">concept</data>
+      <data key="d2">Residual vibration is an unexpected condition discovered during post-repair inspection of FRAME-255.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Ultrasonic Thickness Gauge">
+      <data key="d0">Ultrasonic Thickness Gauge</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Ultrasonic thickness gauge is an inspection tool used to conduct detailed dimensional check that led to severity reclassification.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="ASSET-233">
+      <data key="d0">ASSET-233</data>
+      <data key="d1">artifact</data>
+      <data key="d2">ASSET-233 is a fleet asset recommended for additional inspection based on findings from FRAME-255.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="ASSET-369">
+      <data key="d0">ASSET-369</data>
+      <data key="d1">artifact</data>
+      <data key="d2">ASSET-369 is a fleet asset recommended for additional inspection as part of the fleet assessment.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="FIND-86931">
+      <data key="d0">FIND-86931</data>
+      <data key="d1">data</data>
+      <data key="d2">FIND-86931 is the logging identifier for the finding related to residual vibration in FRAME-255.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Pneumatics System">
+      <data key="d0">Pneumatics System</data>
+      <data key="d1">concept</data>
+      <data key="d2">Pneumatics System refers to the pneumatic equipment category affected by the non-conformance and corrective actions.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Scheduled Overhaul">
+      <data key="d0">Scheduled Overhaul</data>
+      <data key="d1">event</data>
+      <data key="d2">Scheduled overhaul is a maintenance event performed on FRAME-255 prior to the post-repair inspection that revealed residual vibration.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Severity Reclassification">
+      <data key="d0">Severity Reclassification</data>
+      <data key="d1">concept</data>
+      <data key="d2">Severity reclassification is the process of upgrading the severity level from low to high following detailed dimensional inspection of FRAME-255.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Filter">
+      <data key="d0">Filter</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Filter is a component of the pneumatics system that was replaced as part of corrective action.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Seals">
+      <data key="d0">Seals</data>
+      <data key="d1">artifact</data>
+      <data key="d2">Seals are pneumatics system components that were replaced during corrective action procedures.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <node id="Pressure Test">
+      <data key="d0">Pressure Test</data>
+      <data key="d1">method</data>
+      <data key="d2">Pressure test is a corrective action procedure performed to verify system integrity after maintenance.</data>
+      <data key="d3">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d4">unknown_source</data>
+      <data key="d5">1775169292</data>
+      <data key="d6" />
+    </node>
+    <edge source="NCR Report: INC-648887DB" target="Fuel System">
+      <data key="d7">1.0</data>
+      <data key="d8">The NCR report documents maintenance findings and corrective actions related to the Fuel System.</data>
+      <data key="d9">non-conformance documentation,system inspection</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report: INC-648887DB" target="Work Order WO-81763">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrective action was initiated under Work Order WO-81763 as documented in the NCR report.</data>
+      <data key="d9">corrective action authorization,maintenance directive</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Fuel System" target="Asset HYD-222">
+      <data key="d7">1.0</data>
+      <data key="d8">Asset HYD-222 is the specific fuel system component that underwent scheduled maintenance.</data>
+      <data key="d9">maintenance subject,system component</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Asset HYD-222" target="Bay C">
+      <data key="d7">1.0</data>
+      <data key="d8">Asset HYD-222 was inspected and serviced at Bay C.</data>
+      <data key="d9">equipment placement,maintenance location</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Asset HYD-222" target="Bracket">
+      <data key="d7">1.0</data>
+      <data key="d8">Bracket is a component of Asset HYD-222 that exhibited anomalous wear patterns and corrosion.</data>
+      <data key="d9">component part,wear issue</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Asset HYD-222" target="Contamination">
+      <data key="d7">1.0</data>
+      <data key="d8">Contamination was noted at the aft attachment point of Asset HYD-222 during inspection.</data>
+      <data key="d9">contamination presence,maintenance finding</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Asset HYD-222" target="Scheduled Out-Of-Phase Maintenance">
+      <data key="d7">1.0</data>
+      <data key="d8">Scheduled out-of-phase maintenance was performed on Asset HYD-222 to inspect for defects and wear.</data>
+      <data key="d9">component inspection,maintenance activity</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Asset HYD-222" target="Unserviceable Component">
+      <data key="d7">1.0</data>
+      <data key="d8">Asset HYD-222 was tagged as unserviceable due to defects discovered during inspection.</data>
+      <data key="d9">component status,maintenance finding</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Bracket" target="Corrosion">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrosion consistent with fatigue loading was identified on the bracket during inspection.</data>
+      <data key="d9">defect condition,fatigue damage</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Bracket" target="Visual Inspection">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual inspection confirmed corrosion and anomalous wear patterns on the bracket.</data>
+      <data key="d9">defect detection,inspection method</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Bracket" target="Fatigue Loading">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrosion on the bracket is consistent with fatigue loading damage.</data>
+      <data key="d9">mechanical stress,wear cause</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Work Order WO-81763" target="Post-Maintenance Functional Test">
+      <data key="d7">1.0</data>
+      <data key="d8">Post-Maintenance Functional Test was conducted as part of the corrective action process under Work Order WO-81763.</data>
+      <data key="d9">corrective action completion,verification procedure</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Corrosion" target="Switch">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrosion consistent with thermal cycling was identified on the switch.</data>
+      <data key="d9">material degradation,thermal damage</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Corrosion" target="Thermal Cycling">
+      <data key="d7">1.0</data>
+      <data key="d8">Thermal cycling caused the corrosion observed on the switch component.</data>
+      <data key="d9">cause and effect,material degradation</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Corrosion" target="Visual Inspection">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual inspection confirmed corrosion consistent with thermal cycling on the switch.</data>
+      <data key="d9">defect detection,inspection finding</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Contamination" target="Aft Attachment Point">
+      <data key="d7">1.0</data>
+      <data key="d8">Contamination was noted at the aft attachment point during inspection.</data>
+      <data key="d9">contamination location,defect finding</data>
+      <data key="d10">chunk-0bdf2417781acafaa10b011ecd70d095</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169268</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Contamination" target="Forward Bulkhead">
+      <data key="d7">1.0</data>
+      <data key="d8">Contamination was identified at the Forward Bulkhead during the maintenance inspection.</data>
+      <data key="d9">environmental contamination,location condition</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Contamination" target="Avionics System">
+      <data key="d7">1.0</data>
+      <data key="d8">Contamination was noted at the forward bulkhead during inspection of the Avionics system.</data>
+      <data key="d9">condition finding,forward bulkhead</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Scheduled Out-Of-Phase Maintenance" target="Regulator">
+      <data key="d7">1.0</data>
+      <data key="d8">The Scheduled Out-Of-Phase Maintenance revealed the anomalous wear pattern on the Regulator.</data>
+      <data key="d9">defect identification,maintenance discovery</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Visual Inspection" target="Switch">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual inspection was conducted on the switch to confirm defects.</data>
+      <data key="d9">component examination,inspection method</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Visual Inspection" target="Delamination">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual Inspection confirmed the delamination condition on the regulator component.</data>
+      <data key="d9">defect verification,inspection confirmation</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Visual Inspection" target="Loose Fastener">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual Inspection identified the Loose Fastener at the forward bulkhead.</data>
+      <data key="d9">defect identification,inspection method</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Visual Inspection" target="Cylinder">
+      <data key="d7">1.0</data>
+      <data key="d8">Visual Inspection confirmed the presence of surface damage on the Cylinder.</data>
+      <data key="d9">component examination,inspection method</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Unserviceable Component" target="Regulator">
+      <data key="d7">1.0</data>
+      <data key="d8">The Regulator was tagged as an Unserviceable Component following the inspection findings.</data>
+      <data key="d9">component tagging,status designation</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-7C5EA02D" target="Propulsion System">
+      <data key="d7">1.0</data>
+      <data key="d8">The NCR report documents findings from maintenance inspection of the propulsion system.</data>
+      <data key="d9">inspection findings,maintenance documentation</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-7C5EA02D" target="Medium Severity">
+      <data key="d7">1.0</data>
+      <data key="d8">The NCR report was assigned a medium severity classification.</data>
+      <data key="d9">report classification,severity classification</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Propulsion System" target="Asset AVION-760">
+      <data key="d7">1.0</data>
+      <data key="d8">The propulsion system is identified by the asset number AVION-760.</data>
+      <data key="d9">asset tracking,system identification</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Propulsion System" target="Switch">
+      <data key="d7">1.0</data>
+      <data key="d8">The switch is a component of the propulsion system that was inspected.</data>
+      <data key="d9">component identification,system composition</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Propulsion System" target="Receiving Dock">
+      <data key="d7">1.0</data>
+      <data key="d8">The propulsion system underwent scheduled phase maintenance at the Receiving Dock.</data>
+      <data key="d9">inspection site,maintenance location</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Receiving Dock" target="Scheduled Phase Maintenance">
+      <data key="d7">1.0</data>
+      <data key="d8">Scheduled phase maintenance was performed at the Receiving Dock.</data>
+      <data key="d9">event location,maintenance site</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Receiving Dock" target="FRAME-255">
+      <data key="d7">1.0</data>
+      <data key="d8">FRAME-255 underwent post-repair inspection at the Receiving Dock.</data>
+      <data key="d9">equipment maintenance,inspection location</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Switch" target="Anomalous Wear Pattern">
+      <data key="d7">1.0</data>
+      <data key="d8">The switch exhibited an anomalous wear pattern discovered during maintenance inspection.</data>
+      <data key="d9">component condition,defect discovery</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Switch" target="Micro-Crack Indication">
+      <data key="d7">1.0</data>
+      <data key="d8">A micro-crack indication was noted at the root fitting of the switch.</data>
+      <data key="d9">component defect,structural damage</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Switch" target="Unserviceable Status">
+      <data key="d7">1.0</data>
+      <data key="d8">The switch was tagged as unserviceable due to identified defects.</data>
+      <data key="d9">component condition,operational capability</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Micro-Crack Indication" target="Root Fitting">
+      <data key="d7">1.0</data>
+      <data key="d8">The micro-crack indication was located at the root fitting of the switch.</data>
+      <data key="d9">defect site,location specificity</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Thermal Cycling" target="Cylinder">
+      <data key="d7">1.0</data>
+      <data key="d8">Surface damage on the Cylinder is consistent with effects of Thermal Cycling.</data>
+      <data key="d9">damage cause,material degradation</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Work Order WO-72829" target="Corrective Action">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrective action was initiated under work order WO-72829.</data>
+      <data key="d9">remedial action,work authorization</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Maintenance Manual" target="Corrective Action">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrective action was executed by adjusting clearances per the maintenance manual.</data>
+      <data key="d9">maintenance guidance,procedure reference</data>
+      <data key="d10">chunk-c3dae68a7b53635586ac56b2c7a0e752</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169269</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Maintenance Manual" target="Work Order WO-59488">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrective action under Work Order WO-59488 was performed according to procedures specified in the Maintenance Manual.</data>
+      <data key="d9">procedural guidance,technical reference</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169280</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Anomalous Wear Pattern" target="Cylinder">
+      <data key="d7">1.0</data>
+      <data key="d8">The Cylinder exhibited an Anomalous Wear Pattern identified during the inspection.</data>
+      <data key="d9">component condition,defect characteristic</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-7128F761" target="Avionics System">
+      <data key="d7">1.0</data>
+      <data key="d8">The NCR Report documents findings from scheduled maintenance performed on the Avionics system.</data>
+      <data key="d9">non-conformance documentation,system inspection</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169280</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-7128F761" target="Work Order WO-59488">
+      <data key="d7">1.0</data>
+      <data key="d8">Corrective action was initiated under Work Order WO-59488 as documented in the NCR Report.</data>
+      <data key="d9">corrective action authorization,maintenance work</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Avionics System" target="Bay A">
+      <data key="d7">1.0</data>
+      <data key="d8">The Avionics system underwent scheduled out-of-phase maintenance at Bay A.</data>
+      <data key="d9">asset inspection,maintenance location</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169280</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Avionics System" target="Regulator">
+      <data key="d7">1.0</data>
+      <data key="d8">The Regulator is a component of the Avionics system that exhibited anomalous wear pattern and delamination.</data>
+      <data key="d9">component part,wear anomaly</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Bay A" target="Hydraulics System">
+      <data key="d7">1.0</data>
+      <data key="d8">The Hydraulics System underwent scheduled maintenance at Bay A.</data>
+      <data key="d9">asset inspection,maintenance location</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Regulator" target="Manufacturing Variance">
+      <data key="d7">1.0</data>
+      <data key="d8">The delamination on the Regulator is consistent with manufacturing variance.</data>
+      <data key="d9">quality defect,root cause</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169280</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Regulator" target="Delamination">
+      <data key="d7">1.0</data>
+      <data key="d8">The Regulator exhibits delamination as a result of manufacturing variance.</data>
+      <data key="d9">material failure,structural defect</data>
+      <data key="d10">chunk-ecb51acaeb83a4650a7c25bb48021048</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Forward Bulkhead" target="Loose Fastener">
+      <data key="d7">1.0</data>
+      <data key="d8">The Loose Fastener is located at the Forward Bulkhead.</data>
+      <data key="d9">component location,structural attachment</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report: INC-BEC46687" target="Hydraulics System">
+      <data key="d7">1.0</data>
+      <data key="d8">The NCR Report INC-BEC46687 documents critical findings from the inspection of the Hydraulics System.</data>
+      <data key="d9">inspection finding,maintenance documentation</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Hydraulics System" target="Cylinder">
+      <data key="d7">1.0</data>
+      <data key="d8">The Cylinder is a component of the Hydraulics System that exhibited anomalous wear pattern and thermal cycling damage.</data>
+      <data key="d9">component defect,wear damage</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Hydraulics System" target="Work Order WO-49945">
+      <data key="d7">1.0</data>
+      <data key="d8">Work Order WO-49945 was initiated to document and track corrective action for the Hydraulics System defect.</data>
+      <data key="d9">corrective action,maintenance work</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Hydraulics System" target="Loose Fastener">
+      <data key="d7">1.0</data>
+      <data key="d8">The Loose Fastener at the forward bulkhead is a defect found on the Hydraulics System during inspection.</data>
+      <data key="d9">component defect,structural integrity</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Hydraulics System" target="500-Hour Maintenance">
+      <data key="d7">1.0</data>
+      <data key="d8">500-Hour Maintenance was the scheduled maintenance event performed on the Hydraulics System.</data>
+      <data key="d9">asset service,scheduled maintenance</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Cylinder" target="Metallurgical Analysis">
+      <data key="d7">1.0</data>
+      <data key="d8">The damaged Cylinder was submitted for Metallurgical Analysis to determine the root cause of wear.</data>
+      <data key="d9">component investigation,failure analysis</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Cylinder" target="Serviceable Spare">
+      <data key="d7">1.0</data>
+      <data key="d8">The unserviceable Cylinder was replaced with a Serviceable Spare during corrective action.</data>
+      <data key="d9">component replacement,corrective action</data>
+      <data key="d10">chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169281</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-F828ED92" target="FRAME-255">
+      <data key="d7">1.0</data>
+      <data key="d8">NCR Report INC-F828ED92 documents findings from post-repair inspection of FRAME-255.</data>
+      <data key="d9">inspection documentation,non-conformance reporting</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="NCR Report INC-F828ED92" target="Pneumatics System">
+      <data key="d7">1.0</data>
+      <data key="d8">NCR Report INC-F828ED92 documents non-conformance findings related to the Pneumatics System.</data>
+      <data key="d9">equipment category,system classification</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="FRAME-255" target="Residual Vibration">
+      <data key="d7">1.0</data>
+      <data key="d8">Residual vibration was discovered during inspection of FRAME-255.</data>
+      <data key="d9">defect discovery,quality assurance</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="FRAME-255" target="ASSET-233">
+      <data key="d7">1.0</data>
+      <data key="d8">ASSET-233 is recommended for additional inspection based on findings from FRAME-255.</data>
+      <data key="d9">fleet assessment,inspection recommendation</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="FRAME-255" target="ASSET-369">
+      <data key="d7">1.0</data>
+      <data key="d8">ASSET-369 is recommended for additional inspection based on findings from FRAME-255.</data>
+      <data key="d9">fleet assessment,inspection recommendation</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="FRAME-255" target="Scheduled Overhaul">
+      <data key="d7">1.0</data>
+      <data key="d8">FRAME-255 underwent scheduled overhaul prior to post-repair inspection.</data>
+      <data key="d9">equipment servicing,maintenance event</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="FRAME-255" target="Pressure Test">
+      <data key="d7">1.0</data>
+      <data key="d8">Pressure test was performed on FRAME-255 as part of corrective action procedures.</data>
+      <data key="d9">corrective action,system verification</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Residual Vibration" target="Ultrasonic Thickness Gauge">
+      <data key="d7">1.0</data>
+      <data key="d8">Ultrasonic thickness gauge was used in detailed dimensional check that identified the residual vibration issue.</data>
+      <data key="d9">defect detection,inspection method</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Residual Vibration" target="FIND-86931">
+      <data key="d7">1.0</data>
+      <data key="d8">FIND-86931 is the logged identifier for the residual vibration finding in FRAME-255.</data>
+      <data key="d9">defect logging,finding documentation</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Residual Vibration" target="Severity Reclassification">
+      <data key="d7">1.0</data>
+      <data key="d8">The discovery of residual vibration led to reclassification of severity from low to high.</data>
+      <data key="d9">defect severity,quality assessment</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Pneumatics System" target="Filter">
+      <data key="d7">1.0</data>
+      <data key="d8">Filter was replaced as part of corrective action for the pneumatics system.</data>
+      <data key="d9">component replacement,system maintenance</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+    <edge source="Pneumatics System" target="Seals">
+      <data key="d7">1.0</data>
+      <data key="d8">Seals were replaced as part of corrective action for the pneumatics system.</data>
+      <data key="d9">component replacement,system maintenance</data>
+      <data key="d10">chunk-29d20847544f3a4c5b00e5237c4c45e6</data>
+      <data key="d11">unknown_source</data>
+      <data key="d12">1775169293</data>
+      <data key="d13" />
+    </edge>
+  </graph>
+</graphml>

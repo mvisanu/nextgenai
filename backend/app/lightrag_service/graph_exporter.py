@@ -32,14 +32,17 @@ async def export_graph(domain: str, max_nodes: int = 200) -> dict:
     """
     rag = await get_lightrag(domain)
 
-    # Access the underlying NetworkX graph
-    # LightRAG stores it in chunk_entity_relation_graph which is a NetworkXStorage
+    # Use the public async API to read nodes and edges — this correctly handles
+    # disk reload on process change (avoids stale ._graph direct access).
     try:
-        G = rag.chunk_entity_relation_graph._graph  # type: ignore[attr-defined]
-    except AttributeError:
-        G = None
+        raw_nodes = await rag.chunk_entity_relation_graph.get_all_nodes()
+        raw_edges = await rag.chunk_entity_relation_graph.get_all_edges()
+    except Exception as exc:
+        logger.error("Graph read failed for '%s': %s", domain, exc)
+        raw_nodes = []
+        raw_edges = []
 
-    if G is None or G.number_of_nodes() == 0:
+    if not raw_nodes:
         return {
             "nodes": [],
             "edges": [],
@@ -49,42 +52,54 @@ async def export_graph(domain: str, max_nodes: int = 200) -> dict:
             "edge_count": 0,
         }
 
-    # Sample nodes if graph is large — prioritise high-degree nodes
-    all_nodes = list(G.nodes(data=True))
-    if len(all_nodes) > max_nodes:
-        # Sort by degree descending, take top max_nodes
-        degrees = dict(G.degree())
-        all_nodes = sorted(all_nodes, key=lambda n: degrees.get(n[0], 0), reverse=True)
-        all_nodes = all_nodes[:max_nodes]
+    # Sample nodes if graph is large — prioritise high-degree nodes.
+    # Build a degree map from the edge list to avoid loading NetworkX here.
+    degree_map: dict[str, int] = {}
+    for edge in raw_edges:
+        src = edge.get("source", "")
+        tgt = edge.get("target", "")
+        degree_map[src] = degree_map.get(src, 0) + 1
+        degree_map[tgt] = degree_map.get(tgt, 0) + 1
 
-    node_ids = {n[0] for n in all_nodes}
+    if len(raw_nodes) > max_nodes:
+        raw_nodes = sorted(
+            raw_nodes,
+            key=lambda n: degree_map.get(n.get("id", ""), 0),
+            reverse=True,
+        )
+        raw_nodes = raw_nodes[:max_nodes]
+
+    node_ids = {n.get("id", "") for n in raw_nodes}
 
     nodes = []
-    for node_id, data in all_nodes:
+    for n in raw_nodes:
+        node_id = str(n.get("id", ""))
         nodes.append({
-            "id": str(node_id),
-            "label": str(node_id),
-            "type": str(data.get("entity_type", data.get("type", "entity"))).lower(),
-            "description": str(data.get("description", "")),
-            "weight": float(data.get("weight", 1.0)),
+            "id": node_id,
+            "label": node_id,
+            "type": str(n.get("entity_type", n.get("type", "entity"))).lower(),
+            "description": str(n.get("description", "")),
+            "weight": float(n.get("weight", 1.0)),
         })
 
     edges = []
     seen_edges: set[str] = set()
-    for u, v, data in G.edges(data=True):
-        if u not in node_ids or v not in node_ids:
+    for e in raw_edges:
+        src = str(e.get("source", ""))
+        tgt = str(e.get("target", ""))
+        if src not in node_ids or tgt not in node_ids:
             continue
-        edge_id = f"{u}||{v}"
+        edge_id = f"{src}||{tgt}"
         if edge_id in seen_edges:
             continue
         seen_edges.add(edge_id)
         edges.append({
             "id": edge_id,
-            "source": str(u),
-            "target": str(v),
-            "label": str(data.get("keywords", data.get("relation", ""))),
-            "weight": float(data.get("weight", 1.0)),
-            "description": str(data.get("description", "")),
+            "source": src,
+            "target": tgt,
+            "label": str(e.get("keywords", e.get("relation", ""))),
+            "weight": float(e.get("weight", 1.0)),
+            "description": str(e.get("description", "")),
         })
 
     return {

@@ -34,7 +34,8 @@ A user types a free-text query in either **Aircraft** or **Medical** domain mode
 | NER | spaCy `en_core_web_sm` |
 | LLM | Claude Sonnet 4.6 (synthesis) + Haiku 4.5 (classify / plan / verify) |
 | Diagrams | Mermaid.js |
-| Graph | ReactFlow |
+| Graph | ReactFlow + dagre |
+| Knowledge Graph | LightRAG (`lightrag-hku 1.4.12`) — file-based entity extraction + NL query |
 | Deployment | Vercel (frontend) + Render (backend, Docker) |
 
 ---
@@ -46,10 +47,11 @@ NextAgentAI/
 ├── backend/
 │   ├── app/
 │   │   ├── agent/          # orchestrator, intent, planner, verifier
-│   │   ├── api/            # FastAPI routers: query, ingest, docs, healthz
+│   │   ├── api/            # FastAPI routers: query, ingest, docs, healthz, lightrag
 │   │   ├── db/             # SQLAlchemy models, session, Alembic migrations
 │   │   ├── graph/          # GraphRAG builder, expander, scorer
 │   │   ├── ingest/         # Pipeline, Kaggle loader, synthetic data generator, medical_pipeline
+│   │   ├── lightrag_service/ # LightRAG singleton per domain, indexer, demo_indexer, graph_exporter
 │   │   ├── llm/            # Anthropic client wrapper
 │   │   ├── rag/            # Chunker, embeddings, retrieval (aircraft + medical)
 │   │   ├── schemas/        # Pydantic request/response models
@@ -70,6 +72,8 @@ NextAgentAI/
 │       ├── medical-examples/ # 14 clinical example queries
 │       ├── faq/            # FAQ page
 │       └── lib/            # api.ts, theme, domain-context
+├── demo/
+│   └── lightrag_docs/      # 10 aircraft NCR docs + 10 medical case docs (demo fallback)
 ├── docker-compose.yml
 ├── render.yaml
 └── CLAUDE.md
@@ -124,6 +128,12 @@ All endpoints are public — no authentication token required.
 | `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` |
 | `POST` | `/ingest` | Trigger ingest pipeline |
 | `GET` | `/healthz` | Liveness + DB health check (`Cache-Control: no-store`) |
+| `GET` | `/lightrag/status/{domain}` | LightRAG index status + entity/relation counts |
+| `POST` | `/lightrag/index/{domain}` | Trigger background indexing (returns immediately) |
+| `GET` | `/lightrag/graph/{domain}` | Export knowledge graph nodes + edges as JSON |
+| `POST` | `/lightrag/query` | LightRAG NL query — `domain`, `query`, `mode` (local/global/hybrid/naive/mix) |
+| `GET` | `/lightrag/modes` | List supported query modes |
+| `GET` | `/lightrag/index-status` | All-domain indexing job status |
 | `GET` | `/api/docs` | Swagger UI |
 
 ---
@@ -203,6 +213,8 @@ The `render.yaml` blueprint deploys via Docker. Required environment variables i
 | `DATABASE_URL` | `postgresql+asyncpg://user:pass@host.neon.tech/neondb?ssl=require` |
 | `ANTHROPIC_API_KEY` | Your Anthropic API key (`sk-ant-api03-...`) |
 | `SUPABASE_JWT_SECRET` | From Supabase dashboard → Settings → API → JWT Settings |
+| `LIGHTRAG_BASE_DIR` | Base directory for LightRAG file storage (default: `backend/data/lightrag`) |
+| `LIGHTRAG_BATCH_SIZE` | Docs per indexing batch (default: `10`; raise to `25–50` for faster local indexing) |
 | `CORS_ORIGINS` | Additional allowed origins, comma-separated (optional) |
 
 > **DSN format**: `PG_DSN` uses psycopg2 syntax (`sslmode=require`); `DATABASE_URL` uses asyncpg syntax (`postgresql+asyncpg://` prefix + `ssl=require`). Both require `?` before query params — a missing `?` produces `"db":false` in `/healthz`.
@@ -233,6 +245,7 @@ Connect the GitHub repo to Vercel. Required environment variables:
 | `/examples` | Pre-built example queries (aircraft domain) + Industry Use Cases with client CTA |
 | `/medical-examples` | 14 clinical example queries (medical domain) |
 | `/faq` | Frequently asked questions |
+| `/lightrag` | LightRAG knowledge graph explorer — domain switcher, sample queries, React Flow graph, NL query panel |
 | `/sign-in` | Supabase auth — sign in |
 | `/sign-up` | Supabase auth — create account |
 | `/forgot-password` | Supabase auth — request password reset email |
@@ -293,3 +306,6 @@ Each domain maintains its own isolated session. Switching between Aircraft and M
 - **Graph completeness**: `GraphViewer` supplements the backend `graph_path` with any vector-hit chunk nodes not already present — ensuring all retrieved chunks are visible in the knowledge graph.
 - **ExportModal (PDF)**: `ExportModal` is loaded via `next/dynamic` with `ssr: false` because `@react-pdf/renderer` uses browser canvas APIs at module load time and cannot be server-rendered.
 - **Frontend dev mode**: `npm run dev` uses `--webpack` due to a Turbopack panic in Next.js 16 when `/_app` is resolved in an App Router project. Production `next build` is unaffected.
+- **LightRAG auto-indexing**: on startup `main.py` fires `_auto_index_lightrag()` as a background `asyncio.Task` — indexes both domains concurrently from DB (falls back to demo docs if DB is empty). Does not block the `/healthz` warm-up path.
+- **LightRAG graph-stats cache**: `check_index_status` reads `kv_store_full_docs.json` + graphml only on the first call after indexing; all subsequent status polls (including frontend polling during indexing) return from an in-memory `_graph_stats` dict. Cache is invalidated before and after each `index_domain()` call so re-indexing reflects fresh counts.
+- **LightRAGGraphViewer memoization**: the `/lightrag` page passes `graphNodes`/`graphEdges` as `useMemo` values so the dagre layout only recomputes when `graphData` actually changes; `connectionCount` is also memoized. Status polling is paused via a `visibilitychange` listener when the tab is hidden.

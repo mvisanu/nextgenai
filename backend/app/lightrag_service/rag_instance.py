@@ -84,20 +84,23 @@ async def _lightrag_llm_func(
     if history_messages:
         messages.extend(history_messages)
 
-    # LightRAG passes the full prompt; system_prompt is the extraction instruction
-    if system_prompt:
-        messages.append({"role": "user", "content": system_prompt})
-
+    # LightRAG sends the extraction prompt as the final user turn.
+    # system_prompt must be passed as the Anthropic `system` parameter —
+    # NOT as a user message — to avoid consecutive user messages (API error).
     messages.append({"role": "user", "content": prompt})
 
     max_tokens = kwargs.get("max_tokens", 1024)
 
+    create_kwargs: dict[str, Any] = dict(
+        model=client.model,
+        max_tokens=max_tokens,
+        messages=messages,
+    )
+    if system_prompt:
+        create_kwargs["system"] = system_prompt
+
     try:
-        response = await client._async_client.messages.create(
-            model=client.model,
-            max_tokens=max_tokens,
-            messages=messages,
-        )
+        response = await client._async_client.messages.create(**create_kwargs)
         return response.content[0].text
     except Exception as exc:
         logger.error("LightRAG LLM call failed: %s", exc)
@@ -128,7 +131,6 @@ async def get_lightrag(domain: str) -> LightRAG:
 
         rag = LightRAG(
             working_dir=working_dir,
-            workspace=domain,
             llm_model_func=_lightrag_llm_func,
             embedding_func=_make_embedding_func(),
             # File-based storage — does NOT touch PostgreSQL tables

@@ -165,12 +165,12 @@ def test_valid_domains_accepted(client):
 @pytest.mark.asyncio
 async def test_export_graph_empty_returns_not_indexed():
     """export_graph returns not_indexed when LightRAG graph is empty."""
-    import networkx as nx
     from backend.app.lightrag_service.graph_exporter import export_graph
 
     with patch("backend.app.lightrag_service.graph_exporter.get_lightrag") as mock_get:
-        mock_rag = MagicMock()
-        mock_rag.chunk_entity_relation_graph._graph = nx.Graph()
+        mock_rag = AsyncMock()
+        mock_rag.chunk_entity_relation_graph.get_all_nodes = AsyncMock(return_value=[])
+        mock_rag.chunk_entity_relation_graph.get_all_edges = AsyncMock(return_value=[])
         mock_get.return_value = mock_rag
 
         result = await export_graph("aircraft", max_nodes=200)
@@ -181,18 +181,21 @@ async def test_export_graph_empty_returns_not_indexed():
 
 @pytest.mark.asyncio
 async def test_export_graph_with_nodes():
-    """export_graph converts NetworkX graph to correct JSON structure."""
-    import networkx as nx
+    """export_graph converts node/edge dicts to correct JSON structure."""
     from backend.app.lightrag_service.graph_exporter import export_graph
 
-    G = nx.Graph()
-    G.add_node("AeroCo Industries", entity_type="supplier", description="Aerospace supplier", weight=2.0)
-    G.add_node("Hydraulic Seal", entity_type="component", description="O-ring seal", weight=1.0)
-    G.add_edge("AeroCo Industries", "Hydraulic Seal", keywords="manufactures", weight=1.5, description="")
+    mock_nodes = [
+        {"id": "AeroCo Industries", "entity_type": "supplier", "description": "Aerospace supplier", "weight": 2.0},
+        {"id": "Hydraulic Seal", "entity_type": "component", "description": "O-ring seal", "weight": 1.0},
+    ]
+    mock_edges = [
+        {"source": "AeroCo Industries", "target": "Hydraulic Seal", "keywords": "manufactures", "weight": 1.5, "description": ""},
+    ]
 
     with patch("backend.app.lightrag_service.graph_exporter.get_lightrag") as mock_get:
-        mock_rag = MagicMock()
-        mock_rag.chunk_entity_relation_graph._graph = G
+        mock_rag = AsyncMock()
+        mock_rag.chunk_entity_relation_graph.get_all_nodes = AsyncMock(return_value=mock_nodes)
+        mock_rag.chunk_entity_relation_graph.get_all_edges = AsyncMock(return_value=mock_edges)
         mock_get.return_value = mock_rag
 
         result = await export_graph("aircraft", max_nodes=200)

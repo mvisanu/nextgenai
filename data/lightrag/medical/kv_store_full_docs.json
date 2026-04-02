@@ -1,0 +1,1402 @@
+{
+  "doc-b6969a3f3abe42a30b2b43bfafceacaa": {
+    "content": "Clinical Case: b274b46e-0b92-4bdc-a89c-a5886d16d733\nDate: 2026-02-26 | System: Musculoskeletal | Severity: High\nNarrative: A 69-year-old female presented with reduced range of motion affecting the knee, associated with skin rash. Duration of symptoms was 28 months. Blood tests showed elevated CRP and ESR. X-ray of the knee revealed periarticular erosions. MRI demonstrated meniscal tear. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: osteoarthritis. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: osteoarthritis. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-b6969a3f3abe42a30b2b43bfafceacaa"
+  },
+  "doc-571ddc4aa63fdf4b9d03942b5048b279": {
+    "content": "Clinical Case: f90730a0-4c3d-4383-a1e3-c380209f1b6b\nDate: 2026-02-18 | System: Neurological | Severity: Low\nNarrative: A 33-year-old male presented with sudden onset of focal weakness and ataxia. Neurological examination revealed papilloedema and cerebellar signs. History included hypertension. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge.\nCorrective Action: The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-571ddc4aa63fdf4b9d03942b5048b279"
+  },
+  "doc-913dac86f1445586ee7313cee3abcef4": {
+    "content": "Clinical Case: 8746370a-d907-470f-80a9-ea627ba70326\nDate: 2026-02-11 | System: Gastrointestinal | Severity: Low\nNarrative: A 23-year-old female presented with jaundice of 1 weeks duration, associated with weight loss of 8 kg and dark urine. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed Crohn's disease. Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-913dac86f1445586ee7313cee3abcef4"
+  },
+  "doc-8176cddaae4d68a2202fd24c008d9124": {
+    "content": "Clinical Case: a8e8cf8e-6a2e-447b-8e02-853d72ffd9b1\nDate: 2026-02-23 | System: Dermatology | Severity: Low\nNarrative: A 57-year-old male was referred to the dermatology clinic following a suspicious pigmented lesion noted by GP. The patient reported a 14-month history of a changing skin lesion. Examination revealed an asymmetric pigmented lesion with irregular border and colour variation on the upper back. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included family history of melanoma. Diagnosis: nodular basal cell carcinoma. topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: nodular basal cell carcinoma. topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-8176cddaae4d68a2202fd24c008d9124"
+  },
+  "doc-f55f588d05d3c94a3e19fa2baa547f4d": {
+    "content": "Clinical Case: e7c0bc09-aac5-412d-90b7-2d6936020630\nDate: 2026-02-15 | System: Dermatology | Severity: Low\nNarrative: A 53-year-old male was referred to the dermatology clinic following routine dermatology screening. The patient reported a 28-month history of a changing skin lesion. Examination revealed a pearly nodule with telangiectasia on the lower leg. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed nodular basal cell carcinoma. Relevant history included prior basal cell carcinoma. Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-f55f588d05d3c94a3e19fa2baa547f4d"
+  },
+  "doc-010177962773e82b3b10b0765421d512": {
+    "content": "Clinical Case: 2c4855f4-3121-4312-bc35-1f204c59f5c4\nDate: 2026-03-04 | System: Musculoskeletal | Severity: Low\nNarrative: A 34-year-old female presented with pain and swelling affecting the knee, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 10 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the knee revealed joint space narrowing and osteophytes. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: systemic lupus erythematosus. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-010177962773e82b3b10b0765421d512"
+  },
+  "doc-556d7ea1921560596bb0c596a00bdf0a": {
+    "content": "Clinical Case: cc1b891e-abfe-4f68-a2c3-b29c63186949\nDate: 2026-02-15 | System: Respiratory | Severity: High\nNarrative: A 82-year-old female was admitted with a 10-week history of progressive dyspnoea. The patient also reported fatigue and ankle swelling. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated bilateral infiltrates. CT thorax revealed cavitating lesion. Bronchoscopy showed mucosal inflammation. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of lung adenocarcinoma was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-556d7ea1921560596bb0c596a00bdf0a"
+  },
+  "doc-937e867ddae2f8daaa79bd2e639976eb": {
+    "content": "Clinical Case: d242e7e1-6bca-4410-8d7c-0a8836a6aa9d\nDate: 2026-02-26 | System: Respiratory | Severity: High\nNarrative: A 26-year-old female was admitted with a 14-week history of haemoptysis. The patient also reported fatigue and ankle swelling. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed cavitating lesion. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-937e867ddae2f8daaa79bd2e639976eb"
+  },
+  "doc-7cfa77dcd4a2e473aabe4108bc1732c3": {
+    "content": "Clinical Case: 3ed6e5bd-0c1a-4ce0-92ca-0611626bb3fd\nDate: 2026-02-15 | System: Respiratory | Severity: High\nNarrative: A 81-year-old male was admitted with a 28-week history of progressive dyspnoea. The patient also reported fever and hoarseness. Relevant history included occupational asbestos exposure. Chest X-ray demonstrated hyperinflation. CT thorax revealed cavitating lesion. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated restrictive pattern. The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-7cfa77dcd4a2e473aabe4108bc1732c3"
+  },
+  "doc-3d29c25e21e325edd849f3dc97bf8a04": {
+    "content": "Clinical Case: 5ae9a12b-8e5c-43c2-aaa9-91928b240704\nDate: 2026-02-23 | System: Respiratory | Severity: High\nNarrative: A 80-year-old male was admitted with a 28-week history of progressive dyspnoea. The patient also reported night sweats and wheeze. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated bilateral infiltrates. CT thorax revealed cavitating lesion. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated restrictive pattern. The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161373,
+    "update_time": 1775161373,
+    "_id": "doc-3d29c25e21e325edd849f3dc97bf8a04"
+  },
+  "doc-b06c6a57e949da38959e52335f1e7ad5": {
+    "content": "Clinical Case: 08538c9c-909e-4c0d-8d72-36ca99fde556\nDate: 2026-02-09 | System: Neurological | Severity: Low\nNarrative: A 76-year-old male presented with sudden onset of altered consciousness and visual disturbance. Neurological examination revealed positive Kernig's sign and dysphasia. History included HIV-positive status. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated normal constituents. EEG was generalised spike-and-wave discharges. The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-b06c6a57e949da38959e52335f1e7ad5"
+  },
+  "doc-dc908789d613380f6cd7ce177b5dfafb": {
+    "content": "Clinical Case: d2415128-c4cf-4a35-a03c-4dddb2327176\nDate: 2026-01-24 | System: Musculoskeletal | Severity: Low\nNarrative: A 65-year-old male presented with pain and swelling affecting the wrist and MCPs, associated with nocturnal pain. Duration of symptoms was 14 months. Blood tests showed elevated CRP and ESR. X-ray of the wrist and MCPs revealed soft tissue swelling. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed haemarthrosis. Diagnosis: gout. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: gout. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-dc908789d613380f6cd7ce177b5dfafb"
+  },
+  "doc-147130d60b546439813daa2cf522a31b": {
+    "content": "Clinical Case: b0d2bbfd-dd49-4dd2-9275-e0ddfc3763d4\nDate: 2026-01-30 | System: Cardiac | Severity: Critical\nNarrative: A 48-year-old male presented to the emergency department with a 14-day history of dizziness and ankle oedema. Past medical history was notable for prior MI. Physical examination revealed S3 gallop. ECG demonstrated QTc prolongation. Echocardiography showed reduced ejection fraction of 35%. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and rate-controlled with metoprolol.\nCorrective Action: Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and rate-controlled with metoprolol",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-147130d60b546439813daa2cf522a31b"
+  },
+  "doc-ed0783f447cb66336d0ee665a9a9ae0c": {
+    "content": "Clinical Case: 391d55e5-837b-469f-a1c5-9f7161cc5f3e\nDate: 2026-01-26 | System: Gastrointestinal | Severity: Low\nNarrative: A 79-year-old male presented with rectal bleeding of 7 weeks duration, associated with altered bowel habit and anorexia. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed hepatic metastases. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: primary sclerosing cholangitis. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: primary sclerosing cholangitis. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-ed0783f447cb66336d0ee665a9a9ae0c"
+  },
+  "doc-8a6870a0ae60e5e97ee38192a8c7cb33": {
+    "content": "Clinical Case: 331a9457-6741-49ed-af63-5a5afe370055\nDate: 2026-02-06 | System: Cardiac | Severity: Critical\nNarrative: A 57-year-old female presented to the emergency department with a 10-day history of shortness of breath and dyspnea on exertion. Past medical history was notable for type 2 diabetes. Physical examination revealed elevated JVP. ECG demonstrated atrial fibrillation. Echocardiography showed pericardial effusion. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with hypertensive urgency and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-8a6870a0ae60e5e97ee38192a8c7cb33"
+  },
+  "doc-17baf644d96495d064f9649f631230b0": {
+    "content": "Clinical Case: 5e810217-e540-4981-89ad-cd18726a2a3e\nDate: 2026-02-07 | System: Gastrointestinal | Severity: Medium\nNarrative: A 45-year-old female presented with progressive dysphagia of 3 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: decompensated cirrhosis. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-17baf644d96495d064f9649f631230b0"
+  },
+  "doc-1833ee3771fdd057cb4b4d8971b96a1b": {
+    "content": "Clinical Case: f4daa6a4-d452-4277-82d1-a33f73acf8a4\nDate: 2026-01-29 | System: Dermatology | Severity: Low\nNarrative: A 81-year-old female was referred to the dermatology clinic following a rapidly changing mole. The patient reported a 5-month history of pruritic rash. Examination revealed a pearly nodule with telangiectasia on the face and scalp. Dermoscopy demonstrated arborising vessels and blue-grey ovoid nests. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included prolonged sun exposure. Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-1833ee3771fdd057cb4b4d8971b96a1b"
+  },
+  "doc-e0cf79a93d6937f4e196efd0a76b1c14": {
+    "content": "Clinical Case: 50306e6e-4bbf-4f1a-8963-1abae0b0446f\nDate: 2026-01-16 | System: Gastrointestinal | Severity: Low\nNarrative: A 45-year-old female presented with jaundice of 5 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated multiple colonic polyps. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed adenocarcinoma. Diagnosis: colorectal cancer. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-e0cf79a93d6937f4e196efd0a76b1c14"
+  },
+  "doc-6832ceabd069924c459708223a28ba62": {
+    "content": "Clinical Case: 97ba2a13-b656-4261-b21f-7608eb588ac5\nDate: 2026-01-18 | System: Dermatology | Severity: Low\nNarrative: A 32-year-old male was referred to the dermatology clinic following a suspicious pigmented lesion noted by GP. The patient reported a 14-month history of pruritic rash. Examination revealed a pearly nodule with telangiectasia on the left forearm. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included prior basal cell carcinoma. Diagnosis: malignant melanoma stage IB. surgical excision with 4 mm margins was recommended.\nCorrective Action: Diagnosis: malignant melanoma stage IB. surgical excision with 4 mm margins was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-6832ceabd069924c459708223a28ba62"
+  },
+  "doc-590c301f3f3b6ed7e8dd79ff818eb970": {
+    "content": "Clinical Case: 1cfbdf69-8b2a-46b1-be6d-f1a6c166a184\nDate: 2026-01-26 | System: Cardiac | Severity: Critical\nNarrative: A 60-year-old male presented to the emergency department with a 1-day history of shortness of breath and ankle oedema. Past medical history was notable for type 2 diabetes. Physical examination revealed irregular rhythm. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was markedly elevated. The patient was diagnosed with acute NSTEMI and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with acute NSTEMI and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775161441,
+    "update_time": 1775161441,
+    "_id": "doc-590c301f3f3b6ed7e8dd79ff818eb970"
+  },
+  "doc-64cd049e5c5b89e54dfbde1ab8bbcd95": {
+    "content": "Clinical Case: 8367a055-ba6f-4208-b05e-f6f7fa5dfe06\nDate: 2026-01-12 | System: Cardiac | Severity: Critical\nNarrative: A 62-year-old female presented to the emergency department with a 7-day history of dizziness and orthopnea. Past medical history was notable for type 2 diabetes. Physical examination revealed bilateral basal crepitations. ECG demonstrated left bundle branch block. Echocardiography showed regional wall motion abnormality. Troponin was markedly elevated. The patient was diagnosed with decompensated heart failure and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was markedly elevated. The patient was diagnosed with decompensated heart failure and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-64cd049e5c5b89e54dfbde1ab8bbcd95"
+  },
+  "doc-348a6f93e1df4665db6794f8f475315a": {
+    "content": "Clinical Case: 571b439e-8a5c-432d-8cee-53be817ca467\nDate: 2026-01-03 | System: Respiratory | Severity: High\nNarrative: A 44-year-old male was admitted with a 1-week history of haemoptysis. The patient also reported fever and stridor. Relevant history included prior tuberculosis. Chest X-ray demonstrated pleural effusion. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of pulmonary fibrosis was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-348a6f93e1df4665db6794f8f475315a"
+  },
+  "doc-ed28d4753317331d50864a0ff241202a": {
+    "content": "Clinical Case: 9e5cf53d-e9a8-4893-af6e-663346089d5e\nDate: 2026-01-11 | System: Gastrointestinal | Severity: Low\nNarrative: A 71-year-old male presented with upper abdominal pain of 14 weeks duration, associated with altered bowel habit and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed Crohn's disease. Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-ed28d4753317331d50864a0ff241202a"
+  },
+  "doc-f5543cdd6c57fb9e70e4d6b2688e3521": {
+    "content": "Clinical Case: 6e431c34-51b2-4fd4-9cd7-bd546f57ca3d\nDate: 2026-01-10 | System: Respiratory | Severity: High\nNarrative: A 34-year-old female was admitted with a 3-week history of progressive dyspnoea. The patient also reported night sweats and stridor. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated pleural effusion. CT thorax revealed honeycombing pattern. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-f5543cdd6c57fb9e70e4d6b2688e3521"
+  },
+  "doc-753f2b2c76f5884bcc21bf4f615442cc": {
+    "content": "Clinical Case: 3b79bba2-9f2c-4933-994e-243c7e4fe2db\nDate: 2025-12-24 | System: Dermatology | Severity: Low\nNarrative: A 56-year-old female was referred to the dermatology clinic following a suspicious pigmented lesion noted by GP. The patient reported a 10-month history of a changing skin lesion. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the left forearm. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed nodular basal cell carcinoma. Relevant history included immunosuppression post-renal transplant. Diagnosis: nodular basal cell carcinoma. topical corticosteroids and phototherapy was recommended.\nCorrective Action: topical corticosteroids and phototherapy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-753f2b2c76f5884bcc21bf4f615442cc"
+  },
+  "doc-4b2d5f8876ed45c5eb097f53215c03ef": {
+    "content": "Clinical Case: 9593bea3-c73e-43c8-9155-f0b60c9ea496\nDate: 2026-01-08 | System: Dermatology | Severity: Low\nNarrative: A 54-year-old male was referred to the dermatology clinic following a rapidly changing mole. The patient reported a 5-month history of pruritic rash. Examination revealed an erythematous plaque with silvery scaling on the upper back. Dermoscopy demonstrated Munro microabscesses pattern. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included family history of melanoma. Diagnosis: plaque psoriasis. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: plaque psoriasis. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-4b2d5f8876ed45c5eb097f53215c03ef"
+  },
+  "doc-3758214300d6bd794534d0e32e9bd057": {
+    "content": "Clinical Case: d2eb2279-6ead-47e7-a8d9-04ec53ca3fc5\nDate: 2026-01-01 | System: Respiratory | Severity: High\nNarrative: A 71-year-old male was admitted with a 2-week history of pleuritic chest pain. The patient also reported fatigue and hoarseness. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated hyperinflation. CT thorax revealed honeycombing pattern. Bronchoscopy showed mucosal inflammation. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-3758214300d6bd794534d0e32e9bd057"
+  },
+  "doc-92cc2c46c1f49338ed7955ea4238e60f": {
+    "content": "Clinical Case: 5be4a2a8-393b-4ed1-9197-fca1c232aba5\nDate: 2026-01-10 | System: Respiratory | Severity: High\nNarrative: A 21-year-old male was admitted with a 28-week history of productive cough. The patient also reported fatigue and ankle swelling. Relevant history included immunosuppression. Chest X-ray demonstrated pleural effusion. CT thorax revealed honeycombing pattern. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of lung adenocarcinoma was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-92cc2c46c1f49338ed7955ea4238e60f"
+  },
+  "doc-13a80dbd998d7aced4f85f4e332b3980": {
+    "content": "Clinical Case: ed697abe-12d0-4f61-95b8-21d46d4531f8\nDate: 2026-01-16 | System: Cardiac | Severity: Critical\nNarrative: A 48-year-old female presented to the emergency department with a 5-day history of chest pain and syncope. Past medical history was notable for hypertension. Physical examination revealed elevated JVP. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-13a80dbd998d7aced4f85f4e332b3980"
+  },
+  "doc-91f2e17beb9f3d24b9faa9059ed6acae": {
+    "content": "Clinical Case: 0f0f8739-b213-43c7-9c86-ce05c1355c5c\nDate: 2025-12-25 | System: Musculoskeletal | Severity: High\nNarrative: A 20-year-old male presented with reduced range of motion affecting the spine, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 3 months. Blood tests showed elevated uric acid. X-ray of the spine revealed periarticular erosions. MRI demonstrated sacroiliitis. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: rheumatoid arthritis. Management included total knee replacement.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775161528,
+    "update_time": 1775161528,
+    "_id": "doc-91f2e17beb9f3d24b9faa9059ed6acae"
+  },
+  "doc-05e39d703a228f9f75806162f2ec5ed2": {
+    "content": "Clinical Case: 01e5ae7d-9ea1-4777-8bbd-41346107c5ed\nDate: 2025-12-23 | System: Musculoskeletal | Severity: Medium\nNarrative: A 21-year-old female presented with progressive stiffness affecting the wrist and MCPs, associated with constitutional symptoms. Duration of symptoms was 1 months. Blood tests showed elevated uric acid. X-ray of the wrist and MCPs revealed soft tissue swelling. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-05e39d703a228f9f75806162f2ec5ed2"
+  },
+  "doc-d5ef4a9ff207d5fcf312fa4948419500": {
+    "content": "Clinical Case: d75aa5c8-3f63-4f41-821d-78d142987a8d\nDate: 2025-12-07 | System: Musculoskeletal | Severity: Low\nNarrative: A 68-year-old female presented with reduced range of motion affecting the spine, associated with skin rash. Duration of symptoms was 1 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the spine revealed soft tissue swelling. MRI demonstrated sacroiliitis. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-d5ef4a9ff207d5fcf312fa4948419500"
+  },
+  "doc-6c35da8135a5d590d4accdb1b51d149c": {
+    "content": "Clinical Case: 049fce59-ece1-4409-8dd6-9a218145e736\nDate: 2025-12-15 | System: Respiratory | Severity: High\nNarrative: A 46-year-old male was admitted with a 21-week history of productive cough. The patient also reported fatigue and hoarseness. Relevant history included immunosuppression. Chest X-ray demonstrated hyperinflation. CT thorax revealed honeycombing pattern. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of pulmonary embolism was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-6c35da8135a5d590d4accdb1b51d149c"
+  },
+  "doc-c49c05a874ce6761c157c4e35dd9903b": {
+    "content": "Clinical Case: 8e3f5273-e16d-4a6f-a575-8fba9e15de97\nDate: 2025-12-14 | System: Musculoskeletal | Severity: High\nNarrative: A 73-year-old male presented with pain and swelling affecting the shoulder, associated with nocturnal pain. Duration of symptoms was 2 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the shoulder revealed periarticular erosions. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed haemarthrosis. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-c49c05a874ce6761c157c4e35dd9903b"
+  },
+  "doc-6f3968a1e0f64443d559f9c75594cad0": {
+    "content": "Clinical Case: ae2d5d72-4511-4c55-b8ef-29ed75d70a61\nDate: 2025-12-16 | System: Musculoskeletal | Severity: Low\nNarrative: A 78-year-old female presented with pain and swelling affecting the wrist and MCPs, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 1 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the wrist and MCPs revealed soft tissue swelling. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-6f3968a1e0f64443d559f9c75594cad0"
+  },
+  "doc-5da01a385b47958d437c2b60db9a3505": {
+    "content": "Clinical Case: cb208a6f-e5bb-4b98-b9e9-74dfafc7ed2a\nDate: 2025-12-15 | System: Musculoskeletal | Severity: Low\nNarrative: A 72-year-old female presented with instability affecting the spine, associated with constitutional symptoms. Duration of symptoms was 3 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the spine revealed soft tissue swelling. MRI demonstrated sacroiliitis. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-5da01a385b47958d437c2b60db9a3505"
+  },
+  "doc-c23e378760ce2cf115e65e9075717448": {
+    "content": "Clinical Case: c1d9bffd-b8b0-436e-80c1-136fdf34c069\nDate: 2025-12-03 | System: Cardiac | Severity: Critical\nNarrative: A 35-year-old male presented to the emergency department with a 28-day history of palpitations and syncope. Past medical history was notable for prior MI. Physical examination revealed irregular rhythm. ECG demonstrated atrial fibrillation. Echocardiography showed mitral regurgitation. Troponin was mildly elevated. The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-c23e378760ce2cf115e65e9075717448"
+  },
+  "doc-6fefabc1e665ca1162ec747e9ecad131": {
+    "content": "Clinical Case: d8b44c34-4349-4677-b741-493c790896cb\nDate: 2025-12-16 | System: Dermatology | Severity: Low\nNarrative: A 56-year-old female was referred to the dermatology clinic following a rapidly changing mole. The patient reported a 1-month history of a changing skin lesion. Examination revealed an erythematous plaque with silvery scaling on the lower leg. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included prolonged sun exposure. Diagnosis: plaque psoriasis. topical corticosteroids and phototherapy was recommended.\nCorrective Action: topical corticosteroids and phototherapy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-6fefabc1e665ca1162ec747e9ecad131"
+  },
+  "doc-cf05a1180370ca5c22ffbfcdb89ab2d9": {
+    "content": "Clinical Case: 8d04625b-7591-4943-92d0-d4080486fced\nDate: 2025-12-21 | System: Respiratory | Severity: High\nNarrative: A 35-year-old female was admitted with a 7-week history of haemoptysis. The patient also reported night sweats and wheeze. Relevant history included immunosuppression. Chest X-ray demonstrated hyperinflation. CT thorax revealed honeycombing pattern. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated normal spirometry. The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-cf05a1180370ca5c22ffbfcdb89ab2d9"
+  },
+  "doc-6d5bcc445de13e0cbc298cdc386c5d44": {
+    "content": "Clinical Case: 55710786-3f61-4c67-afcf-486b794569a9\nDate: 2025-12-23 | System: Paediatric | Severity: Critical\nNarrative: A 37-year-old female was brought to the paediatric emergency department by parents with a 7-day history of stridor and increased work of breathing. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 96% on room air. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed left-sided pneumothorax. Blood cultures were negative. History included premature birth at 32 weeks. Diagnosis: suspected foreign body aspiration. urgent rigid bronchoscopy under general anaesthesia was initiated.\nCorrective Action: urgent rigid bronchoscopy under general anaesthesia was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161642,
+    "update_time": 1775161642,
+    "_id": "doc-6d5bcc445de13e0cbc298cdc386c5d44"
+  },
+  "doc-0ff99b3fbcf99c238b4ecf7d0e0a7afc": {
+    "content": "Clinical Case: 9a88df4f-0ab0-445f-84b7-cb4cb43e5abf\nDate: 2025-11-19 | System: Musculoskeletal | Severity: Low\nNarrative: A 26-year-old female presented with instability affecting the spine, associated with constitutional symptoms. Duration of symptoms was 2 months. Blood tests showed elevated CRP and ESR. X-ray of the spine revealed chondrocalcinosis. MRI demonstrated meniscal tear. Synovial fluid analysis showed haemarthrosis. Diagnosis: gout. Management included total knee replacement.\nCorrective Action: Diagnosis: gout. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-0ff99b3fbcf99c238b4ecf7d0e0a7afc"
+  },
+  "doc-ce7467c36645566972e9f92c5fea2ee8": {
+    "content": "Clinical Case: a4be1dbd-a258-438a-beb1-58165f824e11\nDate: 2025-12-01 | System: Neurological | Severity: High\nNarrative: A 45-year-old female presented with sudden onset of focal weakness and visual disturbance. Neurological examination revealed left-sided hemiplegia and cerebellar signs. History included prior stroke. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated oligoclonal bands. EEG was normal. The patient was diagnosed with bacterial meningitis. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with complete resolution of symptoms at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with complete resolution of symptoms at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-ce7467c36645566972e9f92c5fea2ee8"
+  },
+  "doc-47645b674af4f2a88a64e49657a83073": {
+    "content": "Clinical Case: 9fb2cdc5-71f2-4ca2-833f-cb1d5f13c39b\nDate: 2025-11-16 | System: Musculoskeletal | Severity: High\nNarrative: A 71-year-old male presented with pain and swelling affecting the knee, associated with nocturnal pain. Duration of symptoms was 10 months. Blood tests showed elevated uric acid. X-ray of the knee revealed periarticular erosions. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-47645b674af4f2a88a64e49657a83073"
+  },
+  "doc-2a418de55ab776ed3382840643ce211c": {
+    "content": "Clinical Case: 0bdef144-91ba-4386-b185-0c64ce3a45b3\nDate: 2025-11-17 | System: Cardiac | Severity: Critical\nNarrative: A 30-year-old female presented to the emergency department with a 5-day history of palpitations and syncope. Past medical history was notable for hyperlipidaemia. Physical examination revealed irregular rhythm. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was mildly elevated. The patient was diagnosed with acute NSTEMI and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with acute NSTEMI and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-2a418de55ab776ed3382840643ce211c"
+  },
+  "doc-e7f38ad205281fc2b3d3fdc52c5a8b5c": {
+    "content": "Clinical Case: 356b55fb-dc82-426e-927b-5c6f256b67b5\nDate: 2025-11-24 | System: Respiratory | Severity: High\nNarrative: A 44-year-old female was admitted with a 5-week history of haemoptysis. The patient also reported fever and ankle swelling. Relevant history included immunosuppression. Chest X-ray demonstrated pleural effusion. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-e7f38ad205281fc2b3d3fdc52c5a8b5c"
+  },
+  "doc-552541f5707dbc91dc2b39f24da42ff3": {
+    "content": "Clinical Case: 8ded484e-4e00-42fa-8032-98eb83eac6b2\nDate: 2025-11-29 | System: Gastrointestinal | Severity: Low\nNarrative: A 71-year-old male presented with jaundice of 10 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: oesophageal adenocarcinoma. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-552541f5707dbc91dc2b39f24da42ff3"
+  },
+  "doc-c1de22df34c77d7bc601fa40ded28a01": {
+    "content": "Clinical Case: eec83c17-f3f2-467e-b824-e967391f5c57\nDate: 2025-12-01 | System: Musculoskeletal | Severity: High\nNarrative: A 55-year-old male presented with pain and swelling affecting the wrist and MCPs, associated with nocturnal pain. Duration of symptoms was 2 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the wrist and MCPs revealed periarticular erosions. MRI demonstrated sacroiliitis. Synovial fluid analysis showed haemarthrosis. Diagnosis: osteoarthritis. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: osteoarthritis. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-c1de22df34c77d7bc601fa40ded28a01"
+  },
+  "doc-8a667de4da28bb439da82a6fd3153ca1": {
+    "content": "Clinical Case: 30307ed6-5681-43e7-bd15-40796b6b500c\nDate: 2025-12-01 | System: Musculoskeletal | Severity: Medium\nNarrative: A 32-year-old male presented with progressive stiffness affecting the shoulder, associated with nocturnal pain. Duration of symptoms was 28 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the shoulder revealed soft tissue swelling. MRI demonstrated sacroiliitis. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-8a667de4da28bb439da82a6fd3153ca1"
+  },
+  "doc-163a075cd3f1260ecb6825df91ee03e0": {
+    "content": "Clinical Case: 443c078e-7a59-4a50-a4b9-1f301a548469\nDate: 2025-11-29 | System: Neurological | Severity: High\nNarrative: A 76-year-old female presented with sudden onset of severe headache and visual disturbance. Neurological examination revealed positive Kernig's sign and cerebellar signs. History included prior stroke. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was burst suppression pattern. The patient was diagnosed with ischaemic stroke. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-163a075cd3f1260ecb6825df91ee03e0"
+  },
+  "doc-24b0722d4e6a03efb1f886b8c96c34fd": {
+    "content": "Clinical Case: 90f7391c-787a-4af1-8952-c26e102ea629\nDate: 2025-11-15 | System: Cardiac | Severity: Critical\nNarrative: A 49-year-old female presented to the emergency department with a 2-day history of dizziness and syncope. Past medical history was notable for type 2 diabetes. Physical examination revealed irregular rhythm. ECG demonstrated QTc prolongation. Echocardiography showed pericardial effusion. Troponin was markedly elevated. The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775161747,
+    "update_time": 1775161747,
+    "_id": "doc-24b0722d4e6a03efb1f886b8c96c34fd"
+  },
+  "doc-858effb6f3bd62fa4b2171b7a13e1257": {
+    "content": "Clinical Case: 63269a8e-473e-4d80-9d5a-1411d9c6d257\nDate: 2025-11-06 | System: Musculoskeletal | Severity: High\nNarrative: A 59-year-old male presented with instability affecting the wrist and MCPs, associated with skin rash. Duration of symptoms was 2 months. Blood tests showed elevated CRP and ESR. X-ray of the wrist and MCPs revealed periarticular erosions. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-858effb6f3bd62fa4b2171b7a13e1257"
+  },
+  "doc-359c4bdb901dcb37d2cf0fa307a2c571": {
+    "content": "Clinical Case: 5553062f-0957-49f2-ac1e-a72be8fa19fc\nDate: 2025-10-13 | System: Gastrointestinal | Severity: Medium\nNarrative: A 29-year-old female presented with progressive dysphagia of 10 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed elevated liver enzymes (AST/ALT 4× ULN). Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-359c4bdb901dcb37d2cf0fa307a2c571"
+  },
+  "doc-b0848622c01d4f566da1895987417746": {
+    "content": "Clinical Case: 6ca6c2de-d344-48ec-8bae-8feae075712f\nDate: 2025-11-04 | System: Gastrointestinal | Severity: Medium\nNarrative: A 58-year-old female presented with progressive dysphagia of 14 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-b0848622c01d4f566da1895987417746"
+  },
+  "doc-299e0d28d253c37f9dddf4aef8eb2c94": {
+    "content": "Clinical Case: 9cb76fd3-3c65-4b81-bb56-ab9428b2d5a6\nDate: 2025-10-25 | System: Gastrointestinal | Severity: Low\nNarrative: A 46-year-old female presented with rectal bleeding of 5 weeks duration, associated with pruritus and pale stools. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-299e0d28d253c37f9dddf4aef8eb2c94"
+  },
+  "doc-1367d2b19d4c80169f6e3f681823cd2c": {
+    "content": "Clinical Case: aea7cbb5-7300-443d-9246-1a6b77624a31\nDate: 2025-11-09 | System: Musculoskeletal | Severity: Medium\nNarrative: A 54-year-old male presented with progressive stiffness affecting the shoulder, associated with nocturnal pain. Duration of symptoms was 7 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the shoulder revealed soft tissue swelling. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: systemic lupus erythematosus. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-1367d2b19d4c80169f6e3f681823cd2c"
+  },
+  "doc-5efbbabff30dce7757a05e1d7b57eaa2": {
+    "content": "Clinical Case: 9287e7f5-c202-4180-966b-30e1af0d109c\nDate: 2025-11-07 | System: Gastrointestinal | Severity: Low\nNarrative: A 78-year-old female presented with upper abdominal pain of 1 weeks duration, associated with altered bowel habit and dark urine. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed Crohn's disease. Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-5efbbabff30dce7757a05e1d7b57eaa2"
+  },
+  "doc-cc54586b6f383f8d77f096cecdbfabb4": {
+    "content": "Clinical Case: 9b86a106-6634-4282-8181-5144f3e6ddac\nDate: 2025-11-06 | System: Cardiac | Severity: Critical\nNarrative: A 38-year-old female presented to the emergency department with a 14-day history of dizziness and ankle oedema. Past medical history was notable for prior MI. Physical examination revealed elevated JVP. ECG demonstrated QTc prolongation. Echocardiography showed reduced ejection fraction of 35%. Troponin was mildly elevated. The patient was diagnosed with new-onset atrial fibrillation and rate-controlled with metoprolol.\nCorrective Action: Troponin was mildly elevated. The patient was diagnosed with new-onset atrial fibrillation and rate-controlled with metoprolol",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-cc54586b6f383f8d77f096cecdbfabb4"
+  },
+  "doc-432f575b36f0861b9c262c0f7ea4613e": {
+    "content": "Clinical Case: aad8b076-ffff-42c3-9f85-34c776c59a12\nDate: 2025-10-26 | System: Cardiac | Severity: Critical\nNarrative: A 25-year-old female presented to the emergency department with a 14-day history of dizziness and dyspnea on exertion. Past medical history was notable for prior MI. Physical examination revealed irregular rhythm. ECG demonstrated ST-elevation in leads II, III, aVF. Echocardiography showed reduced ejection fraction of 35%. Troponin was mildly elevated. The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-432f575b36f0861b9c262c0f7ea4613e"
+  },
+  "doc-11944cb5618b1905065e32d7424e5ea1": {
+    "content": "Clinical Case: 53dae0ee-87a8-49e3-a019-074115a0a559\nDate: 2025-10-12 | System: Respiratory | Severity: High\nNarrative: A 60-year-old male was admitted with a 14-week history of productive cough. The patient also reported fatigue and hoarseness. Relevant history included prior tuberculosis. Chest X-ray demonstrated hyperinflation. CT thorax revealed cavitating lesion. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated restrictive pattern. The diagnosis of lung adenocarcinoma was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-11944cb5618b1905065e32d7424e5ea1"
+  },
+  "doc-9953fc82aa24f3592983321f1a24638a": {
+    "content": "Clinical Case: 9925cee1-9401-413f-ba5b-293ad45018fd\nDate: 2025-10-15 | System: Cardiac | Severity: Critical\nNarrative: A 54-year-old female presented to the emergency department with a 28-day history of shortness of breath and dyspnea on exertion. Past medical history was notable for type 2 diabetes. Physical examination revealed irregular rhythm. ECG demonstrated ST-elevation in leads II, III, aVF. Echocardiography showed reduced ejection fraction of 35%. Troponin was markedly elevated. The patient was diagnosed with new-onset atrial fibrillation and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was markedly elevated. The patient was diagnosed with new-onset atrial fibrillation and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775161866,
+    "update_time": 1775161866,
+    "_id": "doc-9953fc82aa24f3592983321f1a24638a"
+  },
+  "doc-27c41f1161752e203627b5fc920fca07": {
+    "content": "Clinical Case: 95abb41f-5883-4a79-8ffe-ee79c0f4f42a\nDate: 2025-09-26 | System: Respiratory | Severity: High\nNarrative: A 82-year-old male was admitted with a 28-week history of productive cough. The patient also reported fatigue and stridor. Relevant history included immunosuppression. Chest X-ray demonstrated pleural effusion. CT thorax revealed ground-glass opacification. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated normal spirometry. The diagnosis of lung adenocarcinoma was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-27c41f1161752e203627b5fc920fca07"
+  },
+  "doc-93f288f93598c3b3a931faed20b2314c": {
+    "content": "Clinical Case: 1b7aa3e9-c069-47c2-93c5-1083c6be0dd7\nDate: 2025-10-09 | System: Gastrointestinal | Severity: Low\nNarrative: A 62-year-old female presented with rectal bleeding of 1 weeks duration, associated with pruritus and dark urine. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed Crohn's disease. Diagnosis: decompensated cirrhosis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-93f288f93598c3b3a931faed20b2314c"
+  },
+  "doc-e78b4d015419c364789de541e7d7c770": {
+    "content": "Clinical Case: ad5c8122-2ced-40a6-83e0-6cd88e959458\nDate: 2025-10-10 | System: Musculoskeletal | Severity: High\nNarrative: A 62-year-old male presented with pain and swelling affecting the spine, associated with constitutional symptoms. Duration of symptoms was 10 months. Blood tests showed elevated CRP and ESR. X-ray of the spine revealed periarticular erosions. MRI demonstrated meniscal tear. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-e78b4d015419c364789de541e7d7c770"
+  },
+  "doc-633b98afe9675d274497d13c770dc7a8": {
+    "content": "Clinical Case: 82ed25e4-d483-4878-b914-312ede1623d5\nDate: 2025-09-29 | System: Paediatric | Severity: Critical\nNarrative: A 78-year-old female was brought to the paediatric emergency department by parents with a 5-day history of stridor and sudden onset unilateral wheeze. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 91% on room air. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed air trapping on expiratory film suggesting bronchial foreign body. Blood cultures grew Streptococcus pneumoniae. History included recurrent wheeze since infancy. Diagnosis: croup (laryngotracheobronchitis). salbutamol nebulisers and oral prednisolone was initiated.\nCorrective Action: salbutamol nebulisers and oral prednisolone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-633b98afe9675d274497d13c770dc7a8"
+  },
+  "doc-664a546642468c69e4060dadf0cf6259": {
+    "content": "Clinical Case: 6026756a-293b-409d-b3f3-08d6bc43f1ef\nDate: 2025-10-10 | System: Paediatric | Severity: Critical\nNarrative: A 21-year-old female was brought to the paediatric emergency department by parents with a 1-day history of respiratory distress and sudden onset unilateral wheeze. On examination the child was afebrile with unilateral reduced air entry and wheeze. Oxygen saturation was 88% requiring supplemental oxygen. Chest auscultation revealed expiratory wheeze bilaterally. CXR showed right lower lobe consolidation. Blood cultures were negative. History included recent choking episode on food. Diagnosis: croup (laryngotracheobronchitis). IV amoxicillin-clavulanate was initiated.\nCorrective Action: IV amoxicillin-clavulanate was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-664a546642468c69e4060dadf0cf6259"
+  },
+  "doc-4fb8802354fa5826fc6a61e1d4703650": {
+    "content": "Clinical Case: 0d51906f-1148-4604-9439-ca98a0ec9ad7\nDate: 2025-10-09 | System: Gastrointestinal | Severity: Low\nNarrative: A 74-year-old male presented with upper abdominal pain of 28 weeks duration, associated with weight loss of 8 kg and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed Crohn's disease. Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-4fb8802354fa5826fc6a61e1d4703650"
+  },
+  "doc-9712a596a557320744b8555237d23730": {
+    "content": "Clinical Case: 5168b7f7-9e5e-4c9b-a76e-3839cc844f44\nDate: 2025-10-06 | System: Dermatology | Severity: Low\nNarrative: A 30-year-old female was referred to the dermatology clinic following a rapidly changing mole. The patient reported a 3-month history of a changing skin lesion. Examination revealed an asymmetric pigmented lesion with irregular border and colour variation on the face and scalp. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed psoriasis with acanthosis and parakeratosis. Relevant history included immunosuppression post-renal transplant. Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-9712a596a557320744b8555237d23730"
+  },
+  "doc-6c89e4f390f742775decbbc049992e1b": {
+    "content": "Clinical Case: 60b79c2f-6164-496c-ba18-f51e349dadee\nDate: 2025-09-26 | System: Musculoskeletal | Severity: Low\nNarrative: A 21-year-old male presented with instability affecting the hip, associated with skin rash. Duration of symptoms was 28 months. Blood tests showed elevated uric acid. X-ray of the hip revealed joint space narrowing and osteophytes. MRI demonstrated meniscal tear. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: osteoarthritis. Management included total knee replacement.\nCorrective Action: Diagnosis: osteoarthritis. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-6c89e4f390f742775decbbc049992e1b"
+  },
+  "doc-c6540caa7beb945f0321bf38942587d0": {
+    "content": "Clinical Case: b2b9c248-0fea-4e6a-bdaf-647ddeec5d96\nDate: 2025-10-03 | System: Gastrointestinal | Severity: Low\nNarrative: A 61-year-old male presented with rectal bleeding of 1 weeks duration, associated with pruritus and anorexia. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-c6540caa7beb945f0321bf38942587d0"
+  },
+  "doc-42c5dd7e4b8ae3efca148f8d10f468da": {
+    "content": "Clinical Case: c3b873f8-ebb2-4104-b8c4-92ba6d1e4204\nDate: 2025-10-08 | System: Gastrointestinal | Severity: Low\nNarrative: A 66-year-old female presented with jaundice of 3 weeks duration, associated with weight loss of 8 kg and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: primary sclerosing cholangitis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775161977,
+    "update_time": 1775161977,
+    "_id": "doc-42c5dd7e4b8ae3efca148f8d10f468da"
+  },
+  "doc-4a10d7b819d49867b6e7814e98a516ca": {
+    "content": "Clinical Case: eb9eef9b-5e5f-4200-9e4b-3b36368904de\nDate: 2025-09-17 | System: Musculoskeletal | Severity: Low\nNarrative: A 78-year-old male presented with pain and swelling affecting the shoulder, associated with skin rash. Duration of symptoms was 5 months. Blood tests showed elevated uric acid. X-ray of the shoulder revealed joint space narrowing and osteophytes. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: gout. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: gout. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-4a10d7b819d49867b6e7814e98a516ca"
+  },
+  "doc-d7dfbf9ae7bdd2da18160509a98a29b9": {
+    "content": "Clinical Case: adeb676b-15e6-4a20-8845-a0cb5b3eb0b1\nDate: 2025-09-24 | System: Gastrointestinal | Severity: Low\nNarrative: A 26-year-old female presented with jaundice of 14 weeks duration, associated with altered bowel habit and anorexia. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated multiple colonic polyps. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: colorectal cancer. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: colorectal cancer. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-d7dfbf9ae7bdd2da18160509a98a29b9"
+  },
+  "doc-c3052227d42277d8826362c90a01ca5a": {
+    "content": "Clinical Case: 3acacef4-d30a-44e3-8a73-bdfe0bbfa216\nDate: 2025-09-22 | System: Neurological | Severity: Low\nNarrative: A 67-year-old male presented with sudden onset of speech disturbance and visual disturbance. Neurological examination revealed papilloedema and dysphasia. History included prior stroke. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was generalised spike-and-wave discharges. The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with stable neurological deficit at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with stable neurological deficit at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-c3052227d42277d8826362c90a01ca5a"
+  },
+  "doc-b0260e68b82e6826effdbcc686dec9cd": {
+    "content": "Clinical Case: 31dbcfe2-d804-45a4-ac9d-98bda3c28e0e\nDate: 2025-09-24 | System: Cardiac | Severity: Critical\nNarrative: A 35-year-old male presented to the emergency department with a 21-day history of palpitations and syncope. Past medical history was notable for hypertension. Physical examination revealed bilateral basal crepitations. ECG demonstrated left bundle branch block. Echocardiography showed reduced ejection fraction of 35%. Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and rate-controlled with metoprolol.\nCorrective Action: Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and rate-controlled with metoprolol",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-b0260e68b82e6826effdbcc686dec9cd"
+  },
+  "doc-48d485c49b8fecae90419b536e5c22d5": {
+    "content": "Clinical Case: 498162ad-a4aa-44a5-84b9-47f7f889499d\nDate: 2025-09-23 | System: Cardiac | Severity: Critical\nNarrative: A 76-year-old male presented to the emergency department with a 2-day history of palpitations and syncope. Past medical history was notable for prior MI. Physical examination revealed elevated JVP. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was within normal limits. The patient was diagnosed with decompensated heart failure and rate-controlled with metoprolol.\nCorrective Action: Troponin was within normal limits. The patient was diagnosed with decompensated heart failure and rate-controlled with metoprolol",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-48d485c49b8fecae90419b536e5c22d5"
+  },
+  "doc-9e6cfcb84271ca620400ff56bfc7cd22": {
+    "content": "Clinical Case: 64908bf1-267d-4101-b772-36c150a46c8a\nDate: 2025-09-19 | System: Musculoskeletal | Severity: Low\nNarrative: A 31-year-old female presented with instability affecting the shoulder, associated with skin rash. Duration of symptoms was 7 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the shoulder revealed chondrocalcinosis. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: rheumatoid arthritis. Management included total knee replacement.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-9e6cfcb84271ca620400ff56bfc7cd22"
+  },
+  "doc-32a4845ff65651415af840aed5ad1767": {
+    "content": "Clinical Case: b34b9e87-a626-4e38-a23b-f203758219e5\nDate: 2025-09-24 | System: Gastrointestinal | Severity: Low\nNarrative: A 21-year-old female presented with rectal bleeding of 28 weeks duration, associated with altered bowel habit and pale stools. Laboratory results revealed elevated liver enzymes (AST/ALT 4× ULN). Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: oesophageal adenocarcinoma. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-32a4845ff65651415af840aed5ad1767"
+  },
+  "doc-aea77867f87b397c2569ebf2e109e550": {
+    "content": "Clinical Case: e9fcdf87-25d4-4181-977b-a08066bc6320\nDate: 2025-09-24 | System: Gastrointestinal | Severity: Low\nNarrative: A 26-year-old female presented with jaundice of 14 weeks duration, associated with altered bowel habit and anorexia. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated multiple colonic polyps. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: colorectal cancer. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: colorectal cancer. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-aea77867f87b397c2569ebf2e109e550"
+  },
+  "doc-1911d102d00d5197ec74e282f36fbad9": {
+    "content": "Clinical Case: 98084607-6d0e-41f5-8916-e49952fb782d\nDate: 2025-09-16 | System: Neurological | Severity: Low\nNarrative: A 54-year-old female presented with sudden onset of focal weakness and visual disturbance. Neurological examination revealed right facial droop and cranial nerve palsy. History included hypertension. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated xanthochromia. EEG was normal. The patient was diagnosed with bacterial meningitis. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-1911d102d00d5197ec74e282f36fbad9"
+  },
+  "doc-51b315cb721376514a08823422d5c30f": {
+    "content": "Clinical Case: e8a8f5e1-a141-4f36-a136-780e5e753070\nDate: 2025-09-18 | System: Cardiac | Severity: Critical\nNarrative: A 49-year-old male presented to the emergency department with a 14-day history of chest pain and syncope. Past medical history was notable for hypertension. Physical examination revealed bilateral basal crepitations. ECG demonstrated atrial fibrillation. Echocardiography showed reduced ejection fraction of 35%. Troponin was markedly elevated. The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with decompensated heart failure and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775162090,
+    "update_time": 1775162090,
+    "_id": "doc-51b315cb721376514a08823422d5c30f"
+  },
+  "doc-9d8c12fa6d02482beb80341b410dc4fc": {
+    "content": "Clinical Case: 0ceed349-60f1-4a74-8dde-0d71603b8831\nDate: 2025-09-08 | System: Paediatric | Severity: Critical\nNarrative: A 39-year-old male was brought to the paediatric emergency department by parents with a 28-day history of fever and barking cough. On examination the child was afebrile with unilateral reduced air entry and wheeze. Oxygen saturation was 88% requiring supplemental oxygen. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed air trapping on expiratory film suggesting bronchial foreign body. Blood cultures grew Streptococcus pneumoniae. History included recent choking episode on food. Diagnosis: viral-induced wheeze. urgent rigid bronchoscopy under general anaesthesia was initiated.\nCorrective Action: urgent rigid bronchoscopy under general anaesthesia was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-9d8c12fa6d02482beb80341b410dc4fc"
+  },
+  "doc-74df9a5aaec0ab322e9634e2a357e4ae": {
+    "content": "Clinical Case: b764e1ec-fc54-420d-9edc-6f9c2d7c657f\nDate: 2025-09-03 | System: Respiratory | Severity: High\nNarrative: A 21-year-old male was admitted with a 14-week history of haemoptysis. The patient also reported fever and wheeze. Relevant history included prior tuberculosis. Chest X-ray demonstrated pleural effusion. CT thorax revealed cavitating lesion. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of community-acquired pneumonia was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-74df9a5aaec0ab322e9634e2a357e4ae"
+  },
+  "doc-2fe603f70880276dc53d591b2c6fc6ca": {
+    "content": "Clinical Case: d2226a6e-4d80-437e-8b57-abd8b32539e4\nDate: 2025-09-07 | System: Paediatric | Severity: Critical\nNarrative: A 36-year-old male was brought to the paediatric emergency department by parents with a 28-day history of stridor and barking cough. On examination the child was tachycardic and tachypnoeic with subcostal recession. Oxygen saturation was 91% on room air. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed right lower lobe consolidation. Blood cultures grew Staphylococcus aureus. History included recent choking episode on food. Diagnosis: viral-induced wheeze. IV amoxicillin-clavulanate was initiated.\nCorrective Action: IV amoxicillin-clavulanate was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-2fe603f70880276dc53d591b2c6fc6ca"
+  },
+  "doc-680b0868e00cfb2dc1ba062d72742486": {
+    "content": "Clinical Case: e0158226-504f-4aa3-9af6-1c603b8945b9\nDate: 2025-09-03 | System: Respiratory | Severity: High\nNarrative: A 21-year-old male was admitted with a 14-week history of haemoptysis. The patient also reported fever and wheeze. Relevant history included prior tuberculosis. Chest X-ray demonstrated pleural effusion. CT thorax revealed cavitating lesion. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of community-acquired pneumonia was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-680b0868e00cfb2dc1ba062d72742486"
+  },
+  "doc-3d50fc57a8c14c7819b2950816abc682": {
+    "content": "Clinical Case: c213d916-25d8-421b-a8ed-7597bee20440\nDate: 2025-09-09 | System: Gastrointestinal | Severity: Low\nNarrative: A 33-year-old female presented with jaundice of 7 weeks duration, associated with nausea and vomiting and dark urine. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed hepatic metastases. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-3d50fc57a8c14c7819b2950816abc682"
+  },
+  "doc-caa60f44fc47125398c7ec53a5186865": {
+    "content": "Clinical Case: 8fcfc186-892f-4da8-a16d-ea2c20bd33b3\nDate: 2025-09-03 | System: Gastrointestinal | Severity: Low\nNarrative: A 41-year-old male presented with rectal bleeding of 14 weeks duration, associated with pruritus and pale stools. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed hepatic metastases. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: colorectal cancer. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-caa60f44fc47125398c7ec53a5186865"
+  },
+  "doc-2af3da83b586005637f4530b60892346": {
+    "content": "Clinical Case: 7da120aa-214b-4c16-ab82-70e7eb6959c1\nDate: 2025-09-06 | System: Gastrointestinal | Severity: Low\nNarrative: A 52-year-old male presented with rectal bleeding of 2 weeks duration, associated with nausea and vomiting and pale stools. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed hepatic metastases. Liver biopsy confirmed Crohn's disease. Diagnosis: colorectal cancer. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: colorectal cancer. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-2af3da83b586005637f4530b60892346"
+  },
+  "doc-d69e90de14f13f99bd017794598000f5": {
+    "content": "Clinical Case: aba915af-7cf4-4148-9c40-2e7f6d3236bf\nDate: 2025-09-12 | System: Respiratory | Severity: High\nNarrative: A 43-year-old female was admitted with a 5-week history of pleuritic chest pain. The patient also reported weight loss and ankle swelling. Relevant history included prior tuberculosis. Chest X-ray demonstrated pleural effusion. CT thorax revealed cavitating lesion. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated normal spirometry. The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-d69e90de14f13f99bd017794598000f5"
+  },
+  "doc-6f98e594c48f4396c9da7f66fe58029d": {
+    "content": "Clinical Case: f319d4bf-790e-4c84-b3dc-ac253927bd97\nDate: 2025-09-15 | System: Cardiac | Severity: Critical\nNarrative: A 73-year-old male presented to the emergency department with a 28-day history of shortness of breath and ankle oedema. Past medical history was notable for hypertension. Physical examination revealed elevated JVP. ECG demonstrated left bundle branch block. Echocardiography showed mitral regurgitation. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-6f98e594c48f4396c9da7f66fe58029d"
+  },
+  "doc-8a34ac93aa94bca40ac3bced0aa9de86": {
+    "content": "Clinical Case: adb33401-db77-4568-9b9d-367c5f244c79\nDate: 2025-09-15 | System: Neurological | Severity: High\nNarrative: A 37-year-old female presented with sudden onset of severe headache and ataxia. Neurological examination revealed positive Kernig's sign and cranial nerve palsy. History included HIV-positive status. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was generalised spike-and-wave discharges. The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162211,
+    "update_time": 1775162211,
+    "_id": "doc-8a34ac93aa94bca40ac3bced0aa9de86"
+  },
+  "doc-d4fd7d8854cca43bc54c0fae9bacd07a": {
+    "content": "Clinical Case: 063db52a-995d-4017-8ba7-b82ab1046c4a\nDate: 2025-08-31 | System: Neurological | Severity: High\nNarrative: A 80-year-old male presented with sudden onset of focal weakness and photophobia. Neurological examination revealed left-sided hemiplegia and cerebellar signs. History included hypertension. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge.\nCorrective Action: The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-d4fd7d8854cca43bc54c0fae9bacd07a"
+  },
+  "doc-68e7577c18cbc865ebf744daec101377": {
+    "content": "Clinical Case: 9360499e-0dad-4d4a-96d7-3eec77daab38\nDate: 2025-08-31 | System: Musculoskeletal | Severity: Medium\nNarrative: A 50-year-old male presented with progressive stiffness affecting the shoulder, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 2 months. Blood tests showed elevated uric acid. X-ray of the shoulder revealed joint space narrowing and osteophytes. MRI demonstrated meniscal tear. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: systemic lupus erythematosus. Management included total knee replacement.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-68e7577c18cbc865ebf744daec101377"
+  },
+  "doc-b29acdc1599ff32318f1144aaa062a2b": {
+    "content": "Clinical Case: 99a88aa3-cd47-4ee6-b618-141829f2dca8\nDate: 2025-08-20 | System: Respiratory | Severity: High\nNarrative: A 84-year-old male was admitted with a 28-week history of haemoptysis. The patient also reported fatigue and ankle swelling. Relevant history included prior tuberculosis. Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed cavitating lesion. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-b29acdc1599ff32318f1144aaa062a2b"
+  },
+  "doc-3303df334fce5c6456df7e61e6203291": {
+    "content": "Clinical Case: c87ee0eb-d369-46f0-ad32-f32231a5a488\nDate: 2025-09-02 | System: Musculoskeletal | Severity: Low\nNarrative: A 32-year-old male presented with pain and swelling affecting the knee, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 28 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the knee revealed joint space narrowing and osteophytes. MRI demonstrated sacroiliitis. Synovial fluid analysis showed haemarthrosis. Diagnosis: systemic lupus erythematosus. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-3303df334fce5c6456df7e61e6203291"
+  },
+  "doc-50c06f071bd4436025fb35de50515fda": {
+    "content": "Clinical Case: ab62e555-2f8b-4fd4-8072-48f6519bbc6a\nDate: 2025-08-23 | System: Respiratory | Severity: High\nNarrative: A 46-year-old male was admitted with a 1-week history of haemoptysis. The patient also reported fatigue and ankle swelling. Relevant history included immunosuppression. Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed honeycombing pattern. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-50c06f071bd4436025fb35de50515fda"
+  },
+  "doc-d21fe1428431fa9900c5bdf9740d3490": {
+    "content": "Clinical Case: 6b35d502-cd91-444f-847e-71bc720f797d\nDate: 2025-08-31 | System: Neurological | Severity: High\nNarrative: A 80-year-old male presented with sudden onset of focal weakness and photophobia. Neurological examination revealed left-sided hemiplegia and cerebellar signs. History included hypertension. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge.\nCorrective Action: The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-d21fe1428431fa9900c5bdf9740d3490"
+  },
+  "doc-b77bea8599e47e5947ec3a7be0ce9b73": {
+    "content": "Clinical Case: e949d23a-b452-49ed-b51c-844a504e65f4\nDate: 2025-08-19 | System: Respiratory | Severity: High\nNarrative: A 57-year-old female was admitted with a 21-week history of haemoptysis. The patient also reported fatigue and hoarseness. Relevant history included prior tuberculosis. Chest X-ray demonstrated hyperinflation. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-b77bea8599e47e5947ec3a7be0ce9b73"
+  },
+  "doc-edefebc0c0ccf297dd9120097036b554": {
+    "content": "Clinical Case: bdf5985a-caaa-4bdd-9e00-5be1f9a39e81\nDate: 2025-08-18 | System: Paediatric | Severity: Critical\nNarrative: A 39-year-old female was brought to the paediatric emergency department by parents with a 1-day history of wheeze and sudden onset unilateral wheeze. On examination the child was febrile at 38.9°C with inspiratory stridor. Oxygen saturation was 96% on room air. Chest auscultation revealed expiratory wheeze bilaterally. CXR showed left-sided pneumothorax. Blood cultures were negative. History included recent choking episode on food. Diagnosis: viral-induced wheeze. nebulised adrenaline and oral dexamethasone was initiated.\nCorrective Action: nebulised adrenaline and oral dexamethasone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-edefebc0c0ccf297dd9120097036b554"
+  },
+  "doc-cd85436604dc21edf42918a59c026df6": {
+    "content": "Clinical Case: 238b97a6-bc76-4031-b498-74d348b1de5f\nDate: 2025-09-01 | System: Paediatric | Severity: Critical\nNarrative: A 18-year-old male was brought to the paediatric emergency department by parents with a 2-day history of fever and increased work of breathing. On examination the child was afebrile with unilateral reduced air entry and wheeze. Oxygen saturation was 91% on room air. Chest auscultation revealed bilateral coarse crackles. CXR showed right lower lobe consolidation. Blood cultures were pending at time of treatment. History included no prior hospital admissions. Diagnosis: viral-induced wheeze. nebulised adrenaline and oral dexamethasone was initiated.\nCorrective Action: nebulised adrenaline and oral dexamethasone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-cd85436604dc21edf42918a59c026df6"
+  },
+  "doc-a1f1f43b5a8581949513cce1ff0ab8de": {
+    "content": "Clinical Case: de340e86-f972-4bb7-82c5-c226a5419418\nDate: 2025-08-29 | System: Cardiac | Severity: Critical\nNarrative: A 62-year-old female presented to the emergency department with a 21-day history of palpitations and ankle oedema. Past medical history was notable for hypertension. Physical examination revealed S3 gallop. ECG demonstrated left bundle branch block. Echocardiography showed reduced ejection fraction of 35%. Troponin was markedly elevated. The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with new-onset atrial fibrillation and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775162329,
+    "update_time": 1775162329,
+    "_id": "doc-a1f1f43b5a8581949513cce1ff0ab8de"
+  },
+  "doc-df3d0210bdc53243a466e464ecd7efc4": {
+    "content": "Clinical Case: b0a2823d-8738-4ecd-acd9-c633239136e8\nDate: 2025-08-11 | System: Cardiac | Severity: Critical\nNarrative: A 23-year-old female presented to the emergency department with a 21-day history of chest pain and ankle oedema. Past medical history was notable for type 2 diabetes. Physical examination revealed elevated JVP. ECG demonstrated left bundle branch block. Echocardiography showed mitral regurgitation. Troponin was within normal limits. The patient was diagnosed with hypertensive urgency and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was within normal limits. The patient was diagnosed with hypertensive urgency and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-df3d0210bdc53243a466e464ecd7efc4"
+  },
+  "doc-8b9466306ab7d2011082fa69d4835ba8": {
+    "content": "Clinical Case: 5415e9b3-fb2b-4ecf-9f60-5ad25ad06da6\nDate: 2025-08-12 | System: Cardiac | Severity: Critical\nNarrative: A 21-year-old male presented to the emergency department with a 21-day history of dizziness and dyspnea on exertion. Past medical history was notable for hyperlipidaemia. Physical examination revealed bilateral basal crepitations. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with new-onset atrial fibrillation and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-8b9466306ab7d2011082fa69d4835ba8"
+  },
+  "doc-81df5ef7a4ba33b8c9c8661a3dfabcaa": {
+    "content": "Clinical Case: 457a9674-e9da-4baf-8209-194119938e93\nDate: 2025-07-28 | System: Dermatology | Severity: Low\nNarrative: A 66-year-old female was referred to the dermatology clinic following routine dermatology screening. The patient reported a 10-month history of a new pigmented lesion. Examination revealed an asymmetric pigmented lesion with irregular border and colour variation on the face and scalp. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed psoriasis with acanthosis and parakeratosis. Relevant history included prior basal cell carcinoma. Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: plaque psoriasis. topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-81df5ef7a4ba33b8c9c8661a3dfabcaa"
+  },
+  "doc-4c60f4b4404d3d935bf9d0334c2044fa": {
+    "content": "Clinical Case: 2b9ded5e-0040-4b0d-b070-c11c0ff295d1\nDate: 2025-08-13 | System: Dermatology | Severity: Low\nNarrative: A 19-year-old female was referred to the dermatology clinic following routine dermatology screening. The patient reported a 7-month history of a changing skin lesion. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the face and scalp. Dermoscopy demonstrated Munro microabscesses pattern. Skin biopsy showed squamous cell carcinoma in situ. Relevant history included immunosuppression post-renal transplant. Diagnosis: Bowen's disease (SCC in situ). topical corticosteroids and phototherapy was recommended.\nCorrective Action: topical corticosteroids and phototherapy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-4c60f4b4404d3d935bf9d0334c2044fa"
+  },
+  "doc-4a185cf1750f40bf2fcc7a6769dd25c5": {
+    "content": "Clinical Case: 082978e4-e9f4-45fa-bb5f-b542b970aa6a\nDate: 2025-07-24 | System: Dermatology | Severity: Low\nNarrative: A 32-year-old male was referred to the dermatology clinic following routine dermatology screening. The patient reported a 7-month history of pruritic rash. Examination revealed a pearly nodule with telangiectasia on the left forearm. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed squamous cell carcinoma in situ. Relevant history included prolonged sun exposure. Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-4a185cf1750f40bf2fcc7a6769dd25c5"
+  },
+  "doc-b2c623dc26c99ebd3a6caf0a7b69babb": {
+    "content": "Clinical Case: 34eaaede-a1cd-4f00-9c0c-483a166af29f\nDate: 2025-07-31 | System: Musculoskeletal | Severity: High\nNarrative: A 21-year-old female presented with pain and swelling affecting the spine, associated with nocturnal pain. Duration of symptoms was 1 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the spine revealed periarticular erosions. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed haemarthrosis. Diagnosis: systemic lupus erythematosus. Management included total knee replacement.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-b2c623dc26c99ebd3a6caf0a7b69babb"
+  },
+  "doc-4881dc7c4d5f1079552b2430a7677765": {
+    "content": "Clinical Case: f2c81dcf-8948-42ba-bd66-bc3ce886dc66\nDate: 2025-07-29 | System: Neurological | Severity: High\nNarrative: A 29-year-old female presented with sudden onset of severe headache and visual disturbance. Neurological examination revealed right facial droop and dysphasia. History included HIV-positive status. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was burst suppression pattern. The patient was diagnosed with ischaemic stroke. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-4881dc7c4d5f1079552b2430a7677765"
+  },
+  "doc-9e95a6830eba771de7657ec415c1a31b": {
+    "content": "Clinical Case: db442659-219b-42a8-8d92-1ae2fda315e9\nDate: 2025-07-25 | System: Neurological | Severity: Low\nNarrative: A 56-year-old male presented with sudden onset of focal weakness and photophobia. Neurological examination revealed left-sided hemiplegia and dysphasia. History included atrial fibrillation on anticoagulation. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with bacterial meningitis. Treatment comprised IV levetiracetam and phenytoin with complete resolution of symptoms at discharge.\nCorrective Action: The patient was diagnosed with bacterial meningitis. Treatment comprised IV levetiracetam and phenytoin with complete resolution of symptoms at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-9e95a6830eba771de7657ec415c1a31b"
+  },
+  "doc-7e52b6e535af5d46b5f2606e7f3ba818": {
+    "content": "Clinical Case: e7906691-4339-4ed3-9474-e65365ee4023\nDate: 2025-07-28 | System: Neurological | Severity: Medium\nNarrative: A 68-year-old male presented with sudden onset of speech disturbance and ataxia. Neurological examination revealed papilloedema and hyperreflexia. History included hypertension. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated normal constituents. EEG was generalised spike-and-wave discharges. The patient was diagnosed with primary CNS lymphoma. Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-7e52b6e535af5d46b5f2606e7f3ba818"
+  },
+  "doc-903baf97d86d9b7dd49873c2407977ae": {
+    "content": "Clinical Case: a04f9fe9-6450-423e-a0c1-717e8979e8f2\nDate: 2025-07-28 | System: Neurological | Severity: Medium\nNarrative: A 68-year-old male presented with sudden onset of speech disturbance and ataxia. Neurological examination revealed papilloedema and hyperreflexia. History included hypertension. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated normal constituents. EEG was generalised spike-and-wave discharges. The patient was diagnosed with primary CNS lymphoma. Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162450,
+    "update_time": 1775162450,
+    "_id": "doc-903baf97d86d9b7dd49873c2407977ae"
+  },
+  "doc-983b5f68059fc792b82433c7f0d17697": {
+    "content": "Clinical Case: 5d9c7444-0057-44aa-a75b-be57009a862b\nDate: 2025-07-09 | System: Cardiac | Severity: Critical\nNarrative: A 21-year-old female presented to the emergency department with a 5-day history of palpitations and orthopnea. Past medical history was notable for hypertension. Physical examination revealed elevated JVP. ECG demonstrated QTc prolongation. Echocardiography showed reduced ejection fraction of 35%. Troponin was markedly elevated. The patient was diagnosed with acute NSTEMI and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was markedly elevated. The patient was diagnosed with acute NSTEMI and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-983b5f68059fc792b82433c7f0d17697"
+  },
+  "doc-da9725a3a120031d9b91eb87eeb7ea97": {
+    "content": "Clinical Case: 5b8ad769-2a73-4938-9802-3f626f3d4d2f\nDate: 2025-07-19 | System: Cardiac | Severity: Critical\nNarrative: A 71-year-old male presented to the emergency department with a 10-day history of palpitations and syncope. Past medical history was notable for hyperlipidaemia. Physical examination revealed bilateral basal crepitations. ECG demonstrated ST-elevation in leads II, III, aVF. Echocardiography showed mitral regurgitation. Troponin was markedly elevated. The patient was diagnosed with acute NSTEMI and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was markedly elevated. The patient was diagnosed with acute NSTEMI and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-da9725a3a120031d9b91eb87eeb7ea97"
+  },
+  "doc-dfaaca9bc6d86852ae2e8758043f9795": {
+    "content": "Clinical Case: cb9897a9-1787-4d1c-b2d3-9df5b4db0bfe\nDate: 2025-07-14 | System: Dermatology | Severity: Low\nNarrative: A 27-year-old female was referred to the dermatology clinic following a rapidly changing mole. The patient reported a 21-month history of a changing skin lesion. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the upper back. Dermoscopy demonstrated Munro microabscesses pattern. Skin biopsy showed nodular basal cell carcinoma. Relevant history included immunosuppression post-renal transplant. Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-dfaaca9bc6d86852ae2e8758043f9795"
+  },
+  "doc-88719264befc27293ac742a7e9abf0c2": {
+    "content": "Clinical Case: 246fe0b4-406e-4a4e-8f94-21006864ec45\nDate: 2025-07-10 | System: Dermatology | Severity: Low\nNarrative: A 28-year-old male was referred to the dermatology clinic following routine dermatology screening. The patient reported a 5-month history of a changing skin lesion. Examination revealed a pearly nodule with telangiectasia on the left forearm. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed squamous cell carcinoma in situ. Relevant history included prior basal cell carcinoma. Diagnosis: plaque psoriasis. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: plaque psoriasis. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-88719264befc27293ac742a7e9abf0c2"
+  },
+  "doc-43ac57a7d8c6d0fe3f3c2007ee0bfd6c": {
+    "content": "Clinical Case: 06b4d8a9-d865-4cd6-a2ae-722a0ca036be\nDate: 2025-07-09 | System: Musculoskeletal | Severity: High\nNarrative: A 56-year-old male presented with reduced range of motion affecting the shoulder, associated with skin rash. Duration of symptoms was 21 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the shoulder revealed periarticular erosions. MRI demonstrated meniscal tear. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-43ac57a7d8c6d0fe3f3c2007ee0bfd6c"
+  },
+  "doc-c8a8e6a29e85b55ab54a20a5f904ef16": {
+    "content": "Clinical Case: 18814079-b57c-415c-8de9-5f6f948f3aba\nDate: 2025-07-17 | System: Musculoskeletal | Severity: High\nNarrative: A 34-year-old female presented with instability affecting the knee, associated with morning stiffness lasting > 1 hour. Duration of symptoms was 21 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the knee revealed periarticular erosions. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-c8a8e6a29e85b55ab54a20a5f904ef16"
+  },
+  "doc-c464148080eca020535a45a857530061": {
+    "content": "Clinical Case: 925d41e8-ebf5-434b-92b9-07c1fd13cb1c\nDate: 2025-07-17 | System: Paediatric | Severity: Critical\nNarrative: A 59-year-old female was brought to the paediatric emergency department by parents with a 21-day history of wheeze and barking cough. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 94% on room air. Chest auscultation revealed bilateral coarse crackles. CXR showed hyperinflation bilaterally. Blood cultures grew Staphylococcus aureus. History included no prior hospital admissions. Diagnosis: suspected foreign body aspiration. salbutamol nebulisers and oral prednisolone was initiated.\nCorrective Action: salbutamol nebulisers and oral prednisolone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-c464148080eca020535a45a857530061"
+  },
+  "doc-8eff0da2c4db4508c02bd09795c327d2": {
+    "content": "Clinical Case: c0a6eed1-9ceb-41c1-8cd1-933a7a035005\nDate: 2025-07-14 | System: Paediatric | Severity: Critical\nNarrative: A 70-year-old male was brought to the paediatric emergency department by parents with a 7-day history of respiratory distress and reduced oral intake. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 91% on room air. Chest auscultation revealed tubular breathing at right base. CXR showed air trapping on expiratory film suggesting bronchial foreign body. Blood cultures were negative. History included premature birth at 32 weeks. Diagnosis: viral-induced wheeze. salbutamol nebulisers and oral prednisolone was initiated.\nCorrective Action: salbutamol nebulisers and oral prednisolone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-8eff0da2c4db4508c02bd09795c327d2"
+  },
+  "doc-12b0793fd5ff30936be7578fadb2f11c": {
+    "content": "Clinical Case: 34180db5-43e9-4ad4-88e8-3ed8cd40faa4\nDate: 2025-07-14 | System: Gastrointestinal | Severity: Medium\nNarrative: A 49-year-old female presented with progressive dysphagia of 3 weeks duration, associated with pruritus and anorexia. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed adenocarcinoma. Diagnosis: colorectal cancer. surgical resection (right hemicolectomy) was commenced.\nCorrective Action: Diagnosis: colorectal cancer. surgical resection (right hemicolectomy) was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-12b0793fd5ff30936be7578fadb2f11c"
+  },
+  "doc-389cb396bf4e6268fa31af66e862032b": {
+    "content": "Clinical Case: ffc3f93f-f9f9-49e1-ab6c-0f3053471e77\nDate: 2025-07-13 | System: Gastrointestinal | Severity: Low\nNarrative: A 27-year-old male presented with jaundice of 5 weeks duration, associated with weight loss of 8 kg and anorexia. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: primary sclerosing cholangitis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162562,
+    "update_time": 1775162562,
+    "_id": "doc-389cb396bf4e6268fa31af66e862032b"
+  },
+  "doc-9e94bd709d2e35b86324f9ebf8cb380f": {
+    "content": "Clinical Case: 2ab96e88-c1d7-4619-a431-26a772060e3e\nDate: 2025-06-28 | System: Paediatric | Severity: Critical\nNarrative: A 43-year-old male was brought to the paediatric emergency department by parents with a 1-day history of fever and barking cough. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 91% on room air. Chest auscultation revealed tubular breathing at right base. CXR showed left-sided pneumothorax. Blood cultures were negative. History included premature birth at 32 weeks. Diagnosis: croup (laryngotracheobronchitis). nebulised adrenaline and oral dexamethasone was initiated.\nCorrective Action: nebulised adrenaline and oral dexamethasone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-9e94bd709d2e35b86324f9ebf8cb380f"
+  },
+  "doc-b5549f54f3a70ba226eb2c6771d9bfa2": {
+    "content": "Clinical Case: 1c60dabc-1b0f-403a-bea8-2b2d135fd062\nDate: 2025-07-01 | System: Dermatology | Severity: Low\nNarrative: A 58-year-old male was referred to the dermatology clinic following a non-healing ulcerated lesion. The patient reported a 3-month history of skin thickening with scaling. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the face and scalp. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed malignant melanoma with Breslow thickness 1.2 mm. Relevant history included prolonged sun exposure. Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-b5549f54f3a70ba226eb2c6771d9bfa2"
+  },
+  "doc-b74bdb93da896529bce41ee41924095c": {
+    "content": "Clinical Case: 402e51ee-3677-4c85-b537-f78888355d34\nDate: 2025-06-28 | System: Respiratory | Severity: High\nNarrative: A 73-year-old male was admitted with a 28-week history of haemoptysis. The patient also reported fatigue and ankle swelling. Relevant history included immunosuppression. Chest X-ray demonstrated pleural effusion. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-b74bdb93da896529bce41ee41924095c"
+  },
+  "doc-035214426d6755454aa9eb73b6e0d4e1": {
+    "content": "Clinical Case: 32f4b7f2-8f26-4b89-b7f3-8b642709ddf2\nDate: 2025-06-24 | System: Neurological | Severity: High\nNarrative: A 61-year-old female presented with sudden onset of altered consciousness and visual disturbance. Neurological examination revealed left-sided hemiplegia and cranial nerve palsy. History included hypertension. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with ischaemic stroke. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-035214426d6755454aa9eb73b6e0d4e1"
+  },
+  "doc-b6d9ce3f21c7d4f0447f68d282ddba6e": {
+    "content": "Clinical Case: a217f889-1b3b-4dcc-b0f9-e268e434dd7c\nDate: 2025-06-29 | System: Neurological | Severity: Low\nNarrative: A 66-year-old male presented with sudden onset of focal weakness and photophobia. Neurological examination revealed positive Kernig's sign and hyperreflexia. History included prior stroke. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated elevated protein and pleocytosis. EEG was focal slowing. The patient was diagnosed with bacterial meningitis. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with complete resolution of symptoms at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with complete resolution of symptoms at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-b6d9ce3f21c7d4f0447f68d282ddba6e"
+  },
+  "doc-57d53deb985a155d9d6cc2e16d224de8": {
+    "content": "Clinical Case: 0b66831c-a316-42df-9474-d38d8c1baa06\nDate: 2025-07-01 | System: Musculoskeletal | Severity: Low\nNarrative: A 82-year-old male presented with instability affecting the knee, associated with skin rash. Duration of symptoms was 14 months. Blood tests showed elevated uric acid. X-ray of the knee revealed soft tissue swelling. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed haemarthrosis. Diagnosis: rheumatoid arthritis. Management included total knee replacement.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-57d53deb985a155d9d6cc2e16d224de8"
+  },
+  "doc-996a573759ff4451282c4bad9069e599": {
+    "content": "Clinical Case: 0fc2cf3f-7baa-4eb7-b8d8-3cd59843d55b\nDate: 2025-07-03 | System: Musculoskeletal | Severity: Low\nNarrative: A 37-year-old female presented with reduced range of motion affecting the knee, associated with nocturnal pain. Duration of symptoms was 2 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the knee revealed soft tissue swelling. MRI demonstrated sacroiliitis. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-996a573759ff4451282c4bad9069e599"
+  },
+  "doc-11ac0d1d3c9697cf3ad1c05e8e52ee8a": {
+    "content": "Clinical Case: ad86a5ce-1c05-4315-b5c0-4260bb39e409\nDate: 2025-06-27 | System: Respiratory | Severity: High\nNarrative: A 53-year-old male was admitted with a 2-week history of progressive dyspnoea. The patient also reported fatigue and wheeze. Relevant history included occupational asbestos exposure. Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed ground-glass opacification. Bronchoscopy showed mucosal inflammation. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-11ac0d1d3c9697cf3ad1c05e8e52ee8a"
+  },
+  "doc-93cc887c0186b2515e2821eabf31639d": {
+    "content": "Clinical Case: 426681d5-2f38-4158-89ad-3a6241aa94de\nDate: 2025-06-24 | System: Gastrointestinal | Severity: Low\nNarrative: A 39-year-old female presented with jaundice of 28 weeks duration, associated with nausea and vomiting and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: primary sclerosing cholangitis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-93cc887c0186b2515e2821eabf31639d"
+  },
+  "doc-ba602c293552d3d1cc227f2fb935fe2c": {
+    "content": "Clinical Case: 7e6cc097-beee-4f26-9804-57c0b9b0c936\nDate: 2025-06-30 | System: Neurological | Severity: High\nNarrative: A 32-year-old male presented with sudden onset of focal weakness and neck stiffness. Neurological examination revealed positive Kernig's sign and hyperreflexia. History included HIV-positive status. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated elevated protein and pleocytosis. EEG was burst suppression pattern. The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge.\nCorrective Action: The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775162675,
+    "update_time": 1775162675,
+    "_id": "doc-ba602c293552d3d1cc227f2fb935fe2c"
+  },
+  "doc-7c81af782e89b002c04a944dc0cea584": {
+    "content": "Clinical Case: ca438ed6-a898-475b-8c4f-4334e4e48216\nDate: 2025-06-14 | System: Musculoskeletal | Severity: High\nNarrative: A 64-year-old male presented with reduced range of motion affecting the wrist and MCPs, associated with skin rash. Duration of symptoms was 2 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the wrist and MCPs revealed periarticular erosions. MRI demonstrated meniscal tear. Synovial fluid analysis showed haemarthrosis. Diagnosis: osteoarthritis. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: osteoarthritis. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-7c81af782e89b002c04a944dc0cea584"
+  },
+  "doc-8e4a466aae7fe4bee947643e66e2ba9c": {
+    "content": "Clinical Case: 601fe879-d46b-4574-b059-cd1ebdbc1719\nDate: 2025-06-16 | System: Respiratory | Severity: High\nNarrative: A 70-year-old male was admitted with a 3-week history of productive cough. The patient also reported night sweats and ankle swelling. Relevant history included occupational asbestos exposure. Chest X-ray demonstrated hyperinflation. CT thorax revealed honeycombing pattern. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated normal spirometry. The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-8e4a466aae7fe4bee947643e66e2ba9c"
+  },
+  "doc-735be7666813a3f1eedf039a72df5db3": {
+    "content": "Clinical Case: 2ff77050-ad7d-4618-94d0-114347f7879e\nDate: 2025-06-24 | System: Gastrointestinal | Severity: Low\nNarrative: A 39-year-old female presented with jaundice of 28 weeks duration, associated with nausea and vomiting and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: primary sclerosing cholangitis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-735be7666813a3f1eedf039a72df5db3"
+  },
+  "doc-86ab66027f34b355354509e6cc65735e": {
+    "content": "Clinical Case: 28c8e7d4-2332-4f80-9fb8-84e9e95e073b\nDate: 2025-06-19 | System: Musculoskeletal | Severity: Low\nNarrative: A 55-year-old male presented with pain and swelling affecting the knee, associated with constitutional symptoms. Duration of symptoms was 21 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the knee revealed chondrocalcinosis. MRI demonstrated sacroiliitis. Synovial fluid analysis showed haemarthrosis. Diagnosis: gout. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: gout. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-86ab66027f34b355354509e6cc65735e"
+  },
+  "doc-d5688d8714c141858552becb5c4be710": {
+    "content": "Clinical Case: 9464e8bf-ccfe-49be-a93e-fe888d5db678\nDate: 2025-06-17 | System: Musculoskeletal | Severity: Medium\nNarrative: A 75-year-old male presented with progressive stiffness affecting the shoulder, associated with skin rash. Duration of symptoms was 21 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the shoulder revealed joint space narrowing and osteophytes. MRI demonstrated sacroiliitis. Synovial fluid analysis showed haemarthrosis. Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-d5688d8714c141858552becb5c4be710"
+  },
+  "doc-17ee3298badd5c634297742f3bfdd8e4": {
+    "content": "Clinical Case: 37430abe-9eda-405f-8560-b5c17eef3076\nDate: 2025-06-08 | System: Gastrointestinal | Severity: Low\nNarrative: A 62-year-old female presented with rectal bleeding of 3 weeks duration, associated with nausea and vomiting and dark urine. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: colorectal cancer. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-17ee3298badd5c634297742f3bfdd8e4"
+  },
+  "doc-3fa76722cb250ebdc3971241f8d1d7a1": {
+    "content": "Clinical Case: 2de58f48-b4a6-42df-b69f-7507479e9a37\nDate: 2025-06-18 | System: Respiratory | Severity: High\nNarrative: A 35-year-old male was admitted with a 21-week history of progressive dyspnoea. The patient also reported fever and stridor. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed ground-glass opacification. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-3fa76722cb250ebdc3971241f8d1d7a1"
+  },
+  "doc-ea49e51c9a44c10ef5253c942a3bd509": {
+    "content": "Clinical Case: 078fa18a-5ff0-43ad-b5a9-45d6c575ab77\nDate: 2025-06-07 | System: Paediatric | Severity: Critical\nNarrative: A 71-year-old male was brought to the paediatric emergency department by parents with a 28-day history of wheeze and increased work of breathing. On examination the child was pale and lethargic with intercostal recession. Oxygen saturation was 88% requiring supplemental oxygen. Chest auscultation revealed tubular breathing at right base. CXR showed hyperinflation bilaterally. Blood cultures grew Streptococcus pneumoniae. History included no prior hospital admissions. Diagnosis: suspected foreign body aspiration. urgent rigid bronchoscopy under general anaesthesia was initiated.\nCorrective Action: urgent rigid bronchoscopy under general anaesthesia was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-ea49e51c9a44c10ef5253c942a3bd509"
+  },
+  "doc-bd08cbda0f2618e783e7d18b1e718420": {
+    "content": "Clinical Case: 13be284a-2097-4494-a081-915ae6a30829\nDate: 2025-06-22 | System: Gastrointestinal | Severity: Low\nNarrative: A 22-year-old male presented with rectal bleeding of 21 weeks duration, associated with altered bowel habit and pale stools. Laboratory results revealed iron-deficiency anaemia. Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed adenocarcinoma. Diagnosis: colorectal cancer. surgical resection (right hemicolectomy) was commenced.\nCorrective Action: Diagnosis: colorectal cancer. surgical resection (right hemicolectomy) was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-bd08cbda0f2618e783e7d18b1e718420"
+  },
+  "doc-125eccf021b8ac36d38facc6f2707698": {
+    "content": "Clinical Case: 0492a0dc-6279-4902-826d-f2d968e053f7\nDate: 2025-06-07 | System: Paediatric | Severity: Critical\nNarrative: A 79-year-old female was brought to the paediatric emergency department by parents with a 10-day history of fever and increased work of breathing. On examination the child was tachycardic and tachypnoeic with subcostal recession. Oxygen saturation was 94% on room air. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed left-sided pneumothorax. Blood cultures grew Staphylococcus aureus. History included no prior hospital admissions. Diagnosis: croup (laryngotracheobronchitis). IV amoxicillin-clavulanate was initiated.\nCorrective Action: IV amoxicillin-clavulanate was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168376,
+    "update_time": 1775168376,
+    "_id": "doc-125eccf021b8ac36d38facc6f2707698"
+  },
+  "doc-22ab2cc7fede189ebd9f80f76a17ce09": {
+    "content": "Clinical Case: 7aa403ab-f53c-4c64-91e0-062550be82ea\nDate: 2025-05-27 | System: Musculoskeletal | Severity: Low\nNarrative: A 82-year-old female presented with instability affecting the hip, associated with skin rash. Duration of symptoms was 28 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the hip revealed soft tissue swelling. MRI demonstrated meniscal tear. Synovial fluid analysis showed haemarthrosis. Diagnosis: systemic lupus erythematosus. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: systemic lupus erythematosus. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-22ab2cc7fede189ebd9f80f76a17ce09"
+  },
+  "doc-931d7f0d4f1634c02440df1aacdef13c": {
+    "content": "Clinical Case: 79d01825-128c-44bf-a301-cc0760c6387a\nDate: 2025-05-27 | System: Musculoskeletal | Severity: Low\nNarrative: A 81-year-old female presented with instability affecting the spine, associated with skin rash. Duration of symptoms was 21 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the spine revealed joint space narrowing and osteophytes. MRI demonstrated synovitis and bone marrow oedema. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: osteoarthritis. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: osteoarthritis. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-931d7f0d4f1634c02440df1aacdef13c"
+  },
+  "doc-8ef20424effc0d32c39fcdcec5da83d2": {
+    "content": "Clinical Case: ccbfec0e-4b37-4c45-9ce1-70cf83c073bb\nDate: 2025-05-30 | System: Respiratory | Severity: High\nNarrative: A 19-year-old male was admitted with a 21-week history of haemoptysis. The patient also reported fever and stridor. Relevant history included prior tuberculosis. Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed mucosal inflammation. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated.\nCorrective Action: The diagnosis of lung adenocarcinoma was established and anticoagulation with low-molecular-weight heparin was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-8ef20424effc0d32c39fcdcec5da83d2"
+  },
+  "doc-dda6359792d27d913bf9dbba5833f91f": {
+    "content": "Clinical Case: af80d12f-e568-485c-b2c7-18c99abfc61c\nDate: 2025-05-27 | System: Respiratory | Severity: High\nNarrative: A 27-year-old male was admitted with a 21-week history of pleuritic chest pain. The patient also reported fatigue and hoarseness. Relevant history included prior tuberculosis. Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed cavitating lesion. Bronchoscopy showed mucosal inflammation. Pulmonary function tests indicated normal spirometry. The diagnosis of pulmonary embolism was established and palliative chemotherapy was initiated.\nCorrective Action: The diagnosis of pulmonary embolism was established and palliative chemotherapy was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-dda6359792d27d913bf9dbba5833f91f"
+  },
+  "doc-9bd68a770018591cf0e4611e9e14ae0c": {
+    "content": "Clinical Case: eec8e5c2-5702-4ada-ac0e-3db77cbaee90\nDate: 2025-06-04 | System: Gastrointestinal | Severity: Low\nNarrative: A 83-year-old male presented with jaundice of 28 weeks duration, associated with pruritus and anorexia. Laboratory results revealed elevated liver enzymes (AST/ALT 4× ULN). Endoscopy demonstrated multiple colonic polyps. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed adenocarcinoma. Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-9bd68a770018591cf0e4611e9e14ae0c"
+  },
+  "doc-6c4cc1d83b1ff0beb41c0996e0bed59f": {
+    "content": "Clinical Case: 9903c6ee-e2cd-4f1c-96b8-5c4cbd9665e8\nDate: 2025-06-03 | System: Respiratory | Severity: High\nNarrative: A 28-year-old male was admitted with a 5-week history of haemoptysis. The patient also reported night sweats and hoarseness. Relevant history included occupational asbestos exposure. Chest X-ray demonstrated pleural effusion. CT thorax revealed honeycombing pattern. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated normal spirometry. The diagnosis of community-acquired pneumonia was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-6c4cc1d83b1ff0beb41c0996e0bed59f"
+  },
+  "doc-bf57c7666f58268cb9b55a024ab50566": {
+    "content": "Clinical Case: 3f7f8f11-d6d3-45c8-849e-ef03005790c5\nDate: 2025-06-04 | System: Dermatology | Severity: Low\nNarrative: A 53-year-old female was referred to the dermatology clinic following a non-healing ulcerated lesion. The patient reported a 1-month history of pruritic rash. Examination revealed an asymmetric pigmented lesion with irregular border and colour variation on the left forearm. Dermoscopy demonstrated arborising vessels and blue-grey ovoid nests. Skin biopsy showed nodular basal cell carcinoma. Relevant history included family history of melanoma. Diagnosis: plaque psoriasis. topical corticosteroids and phototherapy was recommended.\nCorrective Action: topical corticosteroids and phototherapy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-bf57c7666f58268cb9b55a024ab50566"
+  },
+  "doc-606a0358ec61458bc198d5e4d438844f": {
+    "content": "Clinical Case: cca52c7b-c0d9-4913-b533-4a13bcc421c0\nDate: 2025-06-03 | System: Musculoskeletal | Severity: Low\nNarrative: A 35-year-old female presented with reduced range of motion affecting the hip, associated with constitutional symptoms. Duration of symptoms was 5 months. Blood tests showed elevated CRP and ESR. X-ray of the hip revealed chondrocalcinosis. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: gout. Management included methotrexate and hydroxychloroquine.\nCorrective Action: Diagnosis: gout. Management included methotrexate and hydroxychloroquine",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-606a0358ec61458bc198d5e4d438844f"
+  },
+  "doc-ebdec2fe609dbeb73244f6c370f4d8eb": {
+    "content": "Clinical Case: b8337b80-68a8-46d5-b10b-c4c4ba2de985\nDate: 2025-05-30 | System: Respiratory | Severity: High\nNarrative: A 65-year-old female was admitted with a 3-week history of pleuritic chest pain. The patient also reported fever and wheeze. Relevant history included prior tuberculosis. Chest X-ray demonstrated bilateral infiltrates. CT thorax revealed honeycombing pattern. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated obstructive pattern with FEV1/FVC 0.58. The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-ebdec2fe609dbeb73244f6c370f4d8eb"
+  },
+  "doc-d745ec6e17e6c423c81b61841434f2ce": {
+    "content": "Clinical Case: b78df8a6-59d6-4d5f-a9a0-ed73824dbf47\nDate: 2025-06-06 | System: Musculoskeletal | Severity: High\nNarrative: A 60-year-old male presented with pain and swelling affecting the shoulder, associated with skin rash. Duration of symptoms was 21 months. Blood tests showed elevated CRP and ESR. X-ray of the shoulder revealed periarticular erosions. MRI demonstrated sacroiliitis. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775168527,
+    "update_time": 1775168527,
+    "_id": "doc-d745ec6e17e6c423c81b61841434f2ce"
+  },
+  "doc-b832bffca6f5b953e97047ac37cd38ec": {
+    "content": "Clinical Case: 526fd06f-ee4c-448d-9980-484f663b6137\nDate: 2025-05-14 | System: Gastrointestinal | Severity: Low\nNarrative: A 58-year-old female presented with rectal bleeding of 10 weeks duration, associated with altered bowel habit and anorexia. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed circumferential colonic thickening. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: colorectal cancer. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-b832bffca6f5b953e97047ac37cd38ec"
+  },
+  "doc-e2125b75a0cbbb2f0ed02f43f4bdbc9f": {
+    "content": "Clinical Case: 45a11a1a-95a8-4bd1-901b-3c1d7c3c0182\nDate: 2025-05-10 | System: Musculoskeletal | Severity: Low\nNarrative: A 23-year-old female presented with instability affecting the wrist and MCPs, associated with constitutional symptoms. Duration of symptoms was 2 months. Blood tests showed elevated uric acid. X-ray of the wrist and MCPs revealed joint space narrowing and osteophytes. MRI demonstrated sacroiliitis. Synovial fluid analysis showed inflammatory aspirate with elevated WBC. Diagnosis: osteoarthritis. Management included colchicine and allopurinol.\nCorrective Action: Diagnosis: osteoarthritis. Management included colchicine and allopurinol",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-e2125b75a0cbbb2f0ed02f43f4bdbc9f"
+  },
+  "doc-aeb696350165bf9ae41216f5236c3817": {
+    "content": "Clinical Case: 8aeea9b9-dc2c-42a8-af7c-938f55520ad2\nDate: 2025-05-25 | System: Respiratory | Severity: High\nNarrative: A 20-year-old male was admitted with a 10-week history of productive cough. The patient also reported weight loss and stridor. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed honeycombing pattern. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-aeb696350165bf9ae41216f5236c3817"
+  },
+  "doc-bbc516b53c71727bd08346a19ee50251": {
+    "content": "Clinical Case: c4f40568-0665-427f-8b70-a36fa246f5c7\nDate: 2025-05-17 | System: Neurological | Severity: High\nNarrative: A 76-year-old female presented with sudden onset of severe headache and ataxia. Neurological examination revealed left-sided hemiplegia and dysphasia. History included atrial fibrillation on anticoagulation. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was normal. The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with stable neurological deficit at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-bbc516b53c71727bd08346a19ee50251"
+  },
+  "doc-af28652606d78849d0249d790f40681f": {
+    "content": "Clinical Case: 87c03249-8451-4c36-8720-a424781b5a4c\nDate: 2025-05-06 | System: Cardiac | Severity: Critical\nNarrative: A 78-year-old female presented to the emergency department with a 5-day history of shortness of breath and ankle oedema. Past medical history was notable for prior MI. Physical examination revealed elevated JVP. ECG demonstrated atrial fibrillation. Echocardiography showed regional wall motion abnormality. Troponin was markedly elevated. The patient was diagnosed with new-onset atrial fibrillation and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with new-onset atrial fibrillation and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-af28652606d78849d0249d790f40681f"
+  },
+  "doc-e8ab7539afd48876f5bb300e184ed79b": {
+    "content": "Clinical Case: 661570b4-1097-4ce4-a383-45c575a25138\nDate: 2025-05-25 | System: Respiratory | Severity: High\nNarrative: A 20-year-old male was admitted with a 10-week history of productive cough. The patient also reported weight loss and stridor. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated right upper lobe consolidation. CT thorax revealed honeycombing pattern. Bronchoscopy showed endobronchial tumour. Pulmonary function tests indicated mixed pattern. The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-e8ab7539afd48876f5bb300e184ed79b"
+  },
+  "doc-1693a9d96722a090fabd3e1bd2ba20a2": {
+    "content": "Clinical Case: a2b77c54-210e-49b1-8b5c-1fe345be9594\nDate: 2025-05-25 | System: Gastrointestinal | Severity: Low\nNarrative: A 52-year-old female presented with upper abdominal pain of 7 weeks duration, associated with weight loss of 8 kg and early satiety. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-1693a9d96722a090fabd3e1bd2ba20a2"
+  },
+  "doc-6bd187f61bb50ddf67fed66dbf47414b": {
+    "content": "Clinical Case: a0138f1e-c862-4c7d-a153-53aef0c659e9\nDate: 2025-05-17 | System: Neurological | Severity: Low\nNarrative: A 74-year-old female presented with sudden onset of altered consciousness and ataxia. Neurological examination revealed right facial droop and hyperreflexia. History included atrial fibrillation on anticoagulation. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated elevated protein and pleocytosis. EEG was burst suppression pattern. The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-6bd187f61bb50ddf67fed66dbf47414b"
+  },
+  "doc-df174d639a33c9effb2f0ce6df80ce71": {
+    "content": "Clinical Case: b500b061-5b32-4a98-ace7-0c22176946b1\nDate: 2025-05-15 | System: Neurological | Severity: High\nNarrative: A 20-year-old female presented with sudden onset of severe headache and photophobia. Neurological examination revealed left-sided hemiplegia and dysphasia. History included HIV-positive status. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated elevated protein and pleocytosis. EEG was generalised spike-and-wave discharges. The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with significant motor improvement at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-df174d639a33c9effb2f0ce6df80ce71"
+  },
+  "doc-c2571e07f042a9f93f2e47306fa03981": {
+    "content": "Clinical Case: 3a875e2c-83e3-4bfb-b6de-763eb056fa9a\nDate: 2025-05-16 | System: Cardiac | Severity: Critical\nNarrative: A 29-year-old female presented to the emergency department with a 28-day history of dizziness and orthopnea. Past medical history was notable for type 2 diabetes. Physical examination revealed bilateral basal crepitations. ECG demonstrated ST-elevation in leads II, III, aVF. Echocardiography showed reduced ejection fraction of 35%. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775168655,
+    "update_time": 1775168655,
+    "_id": "doc-c2571e07f042a9f93f2e47306fa03981"
+  },
+  "doc-36fd271447be9f1bd7be85292d8a1b54": {
+    "content": "Clinical Case: 399ac967-cb2e-4f87-a34e-48b6fd406ce5\nDate: 2025-05-03 | System: Dermatology | Severity: Low\nNarrative: A 47-year-old male was referred to the dermatology clinic following a non-healing ulcerated lesion. The patient reported a 3-month history of pruritic rash. Examination revealed an asymmetric pigmented lesion with irregular border and colour variation on the lower leg. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed nodular basal cell carcinoma. Relevant history included immunosuppression post-renal transplant. Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: malignant melanoma stage IB. wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-36fd271447be9f1bd7be85292d8a1b54"
+  },
+  "doc-4004490c7f995b8c84484a113ba933ec": {
+    "content": "Clinical Case: df902c02-ed28-4c75-ba54-7056ca0190d5\nDate: 2025-04-29 | System: Cardiac | Severity: Critical\nNarrative: A 69-year-old female presented to the emergency department with a 5-day history of palpitations and dyspnea on exertion. Past medical history was notable for type 2 diabetes. Physical examination revealed bilateral basal crepitations. ECG demonstrated atrial fibrillation. Echocardiography showed mitral regurgitation. Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and commenced on diuretics and ACE inhibitor.\nCorrective Action: Troponin was within normal limits. The patient was diagnosed with new-onset atrial fibrillation and commenced on diuretics and ACE inhibitor",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-4004490c7f995b8c84484a113ba933ec"
+  },
+  "doc-2c15b0cde6ec5d9e10908aa2ac3619ac": {
+    "content": "Clinical Case: 9387338e-f3c5-42fa-8dad-cb1d131b56ec\nDate: 2025-04-30 | System: Neurological | Severity: High\nNarrative: A 45-year-old male presented with sudden onset of altered consciousness and neck stiffness. Neurological examination revealed papilloedema and cranial nerve palsy. History included prior stroke. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated xanthochromia. EEG was burst suppression pattern. The patient was diagnosed with ischaemic stroke. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-2c15b0cde6ec5d9e10908aa2ac3619ac"
+  },
+  "doc-a71fb455018aca9558b624f3b05ab137": {
+    "content": "Clinical Case: a6d8db3b-e1f4-4ecc-b4e4-22ac41404e2f\nDate: 2025-05-05 | System: Respiratory | Severity: High\nNarrative: A 69-year-old male was admitted with a 3-week history of pleuritic chest pain. The patient also reported night sweats and ankle swelling. Relevant history included prior tuberculosis. Chest X-ray demonstrated hyperinflation. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated normal spirometry. The diagnosis of pulmonary fibrosis was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-a71fb455018aca9558b624f3b05ab137"
+  },
+  "doc-a0808ea5951fe6ba96ffa3ee735cda17": {
+    "content": "Clinical Case: a05e41e0-7639-4638-89f2-47cb809d94c3\nDate: 2025-04-23 | System: Neurological | Severity: High\nNarrative: A 38-year-old female presented with sudden onset of altered consciousness and neck stiffness. Neurological examination revealed left-sided hemiplegia and dysphasia. History included atrial fibrillation on anticoagulation. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge.\nCorrective Action: The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-a0808ea5951fe6ba96ffa3ee735cda17"
+  },
+  "doc-f0cb44df10264318173904dd8b4a1b9e": {
+    "content": "Clinical Case: eab65eeb-1573-45da-8991-fc96e63e67f5\nDate: 2025-04-26 | System: Musculoskeletal | Severity: Low\nNarrative: A 56-year-old male presented with pain and swelling affecting the shoulder, associated with skin rash. Duration of symptoms was 5 months. Blood tests showed positive RF and anti-CCP antibodies. X-ray of the shoulder revealed chondrocalcinosis. MRI demonstrated sacroiliitis. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: osteoarthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-f0cb44df10264318173904dd8b4a1b9e"
+  },
+  "doc-dbdb6e100fb2bdb409feb08c479fa265": {
+    "content": "Clinical Case: 48679a2a-1c5c-45fa-ab8c-4d5033c56e91\nDate: 2025-05-02 | System: Gastrointestinal | Severity: Low\nNarrative: A 39-year-old male presented with rectal bleeding of 7 weeks duration, associated with altered bowel habit and pale stools. Laboratory results revealed elevated liver enzymes (AST/ALT 4× ULN). Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed adenocarcinoma. Diagnosis: colorectal cancer. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: colorectal cancer. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-dbdb6e100fb2bdb409feb08c479fa265"
+  },
+  "doc-c51e9f120ecce8be89d00fb7954cbe1a": {
+    "content": "Clinical Case: f0e2a7e5-144a-4fc9-8792-fc2c3e23d773\nDate: 2025-05-05 | System: Respiratory | Severity: High\nNarrative: A 69-year-old male was admitted with a 3-week history of pleuritic chest pain. The patient also reported night sweats and ankle swelling. Relevant history included prior tuberculosis. Chest X-ray demonstrated hyperinflation. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed normal mucosa. Pulmonary function tests indicated normal spirometry. The diagnosis of pulmonary fibrosis was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of pulmonary fibrosis was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-c51e9f120ecce8be89d00fb7954cbe1a"
+  },
+  "doc-84e342b229c6a006856ecdc1a267768a": {
+    "content": "Clinical Case: fe4dc55f-e9ec-4f3b-8e40-2d8e815e94dc\nDate: 2025-04-23 | System: Neurological | Severity: High\nNarrative: A 38-year-old female presented with sudden onset of altered consciousness and neck stiffness. Neurological examination revealed left-sided hemiplegia and dysphasia. History included atrial fibrillation on anticoagulation. MRI brain showed acute territorial infarct in MCA distribution. CSF analysis demonstrated normal constituents. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge.\nCorrective Action: The patient was diagnosed with status epilepticus. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-84e342b229c6a006856ecdc1a267768a"
+  },
+  "doc-7f26c6d54ddb9d4b1f92d2f09061da7f": {
+    "content": "Clinical Case: 426e491d-c402-4612-a8d4-3c5d6de679d9\nDate: 2025-04-30 | System: Neurological | Severity: Medium\nNarrative: A 78-year-old male presented with sudden onset of altered consciousness and neck stiffness. Neurological examination revealed left-sided hemiplegia and dysphasia. History included prior stroke. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated xanthochromia. EEG was burst suppression pattern. The patient was diagnosed with ischaemic stroke. Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168818,
+    "update_time": 1775168818,
+    "_id": "doc-7f26c6d54ddb9d4b1f92d2f09061da7f"
+  },
+  "doc-66d79432cfb5da18b1aac0a6d772e676": {
+    "content": "Clinical Case: 149d05c9-725a-472c-bb05-1b5915b514be\nDate: 2025-04-15 | System: Neurological | Severity: Low\nNarrative: A 44-year-old female presented with sudden onset of focal weakness and photophobia. Neurological examination revealed right facial droop and cranial nerve palsy. History included HIV-positive status. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was normal. The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-66d79432cfb5da18b1aac0a6d772e676"
+  },
+  "doc-cb2cd72190b2ba60ab4d0ac08898df5c": {
+    "content": "Clinical Case: d946d766-aaf5-4e9d-966b-34bddf607dac\nDate: 2025-04-08 | System: Paediatric | Severity: Critical\nNarrative: A 57-year-old female was brought to the paediatric emergency department by parents with a 21-day history of fever and increased work of breathing. On examination the child was afebrile with unilateral reduced air entry and wheeze. Oxygen saturation was 96% on room air. Chest auscultation revealed expiratory wheeze bilaterally. CXR showed left-sided pneumothorax. Blood cultures were pending at time of treatment. History included no prior hospital admissions. Diagnosis: community-acquired pneumonia. nebulised adrenaline and oral dexamethasone was initiated.\nCorrective Action: nebulised adrenaline and oral dexamethasone was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-cb2cd72190b2ba60ab4d0ac08898df5c"
+  },
+  "doc-e3cde4a56707d1854488f0b25ff33596": {
+    "content": "Clinical Case: cf1465e1-cd74-48a0-96f0-fe1fc250bd74\nDate: 2025-04-15 | System: Neurological | Severity: Low\nNarrative: A 44-year-old female presented with sudden onset of focal weakness and photophobia. Neurological examination revealed right facial droop and cranial nerve palsy. History included HIV-positive status. MRI brain showed diffuse leptomeningeal enhancement. CSF analysis demonstrated xanthochromia. EEG was normal. The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV ceftriaxone and dexamethasone with significant motor improvement at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-e3cde4a56707d1854488f0b25ff33596"
+  },
+  "doc-fa5295eee150f6d2e5bed021b15fafd0": {
+    "content": "Clinical Case: cb7061cf-0057-4c65-8b8f-f71e4daf8d1e\nDate: 2025-04-18 | System: Cardiac | Severity: Critical\nNarrative: A 61-year-old male presented to the emergency department with a 14-day history of palpitations and syncope. Past medical history was notable for hypertension. Physical examination revealed S3 gallop. ECG demonstrated QTc prolongation. Echocardiography showed reduced ejection fraction of 35%. Troponin was within normal limits. The patient was diagnosed with acute NSTEMI and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with acute NSTEMI and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-fa5295eee150f6d2e5bed021b15fafd0"
+  },
+  "doc-d99b348010e0859bf79ca469b926378b": {
+    "content": "Clinical Case: b77fb565-4d3c-46d1-86e2-93cb9cf21ea8\nDate: 2025-04-13 | System: Gastrointestinal | Severity: Low\nNarrative: A 62-year-old female presented with jaundice of 28 weeks duration, associated with pruritus and dark urine. Laboratory results revealed elevated liver enzymes (AST/ALT 4× ULN). Endoscopy demonstrated Barrett's oesophagus with high-grade dysplasia. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: primary sclerosing cholangitis. neoadjuvant chemoradiotherapy was commenced.\nCorrective Action: neoadjuvant chemoradiotherapy was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-d99b348010e0859bf79ca469b926378b"
+  },
+  "doc-7f78e14c615a6efcb86bacdcef718021": {
+    "content": "Clinical Case: 3f5ac5dc-d399-4f38-88e3-42ec6e2d4ce0\nDate: 2025-04-19 | System: Gastrointestinal | Severity: Medium\nNarrative: A 82-year-old male presented with progressive dysphagia of 10 weeks duration, associated with pruritus and anorexia. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated oesophageal varices grade III. CT abdomen showed hepatic metastases. Liver biopsy confirmed cirrhosis with bridging fibrosis. Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. surgical resection (right hemicolectomy) was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-7f78e14c615a6efcb86bacdcef718021"
+  },
+  "doc-d94401800c111b74bf53e07ee0975662": {
+    "content": "Clinical Case: c2ccfd54-ae92-42eb-8f49-a65aeedf76e3\nDate: 2025-04-16 | System: Neurological | Severity: Medium\nNarrative: A 36-year-old female presented with sudden onset of focal weakness and ataxia. Neurological examination revealed positive Kernig's sign and hyperreflexia. History included HIV-positive status. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated xanthochromia. EEG was burst suppression pattern. The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge.\nCorrective Action: The patient was diagnosed with primary CNS lymphoma. Treatment comprised IV ceftriaxone and dexamethasone with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-d94401800c111b74bf53e07ee0975662"
+  },
+  "doc-6c7f5f1efa9fe1ad162b412383e280bf": {
+    "content": "Clinical Case: 29ca48b0-1ffd-40a6-8926-09eef99bbdb1\nDate: 2025-04-20 | System: Respiratory | Severity: High\nNarrative: A 20-year-old male was admitted with a 5-week history of productive cough. The patient also reported fatigue and wheeze. Relevant history included occupational asbestos exposure. Chest X-ray demonstrated hyperinflation. CT thorax revealed mediastinal lymphadenopathy. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated restrictive pattern. The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and high-dose corticosteroids was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-6c7f5f1efa9fe1ad162b412383e280bf"
+  },
+  "doc-41110817cee95604f38a1c263881cb91": {
+    "content": "Clinical Case: 8f88a931-0f15-40c8-a8aa-a9aca8fa0fec\nDate: 2025-04-08 | System: Dermatology | Severity: Low\nNarrative: A 84-year-old female was referred to the dermatology clinic following routine dermatology screening. The patient reported a 3-month history of pruritic rash. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the left forearm. Dermoscopy demonstrated atypical pigment network with regression structures. Skin biopsy showed nodular basal cell carcinoma. Relevant history included immunosuppression post-renal transplant. Diagnosis: nodular basal cell carcinoma. surgical excision with 4 mm margins was recommended.\nCorrective Action: Diagnosis: nodular basal cell carcinoma. surgical excision with 4 mm margins was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-41110817cee95604f38a1c263881cb91"
+  },
+  "doc-e434022f7935c8daeaf7caba8c447e9f": {
+    "content": "Clinical Case: 16150a30-f980-4db4-8a13-3317bfe01e0f\nDate: 2025-04-10 | System: Cardiac | Severity: Critical\nNarrative: A 35-year-old female presented to the emergency department with a 1-day history of dizziness and ankle oedema. Past medical history was notable for prior MI. Physical examination revealed bilateral basal crepitations. ECG demonstrated QTc prolongation. Echocardiography showed mitral regurgitation. Troponin was mildly elevated. The patient was diagnosed with decompensated heart failure and rate-controlled with metoprolol.\nCorrective Action: Troponin was mildly elevated. The patient was diagnosed with decompensated heart failure and rate-controlled with metoprolol",
+    "file_path": "unknown_source",
+    "create_time": 1775168932,
+    "update_time": 1775168932,
+    "_id": "doc-e434022f7935c8daeaf7caba8c447e9f"
+  },
+  "doc-b934702b442931687944c3b680751df6": {
+    "content": "Clinical Case: 48a811ad-07d0-4895-b7ed-3417b7171869\nDate: 2025-03-31 | System: Neurological | Severity: Low\nNarrative: A 48-year-old female presented with sudden onset of speech disturbance and neck stiffness. Neurological examination revealed right facial droop and hyperreflexia. History included atrial fibrillation on anticoagulation. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated xanthochromia. EEG was focal slowing. The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with complete resolution of symptoms at discharge.\nCorrective Action: The patient was diagnosed with ischaemic stroke. Treatment comprised IV levetiracetam and phenytoin with complete resolution of symptoms at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-b934702b442931687944c3b680751df6"
+  },
+  "doc-3c717ae7fe86b3a6ae2271e48ba22e47": {
+    "content": "Clinical Case: 1c6487ee-ea88-4393-914a-c5f83ef61bf2\nDate: 2025-03-30 | System: Musculoskeletal | Severity: Medium\nNarrative: A 35-year-old female presented with progressive stiffness affecting the spine, associated with constitutional symptoms. Duration of symptoms was 10 months. Blood tests showed elevated uric acid. X-ray of the spine revealed chondrocalcinosis. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed non-inflammatory aspirate. Diagnosis: rheumatoid arthritis. Management included total knee replacement.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included total knee replacement",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-3c717ae7fe86b3a6ae2271e48ba22e47"
+  },
+  "doc-304f340ad4cf36f85eadeea2200b5890": {
+    "content": "Clinical Case: 2ce76483-a838-4e65-b999-e61ef91c8ca2\nDate: 2025-03-31 | System: Gastrointestinal | Severity: Medium\nNarrative: A 58-year-old male presented with progressive dysphagia of 7 weeks duration, associated with weight loss of 8 kg and anorexia. Laboratory results revealed hypoalbuminaemia. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed hepatocellular carcinoma. Diagnosis: decompensated cirrhosis. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: decompensated cirrhosis. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-304f340ad4cf36f85eadeea2200b5890"
+  },
+  "doc-e5211c9d4452573a55519727c0ef76b1": {
+    "content": "Clinical Case: 768945ce-6da5-4db2-9d7b-d3bdeeaf1d5c\nDate: 2025-04-07 | System: Paediatric | Severity: Critical\nNarrative: A 33-year-old male was brought to the paediatric emergency department by parents with a 5-day history of stridor and increased work of breathing. On examination the child was febrile at 38.9°C with inspiratory stridor. Oxygen saturation was 94% on room air. Chest auscultation revealed unilateral reduced breath sounds with wheeze consistent with foreign body aspiration. CXR showed air trapping on expiratory film suggesting bronchial foreign body. Blood cultures grew Streptococcus pneumoniae. History included recurrent wheeze since infancy. Diagnosis: viral-induced wheeze. urgent rigid bronchoscopy under general anaesthesia was initiated.\nCorrective Action: urgent rigid bronchoscopy under general anaesthesia was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-e5211c9d4452573a55519727c0ef76b1"
+  },
+  "doc-1375b9b5b2e11625f9232d34b4107e38": {
+    "content": "Clinical Case: d0bcd479-3998-4c66-aa32-fed3e10450c3\nDate: 2025-03-29 | System: Gastrointestinal | Severity: Low\nNarrative: A 27-year-old female presented with upper abdominal pain of 7 weeks duration, associated with pruritus and early satiety. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed portal hypertension with splenomegaly. Liver biopsy confirmed Crohn's disease. Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced.\nCorrective Action: Diagnosis: oesophageal adenocarcinoma. ERCP with stenting was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-1375b9b5b2e11625f9232d34b4107e38"
+  },
+  "doc-2747605a19dd90cae3b9e6a20d1194f3": {
+    "content": "Clinical Case: 4dfa7899-c3d8-44a7-8c00-53d6513f3efc\nDate: 2025-03-29 | System: Neurological | Severity: High\nNarrative: A 23-year-old female presented with sudden onset of focal weakness and neck stiffness. Neurological examination revealed papilloedema and cranial nerve palsy. History included atrial fibrillation on anticoagulation. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated xanthochromia. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-2747605a19dd90cae3b9e6a20d1194f3"
+  },
+  "doc-d4f335b1b7bae18006bc038ab4128db1": {
+    "content": "Clinical Case: 916f6e82-92d3-42b4-a416-434053511a5c\nDate: 2025-04-03 | System: Respiratory | Severity: High\nNarrative: A 81-year-old female was admitted with a 10-week history of haemoptysis. The patient also reported night sweats and ankle swelling. Relevant history included smoking (40 pack-years). Chest X-ray demonstrated hyperinflation. CT thorax revealed honeycombing pattern. Bronchoscopy showed purulent secretions. Pulmonary function tests indicated mixed pattern. The diagnosis of community-acquired pneumonia was established and broad-spectrum antibiotics was initiated.\nCorrective Action: The diagnosis of community-acquired pneumonia was established and broad-spectrum antibiotics was initiated",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-d4f335b1b7bae18006bc038ab4128db1"
+  },
+  "doc-8cf6c15302e70e0980453665ab84f278": {
+    "content": "Clinical Case: cfb9b032-b408-4f62-947d-529320fa5a6c\nDate: 2025-04-01 | System: Dermatology | Severity: Low\nNarrative: A 30-year-old male was referred to the dermatology clinic following a non-healing ulcerated lesion. The patient reported a 3-month history of a new pigmented lesion. Examination revealed a pearly nodule with telangiectasia on the left forearm. Dermoscopy demonstrated Munro microabscesses pattern. Skin biopsy showed squamous cell carcinoma in situ. Relevant history included family history of melanoma. Diagnosis: Bowen's disease (SCC in situ). topical corticosteroids and phototherapy was recommended.\nCorrective Action: topical corticosteroids and phototherapy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-8cf6c15302e70e0980453665ab84f278"
+  },
+  "doc-1405b111c59c1691a48901cde2eed51b": {
+    "content": "Clinical Case: 8908e07d-8612-461d-8c1a-83fd6fadedad\nDate: 2025-03-29 | System: Neurological | Severity: High\nNarrative: A 23-year-old female presented with sudden onset of focal weakness and neck stiffness. Neurological examination revealed papilloedema and cranial nerve palsy. History included atrial fibrillation on anticoagulation. MRI brain showed ring-enhancing lesion. CSF analysis demonstrated xanthochromia. EEG was focal slowing. The patient was diagnosed with status epilepticus. Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised IV alteplase thrombolysis followed by antiplatelet therapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-1405b111c59c1691a48901cde2eed51b"
+  },
+  "doc-f3b72ae1dccac058d727442c28727b3d": {
+    "content": "Clinical Case: d4034256-1591-46fa-bff7-93ffe11e369c\nDate: 2025-03-28 | System: Neurological | Severity: High\nNarrative: A 39-year-old female presented with sudden onset of severe headache and ataxia. Neurological examination revealed left-sided hemiplegia and hyperreflexia. History included HIV-positive status. MRI brain showed haemorrhagic transformation. CSF analysis demonstrated elevated protein and pleocytosis. EEG was burst suppression pattern. The patient was diagnosed with primary CNS lymphoma. Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge.\nCorrective Action: Treatment comprised dexamethasone and whole-brain radiotherapy with moderate functional recovery at discharge",
+    "file_path": "unknown_source",
+    "create_time": 1775169067,
+    "update_time": 1775169067,
+    "_id": "doc-f3b72ae1dccac058d727442c28727b3d"
+  },
+  "doc-205b75d592f5c35757c06b25aa8e1984": {
+    "content": "Clinical Case: 85cceb86-e1cf-42dc-8a78-b41cb85fcd50\nDate: 2025-03-23 | System: Cardiac | Severity: Critical\nNarrative: A 82-year-old male presented to the emergency department with a 1-day history of palpitations and syncope. Past medical history was notable for prior MI. Physical examination revealed S3 gallop. ECG demonstrated left bundle branch block. Echocardiography showed mitral regurgitation. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-205b75d592f5c35757c06b25aa8e1984"
+  },
+  "doc-15f9eef500fedf61aecc494b64b11664": {
+    "content": "Clinical Case: 83449133-3dd0-4338-b886-7fbb9f7af314\nDate: 2025-03-12 | System: Cardiac | Severity: Critical\nNarrative: A 84-year-old male presented to the emergency department with a 7-day history of chest pain and orthopnea. Past medical history was notable for hyperlipidaemia. Physical examination revealed irregular rhythm. ECG demonstrated atrial fibrillation. Echocardiography showed pericardial effusion. Troponin was markedly elevated. The patient was diagnosed with decompensated heart failure and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with decompensated heart failure and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-15f9eef500fedf61aecc494b64b11664"
+  },
+  "doc-d8de08df35da1ef0fd4e98ca92409a82": {
+    "content": "Clinical Case: 9b24b268-6521-4cc5-802a-8d962c5831bd\nDate: 2025-03-18 | System: Dermatology | Severity: Low\nNarrative: A 29-year-old female was referred to the dermatology clinic following a suspicious pigmented lesion noted by GP. The patient reported a 21-month history of skin thickening with scaling. Examination revealed a pearly nodule with telangiectasia on the face and scalp. Dermoscopy demonstrated irregular vascular pattern with white streaks. Skin biopsy showed nodular basal cell carcinoma. Relevant history included prolonged sun exposure. Diagnosis: Bowen's disease (SCC in situ). wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended.\nCorrective Action: Diagnosis: Bowen's disease (SCC in situ). wide local excision with 1 cm margins and sentinel lymph node biopsy was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-d8de08df35da1ef0fd4e98ca92409a82"
+  },
+  "doc-0c1916194296eb589f667c4957ea4df5": {
+    "content": "Clinical Case: a17f1b27-2e5b-4b8d-89fe-1d7c265c975b\nDate: 2025-03-28 | System: Gastrointestinal | Severity: Medium\nNarrative: A 64-year-old male presented with progressive dysphagia of 14 weeks duration, associated with nausea and vomiting and pale stools. Laboratory results revealed elevated CA19-9. Endoscopy demonstrated ulcerating mass at the gastro-oesophageal junction. CT abdomen showed intrahepatic biliary dilatation. Liver biopsy confirmed Crohn's disease. Diagnosis: colorectal cancer. diuretics, propranolol, and dietary sodium restriction was commenced.\nCorrective Action: Diagnosis: colorectal cancer. diuretics, propranolol, and dietary sodium restriction was commenced",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-0c1916194296eb589f667c4957ea4df5"
+  },
+  "doc-b0e1c1410c004db8724b09a7587ebc34": {
+    "content": "Clinical Case: 454921d0-6e84-4f48-aac5-142993f97dd0\nDate: 2025-03-14 | System: Cardiac | Severity: Critical\nNarrative: A 21-year-old female presented to the emergency department with a 14-day history of dizziness and orthopnea. Past medical history was notable for hypertension. Physical examination revealed S3 gallop. ECG demonstrated ST-elevation in leads II, III, aVF. Echocardiography showed mitral regurgitation. Troponin was within normal limits. The patient was diagnosed with acute NSTEMI and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with acute NSTEMI and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-b0e1c1410c004db8724b09a7587ebc34"
+  },
+  "doc-503f0c5b1ee9e112c4c0b322c81d8add": {
+    "content": "Clinical Case: 643a21bf-c06e-4652-a96a-df200fbf24d8\nDate: 2025-03-23 | System: Dermatology | Severity: Low\nNarrative: A 28-year-old male was referred to the dermatology clinic following routine dermatology screening. The patient reported a 1-month history of skin thickening with scaling. Examination revealed a corrosion-pattern lesion with irregular border and satellite nodules on the upper back. Dermoscopy demonstrated Munro microabscesses pattern. Skin biopsy showed psoriasis with acanthosis and parakeratosis. Relevant history included immunosuppression post-renal transplant. Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended.\nCorrective Action: Diagnosis: Bowen's disease (SCC in situ). topical 5-fluorouracil cream was recommended",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-503f0c5b1ee9e112c4c0b322c81d8add"
+  },
+  "doc-bc224378907bb068a980555a92b40ba4": {
+    "content": "Clinical Case: d9e5114f-57b7-4f4c-9612-4b31ad15d066\nDate: 2025-03-22 | System: Cardiac | Severity: Critical\nNarrative: A 42-year-old female presented to the emergency department with a 10-day history of chest pain and ankle oedema. Past medical history was notable for hyperlipidaemia. Physical examination revealed elevated JVP. ECG demonstrated left bundle branch block. Echocardiography showed pericardial effusion. Troponin was mildly elevated. The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives.\nCorrective Action: The patient was diagnosed with hypertensive urgency and managed with IV antihypertensives",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-bc224378907bb068a980555a92b40ba4"
+  },
+  "doc-1837ea42c23afa02d982856fa637e98b": {
+    "content": "Clinical Case: 8ad21ca2-f009-4342-8064-1b4a85dc374d\nDate: 2025-03-15 | System: Musculoskeletal | Severity: Low\nNarrative: A 68-year-old male presented with pain and swelling affecting the knee, associated with constitutional symptoms. Duration of symptoms was 5 months. Blood tests showed ANA positive, anti-dsDNA elevated. X-ray of the knee revealed chondrocalcinosis. MRI demonstrated sacroiliitis. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: gout. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-1837ea42c23afa02d982856fa637e98b"
+  },
+  "doc-8a7ab40ad524ab13bf8bf71cb277ef81": {
+    "content": "Clinical Case: 179ca9bb-0760-4949-a33a-39ab9887c2be\nDate: 2025-03-16 | System: Musculoskeletal | Severity: Low\nNarrative: A 36-year-old male presented with reduced range of motion affecting the spine, associated with constitutional symptoms. Duration of symptoms was 21 months. Blood tests showed elevated CRP and ESR. X-ray of the spine revealed chondrocalcinosis. MRI demonstrated rotator cuff rupture. Synovial fluid analysis showed negatively birefringent crystals. Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone.\nCorrective Action: Diagnosis: rheumatoid arthritis. Management included hydroxychloroquine and low-dose prednisolone",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-8a7ab40ad524ab13bf8bf71cb277ef81"
+  },
+  "doc-fd8e61b0ed54a5e669c6e3649934a7ed": {
+    "content": "Clinical Case: c5b8b3ff-02ed-4d05-8c20-e9076ac9880b\nDate: 2025-03-18 | System: Cardiac | Severity: Critical\nNarrative: A 82-year-old female presented to the emergency department with a 21-day history of chest pain and syncope. Past medical history was notable for type 2 diabetes. Physical examination revealed bilateral basal crepitations. ECG demonstrated QTc prolongation. Echocardiography showed regional wall motion abnormality. Troponin was markedly elevated. The patient was diagnosed with hypertensive urgency and started on dual antiplatelet therapy and transferred for PCI.\nCorrective Action: The patient was diagnosed with hypertensive urgency and started on dual antiplatelet therapy and transferred for PCI",
+    "file_path": "unknown_source",
+    "create_time": 1775169198,
+    "update_time": 1775169198,
+    "_id": "doc-fd8e61b0ed54a5e669c6e3649934a7ed"
+  }
+}

@@ -40,12 +40,46 @@ QUERY_MAX_BYTES = 1 * 1024 * 1024    # 1 MB
 INGEST_MAX_BYTES = 10 * 1024 * 1024  # 10 MB
 
 
+async def _auto_index_lightrag() -> None:
+    """
+    Background task: index each LightRAG domain from the DB (or demo docs as
+    fallback) on startup, but only if the domain has not been indexed yet.
+    Runs concurrently for both domains; errors are logged but never fatal.
+    """
+    import asyncio
+    from backend.app.lightrag_service.indexer import check_index_status, index_domain
+    from backend.app.api.lightrag import _index_status
+
+    async def _index_if_needed(domain: str) -> None:
+        try:
+            status = await check_index_status(domain)
+            if status.get("indexed"):
+                logger.info("LightRAG '%s' already indexed — skipping auto-index.", domain)
+                return
+            logger.info("LightRAG '%s' not indexed — starting auto-index from DB.", domain)
+            _index_status[domain] = "indexing"
+            result = await index_domain(domain)
+            _index_status[domain] = "done"
+            logger.info("LightRAG '%s' auto-index complete: %s", domain, result)
+        except Exception as exc:
+            _index_status[domain] = "error"
+            logger.warning("LightRAG '%s' auto-index failed: %s", domain, exc)
+
+    await asyncio.gather(
+        _index_if_needed("aircraft"),
+        _index_if_needed("medical"),
+    )
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
     """
     FastAPI lifespan context manager.
     Initialises the DB engine pool on startup; disposes on shutdown.
+    Also triggers LightRAG auto-indexing in the background for both domains.
     """
+    import asyncio
+
     logger.info("Starting NextAgentAI backend")
     # Pre-warm the async engine so first request doesn't bear the connection cost
     try:
@@ -56,6 +90,9 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             "DB pool init failed (DB may not be ready yet)",
             extra={"error": str(exc)},
         )
+
+    # Auto-index LightRAG domains in background — does not block startup
+    asyncio.create_task(_auto_index_lightrag())
 
     yield
 

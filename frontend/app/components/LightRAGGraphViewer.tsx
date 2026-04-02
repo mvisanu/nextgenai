@@ -6,7 +6,7 @@
  * Uses dagre for automatic layout, SCADA theme colors, and minimap/controls.
  */
 
-import React, { useCallback, useMemo } from "react";
+import React, { useCallback, useEffect, useMemo } from "react";
 import {
   ReactFlow,
   Node,
@@ -136,8 +136,13 @@ export default function LightRAGGraphViewer({
     [rfNodesRaw, rfEdgesRaw]
   );
 
-  const [nodes, , onNodesChange] = useNodesState(rfNodesLaid);
-  const [edges, , onEdgesChange] = useEdgesState(rfEdgesRaw);
+  const [nodes, setNodes, onNodesChange] = useNodesState(rfNodesLaid);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(rfEdgesRaw);
+
+  // Sync state when data changes — useNodesState/useEdgesState only initialise
+  // once; without this effect, the graph stays empty after the first data load.
+  useEffect(() => { setNodes(rfNodesLaid); }, [rfNodesLaid, setNodes]);
+  useEffect(() => { setEdges(rfEdgesRaw); }, [rfEdgesRaw, setEdges]);
 
   const handleNodeClick = useCallback(
     (_: React.MouseEvent, node: Node) => {

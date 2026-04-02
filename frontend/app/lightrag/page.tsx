@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import dynamic from "next/dynamic";
 import {
   getLightRAGStatus,
@@ -17,6 +17,21 @@ const LightRAGGraphViewer = dynamic(
   () => import("../components/LightRAGGraphViewer"),
   { ssr: false }
 );
+
+const SAMPLE_QUERIES: Record<string, { query: string; mode: string }[]> = {
+  aircraft: [
+    { query: "What are the most common defect types in aircraft components?", mode: "hybrid" },
+    { query: "What maintenance issues are related to engine failures?", mode: "local" },
+    { query: "Which components have the highest failure rates?", mode: "global" },
+    { query: "What corrective actions were taken for hydraulic system faults?", mode: "hybrid" },
+  ],
+  medical: [
+    { query: "What symptoms are associated with respiratory conditions?", mode: "hybrid" },
+    { query: "Which treatments are most effective for cardiac patients?", mode: "local" },
+    { query: "What are the relationships between diagnoses and outcomes?", mode: "global" },
+    { query: "What risk factors are commonly co-occurring?", mode: "hybrid" },
+  ],
+};
 
 const QUERY_MODES = [
   { value: "hybrid", label: "Hybrid (recommended)" },
@@ -35,18 +50,26 @@ export default function LightRAGPage() {
   const [mode, setMode] = useState("hybrid");
   const [queryResult, setQueryResult] = useState<string | null>(null);
   const [maxNodes, setMaxNodes] = useState(200);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [indexing, setIndexing] = useState(false);
   const [queryLoading, setQueryLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const pollRef = useRef<NodeJS.Timeout | null>(null);
+  // Tracks whether an active indexing poll is in progress so the
+  // visibilitychange handler can pause/resume it when the tab is hidden.
+  const pollActiveRef = useRef(false);
+  const pollIntervalMs = 3000;
 
-  // Count connections for selected node
-  const connectionCount = selectedNode && graphData
-    ? graphData.edges.filter(
-        (e) => e.source === selectedNode.id || e.target === selectedNode.id
-      ).length
-    : 0;
+  // Count connections for selected node — memoized to avoid re-filtering on every render
+  const connectionCount = useMemo(
+    () =>
+      selectedNode && graphData
+        ? graphData.edges.filter(
+            (e) => e.source === selectedNode.id || e.target === selectedNode.id
+          ).length
+        : 0,
+    [selectedNode, graphData]
+  );
 
   const loadStatus = useCallback(async () => {
     try {
@@ -76,6 +99,7 @@ export default function LightRAGPage() {
   useEffect(() => {
     setSelectedNode(null);
     setQueryResult(null);
+    setGraphData(null);
     loadStatus();
     loadGraph();
 
@@ -83,6 +107,25 @@ export default function LightRAGPage() {
       if (pollRef.current) clearInterval(pollRef.current);
     };
   }, [domain]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Shared poll tick — called by the interval and also on visibility restore
+  const runPollTick = useCallback(async () => {
+    const s = await loadStatus();
+    if (!s) return;
+    if (s.index_job_status === "done") {
+      if (pollRef.current) clearInterval(pollRef.current);
+      pollRef.current = null;
+      pollActiveRef.current = false;
+      setIndexing(false);
+      await loadGraph();
+    } else if (s.index_job_status === "error") {
+      if (pollRef.current) clearInterval(pollRef.current);
+      pollRef.current = null;
+      pollActiveRef.current = false;
+      setIndexing(false);
+      setError("Indexing failed. Check backend logs.");
+    }
+  }, [loadStatus, loadGraph]);
 
   const handleIndex = async () => {
     setError(null);
@@ -96,28 +139,40 @@ export default function LightRAGPage() {
     }
 
     // Poll every 3 seconds until done or error
-    pollRef.current = setInterval(async () => {
-      const s = await loadStatus();
-      if (!s) return;
-      if (s.index_job_status === "done") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setIndexing(false);
-        await loadGraph();
-      } else if (s.index_job_status === "error") {
-        if (pollRef.current) clearInterval(pollRef.current);
-        setIndexing(false);
-        setError("Indexing failed. Check backend logs.");
-      }
-    }, 3000);
+    pollActiveRef.current = true;
+    pollRef.current = setInterval(runPollTick, pollIntervalMs);
   };
+
+  // Pause polling while the tab is hidden; resume (with an immediate tick)
+  // when it becomes visible again to avoid wasted requests.
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (!pollActiveRef.current) return;
+      if (document.visibilityState === "hidden") {
+        if (pollRef.current) {
+          clearInterval(pollRef.current);
+          pollRef.current = null;
+        }
+      } else {
+        // Tab became visible — fire one tick immediately then resume interval
+        runPollTick();
+        pollRef.current = setInterval(runPollTick, pollIntervalMs);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [runPollTick]);
 
   const handleQuery = async () => {
     if (!query.trim()) return;
     setQueryLoading(true);
+    setQueryResult(null);
     setError(null);
     try {
       const result = await queryLightRAG({ domain, query: query.trim(), mode });
-      setQueryResult(result.answer);
+      setQueryResult(result.answer ?? "");
     } catch (err) {
       setError(String(err));
     } finally {
@@ -131,6 +186,11 @@ export default function LightRAGPage() {
     },
     []
   );
+
+  // Stable array references for LightRAGGraphViewer — prevents dagre from
+  // re-running on every parent render when the underlying data hasn't changed.
+  const graphNodes = useMemo(() => graphData?.nodes ?? [], [graphData]);
+  const graphEdges = useMemo(() => graphData?.edges ?? [], [graphData]);
 
   return (
     <div
@@ -225,6 +285,24 @@ export default function LightRAGPage() {
             </button>
           </div>
 
+          {/* Sample queries */}
+          <div className="border border-cyan-900/30 bg-[#0f1623] p-3 rounded">
+            <label className="font-[Orbitron] text-xs text-cyan-400 tracking-wider uppercase block mb-2">
+              SAMPLE QUERIES
+            </label>
+            <div className="flex flex-col gap-1">
+              {SAMPLE_QUERIES[domain].map((s, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setQuery(s.query); setMode(s.mode); }}
+                  className="text-left font-[Rajdhani] text-xs text-cyan-600 hover:text-cyan-300 border border-cyan-900/20 hover:border-cyan-700/50 bg-[#0a0e17] px-2 py-1.5 rounded transition-all leading-snug"
+                >
+                  {s.query}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Query section */}
           <div className="border border-cyan-900/30 bg-[#0f1623] p-3 rounded flex flex-col gap-2">
             <label className="font-[Orbitron] text-xs text-cyan-400 tracking-wider uppercase">
@@ -248,6 +326,13 @@ export default function LightRAGPage() {
                 </option>
               ))}
             </select>
+            {status && !status.indexed && (
+              <div className="border border-amber-900/40 bg-amber-950/20 px-2 py-1.5 rounded">
+                <p className="font-[JetBrains_Mono] text-xs text-amber-500">
+                  Index empty — click INDEX DATA first.
+                </p>
+              </div>
+            )}
             <button
               onClick={handleQuery}
               disabled={queryLoading || !query.trim()}
@@ -255,10 +340,10 @@ export default function LightRAGPage() {
             >
               {queryLoading ? "QUERYING..." : "SUBMIT QUERY"}
             </button>
-            {queryResult && (
+            {queryResult !== null && (
               <div className="border border-cyan-900/30 bg-[#0a0e17] p-2 rounded max-h-40 overflow-y-auto">
                 <p className="font-[Rajdhani] text-xs text-cyan-400 whitespace-pre-wrap">
-                  {queryResult}
+                  {queryResult || "No relevant information found in the index."}
                 </p>
               </div>
             )}
@@ -288,8 +373,8 @@ export default function LightRAGPage() {
           {/* React Flow graph */}
           <div className="flex-1 overflow-hidden">
             <LightRAGGraphViewer
-              nodes={graphData?.nodes ?? []}
-              edges={graphData?.edges ?? []}
+              nodes={graphNodes}
+              edges={graphEdges}
               onNodeClick={handleNodeClick}
               loading={loading}
               domain={domain}
