@@ -313,8 +313,8 @@ export default function ObsidianGraph() {
     () =>
       visibleLinks.map((e) => ({
         ...e,
-        source: e.source,
-        target: e.target,
+        source: typeof e.source === "object" ? (e.source as { id: string }).id : e.source,
+        target: typeof e.target === "object" ? (e.target as { id: string }).id : e.target,
       })),
     [visibleLinks]
   );
@@ -587,8 +587,7 @@ export default function ObsidianGraph() {
       simRef.current = null;
     };
     // Re-run when filtered node/link sets or maxDegree change (requirement 20)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleNodes, visibleLinks, maxDegree]);
+  }, [visibleNodes, visibleLinks, maxDegree, radiusOf]);
 
   // -------------------------------------------------------------------------
   // Pause / resume
