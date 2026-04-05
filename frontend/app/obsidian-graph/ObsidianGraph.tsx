@@ -1028,6 +1028,81 @@ export default function ObsidianGraph() {
           onNavigate={(n) => setSelectedNode(n)}
         />
       )}
+
+      {/* Partial index warning — shows when graph has data but one domain is empty */}
+      {nodes.length > 0 && (aircraftEmpty || medicalEmpty) && (
+        <div style={{
+          position: "absolute",
+          bottom: 40,
+          left: "50%",
+          transform: "translateX(-50%)",
+          background: "rgba(10,10,20,0.9)",
+          border: "1px solid #92400e",
+          padding: "8px 20px",
+          zIndex: 15,
+          display: "flex",
+          alignItems: "center",
+          gap: 16,
+          whiteSpace: "nowrap",
+        }}>
+          {aircraftEmpty && (
+            <>
+              <span style={{
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 10,
+                color: "#f59e0b",
+                letterSpacing: "0.08em",
+              }}>
+                AIRCRAFT INDEX NOT BUILT
+              </span>
+              <button
+                onClick={async () => { await buildIndex("aircraft"); refetch(); }}
+                style={{
+                  fontFamily: "Orbitron, monospace",
+                  fontSize: 9,
+                  padding: "3px 12px",
+                  border: "1px solid #f59e0b",
+                  color: "#f59e0b",
+                  background: "transparent",
+                  cursor: "pointer",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase" as const,
+                }}
+              >
+                BUILD INDEX
+              </button>
+            </>
+          )}
+          {medicalEmpty && (
+            <>
+              <span style={{
+                fontFamily: "JetBrains Mono, monospace",
+                fontSize: 10,
+                color: "#a855f7",
+                letterSpacing: "0.08em",
+              }}>
+                MEDICAL INDEX NOT BUILT
+              </span>
+              <button
+                onClick={async () => { await buildIndex("medical"); refetch(); }}
+                style={{
+                  fontFamily: "Orbitron, monospace",
+                  fontSize: 9,
+                  padding: "3px 12px",
+                  border: "1px solid #a855f7",
+                  color: "#a855f7",
+                  background: "transparent",
+                  cursor: "pointer",
+                  letterSpacing: "0.1em",
+                  textTransform: "uppercase" as const,
+                }}
+              >
+                BUILD INDEX
+              </button>
+            </>
+          )}
+        </div>
+      )}
     </div>
   );
 }
