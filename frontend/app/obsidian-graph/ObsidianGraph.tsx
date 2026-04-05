@@ -264,6 +264,7 @@ export default function ObsidianGraph() {
 
   const svgRef = useRef<SVGSVGElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [visibleDomains, setVisibleDomains] = useState<Set<string>>(
     new Set(["aircraft", "medical", "bridge"])
@@ -319,6 +320,8 @@ export default function ObsidianGraph() {
     [visibleLinks]
   );
 
+  const USE_CANVAS = simNodes.length > 500;
+
   // -------------------------------------------------------------------------
   // Stats
   // -------------------------------------------------------------------------
@@ -344,6 +347,11 @@ export default function ObsidianGraph() {
     [maxDegree]
   );
 
+  const domainColor = useCallback(
+    (domain: NodeDomain) => DOMAIN_COLORS[domain] ?? UNCONNECTED_COLOR,
+    []
+  );
+
   // -------------------------------------------------------------------------
   // Zoom ref — shared between the useEffect and controls
   // -------------------------------------------------------------------------
@@ -352,6 +360,86 @@ export default function ObsidianGraph() {
   const simRef = useRef<d3.Simulation<SimNode, SimLink> | null>(null);
   const pausedRef = useRef(paused);
   useEffect(() => { pausedRef.current = paused; }, [paused]);
+
+  // -------------------------------------------------------------------------
+  // Canvas renderer — activates when simNodes.length > 500
+  // -------------------------------------------------------------------------
+
+  useEffect(() => {
+    if (!USE_CANVAS) return;
+    if (!canvasRef.current) return;
+
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d")!;
+    const width  = canvas.clientWidth;
+    const height = canvas.clientHeight;
+    canvas.width  = width  * window.devicePixelRatio;
+    canvas.height = height * window.devicePixelRatio;
+    ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+
+    const nodesCopy: SimNode[] = visibleNodes.map((n) => ({ ...n }));
+    const linksCopy: SimLink[] = visibleLinks.map((l) => ({
+      ...l,
+      source: typeof l.source === "object" ? (l.source as { id: string }).id : l.source,
+      target: typeof l.target === "object" ? (l.target as { id: string }).id : l.target,
+    }));
+
+    const sim = d3
+      .forceSimulation<SimNode>(nodesCopy)
+      .force("link", d3.forceLink<SimNode, SimLink>(linksCopy).id((d) => d.id).distance(80).strength(0.4))
+      .force("charge", d3.forceManyBody<SimNode>().strength(-120))
+      .force("center", d3.forceCenter(width / 2, height / 2))
+      .force("collide", d3.forceCollide<SimNode>().radius((d) => radiusOf(d) + 4));
+
+    sim.stop();
+    for (let i = 0; i < 300; i++) sim.tick();
+
+    function draw() {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#0a0a0f";
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw edges
+      for (const l of linksCopy) {
+        const s = l.source as SimNode;
+        const t = l.target as SimNode;
+        if (!s.x || !t.x) continue;
+        const mx = (s.x + t.x) / 2;
+        const my = (s.y! + t.y!) / 2 - 30;
+        ctx.beginPath();
+        ctx.moveTo(s.x, s.y!);
+        ctx.quadraticCurveTo(mx, my, t.x, t.y!);
+        ctx.strokeStyle = domainColor(l.domain) + "4d";
+        ctx.lineWidth = Math.max(0.5, Math.min(3, l.weight));
+        ctx.globalAlpha = 0.3;
+        ctx.stroke();
+      }
+
+      // Draw nodes
+      ctx.globalAlpha = 1;
+      for (const n of nodesCopy) {
+        if (!n.x) continue;
+        const r = radiusOf(n);
+        const color = domainColor(n.domain);
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = color;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y!, r, 0, 2 * Math.PI);
+        ctx.fillStyle = color + "33";
+        ctx.fill();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        ctx.shadowBlur = 0;
+      }
+    }
+
+    simRef.current = sim as unknown as d3.Simulation<SimNode, SimLink>;
+    sim.on("tick", draw).alpha(0.3).restart();
+    draw();
+
+    return () => { sim.stop(); };
+  }, [USE_CANVAS, visibleNodes, visibleLinks, maxDegree, radiusOf]);
 
   // -------------------------------------------------------------------------
   // D3 force simulation — re-runs when filtered sets or maxDegree change
@@ -841,11 +929,18 @@ export default function ObsidianGraph() {
         background: "#0a0a0f",
       }}
     >
-      {/* SVG canvas */}
-      <svg
-        ref={svgRef}
-        style={{ width: "100%", height: "100%", display: "block" }}
-      />
+      {/* Graph canvas — SVG for <= 500 nodes, HTML canvas for > 500 */}
+      {USE_CANVAS ? (
+        <canvas
+          ref={canvasRef}
+          style={{ width: "100%", height: "100%", display: "block" }}
+        />
+      ) : (
+        <svg
+          ref={svgRef}
+          style={{ width: "100%", height: "100%", display: "block" }}
+        />
+      )}
 
       {/* Controls overlay — top left */}
       <div
