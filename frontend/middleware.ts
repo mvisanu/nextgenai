@@ -13,6 +13,7 @@ const PROTECTED_PATHS = [
   '/diagram',
   '/faq',
   '/lightrag',
+  '/obsidian-graph',
 ]
 
 const PUBLIC_PATHS = [

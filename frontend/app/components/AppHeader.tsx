@@ -7,7 +7,7 @@
 // ============================================================
 
 import { useRouter } from "next/navigation";
-import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home, Building2, LogOut, Network } from "lucide-react";
+import { LayoutDashboard, HelpCircle, Database, GraduationCap, FlaskConical, GitBranch, Stethoscope, ChevronDown, Bot, Home, Building2, LogOut, Network, Brain } from "lucide-react";
 import { useDomain, DOMAIN_CONFIGS, type Domain } from "../lib/domain-context";
 import { useAuth } from "../lib/auth-context";
 import {
@@ -35,6 +35,7 @@ export const NAV_ITEMS = [
   { href: "/diagram",          label: "DIAGRAM",   icon: GitBranch,      accent: "--col-cyan"   },
   { href: "/faq",              label: "FAQ",       icon: HelpCircle,     accent: "--col-cyan"   },
   { href: "/lightrag",         label: "LIGHTRAG",  icon: Network,        accent: "--col-cyan"   },
+  { href: "/obsidian-graph",   label: "KNOWLEDGE GRAPH", icon: Brain,    accent: "--col-cyan"   },
 ] as const;
 
 // ---------------------------------------------------------------------------
