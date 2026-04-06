@@ -1,0 +1,116 @@
+{
+  "doc-0bdf2417781acafaa10b011ecd70d095": {
+    "entity_names": [
+      "Unserviceable Component",
+      "Contamination",
+      "Scheduled Out-Of-Phase Maintenance",
+      "Asset HYD-222",
+      "Fatigue Loading",
+      "Bay C",
+      "Post-Maintenance Functional Test",
+      "Corrosion",
+      "Work Order WO-81763",
+      "Aft Attachment Point",
+      "Fuel System",
+      "Bracket",
+      "NCR Report: INC-648887DB",
+      "Visual Inspection"
+    ],
+    "count": 14,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "doc-0bdf2417781acafaa10b011ecd70d095"
+  },
+  "doc-c3dae68a7b53635586ac56b2c7a0e752": {
+    "entity_names": [
+      "NCR Report INC-7C5EA02D",
+      "Medium Severity",
+      "Switch",
+      "Thermal Cycling",
+      "Corrective Action",
+      "Work Order WO-72829",
+      "Scheduled Phase Maintenance",
+      "Asset AVION-760",
+      "Corrosion",
+      "Unserviceable Status",
+      "Propulsion System",
+      "Maintenance Manual",
+      "Anomalous Wear Pattern",
+      "Receiving Dock",
+      "Micro-Crack Indication",
+      "Root Fitting",
+      "Visual Inspection"
+    ],
+    "count": 17,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "doc-c3dae68a7b53635586ac56b2c7a0e752"
+  },
+  "doc-ecb51acaeb83a4650a7c25bb48021048": {
+    "entity_names": [
+      "Unserviceable Component",
+      "Contamination",
+      "Avionics System",
+      "Manufacturing Variance",
+      "Scheduled Out-Of-Phase Maintenance",
+      "Asset ENG-924",
+      "Delamination",
+      "Regulator",
+      "Maintenance Manual",
+      "NCR Report INC-7128F761",
+      "Forward Bulkhead",
+      "Bay A",
+      "Work Order WO-59488",
+      "Visual Inspection"
+    ],
+    "count": 14,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "doc-ecb51acaeb83a4650a7c25bb48021048"
+  },
+  "doc-8ea194d6b2ae51ec2cc94fa3e2e2ea6d": {
+    "entity_names": [
+      "NCR Report: INC-BEC46687",
+      "500-Hour Maintenance",
+      "Cylinder",
+      "Loose Fastener",
+      "Thermal Cycling",
+      "ENG-800",
+      "Serviceable Spare",
+      "Surface Damage",
+      "Forward Bulkhead",
+      "Anomalous Wear Pattern",
+      "Bay A",
+      "Metallurgical Analysis",
+      "Visual Inspection",
+      "Work Order WO-49945",
+      "Hydraulics System"
+    ],
+    "count": 15,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "doc-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+  },
+  "doc-29d20847544f3a4c5b00e5237c4c45e6": {
+    "entity_names": [
+      "Ultrasonic Thickness Gauge",
+      "ASSET-369",
+      "Scheduled Overhaul",
+      "FIND-86931",
+      "Pneumatics System",
+      "ASSET-233",
+      "Residual Vibration",
+      "Seals",
+      "Pressure Test",
+      "NCR Report INC-F828ED92",
+      "Severity Reclassification",
+      "FRAME-255",
+      "Receiving Dock",
+      "Filter"
+    ],
+    "count": 14,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "doc-29d20847544f3a4c5b00e5237c4c45e6"
+  }
+}

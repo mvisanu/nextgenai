@@ -49,7 +49,8 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | Package | Key files | Purpose |
 |---|---|---|
 | `agent/` | `orchestrator.py`, `intent.py`, `planner.py`, `verifier.py` | Intent classification → plan → tool loop → verify |
-| `api/` | `query.py`, `runs.py`, `analytics.py`, `ingest.py`, `docs.py` | FastAPI routers: `POST /query`, `GET /runs`, `GET /analytics/*`, `POST /ingest`, `GET /healthz` |
+| `api/` | `query.py`, `runs.py`, `analytics.py`, `ingest.py`, `docs.py`, `lightrag.py` | FastAPI routers: `POST /query`, `GET /runs`, `GET /analytics/*`, `POST /ingest`, `GET /healthz`, `/lightrag/*` |
+| `lightrag_service/` | `rag_instance.py`, `indexer.py`, `demo_indexer.py`, `graph_exporter.py` | LightRAG singleton per domain, DB/demo-doc indexing, graph export + NL query |
 | `auth/` | `jwt.py` | JWT verification via `python-jose` (HS256); `verify_token()` + `get_current_user` (hard, raises 401) + `get_optional_user` (soft, returns `None` for anonymous) FastAPI dependencies — **currently inactive**: all API routes are fully public (no `Depends(get_current_user/get_optional_user)` applied); module retained for future re-enablement |
 | `db/` | `models.py`, `session.py`, `migrations/` | 7-table SQLAlchemy schema + Wave 3 columns, async/sync engines, Alembic |
 | `graph/` | `builder.py`, `expander.py`, `scorer.py` | GraphRAG: build nodes/edges, expand subgraph, score paths |
@@ -73,6 +74,12 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `GET` | `/analytics/diseases` | Disease aggregates — `?from=&to=&specialty=` — **public** |
 | `POST` | `/ingest` | Ingest documents — public |
 | `GET` | `/healthz` | Health check — `Cache-Control: no-store` — public |
+| `GET` | `/lightrag/status/{domain}` | LightRAG index status + graph stats — public |
+| `POST` | `/lightrag/index/{domain}` | Trigger background indexing (returns immediately) — public |
+| `GET` | `/lightrag/graph/{domain}` | Export knowledge graph nodes+edges — public |
+| `POST` | `/lightrag/query` | LightRAG NL query (`domain`, `query`, `mode`) — public |
+| `GET` | `/lightrag/modes` | List supported query modes — public |
+| `GET` | `/lightrag/index-status` | All domains index job status — public |
 
 ### Database tables (`backend/app/db/models.py`)
 
@@ -109,6 +116,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `/examples` | `examples/page.tsx` | Pre-built example queries (aircraft) — "Run Query" button bridges to ChatPanel |
 | `/medical-examples` | `medical-examples/page.tsx` | 14 pre-built clinical example queries — "Run Query" button bridges to ChatPanel |
 | `/faq` | `faq/page.tsx` | FAQ |
+| `/lightrag` | `lightrag/page.tsx` | LightRAG knowledge graph explorer — two-panel (control + React Flow graph); domain switcher, sample queries, index status, NL query |
 
 Key frontend files:
 - `app/layout.tsx` — renders `<AppHeader />` above all `{children}`; provider nesting: `ThemeProvider` → `AuthProvider` → `DomainProvider` → `RunProvider`
@@ -127,6 +135,7 @@ Key frontend files:
 - `app/components/CitationsDrawer.tsx` — Prev/Next nav; "1 of N" counter; `highlightRange()` char-offset highlighting; conflict badge
 - `app/components/ExportModal.tsx` — PDF export via `@react-pdf/renderer`; JSON download
 - `app/components/MermaidDiagram.tsx` — per-diagram `%%{init}%%` theming, single init
+- `app/components/LightRAGGraphViewer.tsx` — standalone React Flow + dagre graph for LightRAG (SCADA theme); MUST be imported via `dynamic(..., { ssr: false })` — do NOT modify existing `GraphViewer.tsx`
 
 ## Configuration
 
@@ -202,13 +211,16 @@ Key frontend files:
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `frontend/.env.local` / Vercel | Supabase anon/public key — safe to expose client-side |
 | `NEXT_PUBLIC_SITE_URL` | `frontend/.env.local` / Vercel | Full frontend URL for email redirect links (`http://localhost:3005` dev, `https://nextgenai-seven.vercel.app` prod) |
 | `SUPABASE_JWT_SECRET` | `.env` / Render dashboard | JWT secret from Supabase dashboard → Settings → API → JWT Settings — backend-only, never in frontend |
+| `LIGHTRAG_BASE_DIR` | `.env` / Render dashboard | Base directory for LightRAG file storage (default: `backend/data/lightrag`); each domain gets its own subdirectory |
+| `LIGHTRAG_BATCH_SIZE` | `.env` / Render dashboard | Number of docs per `ainsert` batch during indexing (default: `10`); increase to `25–50` for faster indexing on capable hardware |
 
 ## Test Suite
 
-- **Total tests**: 560 (344 pre-Wave 3 + 181 Wave 3 + 35 Wave 4)
-- **Status**: 556 passed, 4 skipped (DB-dependent, expected without live PostgreSQL)
+- **Total tests**: 599 (344 pre-Wave 3 + 181 Wave 3 + 35 Wave 4 + 39 Wave 5 LightRAG)
+- **Status**: 577 passed, 5 skipped (DB-dependent, expected without live PostgreSQL)
 - **Run with**: `.venv/Scripts/python -m pytest tests/` from `backend/` — bare `pytest` will fail with missing native module errors
 - **Wave 3 test files**: `backend/tests/test_wave3_schemas.py`, `test_wave3_runs_api.py`, `test_wave3_analytics_api.py`, `test_wave3_streaming.py`, `test_wave3_conversational_memory.py`, `test_wave3_compute_tool.py`, `test_wave3_retrieval_source.py`, `test_wave3_sql_queries.py`, `test_wave3_frontend_inspection.py`
+- **Wave 5 test file**: `backend/tests/test_lightrag_service.py` — 22 tests for LightRAG endpoints and service layer
 - **Anthropic stub**: `backend/tests/stubs/anthropic/__init__.py` — contains both `Anthropic` (sync) and `AsyncAnthropic` (async) stub classes; loaded via `conftest.py`
 
 ## Wave 3 Reference Docs (repo root)
@@ -230,3 +242,31 @@ Key frontend files:
 | `prd3.md` | Wave 4 PRD v1.0 — Supabase Auth; 7 user stories, architecture decisions, acceptance criteria |
 | `tasks3.md` | 28 atomic Wave 4 tasks (W4-001 → W4-028); phases 1–5; critical path |
 | `auth_prompt.md` | Auth implementation brief — sign-up/sign-in/reset/protect flows |
+
+## Wave 5 — LightRAG Integration
+
+### Architecture
+
+- **`backend/app/lightrag_service/`** — file-based knowledge graph per domain (does NOT touch `graph_node`/`graph_edge` PostgreSQL tables)
+  - `rag_instance.py` — singleton `LightRAG` per domain; wraps existing `EmbeddingModel` (all-MiniLM-L6-v2) + Anthropic Haiku for entity extraction
+  - `indexer.py` — reads from DB (`incident_reports` + `manufacturing_defects` for aircraft; `medical_cases` for medical); falls back to demo docs if DB empty
+  - `demo_indexer.py` — loads `.md` files from `demo/lightrag_docs/{domain}/`
+  - `graph_exporter.py` — exports graph via public async API (`get_all_nodes()` / `get_all_edges()`); provides `search_graph()` query wrapper
+- **`demo/lightrag_docs/`** — 10 aircraft NCR docs (`ncr_001–010.md`) + 10 medical case docs (`case_001–010.md`)
+- **`backend/data/lightrag/{aircraft,medical}/`** — runtime file storage (gitignored; `.gitkeep` files tracked)
+- **Auto-indexing**: `main.py` lifespan fires `_auto_index_lightrag()` as a background task on startup — indexes from DB if not already indexed; does not block startup
+
+### Key LightRAG constraints
+
+- `lightrag-hku==1.4.12` — `EmbeddingFunc` is a **dataclass**: `EmbeddingFunc(embedding_dim=..., func=my_async_fn, max_token_size=..., model_name=...)`
+- Do **NOT** pass `workspace=domain` to the `LightRAG` constructor — it creates a nested subdirectory (e.g. `aircraft/aircraft/`) that breaks `check_index_status`; use `working_dir` only
+- Storage: `JsonKVStorage`, `NanoVectorDBStorage`, `NetworkXStorage`, `JsonDocStatusStorage` — file-based, no PostgreSQL
+- `LightRAGGraphViewer` must be imported via `dynamic(..., { ssr: false })` — React Flow requires browser APIs
+- `system_prompt` must be passed as the Anthropic `system=` kwarg — NOT appended as a user message (causes consecutive-user-message 400 error)
+- Query returns empty string `""` when index is empty — frontend checks `queryResult !== null` (not truthiness) to render result panel
+- `LIGHTRAG_BASE_DIR` env var controls base path; default `backend/data/lightrag`
+- Test path resolution: `REPO_ROOT = Path(__file__).resolve().parent.parent.parent` (pytest cwd is `backend/`)
+- **`_graph_stats` cache in `indexer.py`**: `check_index_status` reads `kv_store_full_docs.json` and `graph_chunk_entity_relation.graphml` only on the first call after indexing; subsequent calls return from `_graph_stats` dict. Cache is invalidated (`.pop`) before and after `index_aircraft_data`/`index_medical_data` so re-indexing produces fresh stats. Do NOT remove this cache — without it every status poll does full JSON+graphml disk reads.
+- **`LIGHTRAG_BATCH_SIZE`**: `indexer.py` reads `int(os.getenv("LIGHTRAG_BATCH_SIZE", "10"))` at module level and uses it as the default for all three indexing function signatures. Default is conservative (10 docs/batch) to avoid Haiku rate limits; override to 25–50 for faster local indexing.
+- **LightRAG frontend memoization**: `lightrag/page.tsx` passes `graphNodes` and `graphEdges` as `useMemo` values to `LightRAGGraphViewer` — these must remain memoized. Inline `graphData?.nodes ?? []` expressions create new array references on every render and cause dagre to recompute layout unnecessarily. `connectionCount` is also `useMemo([selectedNode, graphData])`.
+- **LightRAG polling `visibilitychange` guard**: `lightrag/page.tsx` pauses the status-poll interval when the tab is hidden and resumes it (with an immediate tick) when the tab becomes visible. Do not remove this — background polling wastes API calls on inactive tabs.

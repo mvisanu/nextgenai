@@ -52,3 +52,6 @@ backend/.testlib/
 # MCP config (local only)
 .mcp.json
 .claude/
+
+# LightRAG working directories (auto-generated graph data)
+backend/data/lightrag/

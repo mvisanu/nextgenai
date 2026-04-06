@@ -1,0 +1,310 @@
+{
+  "doc-0bdf2417781acafaa10b011ecd70d095": {
+    "relation_pairs": [
+      [
+        "Aft Attachment Point",
+        "Contamination"
+      ],
+      [
+        "Asset HYD-222",
+        "Unserviceable Component"
+      ],
+      [
+        "Post-Maintenance Functional Test",
+        "Work Order WO-81763"
+      ],
+      [
+        "Asset HYD-222",
+        "Fuel System"
+      ],
+      [
+        "Asset HYD-222",
+        "Scheduled Out-Of-Phase Maintenance"
+      ],
+      [
+        "Fuel System",
+        "NCR Report: INC-648887DB"
+      ],
+      [
+        "Bracket",
+        "Fatigue Loading"
+      ],
+      [
+        "Bracket",
+        "Visual Inspection"
+      ],
+      [
+        "NCR Report: INC-648887DB",
+        "Work Order WO-81763"
+      ],
+      [
+        "Asset HYD-222",
+        "Bracket"
+      ],
+      [
+        "Asset HYD-222",
+        "Bay C"
+      ],
+      [
+        "Bracket",
+        "Corrosion"
+      ],
+      [
+        "Asset HYD-222",
+        "Contamination"
+      ]
+    ],
+    "count": 13,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "doc-0bdf2417781acafaa10b011ecd70d095"
+  },
+  "doc-c3dae68a7b53635586ac56b2c7a0e752": {
+    "relation_pairs": [
+      [
+        "Switch",
+        "Unserviceable Status"
+      ],
+      [
+        "Switch",
+        "Visual Inspection"
+      ],
+      [
+        "Anomalous Wear Pattern",
+        "Switch"
+      ],
+      [
+        "Corrective Action",
+        "Maintenance Manual"
+      ],
+      [
+        "NCR Report INC-7C5EA02D",
+        "Propulsion System"
+      ],
+      [
+        "Corrosion",
+        "Thermal Cycling"
+      ],
+      [
+        "Corrosion",
+        "Switch"
+      ],
+      [
+        "Micro-Crack Indication",
+        "Root Fitting"
+      ],
+      [
+        "Micro-Crack Indication",
+        "Switch"
+      ],
+      [
+        "Corrosion",
+        "Visual Inspection"
+      ],
+      [
+        "Propulsion System",
+        "Receiving Dock"
+      ],
+      [
+        "Asset AVION-760",
+        "Propulsion System"
+      ],
+      [
+        "Corrective Action",
+        "Work Order WO-72829"
+      ],
+      [
+        "Propulsion System",
+        "Switch"
+      ],
+      [
+        "Medium Severity",
+        "NCR Report INC-7C5EA02D"
+      ],
+      [
+        "Receiving Dock",
+        "Scheduled Phase Maintenance"
+      ]
+    ],
+    "count": 16,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "doc-c3dae68a7b53635586ac56b2c7a0e752"
+  },
+  "doc-ecb51acaeb83a4650a7c25bb48021048": {
+    "relation_pairs": [
+      [
+        "Avionics System",
+        "NCR Report INC-7128F761"
+      ],
+      [
+        "Regulator",
+        "Unserviceable Component"
+      ],
+      [
+        "Regulator",
+        "Scheduled Out-Of-Phase Maintenance"
+      ],
+      [
+        "Avionics System",
+        "Contamination"
+      ],
+      [
+        "Avionics System",
+        "Regulator"
+      ],
+      [
+        "NCR Report INC-7128F761",
+        "Work Order WO-59488"
+      ],
+      [
+        "Avionics System",
+        "Bay A"
+      ],
+      [
+        "Contamination",
+        "Forward Bulkhead"
+      ],
+      [
+        "Delamination",
+        "Regulator"
+      ],
+      [
+        "Maintenance Manual",
+        "Work Order WO-59488"
+      ],
+      [
+        "Manufacturing Variance",
+        "Regulator"
+      ],
+      [
+        "Delamination",
+        "Visual Inspection"
+      ]
+    ],
+    "count": 12,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "doc-ecb51acaeb83a4650a7c25bb48021048"
+  },
+  "doc-8ea194d6b2ae51ec2cc94fa3e2e2ea6d": {
+    "relation_pairs": [
+      [
+        "Hydraulics System",
+        "NCR Report: INC-BEC46687"
+      ],
+      [
+        "Cylinder",
+        "Metallurgical Analysis"
+      ],
+      [
+        "Bay A",
+        "Hydraulics System"
+      ],
+      [
+        "Hydraulics System",
+        "Loose Fastener"
+      ],
+      [
+        "Forward Bulkhead",
+        "Loose Fastener"
+      ],
+      [
+        "Hydraulics System",
+        "Work Order WO-49945"
+      ],
+      [
+        "Cylinder",
+        "Thermal Cycling"
+      ],
+      [
+        "Anomalous Wear Pattern",
+        "Cylinder"
+      ],
+      [
+        "Cylinder",
+        "Hydraulics System"
+      ],
+      [
+        "Cylinder",
+        "Visual Inspection"
+      ],
+      [
+        "500-Hour Maintenance",
+        "Hydraulics System"
+      ],
+      [
+        "Loose Fastener",
+        "Visual Inspection"
+      ],
+      [
+        "Cylinder",
+        "Serviceable Spare"
+      ]
+    ],
+    "count": 13,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "doc-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+  },
+  "doc-29d20847544f3a4c5b00e5237c4c45e6": {
+    "relation_pairs": [
+      [
+        "FRAME-255",
+        "Receiving Dock"
+      ],
+      [
+        "FRAME-255",
+        "Scheduled Overhaul"
+      ],
+      [
+        "Pneumatics System",
+        "Seals"
+      ],
+      [
+        "Residual Vibration",
+        "Ultrasonic Thickness Gauge"
+      ],
+      [
+        "FRAME-255",
+        "Residual Vibration"
+      ],
+      [
+        "FRAME-255",
+        "NCR Report INC-F828ED92"
+      ],
+      [
+        "Residual Vibration",
+        "Severity Reclassification"
+      ],
+      [
+        "NCR Report INC-F828ED92",
+        "Pneumatics System"
+      ],
+      [
+        "FRAME-255",
+        "Pressure Test"
+      ],
+      [
+        "FIND-86931",
+        "Residual Vibration"
+      ],
+      [
+        "Filter",
+        "Pneumatics System"
+      ],
+      [
+        "ASSET-233",
+        "FRAME-255"
+      ],
+      [
+        "ASSET-369",
+        "FRAME-255"
+      ]
+    ],
+    "count": 13,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "doc-29d20847544f3a4c5b00e5237c4c45e6"
+  }
+}

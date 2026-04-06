@@ -429,3 +429,97 @@ export async function getAnalyticsDiseases(
   const q = qs.toString();
   return apiFetch<DiseaseAnalytics[]>(`/analytics/diseases${q ? `?${q}` : ""}`, undefined, accessToken);
 }
+
+// ── LightRAG API functions ─────────────────────────────────────────────────
+
+export interface LightRAGStatus {
+  domain: string;
+  indexed: boolean;
+  doc_count: number;
+  entity_count: number;
+  relation_count: number;
+  index_job_status: "idle" | "indexing" | "done" | "error";
+}
+
+export interface LightRAGGraphNode {
+  id: string;
+  label: string;
+  type: string;
+  description: string;
+  weight: number;
+}
+
+export interface LightRAGGraphEdge {
+  id: string;
+  source: string;
+  target: string;
+  label: string;
+  weight: number;
+  description: string;
+}
+
+export interface LightRAGGraphData {
+  nodes: LightRAGGraphNode[];
+  edges: LightRAGGraphEdge[];
+  status: "ok" | "not_indexed";
+  domain: string;
+  node_count: number;
+  edge_count: number;
+}
+
+export interface LightRAGQueryResponse {
+  answer: string;
+  mode: string;
+  domain: string;
+}
+
+export async function getLightRAGStatus(domain: string): Promise<LightRAGStatus> {
+  return apiFetch<LightRAGStatus>(`/lightrag/status/${domain}`);
+}
+
+export async function triggerLightRAGIndex(domain: string): Promise<{
+  message: string; domain: string; status: string;
+}> {
+  return apiFetch<{ message: string; domain: string; status: string }>(
+    `/lightrag/index/${domain}`,
+    { method: "POST" }
+  );
+}
+
+export async function getLightRAGGraph(
+  domain: string,
+  maxNodes: number = 200
+): Promise<LightRAGGraphData> {
+  return apiFetch<LightRAGGraphData>(`/lightrag/graph/${domain}?max_nodes=${maxNodes}`);
+}
+
+/**
+ * Fetch the Kaggle-ingested knowledge graph from the PostgreSQL graph_node/graph_edge
+ * tables for the given domain. Same response shape as getLightRAGGraph.
+ * Used as an immediate fallback when the LightRAG index has not been built yet.
+ */
+export async function getPreloadedGraph(domain: string): Promise<LightRAGGraphData> {
+  return apiFetch<LightRAGGraphData>(`/graph/preloaded/${domain}`);
+}
+
+export async function queryLightRAG(body: {
+  domain: string;
+  query: string;
+  mode: string;
+}): Promise<LightRAGQueryResponse> {
+  return apiFetch<LightRAGQueryResponse>("/lightrag/query", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
+
+export async function getLightRAGModes(): Promise<{
+  modes: string[];
+  default: string;
+  descriptions: Record<string, string>;
+}> {
+  return apiFetch<{ modes: string[]; default: string; descriptions: Record<string, string> }>(
+    "/lightrag/modes"
+  );
+}

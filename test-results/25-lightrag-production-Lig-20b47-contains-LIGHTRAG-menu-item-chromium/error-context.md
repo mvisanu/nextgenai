@@ -1,0 +1,83 @@
+# Page snapshot
+
+```yaml
+- generic:
+  - banner:
+    - generic:
+      - generic: NEXTAGENTAI
+      - generic: // MANUFACTURING INTELLIGENCE PLATFORM
+    - generic:
+      - generic:
+        - generic:
+          - generic: VECTOR
+        - generic:
+          - generic: SQL
+        - generic:
+          - generic: GRAPH
+      - button [expanded]:
+        - text: NAVIGATE
+        - img
+      - generic:
+        - button:
+          - generic: ✈
+          - generic: AIRCRAFT
+        - button:
+          - generic: ⚕
+          - generic: MEDICAL
+  - generic:
+    - generic:
+      - generic:
+        - generic: SIGN IN
+      - generic:
+        - generic:
+          - generic: EMAIL
+          - textbox
+        - generic:
+          - generic: PASSWORD
+          - textbox
+        - button: SIGN IN
+      - generic:
+        - paragraph:
+          - text: Don't have an account?
+          - link:
+            - /url: /sign-up
+            - text: SIGN UP
+        - paragraph:
+          - link:
+            - /url: /forgot-password
+            - text: Forgot password?
+  - alert
+  - menu "NAVIGATE" [active] [ref=e1]:
+    - generic [ref=e2]: // PAGES
+    - separator [ref=e3]
+    - menuitem "HOME" [ref=e4] [cursor=pointer]:
+      - img [ref=e5]
+      - text: HOME
+    - menuitem "DASHBOARD" [ref=e8] [cursor=pointer]:
+      - img [ref=e9]
+      - text: DASHBOARD
+    - menuitem "DATA" [ref=e14] [cursor=pointer]:
+      - img [ref=e15]
+      - text: DATA
+    - menuitem "REVIEW" [ref=e19] [cursor=pointer]:
+      - img [ref=e20]
+      - text: REVIEW
+    - menuitem "EXAMPLES" [ref=e23] [cursor=pointer]:
+      - img [ref=e24]
+      - text: EXAMPLES
+    - menuitem "MED-EX" [ref=e26] [cursor=pointer]:
+      - img [ref=e27]
+      - text: MED-EX
+    - menuitem "INDUSTRIES" [ref=e31] [cursor=pointer]:
+      - img [ref=e32]
+      - text: INDUSTRIES
+    - menuitem "AGENT" [ref=e36] [cursor=pointer]:
+      - img [ref=e37]
+      - text: AGENT
+    - menuitem "DIAGRAM" [ref=e40] [cursor=pointer]:
+      - img [ref=e41]
+      - text: DIAGRAM
+    - menuitem "FAQ" [ref=e45] [cursor=pointer]:
+      - img [ref=e46]
+      - text: FAQ
+```

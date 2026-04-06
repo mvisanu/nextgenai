@@ -1,0 +1,112 @@
+{
+  "chunk-c3dae68a7b53635586ac56b2c7a0e752": {
+    "tokens": 123,
+    "content": "NCR Report: INC-7C5EA02D\nDate: 2025-12-31 | System: Propulsion | Severity: medium\nNarrative: Scheduled phase maintenance on Propulsion system (asset AVION-760) at Receiving Dock revealed anomalous wear pattern on switch. Visual inspection confirmed corrosion consistent with thermal cycling. Inspection also noted micro-crack indication at the root fitting. Component was tagged as unserviceable. medium classification applied. Corrective action initiated under work order WO-72829.\nCorrective Action: adjusted clearances per maintenance manual; documented in log; no further action",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-c3dae68a7b53635586ac56b2c7a0e752",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169255,
+    "update_time": 1775169255,
+    "_id": "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+  },
+  "chunk-0bdf2417781acafaa10b011ecd70d095": {
+    "tokens": 117,
+    "content": "NCR Report: INC-648887DB\nDate: 2025-12-30 | System: Fuel System | Severity: low\nNarrative: Scheduled out-of-phase maintenance on Fuel System system (asset HYD-222) at Bay C revealed anomalous wear pattern on bracket. Visual inspection confirmed corrosion consistent with fatigue loading. Inspection also noted contamination at the aft attachment point. Component was tagged as unserviceable. low classification applied. Corrective action initiated under work order WO-81763.\nCorrective Action: replaced the defective component and conducted post-maintenance functional test",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-0bdf2417781acafaa10b011ecd70d095",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169255,
+    "update_time": 1775169255,
+    "_id": "chunk-0bdf2417781acafaa10b011ecd70d095"
+  },
+  "chunk-ecb51acaeb83a4650a7c25bb48021048": {
+    "tokens": 123,
+    "content": "NCR Report: INC-7128F761\nDate: 2025-12-31 | System: Avionics | Severity: low\nNarrative: Scheduled out-of-phase maintenance on Avionics system (asset ENG-924) at Bay A revealed anomalous wear pattern on regulator. Visual inspection confirmed delamination consistent with manufacturing variance. Inspection also noted contamination at the forward bulkhead. Component was tagged as unserviceable. low classification applied. Corrective action initiated under work order WO-59488.\nCorrective Action: adjusted clearances per maintenance manual; documented in log; no further action",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-ecb51acaeb83a4650a7c25bb48021048",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "chunk-ecb51acaeb83a4650a7c25bb48021048"
+  },
+  "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d": {
+    "tokens": 121,
+    "content": "NCR Report: INC-BEC46687\nDate: 2025-12-31 | System: Hydraulics | Severity: critical\nNarrative: Scheduled 500-hour maintenance on Hydraulics system (asset ENG-800) at Bay A revealed anomalous wear pattern on cylinder. Visual inspection confirmed surface damage consistent with thermal cycling. Inspection also noted loose fastener at the forward bulkhead. Component was tagged as unserviceable. critical classification applied. Corrective action initiated under work order WO-49945.\nCorrective Action: submitted component for metallurgical analysis; installed serviceable spare",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-8ea194d6b2ae51ec2cc94fa3e2e2ea6d",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+  },
+  "chunk-c7c8d696a50a4e06df36464a5de65ce8": {
+    "tokens": 128,
+    "content": "NCR Report: INC-A932CCA5\nDate: 2025-12-31 | System: Hydraulics | Severity: low\nNarrative: Quality control inspection of batch LOT-5801 (product: Bracket Assy A) identified crack affecting the filter interface on 2 of 43 units inspected. The non-conformance originated from in-process machining and was discovered at Line 3. Severity: low. All affected units quarantined. NCR-2025-9221 raised. Root cause analysis initiated; preliminary findings suggest operator error.\nCorrective Action: isolated and replaced failed sensor; calibrated replacement unit; verified",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-c7c8d696a50a4e06df36464a5de65ce8",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "chunk-c7c8d696a50a4e06df36464a5de65ce8"
+  },
+  "chunk-29d20847544f3a4c5b00e5237c4c45e6": {
+    "tokens": 125,
+    "content": "NCR Report: INC-F828ED92\nDate: 2025-12-30 | System: Pneumatics | Severity: high\nNarrative: Post-repair inspection of FRAME-255 (Pneumatics/seal) conducted at Receiving Dock following scheduled overhaul revealed residual vibration. The condition was unexpected given prior repair documentation. Severity reclassified from low to high after detailed dimensional check using ultrasonic thickness gauge. Additional inspection of fleet assets ASSET-233 through ASSET-369 recommended. Finding logged as FIND-86931.\nCorrective Action: drained and flushed system; replaced filter and seals; pressure-tested",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-29d20847544f3a4c5b00e5237c4c45e6",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+  },
+  "chunk-34be8c47cbd93b4035e8b7fcf4045598": {
+    "tokens": 145,
+    "content": "NCR Report: INC-3A962ACE\nDate: 2025-12-30 | System: Mechanical | Severity: critical\nNarrative: During routine pre-flight inspection on Line 1, technician TECH-621 observed a crack on the compressor of the Mechanical system for asset HYD-908. The crack was located at the forward bulkhead and measured approximately 2.5 cm. Adjacent components appeared serviceable. The finding was classified as critical severity per maintenance manual chapter 55. Component at 78% of its life limit. Work order WO-19007 was raised and the unit was removed from service pending repair.\nCorrective Action: submitted component for metallurgical analysis; installed serviceable spare",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-34be8c47cbd93b4035e8b7fcf4045598",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169289,
+    "update_time": 1775169289,
+    "_id": "chunk-34be8c47cbd93b4035e8b7fcf4045598"
+  },
+  "chunk-25fd1aa294a91de033c300945428111f": {
+    "tokens": 129,
+    "content": "NCR Report: INC-6BC28D4E\nDate: 2025-12-31 | System: Structural | Severity: informational\nNarrative: Asset ASSET-792 (Structural system) was brought in for unscheduled maintenance at Test Bench after operator reported intermittent fault during taxi-out. Inspection revealed vibration on the filter, serial number SN-195027. The vibration showed signs of recent initiation indicating the condition had been developing over approximately 6 weeks. Engineering was notified per procedure AMM-54-13-976. Severity assessed as informational.\nCorrective Action: replaced the defective component and conducted post-maintenance functional test",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-25fd1aa294a91de033c300945428111f",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169289,
+    "update_time": 1775169289,
+    "_id": "chunk-25fd1aa294a91de033c300945428111f"
+  },
+  "chunk-79353c93e487c2be25d49069b222e15f": {
+    "tokens": 149,
+    "content": "NCR Report: INC-DD419329\nDate: 2025-12-30 | System: Avionics | Severity: medium\nNarrative: During routine annual inspection on Assembly Area, technician TECH-104 observed a surface damage on the piston of the Avionics system for asset FRAME-924. The surface damage was located at the aft attachment point and measured approximately 0.8 inch. Adjacent components appeared corroded at interface. The finding was classified as medium severity per maintenance manual chapter 83. Component at 78% of its life limit. Work order WO-21351 was raised and the unit was removed from service pending repair.\nCorrective Action: submitted component for metallurgical analysis; installed serviceable spare",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-79353c93e487c2be25d49069b222e15f",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169289,
+    "update_time": 1775169289,
+    "_id": "chunk-79353c93e487c2be25d49069b222e15f"
+  },
+  "chunk-eb03471c7bdd75de342630c5a5deb826": {
+    "tokens": 126,
+    "content": "NCR Report: INC-35334884\nDate: 2025-12-31 | System: Fuel System | Severity: medium\nNarrative: Quality control inspection of batch LOT-9352 (product: Bracket Assy A) identified crack affecting the harness interface on 3 of 21 units inspected. The non-conformance originated from heat treatment and was discovered at Paint Shop. Severity: medium. All affected units quarantined. NCR-2025-8873 raised. Root cause analysis initiated; preliminary findings suggest raw material deviation.\nCorrective Action: submitted component for metallurgical analysis; installed serviceable spare",
+    "chunk_order_index": 0,
+    "full_doc_id": "doc-eb03471c7bdd75de342630c5a5deb826",
+    "file_path": "unknown_source",
+    "llm_cache_list": [],
+    "create_time": 1775169290,
+    "update_time": 1775169290,
+    "_id": "chunk-eb03471c7bdd75de342630c5a5deb826"
+  }
+}

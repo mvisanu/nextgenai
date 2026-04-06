@@ -1,0 +1,605 @@
+{
+  "Fuel System<SEP>NCR Report: INC-648887DB": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Fuel System<SEP>NCR Report: INC-648887DB"
+  },
+  "Bracket<SEP>Corrosion": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Bracket<SEP>Corrosion"
+  },
+  "Post-Maintenance Functional Test<SEP>Work Order WO-81763": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Post-Maintenance Functional Test<SEP>Work Order WO-81763"
+  },
+  "Asset HYD-222<SEP>Fuel System": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Fuel System"
+  },
+  "Bracket<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Bracket<SEP>Visual Inspection"
+  },
+  "NCR Report: INC-648887DB<SEP>Work Order WO-81763": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "NCR Report: INC-648887DB<SEP>Work Order WO-81763"
+  },
+  "Bracket<SEP>Fatigue Loading": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Bracket<SEP>Fatigue Loading"
+  },
+  "Aft Attachment Point<SEP>Contamination": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Aft Attachment Point<SEP>Contamination"
+  },
+  "Asset HYD-222<SEP>Bay C": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Bay C"
+  },
+  "Asset HYD-222<SEP>Bracket": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Bracket"
+  },
+  "Asset HYD-222<SEP>Contamination": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Contamination"
+  },
+  "Asset HYD-222<SEP>Scheduled Out-Of-Phase Maintenance": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Scheduled Out-Of-Phase Maintenance"
+  },
+  "Asset HYD-222<SEP>Unserviceable Component": {
+    "chunk_ids": [
+      "chunk-0bdf2417781acafaa10b011ecd70d095"
+    ],
+    "count": 1,
+    "create_time": 1775169268,
+    "update_time": 1775169268,
+    "_id": "Asset HYD-222<SEP>Unserviceable Component"
+  },
+  "NCR Report INC-7C5EA02D<SEP>Propulsion System": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "NCR Report INC-7C5EA02D<SEP>Propulsion System"
+  },
+  "Anomalous Wear Pattern<SEP>Switch": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Anomalous Wear Pattern<SEP>Switch"
+  },
+  "Corrective Action<SEP>Work Order WO-72829": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Corrective Action<SEP>Work Order WO-72829"
+  },
+  "Corrective Action<SEP>Maintenance Manual": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Corrective Action<SEP>Maintenance Manual"
+  },
+  "Corrosion<SEP>Switch": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Corrosion<SEP>Switch"
+  },
+  "Asset AVION-760<SEP>Propulsion System": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Asset AVION-760<SEP>Propulsion System"
+  },
+  "Receiving Dock<SEP>Scheduled Phase Maintenance": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Receiving Dock<SEP>Scheduled Phase Maintenance"
+  },
+  "Micro-Crack Indication<SEP>Switch": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Micro-Crack Indication<SEP>Switch"
+  },
+  "Corrosion<SEP>Thermal Cycling": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Corrosion<SEP>Thermal Cycling"
+  },
+  "Corrosion<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Corrosion<SEP>Visual Inspection"
+  },
+  "Medium Severity<SEP>NCR Report INC-7C5EA02D": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Medium Severity<SEP>NCR Report INC-7C5EA02D"
+  },
+  "Micro-Crack Indication<SEP>Root Fitting": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Micro-Crack Indication<SEP>Root Fitting"
+  },
+  "Switch<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Switch<SEP>Visual Inspection"
+  },
+  "Propulsion System<SEP>Switch": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Propulsion System<SEP>Switch"
+  },
+  "Switch<SEP>Unserviceable Status": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Switch<SEP>Unserviceable Status"
+  },
+  "Propulsion System<SEP>Receiving Dock": {
+    "chunk_ids": [
+      "chunk-c3dae68a7b53635586ac56b2c7a0e752"
+    ],
+    "count": 1,
+    "create_time": 1775169269,
+    "update_time": 1775169269,
+    "_id": "Propulsion System<SEP>Receiving Dock"
+  },
+  "Avionics System<SEP>NCR Report INC-7128F761": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169280,
+    "update_time": 1775169280,
+    "_id": "Avionics System<SEP>NCR Report INC-7128F761"
+  },
+  "Manufacturing Variance<SEP>Regulator": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169280,
+    "update_time": 1775169280,
+    "_id": "Manufacturing Variance<SEP>Regulator"
+  },
+  "Maintenance Manual<SEP>Work Order WO-59488": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169280,
+    "update_time": 1775169280,
+    "_id": "Maintenance Manual<SEP>Work Order WO-59488"
+  },
+  "Avionics System<SEP>Bay A": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169280,
+    "update_time": 1775169280,
+    "_id": "Avionics System<SEP>Bay A"
+  },
+  "Delamination<SEP>Regulator": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169280,
+    "update_time": 1775169280,
+    "_id": "Delamination<SEP>Regulator"
+  },
+  "NCR Report INC-7128F761<SEP>Work Order WO-59488": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "NCR Report INC-7128F761<SEP>Work Order WO-59488"
+  },
+  "Contamination<SEP>Forward Bulkhead": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Contamination<SEP>Forward Bulkhead"
+  },
+  "Hydraulics System<SEP>NCR Report: INC-BEC46687": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Hydraulics System<SEP>NCR Report: INC-BEC46687"
+  },
+  "Regulator<SEP>Scheduled Out-Of-Phase Maintenance": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Regulator<SEP>Scheduled Out-Of-Phase Maintenance"
+  },
+  "Delamination<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Delamination<SEP>Visual Inspection"
+  },
+  "Cylinder<SEP>Hydraulics System": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Cylinder<SEP>Hydraulics System"
+  },
+  "Avionics System<SEP>Regulator": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Avionics System<SEP>Regulator"
+  },
+  "Hydraulics System<SEP>Work Order WO-49945": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Hydraulics System<SEP>Work Order WO-49945"
+  },
+  "Cylinder<SEP>Metallurgical Analysis": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Cylinder<SEP>Metallurgical Analysis"
+  },
+  "Cylinder<SEP>Serviceable Spare": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Cylinder<SEP>Serviceable Spare"
+  },
+  "Loose Fastener<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Loose Fastener<SEP>Visual Inspection"
+  },
+  "Regulator<SEP>Unserviceable Component": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Regulator<SEP>Unserviceable Component"
+  },
+  "Avionics System<SEP>Contamination": {
+    "chunk_ids": [
+      "chunk-ecb51acaeb83a4650a7c25bb48021048"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Avionics System<SEP>Contamination"
+  },
+  "Hydraulics System<SEP>Loose Fastener": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Hydraulics System<SEP>Loose Fastener"
+  },
+  "Anomalous Wear Pattern<SEP>Cylinder": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Anomalous Wear Pattern<SEP>Cylinder"
+  },
+  "Forward Bulkhead<SEP>Loose Fastener": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Forward Bulkhead<SEP>Loose Fastener"
+  },
+  "Bay A<SEP>Hydraulics System": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Bay A<SEP>Hydraulics System"
+  },
+  "Cylinder<SEP>Thermal Cycling": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Cylinder<SEP>Thermal Cycling"
+  },
+  "Cylinder<SEP>Visual Inspection": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "Cylinder<SEP>Visual Inspection"
+  },
+  "500-Hour Maintenance<SEP>Hydraulics System": {
+    "chunk_ids": [
+      "chunk-8ea194d6b2ae51ec2cc94fa3e2e2ea6d"
+    ],
+    "count": 1,
+    "create_time": 1775169281,
+    "update_time": 1775169281,
+    "_id": "500-Hour Maintenance<SEP>Hydraulics System"
+  },
+  "FRAME-255<SEP>NCR Report INC-F828ED92": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FRAME-255<SEP>NCR Report INC-F828ED92"
+  },
+  "Residual Vibration<SEP>Ultrasonic Thickness Gauge": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "Residual Vibration<SEP>Ultrasonic Thickness Gauge"
+  },
+  "NCR Report INC-F828ED92<SEP>Pneumatics System": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "NCR Report INC-F828ED92<SEP>Pneumatics System"
+  },
+  "FRAME-255<SEP>Receiving Dock": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FRAME-255<SEP>Receiving Dock"
+  },
+  "FIND-86931<SEP>Residual Vibration": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FIND-86931<SEP>Residual Vibration"
+  },
+  "Filter<SEP>Pneumatics System": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "Filter<SEP>Pneumatics System"
+  },
+  "Residual Vibration<SEP>Severity Reclassification": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "Residual Vibration<SEP>Severity Reclassification"
+  },
+  "Pneumatics System<SEP>Seals": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "Pneumatics System<SEP>Seals"
+  },
+  "FRAME-255<SEP>Residual Vibration": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FRAME-255<SEP>Residual Vibration"
+  },
+  "ASSET-233<SEP>FRAME-255": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "ASSET-233<SEP>FRAME-255"
+  },
+  "ASSET-369<SEP>FRAME-255": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "ASSET-369<SEP>FRAME-255"
+  },
+  "FRAME-255<SEP>Scheduled Overhaul": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FRAME-255<SEP>Scheduled Overhaul"
+  },
+  "FRAME-255<SEP>Pressure Test": {
+    "chunk_ids": [
+      "chunk-29d20847544f3a4c5b00e5237c4c45e6"
+    ],
+    "count": 1,
+    "create_time": 1775169293,
+    "update_time": 1775169293,
+    "_id": "FRAME-255<SEP>Pressure Test"
+  }
+}

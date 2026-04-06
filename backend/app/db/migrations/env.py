@@ -18,6 +18,14 @@ _repo_root = str(Path(__file__).resolve().parents[4])
 if _repo_root not in sys.path:
     sys.path.insert(0, _repo_root)
 
+# Auto-load .env from the repo root so PG_DSN / DATABASE_URL are available
+# when running `alembic upgrade head` directly (without pre-exporting env vars).
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(_repo_root) / ".env")
+except ImportError:
+    pass  # python-dotenv not installed — rely on env vars being pre-set
+
 from backend.app.db.models import Base  # noqa: E402
 
 # Alembic Config object

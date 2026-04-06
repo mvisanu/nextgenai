@@ -1,0 +1,9 @@
+lightrag:
+  base_dir: ./data/lightrag
+  max_nodes: 200
+  batch_size: 10
+  llm_model: claude-haiku-4-5-20251001
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  embedding_dim: 384
+  chunk_token_size: 600
+  chunk_overlap_token_size: 80

@@ -41,6 +41,7 @@ services:
       - ./data:/workspace/backend/data
       - ./demo:/workspace/backend/demo
       - ./config.yaml:/workspace/backend/config.yaml
+      - ./backend/data/lightrag:/app/data/lightrag
     command: ["./entrypoint.sh"]
 
   frontend:

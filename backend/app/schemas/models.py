@@ -223,3 +223,52 @@ class RunRecord(BaseModel):
     query: str
     result: dict[str, Any]
     created_at: datetime | None = None
+
+
+# ── LightRAG schemas ────────────────────────────────────────────────────────
+
+class LightRAGQueryRequest(BaseModel):
+    domain: str
+    query: str
+    mode: str = "hybrid"
+
+
+class LightRAGGraphNode(BaseModel):
+    id: str
+    label: str
+    type: str = "entity"
+    description: str = ""
+    weight: float = 1.0
+
+
+class LightRAGGraphEdge(BaseModel):
+    id: str
+    source: str
+    target: str
+    label: str = ""
+    weight: float = 1.0
+    description: str = ""
+
+
+class LightRAGGraphResponse(BaseModel):
+    nodes: list[LightRAGGraphNode]
+    edges: list[LightRAGGraphEdge]
+    status: str = "ok"
+    domain: str
+    node_count: int
+    edge_count: int
+
+
+class LightRAGStatusResponse(BaseModel):
+    domain: str
+    indexed: bool
+    doc_count: int
+    entity_count: int
+    relation_count: int
+    index_job_status: str = "idle"
+
+
+class LightRAGQueryResponse(BaseModel):
+    answer: str
+    mode: str
+    domain: str
