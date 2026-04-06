@@ -83,10 +83,11 @@ async def _auto_index_lightrag() -> None:
             _index_status[domain] = "error"
             logger.warning("LightRAG '%s' auto-index failed: %s", domain, exc)
 
-    await asyncio.gather(
-        _index_if_needed("aircraft"),
-        _index_if_needed("medical"),
-    )
+    # Run domains sequentially to halve peak memory usage.
+    # On Render free tier (512 MB), concurrent initialization of two LightRAG
+    # instances + SentenceTransformer OOMs the container.
+    for _domain in ("aircraft", "medical"):
+        await _index_if_needed(_domain)
 
 
 @asynccontextmanager
@@ -109,8 +110,17 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
             extra={"error": str(exc)},
         )
 
-    # Auto-index LightRAG domains in background — does not block startup
-    asyncio.create_task(_auto_index_lightrag())
+    # Auto-index LightRAG domains in background — does not block startup.
+    # Disabled by default on memory-constrained hosts (Render free tier = 512 MB).
+    # Set LIGHTRAG_AUTO_INDEX=true to enable (requires >= 1 GB RAM).
+    if os.getenv("LIGHTRAG_AUTO_INDEX", "false").lower() == "true":
+        asyncio.create_task(_auto_index_lightrag())
+    else:
+        logger.info(
+            "LightRAG startup auto-index disabled "
+            "(LIGHTRAG_AUTO_INDEX != 'true'). "
+            "Index via POST /lightrag/index/{domain} or the Obsidian graph UI."
+        )
 
     yield
 
