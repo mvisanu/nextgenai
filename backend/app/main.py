@@ -18,7 +18,7 @@ if _repo_root not in sys.path:
 # DATABASE_URL, etc.) are available without manually exporting them.
 try:
     from dotenv import load_dotenv
-    load_dotenv(Path(_repo_root) / ".env")
+    load_dotenv(Path(_repo_root) / ".env", encoding="utf-8")
 except ImportError:
     pass  # python-dotenv not installed — rely on env vars being pre-set
 

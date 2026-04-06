@@ -22,7 +22,7 @@ if _repo_root not in sys.path:
 # when running `alembic upgrade head` directly (without pre-exporting env vars).
 try:
     from dotenv import load_dotenv
-    load_dotenv(Path(_repo_root) / ".env")
+    load_dotenv(Path(_repo_root) / ".env", encoding="utf-8")
 except ImportError:
     pass  # python-dotenv not installed — rely on env vars being pre-set
 
