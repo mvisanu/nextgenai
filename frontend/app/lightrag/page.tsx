@@ -58,7 +58,9 @@ export default function LightRAGPage() {
   // Tracks whether an active indexing poll is in progress so the
   // visibilitychange handler can pause/resume it when the tab is hidden.
   const pollActiveRef = useRef(false);
-  const pollIntervalMs = 3000;
+  // Back off to 5 s — reduces unnecessary /lightrag/status disk reads;
+  // 3 s was faster than needed since indexing a full domain takes 30–120 s.
+  const pollIntervalMs = 5000;
 
   // Count connections for selected node — memoized to avoid re-filtering on every render
   const connectionCount = useMemo(

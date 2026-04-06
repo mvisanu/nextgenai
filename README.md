@@ -170,13 +170,68 @@ NEXT_PUBLIC_SITE_URL=http://localhost:3005
 
 ### 2. Start the backend
 
+#### Option A — Docker Compose (recommended)
+
 ```bash
 docker compose up --build
 ```
 
 This starts:
 - PostgreSQL 16 + pgvector on port `5432`
-- FastAPI backend on port `8000` (waits for DB, runs migrations, seeds aircraft data, seeds medical data)
+- FastAPI backend on port `8000` (waits for DB, runs Alembic migrations, seeds aircraft data, seeds medical data)
+
+On subsequent runs you can skip the rebuild:
+
+```bash
+docker compose up
+```
+
+To stop and remove containers:
+
+```bash
+docker compose down
+```
+
+#### Option B — Run backend directly (no Docker)
+
+Requires a PostgreSQL 16 instance with the `pgvector` extension available. Point `.env` at it, then:
+
+```bash
+# 1. Create and activate the virtual environment (first time only)
+cd backend
+python -m venv .venv
+
+# Windows
+.venv\Scripts\activate
+# macOS / Linux
+source .venv/bin/activate
+
+# 2. Install Python dependencies
+pip install -r requirements.txt
+
+# 3. Install spaCy model
+python -m spacy download en_core_web_sm
+
+# 4. Apply Alembic migrations
+alembic upgrade head
+
+# 5. Start the API server — run from the REPO ROOT, not from backend/
+#    The codebase uses "from backend.app.*" absolute imports, so Python needs
+#    to see the repo root on sys.path.
+cd ..   # back to repo root
+backend/.venv/Scripts/python -m uvicorn backend.app.main:app \
+    --host 0.0.0.0 --port 8000 --reload
+```
+
+The API is now available at `http://localhost:8000`. Interactive docs at `http://localhost:8000/api/docs`.
+
+> **Why `backend.app.main:app` from the repo root?** All source files import with the `backend.app.*` prefix (e.g. `from backend.app.api import query`). Running uvicorn from inside `backend/` would put `backend/` on `sys.path`, making `backend` invisible as a package. Running from the repo root (one level up) keeps the import tree intact.
+
+> **Note:** seeding (`entrypoint.sh`) only runs automatically inside Docker. To seed data manually when running without Docker:
+>
+> ```bash
+> python -m backend.src.cli ingest --config backend/config.yaml
+> ```
 
 ### 3. Start the frontend
 

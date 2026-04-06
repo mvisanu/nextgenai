@@ -259,7 +259,7 @@ function SidePanel({ node, edges, nodes, onClose, onNavigate }: SidePanelProps) 
 // ---------------------------------------------------------------------------
 
 export default function ObsidianGraph() {
-  const { nodes, edges, loading, error, aircraftEmpty, medicalEmpty, refetch, buildIndex } =
+  const { nodes, edges, loading, error, aircraftEmpty, medicalEmpty, indexingDomains, refetch, buildIndex } =
     useGraphData();
 
   const svgRef = useRef<SVGSVGElement>(null);
@@ -875,10 +875,7 @@ export default function ObsidianGraph() {
           {(["aircraft", "medical"] as const).map((domain) => (
             <button
               key={domain}
-              onClick={async () => {
-                await buildIndex(domain);
-                refetch();
-              }}
+              onClick={() => buildIndex(domain)}
               style={{
                 background: `${DOMAIN_COLORS[domain]}18`,
                 border: `1px solid ${DOMAIN_COLORS[domain]}60`,
@@ -1016,6 +1013,28 @@ export default function ObsidianGraph() {
           NODES: {visibleNodes.length} · EDGES: {visibleLinks.length} · AIRCRAFT:{" "}
           {statsAircraft} · MEDICAL: {statsMedical}
         </div>
+        {/* Auto-indexing indicator */}
+        {indexingDomains.size > 0 && (
+          <div style={{
+            marginTop: 4,
+            display: "flex",
+            alignItems: "center",
+            gap: 6,
+            color: "#f59e0b",
+          }}>
+            <span style={{
+              display: "inline-block",
+              width: 6,
+              height: 6,
+              borderRadius: "50%",
+              background: "#f59e0b",
+              animation: "pulse 1.2s ease-in-out infinite",
+            }} />
+            INDEXING{" "}
+            {[...indexingDomains].map((d) => d.toUpperCase()).join(" + ")}{" "}
+            — GRAPH WILL UPGRADE WHEN READY
+          </div>
+        )}
       </div>
 
       {/* Side panel */}
@@ -1056,7 +1075,7 @@ export default function ObsidianGraph() {
                 AIRCRAFT INDEX NOT BUILT
               </span>
               <button
-                onClick={async () => { await buildIndex("aircraft"); refetch(); }}
+                onClick={() => buildIndex("aircraft")}
                 style={{
                   fontFamily: "Orbitron, monospace",
                   fontSize: 9,
@@ -1084,7 +1103,7 @@ export default function ObsidianGraph() {
                 MEDICAL INDEX NOT BUILT
               </span>
               <button
-                onClick={async () => { await buildIndex("medical"); refetch(); }}
+                onClick={() => buildIndex("medical")}
                 style={{
                   fontFamily: "Orbitron, monospace",
                   fontSize: 9,

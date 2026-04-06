@@ -12,7 +12,7 @@ from __future__ import annotations
 from datetime import date, datetime, timedelta
 from typing import Any
 
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, Response
 from sqlalchemy import text
 
 from backend.app.db.session import get_session
@@ -40,6 +40,7 @@ def _default_to() -> str:
     description="Returns aggregated defect counts from manufacturing_defects, filtered by date range.",
 )
 async def get_defects(
+    response: Response,
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
     domain: str | None = Query(None, description="Domain filter (currently unused — always manufacturing)"),
@@ -74,6 +75,7 @@ async def get_defects(
         logger.error("Analytics defects query failed", extra={"error": str(exc)})
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
 
+    response.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=30"
     output = []
     for row in rows:
         row_dict = dict(zip(columns, row))
@@ -91,6 +93,7 @@ async def get_defects(
     description="Returns monthly maintenance event counts from maintenance_logs.",
 )
 async def get_maintenance(
+    response: Response,
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
 ) -> list[dict[str, Any]]:
@@ -107,6 +110,7 @@ async def get_maintenance(
         logger.error("Analytics maintenance query failed", extra={"error": str(exc)})
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
 
+    response.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=30"
     output = []
     for row in rows:
         row_dict = dict(zip(columns, row))
@@ -125,6 +129,7 @@ async def get_maintenance(
     description="Returns disease case counts from disease_records, grouped by specialty.",
 )
 async def get_diseases(
+    response: Response,
     from_date: str | None = Query(None, alias="from", description="Start date ISO (YYYY-MM-DD)"),
     to_date: str | None = Query(None, alias="to", description="End date ISO (YYYY-MM-DD)"),
     specialty: str | None = Query(None, description="Filter by specialty name"),
@@ -155,6 +160,7 @@ async def get_diseases(
         logger.error("Analytics diseases query failed", extra={"error": str(exc)})
         raise HTTPException(status_code=500, detail=f"Database error: {str(exc)}")
 
+    response.headers["Cache-Control"] = "public, max-age=60, stale-while-revalidate=30"
     output = []
     for row in rows:
         row_dict = dict(zip(columns, row))

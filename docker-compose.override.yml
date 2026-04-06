@@ -1,0 +1,12 @@
+# Local override — maps NextAgentAI postgres to port 5433
+# so it can coexist with other projects already using 5432.
+#
+# Update .env to match:
+#   PG_DSN=postgresql://postgres:postgres@localhost:5433/nextai
+#   DATABASE_URL=postgresql://postgres:postgres@localhost:5433/nextai
+#
+# This file is git-ignored; do not commit it.
+services:
+  postgres:
+    ports:
+      - "5433:5432"

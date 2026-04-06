@@ -1,0 +1,43 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e1]:
+  - banner [ref=e2]:
+    - generic [ref=e3]:
+      - generic [ref=e7]: NEXTAGENTAI
+      - generic [ref=e8]: // MANUFACTURING INTELLIGENCE PLATFORM
+    - generic [ref=e9]:
+      - generic [ref=e10]:
+        - generic [ref=e13]: VECTOR
+        - generic [ref=e16]: SQL
+        - generic [ref=e19]: GRAPH
+      - button "NAVIGATE" [active] [ref=e21] [cursor=pointer]:
+        - text: NAVIGATE
+        - img [ref=e22]
+      - generic [ref=e25]:
+        - button "✈ AIRCRAFT" [ref=e26] [cursor=pointer]:
+          - generic [ref=e27]: ✈
+          - generic [ref=e28]: AIRCRAFT
+        - button "⚕ MEDICAL" [ref=e29] [cursor=pointer]:
+          - generic [ref=e30]: ⚕
+          - generic [ref=e31]: MEDICAL
+  - generic [ref=e34]:
+    - generic [ref=e36]: SIGN IN
+    - generic [ref=e37]:
+      - generic [ref=e38]:
+        - generic [ref=e39]: EMAIL
+        - textbox [ref=e40]
+      - generic [ref=e41]:
+        - generic [ref=e42]: PASSWORD
+        - textbox [ref=e43]
+      - button "SIGN IN" [ref=e44] [cursor=pointer]
+    - generic [ref=e45]:
+      - paragraph [ref=e46]:
+        - text: Don't have an account?
+        - link "SIGN UP" [ref=e47] [cursor=pointer]:
+          - /url: /sign-up
+      - paragraph [ref=e48]:
+        - link "Forgot password?" [ref=e49] [cursor=pointer]:
+          - /url: /forgot-password
+  - alert [ref=e50]
+```

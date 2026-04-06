@@ -4,6 +4,24 @@ Configures CORS, lifespan (DB pool init/dispose), size limits, and routers.
 """
 from __future__ import annotations
 
+import sys
+from pathlib import Path
+
+# Ensure the repo root (parent of 'backend/') is on sys.path so that
+# "from backend.app.*" imports resolve whether uvicorn is launched from the
+# repo root OR from inside the backend/ directory.
+_repo_root = str(Path(__file__).resolve().parents[2])  # backend/app/main.py → repo root
+if _repo_root not in sys.path:
+    sys.path.insert(0, _repo_root)
+
+# Auto-load .env from the repo root so all env vars (ANTHROPIC_API_KEY, PG_DSN,
+# DATABASE_URL, etc.) are available without manually exporting them.
+try:
+    from dotenv import load_dotenv
+    load_dotenv(Path(_repo_root) / ".env")
+except ImportError:
+    pass  # python-dotenv not installed — rely on env vars being pre-set
+
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -14,7 +32,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.middleware.gzip import GZipMiddleware
 
-from backend.app.api import analytics, docs, ingest, query, runs
+from backend.app.api import analytics, docs, graph_data, ingest, query, runs
 from backend.app.api.lightrag import router as lightrag_router
 from backend.app.db.session import dispose_async_engine, get_async_engine
 from backend.app.observability.logging import get_logger
@@ -158,6 +176,7 @@ def create_app() -> FastAPI:
     app.include_router(runs.router, tags=["Runs"])
     app.include_router(analytics.router, tags=["Analytics"])
     app.include_router(lightrag_router, prefix="/lightrag", tags=["lightrag"])
+    app.include_router(graph_data.router, tags=["Graph"])
 
     # Root redirect to docs
     @app.get("/", include_in_schema=False)

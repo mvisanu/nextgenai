@@ -22,7 +22,13 @@ from backend.app.llm.client import get_async_fast_llm_client
 logger = logging.getLogger(__name__)
 
 # ── Working directories ────────────────────────────────────────────────────────
-BASE_DIR = Path(os.getenv("LIGHTRAG_BASE_DIR", "backend/data/lightrag"))
+# Default: derive repo root from this file's location so the path resolves
+# correctly whether uvicorn is launched from the repo root, from backend/, or
+# inside the Docker container (where ./data is volume-mounted to
+# /workspace/backend/data via docker-compose).
+_repo_root = Path(__file__).resolve().parents[3]  # backend/app/lightrag_service/rag_instance.py → repo root
+_default_base = str(_repo_root / "data" / "lightrag")
+BASE_DIR = Path(os.getenv("LIGHTRAG_BASE_DIR", _default_base))
 DOMAIN_DIRS = {
     "aircraft": str(BASE_DIR / "aircraft"),
     "medical":  str(BASE_DIR / "medical"),

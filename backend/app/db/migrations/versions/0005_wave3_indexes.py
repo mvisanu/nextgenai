@@ -27,30 +27,36 @@ depends_on = None
 
 
 def upgrade() -> None:
-    connection = op.get_bind()
-    connection.execution_options(isolation_level="AUTOCOMMIT")
+    # CREATE INDEX CONCURRENTLY cannot run inside a transaction.
+    # Commit the current Alembic transaction first, then each CONCURRENTLY
+    # statement runs in autocommit mode (psycopg2 treats each statement as its
+    # own transaction when no BEGIN is active).
 
     # 1. HNSW index on medical_embeddings — parity with incident_embeddings
-    connection.execute(sa.text("""
+    op.execute("COMMIT")
+    op.execute(sa.text("""
         CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_embeddings_hnsw
         ON medical_embeddings USING hnsw (embedding vector_cosine_ops)
         WITH (m = 16, ef_construction = 64)
     """))
 
     # 2. GIN full-text index on incident_reports.narrative (aircraft domain BM25)
-    connection.execute(sa.text("""
+    op.execute("COMMIT")
+    op.execute(sa.text("""
         CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_incident_reports_fts
         ON incident_reports USING GIN(to_tsvector('english', narrative))
     """))
 
     # 3. GIN full-text index on medical_cases.narrative (medical domain BM25)
-    connection.execute(sa.text("""
+    op.execute("COMMIT")
+    op.execute(sa.text("""
         CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_medical_cases_fts
         ON medical_cases USING GIN(to_tsvector('english', narrative))
     """))
 
     # 4. Composite index on agent_runs for query-cache LOWER(query) lookups
-    connection.execute(sa.text("""
+    op.execute("COMMIT")
+    op.execute(sa.text("""
         CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_agent_runs_query_ts
         ON agent_runs (LOWER(query), created_at DESC)
     """))

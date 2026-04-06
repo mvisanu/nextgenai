@@ -61,17 +61,23 @@ async def index_aircraft_data(batch_size: int = LIGHTRAG_BATCH_SIZE) -> dict:
     sources: list[str] = []
 
     with get_sync_session() as session:
-        # Incident reports
+        # Incident reports — project only the columns needed for _fmt_incident
         incidents = session.execute(
-            text("SELECT * FROM incident_reports ORDER BY event_date DESC LIMIT 500")
+            text(
+                "SELECT incident_id, event_date, system, severity, narrative, corrective_action"
+                " FROM incident_reports ORDER BY event_date DESC LIMIT 500"
+            )
         ).fetchall()
         for row in incidents:
             docs.append(_fmt_incident(row))
             sources.append(f"incident:{row.incident_id}")
 
-        # Manufacturing defects
+        # Manufacturing defects — project only the columns needed for _fmt_defect
         defects = session.execute(
-            text("SELECT * FROM manufacturing_defects ORDER BY inspection_date DESC LIMIT 500")
+            text(
+                "SELECT defect_id, inspection_date, product, plant, defect_type, severity, action_taken"
+                " FROM manufacturing_defects ORDER BY inspection_date DESC LIMIT 500"
+            )
         ).fetchall()
         for row in defects:
             docs.append(_fmt_defect(row))
@@ -108,8 +114,12 @@ async def index_medical_data(batch_size: int = LIGHTRAG_BATCH_SIZE) -> dict:
     sources: list[str] = []
 
     with get_sync_session() as session:
+        # Medical cases — project only the columns needed for _fmt_medical_case
         cases = session.execute(
-            text("SELECT * FROM medical_cases ORDER BY event_date DESC LIMIT 500")
+            text(
+                "SELECT case_id, event_date, system, severity, narrative, corrective_action"
+                " FROM medical_cases ORDER BY event_date DESC LIMIT 500"
+            )
         ).fetchall()
         for row in cases:
             docs.append(_fmt_medical_case(row))

@@ -3358,5 +3358,3645 @@
     "create_time": 1775171244,
     "update_time": 1775171244,
     "_id": "doc-93b166f89757074cf6bbcd6523a176bc"
+  },
+  "doc-0b73c3b2f8f322166ec31dcd381ae558": {
+    "content": "NCR Report: INC-B89580A2\nDate: 2025-09-14 | System: Flight Controls | Severity: high\nNarrative: Quality control inspection of batch LOT-8374 (product: Control Unit E) identified loose fastener affecting the piston interface on 3 of 19 units inspected. The non-conformance originated from assembly error and was discovered at Line 1. Severity: high. All affected units quarantined. NCR-2023-7872 raised. Root cause analysis initiated; preliminary findings suggest process parameter drift.\nCorrective Action: realigned assembly to specification; documented findings; submitted NCR",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-0b73c3b2f8f322166ec31dcd381ae558"
+  },
+  "doc-25336e9a8570a0f4731a4708a26934a2": {
+    "content": "NCR Report: INC-B2AA7881\nDate: 2025-09-14 | System: Landing Gear | Severity: informational\nNarrative: Quality control inspection of batch LOT-6661 (product: Pump Assembly F) identified contamination affecting the bracket interface on 5 of 38 units inspected. The non-conformance originated from assembly error and was discovered at Line 3. Severity: informational. All affected units quarantined. NCR-2020-4963 raised. Root cause analysis initiated; preliminary findings suggest tooling wear.\nCorrective Action: isolated and replaced failed sensor; calibrated replacement unit; verified",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-25336e9a8570a0f4731a4708a26934a2"
+  },
+  "doc-846035c3965244adfe01b7a6f5615dd5": {
+    "content": "NCR Report: INC-D4C8CFF6\nDate: 2025-09-13 | System: Pneumatics | Severity: medium\nNarrative: Scheduled out-of-phase maintenance on Pneumatics system (asset HYD-208) at Line 1 revealed anomalous wear pattern on piston. Visual inspection confirmed leakage consistent with thermal cycling. Inspection also noted loose fastener at the lower surface. Component was tagged as unserviceable. medium classification applied. Corrective action initiated under work order WO-82770.\nCorrective Action: drained and flushed system; replaced filter and seals; pressure-tested",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-846035c3965244adfe01b7a6f5615dd5"
+  },
+  "doc-52012b047ad0fe5850420f4a802da2d6": {
+    "content": "NCR Report: INC-72534DDD\nDate: 2025-09-13 | System: Propulsion | Severity: low\nNarrative: Quality control inspection of batch LOT-5371 (product: Bracket Assy A) identified dimensional nonconformance affecting the valve interface on 2 of 10 units inspected. The non-conformance originated from assembly error and was discovered at Warehouse. Severity: low. All affected units quarantined. NCR-2021-5636 raised. Root cause analysis initiated; preliminary findings suggest process parameter drift.\nCorrective Action: escalated to engineering for design review; interim inspection interval reduced",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-52012b047ad0fe5850420f4a802da2d6"
+  },
+  "doc-cb295b96ee67ad8d51e4b23c3939a75b": {
+    "content": "NCR Report: INC-34C9AA64\nDate: 2025-09-14 | System: Hydraulics | Severity: medium\nNarrative: During routine phase inspection on Line 2, technician TECH-186 observed a loose fastener on the relay of the Hydraulics system for asset FRAME-448. The loose fastener was located at the aft attachment point and measured approximately 2.5 cm. Adjacent components appeared corroded at interface. The finding was classified as medium severity per maintenance manual chapter 72. Component at 78% of its life limit. Work order WO-84815 was raised and the unit was removed from service pending repair.\nCorrective Action: realigned assembly to specification; documented findings; submitted NCR",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-cb295b96ee67ad8d51e4b23c3939a75b"
+  },
+  "doc-514b5671b5a49b461fd86112e1ec3e68": {
+    "content": "NCR Report: INC-B5AD774C\nDate: 2025-09-14 | System: Mechanical | Severity: low\nNarrative: Asset FRAME-150 (Mechanical system) was brought in for unscheduled maintenance at Paint Shop after operator reported abnormal pressure drop during approach. Inspection revealed erosion on the switch, serial number SN-577647. The erosion showed signs of chronic cycling damage indicating the condition had been developing over approximately 6 weeks. Engineering was notified per procedure AMM-59-78-529. Severity assessed as low.\nCorrective Action: isolated and replaced failed sensor; calibrated replacement unit; verified",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-514b5671b5a49b461fd86112e1ec3e68"
+  },
+  "doc-f5ad0407a2807d6c9c77d9d9060050d4": {
+    "content": "NCR Report: INC-B8BEB962\nDate: 2025-09-12 | System: Fuel System | Severity: low\nNarrative: During routine zonal inspection on Receiving Dock, technician TECH-731 observed a leakage on the harness of the Fuel System system for asset ASSET-478. The leakage was located at the root fitting and measured approximately 12mm. Adjacent components appeared nominal. The finding was classified as low severity per maintenance manual chapter 26. Similar finding reported on sister aircraft two months prior. Work order WO-84262 was raised and the unit was removed from service pending repair.\nCorrective Action: overhauled pump assembly; bench-tested to confirm rated output; reinstalled",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-f5ad0407a2807d6c9c77d9d9060050d4"
+  },
+  "doc-1a4b6234e5172b5a6e099e2d641e2c76": {
+    "content": "NCR Report: INC-706D0D67\nDate: 2025-09-13 | System: Propulsion | Severity: high\nNarrative: During routine phase inspection on Final Inspection, technician TECH-154 observed a improper torque on the pump of the Propulsion system for asset ENG-586. The improper torque was located at the rib station 7 and measured approximately negligible depth. Adjacent components appeared within limits. The finding was classified as high severity per maintenance manual chapter 39. Component at 78% of its life limit. Work order WO-41852 was raised and the unit was removed from service pending repair.\nCorrective Action: cleaned and treated affected area; applied corrosion inhibitor; re-inspected",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-1a4b6234e5172b5a6e099e2d641e2c76"
+  },
+  "doc-216106a577d64a6fa0bc08561461a6bf": {
+    "content": "NCR Report: INC-46997FC2\nDate: 2025-09-13 | System: Mechanical | Severity: informational\nNarrative: During routine zonal inspection on Bay B, technician TECH-359 observed a misalignment on the connector of the Mechanical system for asset ENG-265. The misalignment was located at the forward bulkhead and measured approximately 0.8 inch. Adjacent components appeared corroded at interface. The finding was classified as informational severity per maintenance manual chapter 39. Previous inspection 300 flight hours ago noted no anomaly. Work order WO-33414 was raised and the unit was removed from service pending repair.\nCorrective Action: replaced the defective component and conducted post-maintenance functional test",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-216106a577d64a6fa0bc08561461a6bf"
+  },
+  "doc-f39b82d7cd32dcffab9c7852bb98a4c3": {
+    "content": "NCR Report: INC-7468BF1D\nDate: 2025-09-14 | System: Structural | Severity: low\nNarrative: During routine 100-hour inspection on Bay C, technician TECH-304 observed a delamination on the seal of the Structural system for asset HYD-680. The delamination was located at the rib station 7 and measured approximately 0.8 inch. Adjacent components appeared serviceable. The finding was classified as low severity per maintenance manual chapter 66. Previous inspection 300 flight hours ago noted no anomaly. Work order WO-48522 was raised and the unit was removed from service pending repair.\nCorrective Action: adjusted clearances per maintenance manual; documented in log; no further action",
+    "file_path": "unknown_source",
+    "create_time": 1775171348,
+    "update_time": 1775171348,
+    "_id": "doc-f39b82d7cd32dcffab9c7852bb98a4c3"
+  },
+  "doc-28fb4a36f549dd94d2af60ad775a1be8": {
+    "content": "NCR Report: INC-819A2B35\nDate: 2025-09-11 | System: Flight Controls | Severity: low\nNarrative: Quality control inspection of batch LOT-5096 (product: Control Unit E) identified loose fastener affecting the harness interface on 3 of 29 units inspected. The non-conformance originated from heat treatment and was discovered at Line 3. Severity: low. All affected units quarantined. NCR-2025-5296 raised. Root cause analysis initiated; preliminary findings suggest raw material deviation.\nCorrective Action: performed non-destructive testing; replaced assembly; returned to service",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-28fb4a36f549dd94d2af60ad775a1be8"
+  },
+  "doc-973f34742903a3d1e4119ff40ab66375": {
+    "content": "NCR Report: INC-5A6A2959\nDate: 2025-09-09 | System: Avionics | Severity: medium\nNarrative: Post-repair inspection of AVION-101 (Avionics/cylinder) conducted at Warehouse following scheduled overhaul revealed residual improper torque. The condition was unexpected given prior repair documentation. Severity reclassified from low to medium after detailed dimensional check using eddy current. Additional inspection of fleet assets ASSET-122 through ASSET-426 recommended. Finding logged as FIND-23671.\nCorrective Action: isolated and replaced failed sensor; calibrated replacement unit; verified",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-973f34742903a3d1e4119ff40ab66375"
+  },
+  "doc-8c07e6ea899e468174555ca04ea91d4e": {
+    "content": "NCR Report: INC-F67789FB\nDate: 2025-09-10 | System: Avionics | Severity: low\nNarrative: Quality control inspection of batch LOT-4537 (product: Valve Body B) identified surface damage affecting the actuator interface on 5 of 32 units inspected. The non-conformance originated from heat treatment and was discovered at Receiving Dock. Severity: low. All affected units quarantined. NCR-2022-5538 raised. Root cause analysis initiated; preliminary findings suggest operator error.\nCorrective Action: performed non-destructive testing; replaced assembly; returned to service",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-8c07e6ea899e468174555ca04ea91d4e"
+  },
+  "doc-1424f4ec65221713054901060f19ce37": {
+    "content": "NCR Report: INC-E92C1864\nDate: 2025-09-11 | System: Landing Gear | Severity: high\nNarrative: Post-repair inspection of AVION-595 (Landing Gear/seal) conducted at Test Bench following corrosion treatment revealed residual short circuit. The condition was unexpected given prior repair documentation. Severity reclassified from low to high after detailed dimensional check using digital micrometer. Additional inspection of fleet assets ASSET-236 through ASSET-387 recommended. Finding logged as FIND-33090.\nCorrective Action: adjusted clearances per maintenance manual; documented in log; no further action",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-1424f4ec65221713054901060f19ce37"
+  },
+  "doc-e49a6d920db11c35de019687f90ea323": {
+    "content": "NCR Report: INC-D27D0EE3\nDate: 2025-09-09 | System: Fuel System | Severity: medium\nNarrative: Asset FRAME-665 (Fuel System system) was brought in for unscheduled maintenance at Paint Shop after operator reported warning light during cruise. Inspection revealed overheating on the actuator, serial number SN-423147. The overheating showed signs of accelerated progression indicating the condition had been developing over approximately 200 flight hours. Engineering was notified per procedure AMM-61-64-472. Severity assessed as medium.\nCorrective Action: adjusted clearances per maintenance manual; documented in log; no further action",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-e49a6d920db11c35de019687f90ea323"
+  },
+  "doc-ea639feb3521d94db0977d68cdb5a609": {
+    "content": "NCR Report: INC-F72169BB\nDate: 2025-09-10 | System: Landing Gear | Severity: low\nNarrative: During routine pre-flight inspection on Receiving Dock, technician TECH-405 observed a leakage on the controller of the Landing Gear system for asset HYD-448. The leakage was located at the lower surface and measured approximately negligible depth. Adjacent components appeared within limits. The finding was classified as low severity per maintenance manual chapter 39. Component at 78% of its life limit. Work order WO-80592 was raised and the unit was removed from service pending repair.\nCorrective Action: isolated and replaced failed sensor; calibrated replacement unit; verified",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-ea639feb3521d94db0977d68cdb5a609"
+  },
+  "doc-97a16f4199bd01eb011431cfb34d4249": {
+    "content": "NCR Report: INC-10F40735\nDate: 2025-09-12 | System: Structural | Severity: low\nNarrative: Quality control inspection of batch LOT-8277 (product: Valve Body B) identified delamination affecting the relay interface on 4 of 41 units inspected. The non-conformance originated from in-process machining and was discovered at Line 3. Severity: low. All affected units quarantined. NCR-2024-6227 raised. Root cause analysis initiated; preliminary findings suggest operator error.\nCorrective Action: overhauled pump assembly; bench-tested to confirm rated output; reinstalled",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-97a16f4199bd01eb011431cfb34d4249"
+  },
+  "doc-be0dd3935ff97852056f531de7b18dca": {
+    "content": "NCR Report: INC-7C596954\nDate: 2025-09-12 | System: Structural | Severity: medium\nNarrative: Quality control inspection of batch LOT-9999 (product: Bracket Assy A) identified leakage affecting the piston interface on 5 of 18 units inspected. The non-conformance originated from assembly error and was discovered at Paint Shop. Severity: medium. All affected units quarantined. NCR-2025-2932 raised. Root cause analysis initiated; preliminary findings suggest process parameter drift.\nCorrective Action: replaced wiring harness; performed continuity and insulation resistance tests",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-be0dd3935ff97852056f531de7b18dca"
+  },
+  "doc-1736aa0dc8f6eeb08cacd3199e12c5a2": {
+    "content": "NCR Report: INC-4CE73F27\nDate: 2025-09-12 | System: Propulsion | Severity: medium\nNarrative: Asset HYD-615 (Propulsion system) was brought in for unscheduled maintenance at Receiving Dock after operator reported abnormal pressure drop during taxi-out. Inspection revealed fatigue on the pump, serial number SN-702093. The fatigue showed signs of recent initiation indicating the condition had been developing over approximately two service cycles. Engineering was notified per procedure AMM-80-56-428. Severity assessed as medium.\nCorrective Action: performed non-destructive testing; replaced assembly; returned to service",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-1736aa0dc8f6eeb08cacd3199e12c5a2"
+  },
+  "doc-14412bc05a19a6ff4f558c900a3c30a4": {
+    "content": "NCR Report: INC-E5D25D0D\nDate: 2025-09-11 | System: Landing Gear | Severity: low\nNarrative: Scheduled phase maintenance on Landing Gear system (asset FRAME-246) at Bay C revealed anomalous wear pattern on switch. Visual inspection confirmed overheating consistent with environmental exposure. Inspection also noted fretting wear at the junction box. Component was tagged as unserviceable. low classification applied. Corrective action initiated under work order WO-63639.\nCorrective Action: replaced the defective component and conducted post-maintenance functional test",
+    "file_path": "unknown_source",
+    "create_time": 1775171440,
+    "update_time": 1775171440,
+    "_id": "doc-14412bc05a19a6ff4f558c900a3c30a4"
+  },
+  "doc-85a7a7a3c1713fd6ae5b1990db990993": {
+    "content": "Manufacturing Defect: DEF-685EE7F9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-85a7a7a3c1713fd6ae5b1990db990993"
+  },
+  "doc-460238c9c43a3072036962da7c9bae3b": {
+    "content": "Manufacturing Defect: DEF-E338AE29\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-460238c9c43a3072036962da7c9bae3b"
+  },
+  "doc-f51b17cbc82493c009ee85eb6874c869": {
+    "content": "Manufacturing Defect: DEF-337DBB56\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-f51b17cbc82493c009ee85eb6874c869"
+  },
+  "doc-a553103590e45ff5b751ede4a561e30a": {
+    "content": "Manufacturing Defect: DEF-39F3DDBC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-a553103590e45ff5b751ede4a561e30a"
+  },
+  "doc-99710f800451d5cc8db218a3f946ce0c": {
+    "content": "Manufacturing Defect: DEF-2E406534\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-99710f800451d5cc8db218a3f946ce0c"
+  },
+  "doc-1410bc3a4171603a335dfe3d092863c3": {
+    "content": "Manufacturing Defect: DEF-08BDACEA\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-1410bc3a4171603a335dfe3d092863c3"
+  },
+  "doc-c839b3b7bf84f3812cd333c3b5e2d739": {
+    "content": "Manufacturing Defect: DEF-D5A50D55\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-c839b3b7bf84f3812cd333c3b5e2d739"
+  },
+  "doc-c52d0698372aedf186e7a064a3e2788f": {
+    "content": "Manufacturing Defect: DEF-F315AAD9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-c52d0698372aedf186e7a064a3e2788f"
+  },
+  "doc-87238bc2a929514c1604e560c6e72e5f": {
+    "content": "Manufacturing Defect: DEF-4809B077\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-87238bc2a929514c1604e560c6e72e5f"
+  },
+  "doc-d2388a7804d66760fcc13f61833bc033": {
+    "content": "Manufacturing Defect: DEF-3977E84F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171514,
+    "update_time": 1775171514,
+    "_id": "doc-d2388a7804d66760fcc13f61833bc033"
+  },
+  "doc-d8ec8f8898f40f1158c8dd058506554a": {
+    "content": "Manufacturing Defect: DEF-F9FC1B41\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-d8ec8f8898f40f1158c8dd058506554a"
+  },
+  "doc-df70e61fd0063368d09c73a787878bdd": {
+    "content": "Manufacturing Defect: DEF-3AD2E275\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-df70e61fd0063368d09c73a787878bdd"
+  },
+  "doc-bb6e1512d9f096924730980bb4c9ebb8": {
+    "content": "Manufacturing Defect: DEF-1372F6E4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-bb6e1512d9f096924730980bb4c9ebb8"
+  },
+  "doc-fc71b27fdc76844f7face3a473f18117": {
+    "content": "Manufacturing Defect: DEF-7EBFD500\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-fc71b27fdc76844f7face3a473f18117"
+  },
+  "doc-cebfb600222bc27d4e17f7778757a999": {
+    "content": "Manufacturing Defect: DEF-16478E75\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-cebfb600222bc27d4e17f7778757a999"
+  },
+  "doc-1a4a909f87e32e4327902f8b1fb3dc6b": {
+    "content": "Manufacturing Defect: DEF-9F17A30A\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-1a4a909f87e32e4327902f8b1fb3dc6b"
+  },
+  "doc-e754828c0b23159eeac0d9a42f026c1f": {
+    "content": "Manufacturing Defect: DEF-0B62DB66\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-e754828c0b23159eeac0d9a42f026c1f"
+  },
+  "doc-640b506a095a450b0fec3e03ae89d1c7": {
+    "content": "Manufacturing Defect: DEF-7801B484\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-640b506a095a450b0fec3e03ae89d1c7"
+  },
+  "doc-662e7fcfcdb34d1c544072e2b833157a": {
+    "content": "Manufacturing Defect: DEF-E23FA21E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-662e7fcfcdb34d1c544072e2b833157a"
+  },
+  "doc-d562323eb87a70fe2f17a1274c559eb8": {
+    "content": "Manufacturing Defect: DEF-89930B80\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171581,
+    "update_time": 1775171581,
+    "_id": "doc-d562323eb87a70fe2f17a1274c559eb8"
+  },
+  "doc-70e09f1559923ccb4c41f4835b9d7e4d": {
+    "content": "Manufacturing Defect: DEF-9D99B769\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-70e09f1559923ccb4c41f4835b9d7e4d"
+  },
+  "doc-032789fac3ed0ddd3cc772f989abd504": {
+    "content": "Manufacturing Defect: DEF-448C8158\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-032789fac3ed0ddd3cc772f989abd504"
+  },
+  "doc-ff9ed5d0272d518439328d2765ead1dd": {
+    "content": "Manufacturing Defect: DEF-F46847BF\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-ff9ed5d0272d518439328d2765ead1dd"
+  },
+  "doc-5332dd949f96e2f49fc9a2456e2d0c6c": {
+    "content": "Manufacturing Defect: DEF-902B4853\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-5332dd949f96e2f49fc9a2456e2d0c6c"
+  },
+  "doc-552d471b509ea44da9b7327cfd92d7e9": {
+    "content": "Manufacturing Defect: DEF-FFDF48B0\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-552d471b509ea44da9b7327cfd92d7e9"
+  },
+  "doc-ca952e8211cabd57912b040677d28c27": {
+    "content": "Manufacturing Defect: DEF-3261E318\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-ca952e8211cabd57912b040677d28c27"
+  },
+  "doc-b7f924413f142a87db24e3efef4cfa08": {
+    "content": "Manufacturing Defect: DEF-EE037022\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-b7f924413f142a87db24e3efef4cfa08"
+  },
+  "doc-fec15d2ea0bdd3c44577bdf685ca11c8": {
+    "content": "Manufacturing Defect: DEF-09A8B4FF\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-fec15d2ea0bdd3c44577bdf685ca11c8"
+  },
+  "doc-4a5446b47757fe32e3be0cb80981d956": {
+    "content": "Manufacturing Defect: DEF-DA455D14\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-4a5446b47757fe32e3be0cb80981d956"
+  },
+  "doc-41e8b12e8c87c1e286000bdd16147266": {
+    "content": "Manufacturing Defect: DEF-8229C6A2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171654,
+    "update_time": 1775171654,
+    "_id": "doc-41e8b12e8c87c1e286000bdd16147266"
+  },
+  "doc-a1d66c361b10fee156f272525336e545": {
+    "content": "Manufacturing Defect: DEF-90847D78\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-a1d66c361b10fee156f272525336e545"
+  },
+  "doc-947e8cee2b664f3ece23a9f15f76e03f": {
+    "content": "Manufacturing Defect: DEF-62D4107E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-947e8cee2b664f3ece23a9f15f76e03f"
+  },
+  "doc-a094e71ff12ba5727262a746257afc7d": {
+    "content": "Manufacturing Defect: DEF-61892B0D\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-a094e71ff12ba5727262a746257afc7d"
+  },
+  "doc-6119412e2d17389b789065d787fb2069": {
+    "content": "Manufacturing Defect: DEF-C38046DE\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-6119412e2d17389b789065d787fb2069"
+  },
+  "doc-ea688371014c055e016aa2e9c80668e5": {
+    "content": "Manufacturing Defect: DEF-6F473FCF\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-ea688371014c055e016aa2e9c80668e5"
+  },
+  "doc-7f80efd67de84ff9149f9528a07142c9": {
+    "content": "Manufacturing Defect: DEF-41321507\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-7f80efd67de84ff9149f9528a07142c9"
+  },
+  "doc-71272d4c94915fd79c75b902cf8f3e8c": {
+    "content": "Manufacturing Defect: DEF-2B495AA5\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-71272d4c94915fd79c75b902cf8f3e8c"
+  },
+  "doc-c023ddc8eeee3c15db03cf71e026f320": {
+    "content": "Manufacturing Defect: DEF-AD614648\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-c023ddc8eeee3c15db03cf71e026f320"
+  },
+  "doc-6c80f78a8dedbf71616b3ceb009f4047": {
+    "content": "Manufacturing Defect: DEF-29BAACD7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-6c80f78a8dedbf71616b3ceb009f4047"
+  },
+  "doc-f1c0777761375b3dc1772cd875dc4c25": {
+    "content": "Manufacturing Defect: DEF-985DBE05\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171732,
+    "update_time": 1775171732,
+    "_id": "doc-f1c0777761375b3dc1772cd875dc4c25"
+  },
+  "doc-942855218483416dcd20c49499bb2e80": {
+    "content": "Manufacturing Defect: DEF-D86485B9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-942855218483416dcd20c49499bb2e80"
+  },
+  "doc-1c1817e48cfe7e783c8eef25c6c20657": {
+    "content": "Manufacturing Defect: DEF-3DCC1D72\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-1c1817e48cfe7e783c8eef25c6c20657"
+  },
+  "doc-8fd80ef0da3804b3c8343d86af264dbd": {
+    "content": "Manufacturing Defect: DEF-6B27F7BD\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-8fd80ef0da3804b3c8343d86af264dbd"
+  },
+  "doc-e2f7489687742fa975fbcfe18069dbf5": {
+    "content": "Manufacturing Defect: DEF-56C9C40C\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-e2f7489687742fa975fbcfe18069dbf5"
+  },
+  "doc-ec10ba4a850422ea41792100d17ed3cd": {
+    "content": "Manufacturing Defect: DEF-6A39C263\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-ec10ba4a850422ea41792100d17ed3cd"
+  },
+  "doc-e073f4c324a273c510de8a0e76e0e51e": {
+    "content": "Manufacturing Defect: DEF-85D2B40F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-e073f4c324a273c510de8a0e76e0e51e"
+  },
+  "doc-f54c86e0952fe6e9cf51c6f9544222f0": {
+    "content": "Manufacturing Defect: DEF-A0B2A059\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-f54c86e0952fe6e9cf51c6f9544222f0"
+  },
+  "doc-4cb84ed5003d7a631042fa93c44ad559": {
+    "content": "Manufacturing Defect: DEF-A4B977DC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-4cb84ed5003d7a631042fa93c44ad559"
+  },
+  "doc-a9141ef932f20a8c0762d30125c60f2d": {
+    "content": "Manufacturing Defect: DEF-A4E2A43F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-a9141ef932f20a8c0762d30125c60f2d"
+  },
+  "doc-81d753b099ca541c8415e062bf1d79fc": {
+    "content": "Manufacturing Defect: DEF-FBD0319D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171823,
+    "update_time": 1775171823,
+    "_id": "doc-81d753b099ca541c8415e062bf1d79fc"
+  },
+  "doc-d574363e6083c304ba2f011e7ccabe78": {
+    "content": "Manufacturing Defect: DEF-2CED610F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-d574363e6083c304ba2f011e7ccabe78"
+  },
+  "doc-5600607d36d7835be30dc87bba14add8": {
+    "content": "Manufacturing Defect: DEF-9EF8EA52\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-5600607d36d7835be30dc87bba14add8"
+  },
+  "doc-d187e72c419bb7f37f6a43730deecdbd": {
+    "content": "Manufacturing Defect: DEF-89B8772E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-d187e72c419bb7f37f6a43730deecdbd"
+  },
+  "doc-98d9dcaa3f3e56955486085e052f3df7": {
+    "content": "Manufacturing Defect: DEF-03201231\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-98d9dcaa3f3e56955486085e052f3df7"
+  },
+  "doc-8dffb5ae76e9c0f24e451a421db91ca2": {
+    "content": "Manufacturing Defect: DEF-5D73B4E0\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-8dffb5ae76e9c0f24e451a421db91ca2"
+  },
+  "doc-4f32ec170fa2859b559c9818a69e5bfc": {
+    "content": "Manufacturing Defect: DEF-C4F494AD\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-4f32ec170fa2859b559c9818a69e5bfc"
+  },
+  "doc-f79404598f3c8f559db16278ca45c99e": {
+    "content": "Manufacturing Defect: DEF-C4F35829\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-f79404598f3c8f559db16278ca45c99e"
+  },
+  "doc-62c35da8fe0d8a7de94a5a06e310795a": {
+    "content": "Manufacturing Defect: DEF-7C750193\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-62c35da8fe0d8a7de94a5a06e310795a"
+  },
+  "doc-8a4605078a65e08a1ec872ead8c46a6e": {
+    "content": "Manufacturing Defect: DEF-8C06D1C0\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-8a4605078a65e08a1ec872ead8c46a6e"
+  },
+  "doc-3dcb6a79fae3a2c36b7fc87520089ce7": {
+    "content": "Manufacturing Defect: DEF-84EFFE80\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775171913,
+    "update_time": 1775171913,
+    "_id": "doc-3dcb6a79fae3a2c36b7fc87520089ce7"
+  },
+  "doc-39ecf5cf06754d82d44b19ed89a44815": {
+    "content": "Manufacturing Defect: DEF-CB484006\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-39ecf5cf06754d82d44b19ed89a44815"
+  },
+  "doc-0e007f8bfce6eabdaeabfd83bf0e0fb3": {
+    "content": "Manufacturing Defect: DEF-E0BB21D3\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-0e007f8bfce6eabdaeabfd83bf0e0fb3"
+  },
+  "doc-6ff33848147611debd05ddf59047e8d6": {
+    "content": "Manufacturing Defect: DEF-206D4CBA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-6ff33848147611debd05ddf59047e8d6"
+  },
+  "doc-69a30b96aa37f7f0261590715d214ef0": {
+    "content": "Manufacturing Defect: DEF-71107B95\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-69a30b96aa37f7f0261590715d214ef0"
+  },
+  "doc-ad712b8e8d39a77cdde7aa711b1919d1": {
+    "content": "Manufacturing Defect: DEF-7382F3B9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-ad712b8e8d39a77cdde7aa711b1919d1"
+  },
+  "doc-30aaaa67bdb88919e400bd99c181f49a": {
+    "content": "Manufacturing Defect: DEF-B33DD195\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-30aaaa67bdb88919e400bd99c181f49a"
+  },
+  "doc-f415a2770a9815ad04b0d4d9d6e45456": {
+    "content": "Manufacturing Defect: DEF-A3E0A33A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-f415a2770a9815ad04b0d4d9d6e45456"
+  },
+  "doc-c7a4b1c1055a266d952c67621e636265": {
+    "content": "Manufacturing Defect: DEF-39A479FA\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-c7a4b1c1055a266d952c67621e636265"
+  },
+  "doc-508bd6f2a2ee254c3df05e99e408ffa4": {
+    "content": "Manufacturing Defect: DEF-9B509199\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-508bd6f2a2ee254c3df05e99e408ffa4"
+  },
+  "doc-cdc7427828f273518366c382fa60362e": {
+    "content": "Manufacturing Defect: DEF-9B334D51\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172004,
+    "update_time": 1775172004,
+    "_id": "doc-cdc7427828f273518366c382fa60362e"
+  },
+  "doc-ce8f5e252d0e56ec8cabdbd935c31963": {
+    "content": "Manufacturing Defect: DEF-3E303624\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-ce8f5e252d0e56ec8cabdbd935c31963"
+  },
+  "doc-621a3eb88e9ccac211f7cabe77fbe785": {
+    "content": "Manufacturing Defect: DEF-56C2B0D6\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-621a3eb88e9ccac211f7cabe77fbe785"
+  },
+  "doc-42243d5b06882698b53b6d8f3b373d05": {
+    "content": "Manufacturing Defect: DEF-B7575143\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-42243d5b06882698b53b6d8f3b373d05"
+  },
+  "doc-8bffcd572ebf26e9e7763063c5c5518a": {
+    "content": "Manufacturing Defect: DEF-AE44C8D2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-8bffcd572ebf26e9e7763063c5c5518a"
+  },
+  "doc-fdde12e6526dfb31e01f64f4306a0480": {
+    "content": "Manufacturing Defect: DEF-8F56A886\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-fdde12e6526dfb31e01f64f4306a0480"
+  },
+  "doc-26e896d78531dc5645ebefd32af1040c": {
+    "content": "Manufacturing Defect: DEF-A6C9E943\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-26e896d78531dc5645ebefd32af1040c"
+  },
+  "doc-49d532a04f7caf5b78619a36db982826": {
+    "content": "Manufacturing Defect: DEF-89F32A8E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-49d532a04f7caf5b78619a36db982826"
+  },
+  "doc-bbafed519cce644f83fe089d4d0c49b3": {
+    "content": "Manufacturing Defect: DEF-E32AAD33\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-bbafed519cce644f83fe089d4d0c49b3"
+  },
+  "doc-66eda4c62790d0372a977f0cb4933a08": {
+    "content": "Manufacturing Defect: DEF-96058E93\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-66eda4c62790d0372a977f0cb4933a08"
+  },
+  "doc-0d6cc40ae96b10586d66c157cc2883c4": {
+    "content": "Manufacturing Defect: DEF-F4F29F5D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172098,
+    "update_time": 1775172098,
+    "_id": "doc-0d6cc40ae96b10586d66c157cc2883c4"
+  },
+  "doc-120ff83c375e1395c26ca304146ffd83": {
+    "content": "Manufacturing Defect: DEF-5FC97DF1\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-120ff83c375e1395c26ca304146ffd83"
+  },
+  "doc-d14424283a3d9ea2f930b2c9cc08e60e": {
+    "content": "Manufacturing Defect: DEF-561C5821\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-d14424283a3d9ea2f930b2c9cc08e60e"
+  },
+  "doc-189d8c65266b238518dbeb7fd0f8f547": {
+    "content": "Manufacturing Defect: DEF-55EC5B19\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-189d8c65266b238518dbeb7fd0f8f547"
+  },
+  "doc-b1d51377dc20f4bc3bd149eecf8589e4": {
+    "content": "Manufacturing Defect: DEF-21C78B5A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-b1d51377dc20f4bc3bd149eecf8589e4"
+  },
+  "doc-26880921807330e0cb6326ee3dfe237c": {
+    "content": "Manufacturing Defect: DEF-97ACC1CC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-26880921807330e0cb6326ee3dfe237c"
+  },
+  "doc-48212bdcacb5f08805278b82e1424fe2": {
+    "content": "Manufacturing Defect: DEF-4791D60C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-48212bdcacb5f08805278b82e1424fe2"
+  },
+  "doc-46e86e1edec5e71244b81e9c9824fee0": {
+    "content": "Manufacturing Defect: DEF-8517D5A7\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-46e86e1edec5e71244b81e9c9824fee0"
+  },
+  "doc-528e7b53cb3c2dd1bbf22ae061c319b2": {
+    "content": "Manufacturing Defect: DEF-2490364B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-528e7b53cb3c2dd1bbf22ae061c319b2"
+  },
+  "doc-57246afd9901db7898d1002252f5b67a": {
+    "content": "Manufacturing Defect: DEF-CA30CF14\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-57246afd9901db7898d1002252f5b67a"
+  },
+  "doc-201fbdf9415e5eb4c7051bc4bead3521": {
+    "content": "Manufacturing Defect: DEF-BD1272C9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172192,
+    "update_time": 1775172192,
+    "_id": "doc-201fbdf9415e5eb4c7051bc4bead3521"
+  },
+  "doc-c09325499e720210b8aafe078d44763e": {
+    "content": "Manufacturing Defect: DEF-D0118B6B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-c09325499e720210b8aafe078d44763e"
+  },
+  "doc-290d36c54cc1cb1ad2066fb179c15a8c": {
+    "content": "Manufacturing Defect: DEF-31F742D3\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-290d36c54cc1cb1ad2066fb179c15a8c"
+  },
+  "doc-fe444160e133b1389c5742ebd219ab6c": {
+    "content": "Manufacturing Defect: DEF-4871C52C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-fe444160e133b1389c5742ebd219ab6c"
+  },
+  "doc-1e22d48a5892b33b78c4d43702d07275": {
+    "content": "Manufacturing Defect: DEF-FBD72930\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-1e22d48a5892b33b78c4d43702d07275"
+  },
+  "doc-4c64cb23b90e499c2920ee45d0bc3dee": {
+    "content": "Manufacturing Defect: DEF-3A850EF1\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-4c64cb23b90e499c2920ee45d0bc3dee"
+  },
+  "doc-2c747d754875391352b8054da2ac76bb": {
+    "content": "Manufacturing Defect: DEF-50B53346\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-2c747d754875391352b8054da2ac76bb"
+  },
+  "doc-5568d73945c69699fbc6da0defd61d0a": {
+    "content": "Manufacturing Defect: DEF-5F9C022B\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-5568d73945c69699fbc6da0defd61d0a"
+  },
+  "doc-8c2b26f50dc7dabf003e267e1410d5e0": {
+    "content": "Manufacturing Defect: DEF-6D0AEB87\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-8c2b26f50dc7dabf003e267e1410d5e0"
+  },
+  "doc-f01acf3e02a59d3fca8e8d24313a0432": {
+    "content": "Manufacturing Defect: DEF-5616A170\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-f01acf3e02a59d3fca8e8d24313a0432"
+  },
+  "doc-9a695094b928edca6893daaff3d64e30": {
+    "content": "Manufacturing Defect: DEF-90FE567B\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172284,
+    "update_time": 1775172284,
+    "_id": "doc-9a695094b928edca6893daaff3d64e30"
+  },
+  "doc-5df06baded5d1c9ad8e0e867a9d53766": {
+    "content": "Manufacturing Defect: DEF-096FED94\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-5df06baded5d1c9ad8e0e867a9d53766"
+  },
+  "doc-e0ac5bc2e813c204ab437970efaed6ae": {
+    "content": "Manufacturing Defect: DEF-4CDFDC15\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-e0ac5bc2e813c204ab437970efaed6ae"
+  },
+  "doc-deb9e2352e24cca7dd048a13e260d2a3": {
+    "content": "Manufacturing Defect: DEF-677D9CAD\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-deb9e2352e24cca7dd048a13e260d2a3"
+  },
+  "doc-3184061f970e31b3b733f5a18b230e05": {
+    "content": "Manufacturing Defect: DEF-84C26900\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-3184061f970e31b3b733f5a18b230e05"
+  },
+  "doc-7b5ebad9ee923dffa326a4a483c66f05": {
+    "content": "Manufacturing Defect: DEF-80B29601\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-7b5ebad9ee923dffa326a4a483c66f05"
+  },
+  "doc-a97fd57a56441d0dc845ca881d64c866": {
+    "content": "Manufacturing Defect: DEF-43492B56\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-a97fd57a56441d0dc845ca881d64c866"
+  },
+  "doc-f2738e3485ba03abb45ec74e38a695fb": {
+    "content": "Manufacturing Defect: DEF-69C231F4\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-f2738e3485ba03abb45ec74e38a695fb"
+  },
+  "doc-7a89933f91354726085ba4923a2c887a": {
+    "content": "Manufacturing Defect: DEF-A3C50B11\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-7a89933f91354726085ba4923a2c887a"
+  },
+  "doc-8c10e25f92936df0e39dc2e291d9d222": {
+    "content": "Manufacturing Defect: DEF-3C81FEFE\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-8c10e25f92936df0e39dc2e291d9d222"
+  },
+  "doc-e4a616f8d809d90f0c575c06cd2e038f": {
+    "content": "Manufacturing Defect: DEF-412E3B93\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172367,
+    "update_time": 1775172367,
+    "_id": "doc-e4a616f8d809d90f0c575c06cd2e038f"
+  },
+  "doc-07f9dae1f7b5232d8206948fb360a9a0": {
+    "content": "Manufacturing Defect: DEF-3257C38D\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-07f9dae1f7b5232d8206948fb360a9a0"
+  },
+  "doc-f2341eb8d4b7df0d93cc2ac4cbfce252": {
+    "content": "Manufacturing Defect: DEF-45222556\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-f2341eb8d4b7df0d93cc2ac4cbfce252"
+  },
+  "doc-7633796a2de6af271d6540ae61297788": {
+    "content": "Manufacturing Defect: DEF-D0B39F42\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-7633796a2de6af271d6540ae61297788"
+  },
+  "doc-328c701331cb5c06094b81eedadfa52d": {
+    "content": "Manufacturing Defect: DEF-89C1B525\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-328c701331cb5c06094b81eedadfa52d"
+  },
+  "doc-7a31c722f784cae9e17934cfdce1f13c": {
+    "content": "Manufacturing Defect: DEF-ACBE63E4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-7a31c722f784cae9e17934cfdce1f13c"
+  },
+  "doc-1336d5df9e9bc75100b4d511598f9ccf": {
+    "content": "Manufacturing Defect: DEF-9AF15CCA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-1336d5df9e9bc75100b4d511598f9ccf"
+  },
+  "doc-afa0ade6df08eae403c627cef6eb25ec": {
+    "content": "Manufacturing Defect: DEF-6A9AF9EC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-afa0ade6df08eae403c627cef6eb25ec"
+  },
+  "doc-8672a031b5e8a5bc979d3bab5db8c0d9": {
+    "content": "Manufacturing Defect: DEF-83D14E56\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-8672a031b5e8a5bc979d3bab5db8c0d9"
+  },
+  "doc-bc1866ec39c0606bedf8bbfe50efb177": {
+    "content": "Manufacturing Defect: DEF-8AC141C1\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-bc1866ec39c0606bedf8bbfe50efb177"
+  },
+  "doc-6c6ef9a44623df0d55902d987c591799": {
+    "content": "Manufacturing Defect: DEF-BC9BCE0B\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172451,
+    "update_time": 1775172451,
+    "_id": "doc-6c6ef9a44623df0d55902d987c591799"
+  },
+  "doc-be42965aa5da6c4a65dc491ad366122d": {
+    "content": "Manufacturing Defect: DEF-4C54432C\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-be42965aa5da6c4a65dc491ad366122d"
+  },
+  "doc-5b2d3a8cceeb718c54ebd4540a741390": {
+    "content": "Manufacturing Defect: DEF-D7790885\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-5b2d3a8cceeb718c54ebd4540a741390"
+  },
+  "doc-0beef3b01eb10bbd74a8943972868f75": {
+    "content": "Manufacturing Defect: DEF-B7C2FC52\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-0beef3b01eb10bbd74a8943972868f75"
+  },
+  "doc-ab049192328ee8c3f7d892546de17a32": {
+    "content": "Manufacturing Defect: DEF-F7DE601A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-ab049192328ee8c3f7d892546de17a32"
+  },
+  "doc-746c037d5a6407f62ea347a4ff05ae10": {
+    "content": "Manufacturing Defect: DEF-A51FC3A5\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-746c037d5a6407f62ea347a4ff05ae10"
+  },
+  "doc-6183f7de6966d5651fc5b5f00c772aec": {
+    "content": "Manufacturing Defect: DEF-B69C68E4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-6183f7de6966d5651fc5b5f00c772aec"
+  },
+  "doc-f9afdd8b52f91a5fb6d136908d441924": {
+    "content": "Manufacturing Defect: DEF-6DB842B8\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-f9afdd8b52f91a5fb6d136908d441924"
+  },
+  "doc-3ce4c64bac9a3a089d59b11bb306e10e": {
+    "content": "Manufacturing Defect: DEF-BEB48F8C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-3ce4c64bac9a3a089d59b11bb306e10e"
+  },
+  "doc-271d04da1d842dd0d93687f8fa920bbb": {
+    "content": "Manufacturing Defect: DEF-F700978E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-271d04da1d842dd0d93687f8fa920bbb"
+  },
+  "doc-73777a019f5127343f37e2889ad6b230": {
+    "content": "Manufacturing Defect: DEF-7F0F3867\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172538,
+    "update_time": 1775172538,
+    "_id": "doc-73777a019f5127343f37e2889ad6b230"
+  },
+  "doc-3130f35e0bdbc2edecd43f8179c77929": {
+    "content": "Manufacturing Defect: DEF-C89AC0B7\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-3130f35e0bdbc2edecd43f8179c77929"
+  },
+  "doc-384358613eea7c982a946018441da0f3": {
+    "content": "Manufacturing Defect: DEF-A0C1CAB4\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-384358613eea7c982a946018441da0f3"
+  },
+  "doc-520210a4977b2916f6521981265e4eea": {
+    "content": "Manufacturing Defect: DEF-BEFCCFF3\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-520210a4977b2916f6521981265e4eea"
+  },
+  "doc-1a1588402230753ba01a2fa5be13b18c": {
+    "content": "Manufacturing Defect: DEF-12E6B622\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-1a1588402230753ba01a2fa5be13b18c"
+  },
+  "doc-a963c1ac7e269b5516a408b4adfd2a9f": {
+    "content": "Manufacturing Defect: DEF-77880060\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-a963c1ac7e269b5516a408b4adfd2a9f"
+  },
+  "doc-08c2d2ad07d097363a446f1b5ed5a029": {
+    "content": "Manufacturing Defect: DEF-06A8DCFC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-08c2d2ad07d097363a446f1b5ed5a029"
+  },
+  "doc-122b4da0f52b487d9b29ff26dc0df5c5": {
+    "content": "Manufacturing Defect: DEF-9E294D5A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-122b4da0f52b487d9b29ff26dc0df5c5"
+  },
+  "doc-8c064ee7b5cc955998518536836ce76e": {
+    "content": "Manufacturing Defect: DEF-C72BDCAE\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-8c064ee7b5cc955998518536836ce76e"
+  },
+  "doc-1176f601ed1df7a0b1f6cf78c24f3e20": {
+    "content": "Manufacturing Defect: DEF-E7ACDAF5\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-1176f601ed1df7a0b1f6cf78c24f3e20"
+  },
+  "doc-56cc56b2949eebf3b0ec8dd2bf258977": {
+    "content": "Manufacturing Defect: DEF-66576732\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172625,
+    "update_time": 1775172625,
+    "_id": "doc-56cc56b2949eebf3b0ec8dd2bf258977"
+  },
+  "doc-2c3b2a745214e0a98c0bee41a4a3be51": {
+    "content": "Manufacturing Defect: DEF-D077FC5A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-2c3b2a745214e0a98c0bee41a4a3be51"
+  },
+  "doc-aba51994c3dc2ce72f1c9bf9d25a1e65": {
+    "content": "Manufacturing Defect: DEF-31A5A75A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-aba51994c3dc2ce72f1c9bf9d25a1e65"
+  },
+  "doc-a37cb8b553f6a8068286f6118b31ca8d": {
+    "content": "Manufacturing Defect: DEF-439D4AE5\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-a37cb8b553f6a8068286f6118b31ca8d"
+  },
+  "doc-ba73f2c237441e4d146eecc181597196": {
+    "content": "Manufacturing Defect: DEF-3933CC28\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-ba73f2c237441e4d146eecc181597196"
+  },
+  "doc-7bdf44401043f54672d9e31f5cd3d0ee": {
+    "content": "Manufacturing Defect: DEF-611E2A78\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-7bdf44401043f54672d9e31f5cd3d0ee"
+  },
+  "doc-92982e05d3892934af162a463160554c": {
+    "content": "Manufacturing Defect: DEF-BAB67168\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-92982e05d3892934af162a463160554c"
+  },
+  "doc-ac40947466e55004c97eb09ad87c262f": {
+    "content": "Manufacturing Defect: DEF-3EDB10FC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-ac40947466e55004c97eb09ad87c262f"
+  },
+  "doc-669e1507c918553e0575839da716b185": {
+    "content": "Manufacturing Defect: DEF-7183A5D7\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-669e1507c918553e0575839da716b185"
+  },
+  "doc-e8c7bb770915fbd6d087d795ddb5fafb": {
+    "content": "Manufacturing Defect: DEF-28F938F8\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-e8c7bb770915fbd6d087d795ddb5fafb"
+  },
+  "doc-35a9c61af71dcf3a84f0de6a8a37d333": {
+    "content": "Manufacturing Defect: DEF-F53A7D3C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775172710,
+    "update_time": 1775172710,
+    "_id": "doc-35a9c61af71dcf3a84f0de6a8a37d333"
+  },
+  "doc-5ac19a93ac2300abe2f5d3f9102bcb52": {
+    "content": "Manufacturing Defect: DEF-FC56AB90\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-5ac19a93ac2300abe2f5d3f9102bcb52"
+  },
+  "doc-dfd9043a7aa8c017ad814fa5a5a342fa": {
+    "content": "Manufacturing Defect: DEF-2A0D671A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-dfd9043a7aa8c017ad814fa5a5a342fa"
+  },
+  "doc-85952810f25da93f1338a4babf3de5f9": {
+    "content": "Manufacturing Defect: DEF-B452C7A4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-85952810f25da93f1338a4babf3de5f9"
+  },
+  "doc-b0a836c73dfac5634d268fb9ce49a7b9": {
+    "content": "Manufacturing Defect: DEF-8A0DD2D7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-b0a836c73dfac5634d268fb9ce49a7b9"
+  },
+  "doc-08323bea74c08123c27a9b61032c42b9": {
+    "content": "Manufacturing Defect: DEF-161F33FE\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-08323bea74c08123c27a9b61032c42b9"
+  },
+  "doc-054fb63e01270029212652ed2296e937": {
+    "content": "Manufacturing Defect: DEF-468C8FCB\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-054fb63e01270029212652ed2296e937"
+  },
+  "doc-0edfd66aed664677ddcf18137672905c": {
+    "content": "Manufacturing Defect: DEF-105BB84D\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-0edfd66aed664677ddcf18137672905c"
+  },
+  "doc-d408cc277e54a441768a65b420177d5a": {
+    "content": "Manufacturing Defect: DEF-C9B16B42\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-d408cc277e54a441768a65b420177d5a"
+  },
+  "doc-010359fb04beb41f3e253fc81566b2aa": {
+    "content": "Manufacturing Defect: DEF-5F4C08A6\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-010359fb04beb41f3e253fc81566b2aa"
+  },
+  "doc-78006cc4af09cc6b655195488e856ad6": {
+    "content": "Manufacturing Defect: DEF-4A3D201E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178770,
+    "update_time": 1775178770,
+    "_id": "doc-78006cc4af09cc6b655195488e856ad6"
+  },
+  "doc-ee9a9e5207d97273d668fda82de2166b": {
+    "content": "Manufacturing Defect: DEF-E3A02976\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-ee9a9e5207d97273d668fda82de2166b"
+  },
+  "doc-f20c9bd254f23747dae3e67ff7fc2d6b": {
+    "content": "Manufacturing Defect: DEF-45C5DAC9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-f20c9bd254f23747dae3e67ff7fc2d6b"
+  },
+  "doc-b524a421efe3de84647c6812384ed086": {
+    "content": "Manufacturing Defect: DEF-2A4DECF0\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-b524a421efe3de84647c6812384ed086"
+  },
+  "doc-fc30ad4e078c25ad24baa331db78d465": {
+    "content": "Manufacturing Defect: DEF-D076AE1B\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-fc30ad4e078c25ad24baa331db78d465"
+  },
+  "doc-8f38bf8857d940b220fe9e9104af3da6": {
+    "content": "Manufacturing Defect: DEF-F385D435\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-8f38bf8857d940b220fe9e9104af3da6"
+  },
+  "doc-ef2a0d3393256b782250e2c2e20cebb6": {
+    "content": "Manufacturing Defect: DEF-71CEC263\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-ef2a0d3393256b782250e2c2e20cebb6"
+  },
+  "doc-fa377e7831db6450623e37f169bea416": {
+    "content": "Manufacturing Defect: DEF-25578A18\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-fa377e7831db6450623e37f169bea416"
+  },
+  "doc-ae72d7dea70bfe7ea11735c8644ad290": {
+    "content": "Manufacturing Defect: DEF-91A8EBBB\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-ae72d7dea70bfe7ea11735c8644ad290"
+  },
+  "doc-dd324adc816e306108c61dbbeb9c7067": {
+    "content": "Manufacturing Defect: DEF-E1F195FD\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-dd324adc816e306108c61dbbeb9c7067"
+  },
+  "doc-17405853141265df4bbcfdc99b3b56a1": {
+    "content": "Manufacturing Defect: DEF-2D9E54C4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178857,
+    "update_time": 1775178857,
+    "_id": "doc-17405853141265df4bbcfdc99b3b56a1"
+  },
+  "doc-05ca07f2af318d2dbcb6b38dd27ed597": {
+    "content": "Manufacturing Defect: DEF-650E0E65\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-05ca07f2af318d2dbcb6b38dd27ed597"
+  },
+  "doc-44e43f10bb6ccfcdb398332b1ccfb3df": {
+    "content": "Manufacturing Defect: DEF-791F9BDC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-44e43f10bb6ccfcdb398332b1ccfb3df"
+  },
+  "doc-cbe2a9340bd93a8e20ad0cff131affda": {
+    "content": "Manufacturing Defect: DEF-E75A4B59\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-cbe2a9340bd93a8e20ad0cff131affda"
+  },
+  "doc-da3017f6a5dcfcc2c1f4dd68ca0d16ea": {
+    "content": "Manufacturing Defect: DEF-FAC1FC43\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-da3017f6a5dcfcc2c1f4dd68ca0d16ea"
+  },
+  "doc-46fff01a4b59764ef788b102916eaf18": {
+    "content": "Manufacturing Defect: DEF-0C2C762E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-46fff01a4b59764ef788b102916eaf18"
+  },
+  "doc-a09eb5c67084999782ab4693d8adc324": {
+    "content": "Manufacturing Defect: DEF-56E44737\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-a09eb5c67084999782ab4693d8adc324"
+  },
+  "doc-b66ece5ed0e282a390be0a5bae3a0c76": {
+    "content": "Manufacturing Defect: DEF-A7BFD7E4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-b66ece5ed0e282a390be0a5bae3a0c76"
+  },
+  "doc-6d19bc4d046201e847017bf78486cbea": {
+    "content": "Manufacturing Defect: DEF-A1AB48DC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-6d19bc4d046201e847017bf78486cbea"
+  },
+  "doc-bf0db5302ef2a293d40762d7223f4803": {
+    "content": "Manufacturing Defect: DEF-95254A67\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-bf0db5302ef2a293d40762d7223f4803"
+  },
+  "doc-5eec763c6dce232eee7487448fcc5898": {
+    "content": "Manufacturing Defect: DEF-FA79CD53\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775178944,
+    "update_time": 1775178944,
+    "_id": "doc-5eec763c6dce232eee7487448fcc5898"
+  },
+  "doc-690cc7727d79038a6414d8f1f96c976b": {
+    "content": "Manufacturing Defect: DEF-EF3F64DF\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-690cc7727d79038a6414d8f1f96c976b"
+  },
+  "doc-cef77afa434b168cb04f592699c21dc1": {
+    "content": "Manufacturing Defect: DEF-207ECEEE\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-cef77afa434b168cb04f592699c21dc1"
+  },
+  "doc-04051d81c3e01fc680fb2dd9096fa379": {
+    "content": "Manufacturing Defect: DEF-A561EEC6\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-04051d81c3e01fc680fb2dd9096fa379"
+  },
+  "doc-b750299c526d9b3f5a284c2d7f297c1d": {
+    "content": "Manufacturing Defect: DEF-6A5D2088\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-b750299c526d9b3f5a284c2d7f297c1d"
+  },
+  "doc-9913be94b759639c2e8abfa8bd0d58c8": {
+    "content": "Manufacturing Defect: DEF-C7B6CE61\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-9913be94b759639c2e8abfa8bd0d58c8"
+  },
+  "doc-0896ee624f8309dc3cffca6c178de6ca": {
+    "content": "Manufacturing Defect: DEF-1D1FF323\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-0896ee624f8309dc3cffca6c178de6ca"
+  },
+  "doc-1a185587b4763897b25b9ab3b2189d91": {
+    "content": "Manufacturing Defect: DEF-E086C4D5\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-1a185587b4763897b25b9ab3b2189d91"
+  },
+  "doc-05c0da514bbcd394d0013b35869fda4a": {
+    "content": "Manufacturing Defect: DEF-7CEE9019\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-05c0da514bbcd394d0013b35869fda4a"
+  },
+  "doc-6167ca1ea7a3788ac5f644df6628a75e": {
+    "content": "Manufacturing Defect: DEF-684A690F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-6167ca1ea7a3788ac5f644df6628a75e"
+  },
+  "doc-040d2580dc212e116733dec181a62c6d": {
+    "content": "Manufacturing Defect: DEF-AC0B1F96\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179025,
+    "update_time": 1775179025,
+    "_id": "doc-040d2580dc212e116733dec181a62c6d"
+  },
+  "doc-8b7c2bc30d7efda38674260248eb5a07": {
+    "content": "Manufacturing Defect: DEF-703130F0\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-8b7c2bc30d7efda38674260248eb5a07"
+  },
+  "doc-56f89ca89f9116f30c853949b350403d": {
+    "content": "Manufacturing Defect: DEF-C6CCFC0A\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-56f89ca89f9116f30c853949b350403d"
+  },
+  "doc-55fb9eee8a47946ad10f7a020211bef6": {
+    "content": "Manufacturing Defect: DEF-C3050DFF\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-55fb9eee8a47946ad10f7a020211bef6"
+  },
+  "doc-e4b512dc02074cf5eae8209aefe248bb": {
+    "content": "Manufacturing Defect: DEF-B8B9477A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-e4b512dc02074cf5eae8209aefe248bb"
+  },
+  "doc-5589d7321221fb849bb7d1e2f4f0ae41": {
+    "content": "Manufacturing Defect: DEF-3F431312\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-5589d7321221fb849bb7d1e2f4f0ae41"
+  },
+  "doc-cd396f9d62c581884f45f7240255528d": {
+    "content": "Manufacturing Defect: DEF-B1BA097C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-cd396f9d62c581884f45f7240255528d"
+  },
+  "doc-368d95961cc19634d1c7a2e34120eee9": {
+    "content": "Manufacturing Defect: DEF-F8F73FAD\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-368d95961cc19634d1c7a2e34120eee9"
+  },
+  "doc-88605c1bc3daa8ca6f933545d8a779d5": {
+    "content": "Manufacturing Defect: DEF-A0CC1477\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-88605c1bc3daa8ca6f933545d8a779d5"
+  },
+  "doc-6088c078cf314f04225b88c817a79535": {
+    "content": "Manufacturing Defect: DEF-BA267BDE\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-6088c078cf314f04225b88c817a79535"
+  },
+  "doc-96081d1f9ad28dc941ae6fd95892eda3": {
+    "content": "Manufacturing Defect: DEF-800A33B9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179106,
+    "update_time": 1775179106,
+    "_id": "doc-96081d1f9ad28dc941ae6fd95892eda3"
+  },
+  "doc-eb82e52ee86d73e5bb12061647dd4fb5": {
+    "content": "Manufacturing Defect: DEF-8303D948\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-eb82e52ee86d73e5bb12061647dd4fb5"
+  },
+  "doc-b93f63d9835290c294e9c87d3156a72d": {
+    "content": "Manufacturing Defect: DEF-441C7EEA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-b93f63d9835290c294e9c87d3156a72d"
+  },
+  "doc-22fde892d2ac2155eb5d84d4cfae1fa6": {
+    "content": "Manufacturing Defect: DEF-4C002E33\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-22fde892d2ac2155eb5d84d4cfae1fa6"
+  },
+  "doc-1607c904d8a1052fb8e9bd1fbec1d283": {
+    "content": "Manufacturing Defect: DEF-789A0B69\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-1607c904d8a1052fb8e9bd1fbec1d283"
+  },
+  "doc-9710f35153affb42646bf62d5f475e50": {
+    "content": "Manufacturing Defect: DEF-A9F354AF\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-9710f35153affb42646bf62d5f475e50"
+  },
+  "doc-1a9cdef33fa639a02193a606625831c5": {
+    "content": "Manufacturing Defect: DEF-A06C2C8E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-1a9cdef33fa639a02193a606625831c5"
+  },
+  "doc-1f8cb0cd6a90458cef319e87cf760165": {
+    "content": "Manufacturing Defect: DEF-F3DFB00B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-1f8cb0cd6a90458cef319e87cf760165"
+  },
+  "doc-ea1dc7bd12f43e8da23d78d5fd00844e": {
+    "content": "Manufacturing Defect: DEF-3EF8E133\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-ea1dc7bd12f43e8da23d78d5fd00844e"
+  },
+  "doc-b9a2a0313328ba34ccade2ab9f91c656": {
+    "content": "Manufacturing Defect: DEF-6A46553E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-b9a2a0313328ba34ccade2ab9f91c656"
+  },
+  "doc-746d6ea801736f934dd2f047db8f6915": {
+    "content": "Manufacturing Defect: DEF-DFFD71FE\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179192,
+    "update_time": 1775179192,
+    "_id": "doc-746d6ea801736f934dd2f047db8f6915"
+  },
+  "doc-f7f8aea98a35e2a122dda2b986b07d21": {
+    "content": "Manufacturing Defect: DEF-E068B406\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-f7f8aea98a35e2a122dda2b986b07d21"
+  },
+  "doc-07407272ce7e279d2362200f8a540e98": {
+    "content": "Manufacturing Defect: DEF-B74C0AE6\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-07407272ce7e279d2362200f8a540e98"
+  },
+  "doc-694ab6bacb2a836bfaf5fe723d509330": {
+    "content": "Manufacturing Defect: DEF-B864959E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-694ab6bacb2a836bfaf5fe723d509330"
+  },
+  "doc-1c3679bdf2faaa929ba29db56e26c6b0": {
+    "content": "Manufacturing Defect: DEF-3361BB91\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-1c3679bdf2faaa929ba29db56e26c6b0"
+  },
+  "doc-3e9642b2e02af2400df150eb7aaf1b7a": {
+    "content": "Manufacturing Defect: DEF-3EBC8BCD\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-3e9642b2e02af2400df150eb7aaf1b7a"
+  },
+  "doc-eca5686206aa7ae7821a5f6cce1f3bce": {
+    "content": "Manufacturing Defect: DEF-ABF12F29\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-eca5686206aa7ae7821a5f6cce1f3bce"
+  },
+  "doc-c897e988831e363c699145972d31265a": {
+    "content": "Manufacturing Defect: DEF-D5937BF7\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-c897e988831e363c699145972d31265a"
+  },
+  "doc-ebcf3161b9e555030ef33f321723f7f9": {
+    "content": "Manufacturing Defect: DEF-B36BABF7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-ebcf3161b9e555030ef33f321723f7f9"
+  },
+  "doc-83c669a20bc79ba23467e176b4bb8547": {
+    "content": "Manufacturing Defect: DEF-7E984EBC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-83c669a20bc79ba23467e176b4bb8547"
+  },
+  "doc-67e675f4e1534a2aafca6d0a96a5694b": {
+    "content": "Manufacturing Defect: DEF-A46FD6D1\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179293,
+    "update_time": 1775179293,
+    "_id": "doc-67e675f4e1534a2aafca6d0a96a5694b"
+  },
+  "doc-9457c421115bc6e9df1c5fc3efb2fcea": {
+    "content": "Manufacturing Defect: DEF-CFEA27B2\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-9457c421115bc6e9df1c5fc3efb2fcea"
+  },
+  "doc-997f06aaef3809a0f6e034de28706be0": {
+    "content": "Manufacturing Defect: DEF-53FD35B2\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-997f06aaef3809a0f6e034de28706be0"
+  },
+  "doc-d3d64fececaaf95782b33c6ee3aba4ce": {
+    "content": "Manufacturing Defect: DEF-2361E77F\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-d3d64fececaaf95782b33c6ee3aba4ce"
+  },
+  "doc-5ac2a45690555b95dcadc49979c72194": {
+    "content": "Manufacturing Defect: DEF-2AA9FE53\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-5ac2a45690555b95dcadc49979c72194"
+  },
+  "doc-c866f6321ce8fb8e59da91488e7c092f": {
+    "content": "Manufacturing Defect: DEF-85380778\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-c866f6321ce8fb8e59da91488e7c092f"
+  },
+  "doc-dfa8afee202c5dab6b00ea3e79618e2a": {
+    "content": "Manufacturing Defect: DEF-862055DB\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-dfa8afee202c5dab6b00ea3e79618e2a"
+  },
+  "doc-a5f5eca040108651b4ca41eb365ea2f7": {
+    "content": "Manufacturing Defect: DEF-6BB361D8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-a5f5eca040108651b4ca41eb365ea2f7"
+  },
+  "doc-4f4aca0ff6e9688663f6503e5c8a7abe": {
+    "content": "Manufacturing Defect: DEF-05855063\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-4f4aca0ff6e9688663f6503e5c8a7abe"
+  },
+  "doc-269c540e245f768cd8b97ba6af7904d1": {
+    "content": "Manufacturing Defect: DEF-6CF2707D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-269c540e245f768cd8b97ba6af7904d1"
+  },
+  "doc-660013b0c95367ebf0b3f5c775d0e153": {
+    "content": "Manufacturing Defect: DEF-2F80B654\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179398,
+    "update_time": 1775179398,
+    "_id": "doc-660013b0c95367ebf0b3f5c775d0e153"
+  },
+  "doc-744ff6cdd888045be48457f4c2b7dd65": {
+    "content": "Manufacturing Defect: DEF-8648802A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-744ff6cdd888045be48457f4c2b7dd65"
+  },
+  "doc-8b5e8c8864d091474d8378e96678e0d5": {
+    "content": "Manufacturing Defect: DEF-E19A5EC1\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-8b5e8c8864d091474d8378e96678e0d5"
+  },
+  "doc-cea8c9bb1bb750e4aeee13a682445b50": {
+    "content": "Manufacturing Defect: DEF-469FEDE7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-cea8c9bb1bb750e4aeee13a682445b50"
+  },
+  "doc-5bd7bbb480525c8f259a955bcc9b990c": {
+    "content": "Manufacturing Defect: DEF-EFE59B69\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-5bd7bbb480525c8f259a955bcc9b990c"
+  },
+  "doc-682dac78a02db6ca996368d1b7ec643c": {
+    "content": "Manufacturing Defect: DEF-4B21FC98\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-682dac78a02db6ca996368d1b7ec643c"
+  },
+  "doc-8e5326b2837c9d928b58d377fc651264": {
+    "content": "Manufacturing Defect: DEF-F13FFA27\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-8e5326b2837c9d928b58d377fc651264"
+  },
+  "doc-a06a83e889372902c1be360a2242a39b": {
+    "content": "Manufacturing Defect: DEF-0883097E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-a06a83e889372902c1be360a2242a39b"
+  },
+  "doc-3905f60d915f193eecabbdbe65e4f08d": {
+    "content": "Manufacturing Defect: DEF-721C6999\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-3905f60d915f193eecabbdbe65e4f08d"
+  },
+  "doc-95f990dacbe5ea446ba5459b0f12d976": {
+    "content": "Manufacturing Defect: DEF-6265B167\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-95f990dacbe5ea446ba5459b0f12d976"
+  },
+  "doc-51044fe342ff96dafee8eebd477e4d26": {
+    "content": "Manufacturing Defect: DEF-7CA1C302\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179501,
+    "update_time": 1775179501,
+    "_id": "doc-51044fe342ff96dafee8eebd477e4d26"
+  },
+  "doc-09800c6ed8d6e95a3bb23c8597cabbfa": {
+    "content": "Manufacturing Defect: DEF-A0F8CC87\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-09800c6ed8d6e95a3bb23c8597cabbfa"
+  },
+  "doc-f45784734b382b85a713fc1d7033c611": {
+    "content": "Manufacturing Defect: DEF-CFAC8EC1\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-f45784734b382b85a713fc1d7033c611"
+  },
+  "doc-5f6db9fdaf3d272628dd9383f910c2e6": {
+    "content": "Manufacturing Defect: DEF-3EF6C2B9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-5f6db9fdaf3d272628dd9383f910c2e6"
+  },
+  "doc-6d25b53593e133c0bfe1db475706d72e": {
+    "content": "Manufacturing Defect: DEF-5188CBA4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-6d25b53593e133c0bfe1db475706d72e"
+  },
+  "doc-05569fa5939815b7c0e81242d5394692": {
+    "content": "Manufacturing Defect: DEF-9495258C\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-05569fa5939815b7c0e81242d5394692"
+  },
+  "doc-fb8b275568580faeaf446000ab276351": {
+    "content": "Manufacturing Defect: DEF-0B516880\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-fb8b275568580faeaf446000ab276351"
+  },
+  "doc-c43da5bb9cc4d5578b696646629e6216": {
+    "content": "Manufacturing Defect: DEF-45A456F4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-c43da5bb9cc4d5578b696646629e6216"
+  },
+  "doc-dfb59e1973c79fa59d43de5ec031ef7f": {
+    "content": "Manufacturing Defect: DEF-D385893C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-dfb59e1973c79fa59d43de5ec031ef7f"
+  },
+  "doc-0ad5e04843cb71615943d16cbef142b8": {
+    "content": "Manufacturing Defect: DEF-1DA0334C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-0ad5e04843cb71615943d16cbef142b8"
+  },
+  "doc-3fe6980888b09b6826bd3e403137faa7": {
+    "content": "Manufacturing Defect: DEF-22FFDCDE\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179601,
+    "update_time": 1775179601,
+    "_id": "doc-3fe6980888b09b6826bd3e403137faa7"
+  },
+  "doc-b62008eae052f11a9370c771e506d5fb": {
+    "content": "Manufacturing Defect: DEF-10FF03E4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-b62008eae052f11a9370c771e506d5fb"
+  },
+  "doc-fc0fa61582e98d6338bab94628b72dfc": {
+    "content": "Manufacturing Defect: DEF-9FEB51B8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-fc0fa61582e98d6338bab94628b72dfc"
+  },
+  "doc-8266aede142a1d610688274b9eae70ee": {
+    "content": "Manufacturing Defect: DEF-527AA7BE\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-8266aede142a1d610688274b9eae70ee"
+  },
+  "doc-050c9ec6ee8b10b9bf366c12aefa2f8e": {
+    "content": "Manufacturing Defect: DEF-3AAB87EC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-050c9ec6ee8b10b9bf366c12aefa2f8e"
+  },
+  "doc-7395c3e882a07a5cbab9309db9164e0e": {
+    "content": "Manufacturing Defect: DEF-6394C8BB\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-7395c3e882a07a5cbab9309db9164e0e"
+  },
+  "doc-7d886d5df2d20a8b5e149abb5bd0afc1": {
+    "content": "Manufacturing Defect: DEF-BC78747A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-7d886d5df2d20a8b5e149abb5bd0afc1"
+  },
+  "doc-490cadd6f339eb5a8aad50845a02ae36": {
+    "content": "Manufacturing Defect: DEF-5E2C968C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-490cadd6f339eb5a8aad50845a02ae36"
+  },
+  "doc-584083a6f3460147e85b12dba48a54eb": {
+    "content": "Manufacturing Defect: DEF-43D45A35\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-584083a6f3460147e85b12dba48a54eb"
+  },
+  "doc-f824ba7ad7b103393f7ae47495a38a88": {
+    "content": "Manufacturing Defect: DEF-FB9D91EF\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-f824ba7ad7b103393f7ae47495a38a88"
+  },
+  "doc-4908daf21c23ac614bf1bf491a14aab9": {
+    "content": "Manufacturing Defect: DEF-BAD35103\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179705,
+    "update_time": 1775179705,
+    "_id": "doc-4908daf21c23ac614bf1bf491a14aab9"
+  },
+  "doc-a908548f55330497d9b48de387629e6f": {
+    "content": "Manufacturing Defect: DEF-E63B90DD\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-a908548f55330497d9b48de387629e6f"
+  },
+  "doc-3747aa29cd932df5a874dd575b9fb63f": {
+    "content": "Manufacturing Defect: DEF-0E4FC6ED\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-3747aa29cd932df5a874dd575b9fb63f"
+  },
+  "doc-b5a93fa71466429b2ac4061cdfeb2098": {
+    "content": "Manufacturing Defect: DEF-3ABB1D75\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-b5a93fa71466429b2ac4061cdfeb2098"
+  },
+  "doc-b4cce4f45561f186270e8a8640907f71": {
+    "content": "Manufacturing Defect: DEF-A69B1F3F\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-b4cce4f45561f186270e8a8640907f71"
+  },
+  "doc-0062fa810f88df8c5f3f4ab399102eac": {
+    "content": "Manufacturing Defect: DEF-88FBBDA4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-0062fa810f88df8c5f3f4ab399102eac"
+  },
+  "doc-d3a62c58e9352c6ac508dce688276c31": {
+    "content": "Manufacturing Defect: DEF-39ED6122\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-d3a62c58e9352c6ac508dce688276c31"
+  },
+  "doc-966db27c0b2067664cf46b4fd7fe33c2": {
+    "content": "Manufacturing Defect: DEF-5D518AF9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-966db27c0b2067664cf46b4fd7fe33c2"
+  },
+  "doc-d3439a4cb36a1935c56611426ab4c461": {
+    "content": "Manufacturing Defect: DEF-0351F0C8\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-d3439a4cb36a1935c56611426ab4c461"
+  },
+  "doc-7b656f525bde6d8a724567f24f0e6797": {
+    "content": "Manufacturing Defect: DEF-8B718B82\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-7b656f525bde6d8a724567f24f0e6797"
+  },
+  "doc-dc5f8244a197b2ab72d4f1208e2b5f9e": {
+    "content": "Manufacturing Defect: DEF-75B8438D\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179807,
+    "update_time": 1775179807,
+    "_id": "doc-dc5f8244a197b2ab72d4f1208e2b5f9e"
+  },
+  "doc-9f3078d16ffaa5c3bb8b752f1115e3e2": {
+    "content": "Manufacturing Defect: DEF-D6F48769\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-9f3078d16ffaa5c3bb8b752f1115e3e2"
+  },
+  "doc-7c4e07391b86e120a56f569342049cd2": {
+    "content": "Manufacturing Defect: DEF-C59FF9F1\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-7c4e07391b86e120a56f569342049cd2"
+  },
+  "doc-45f8b25dc1d2be7f9fc87b52ad8393cf": {
+    "content": "Manufacturing Defect: DEF-4EEFE3C8\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-45f8b25dc1d2be7f9fc87b52ad8393cf"
+  },
+  "doc-7749f8a62828892a527473d58e04a3c5": {
+    "content": "Manufacturing Defect: DEF-D0DB24D1\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-7749f8a62828892a527473d58e04a3c5"
+  },
+  "doc-af66a39d7c4bc54076f6f6463628a3d3": {
+    "content": "Manufacturing Defect: DEF-2E784117\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-af66a39d7c4bc54076f6f6463628a3d3"
+  },
+  "doc-7f3cf56a0cca497e515bb248a299b9bb": {
+    "content": "Manufacturing Defect: DEF-B696C01A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-7f3cf56a0cca497e515bb248a299b9bb"
+  },
+  "doc-e4547aff1c8c29d989c12fae2c5fb09e": {
+    "content": "Manufacturing Defect: DEF-68108782\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-e4547aff1c8c29d989c12fae2c5fb09e"
+  },
+  "doc-ab1d782a29abb598dc517d0b8684fac2": {
+    "content": "Manufacturing Defect: DEF-2FD624BD\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-ab1d782a29abb598dc517d0b8684fac2"
+  },
+  "doc-2bdbdae95036903015c34197a82c5144": {
+    "content": "Manufacturing Defect: DEF-20F39E21\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-2bdbdae95036903015c34197a82c5144"
+  },
+  "doc-e664c365432004aeddb77906c81ee596": {
+    "content": "Manufacturing Defect: DEF-CA670E0C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775179908,
+    "update_time": 1775179908,
+    "_id": "doc-e664c365432004aeddb77906c81ee596"
+  },
+  "doc-5c7b364330d65a6a60cef3309e2f4036": {
+    "content": "Manufacturing Defect: DEF-A5419FA9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-5c7b364330d65a6a60cef3309e2f4036"
+  },
+  "doc-e75485b17eb79a47f60aa8f8ade8f81d": {
+    "content": "Manufacturing Defect: DEF-82405283\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-e75485b17eb79a47f60aa8f8ade8f81d"
+  },
+  "doc-c755815172e85107602f11b46e52383a": {
+    "content": "Manufacturing Defect: DEF-4C2DA44C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-c755815172e85107602f11b46e52383a"
+  },
+  "doc-c04d2c58b6b18eb155bce4700e25117d": {
+    "content": "Manufacturing Defect: DEF-0E0CB37E\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-c04d2c58b6b18eb155bce4700e25117d"
+  },
+  "doc-5d4806c62b55a8c24a9bc9164c5769b5": {
+    "content": "Manufacturing Defect: DEF-79018A54\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-5d4806c62b55a8c24a9bc9164c5769b5"
+  },
+  "doc-e3950b935efcffb71add3f54ccb034a5": {
+    "content": "Manufacturing Defect: DEF-A3711A8E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-e3950b935efcffb71add3f54ccb034a5"
+  },
+  "doc-232bcddc7120fa0557a6a0d07ed84cee": {
+    "content": "Manufacturing Defect: DEF-BFA8A816\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-232bcddc7120fa0557a6a0d07ed84cee"
+  },
+  "doc-9044a2ff3948c38672a1447a51a4450a": {
+    "content": "Manufacturing Defect: DEF-17362263\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-9044a2ff3948c38672a1447a51a4450a"
+  },
+  "doc-d70871570ab4715018a8ec623df73928": {
+    "content": "Manufacturing Defect: DEF-CE055BE2\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-d70871570ab4715018a8ec623df73928"
+  },
+  "doc-9e4deec14e0516561c9da0bff5100231": {
+    "content": "Manufacturing Defect: DEF-B0731FB2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180010,
+    "update_time": 1775180010,
+    "_id": "doc-9e4deec14e0516561c9da0bff5100231"
+  },
+  "doc-b4871de7ba2d86592f0e19a1346abede": {
+    "content": "Manufacturing Defect: DEF-20E17E11\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-b4871de7ba2d86592f0e19a1346abede"
+  },
+  "doc-660bc082d4243475fceee0c413360d2e": {
+    "content": "Manufacturing Defect: DEF-D1BB93DD\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-660bc082d4243475fceee0c413360d2e"
+  },
+  "doc-6d438673bd39b0a88eaca788e1f4ea4d": {
+    "content": "Manufacturing Defect: DEF-F2D52C21\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-6d438673bd39b0a88eaca788e1f4ea4d"
+  },
+  "doc-0b2fb38166dc9c7c396cd7cc0a47adc5": {
+    "content": "Manufacturing Defect: DEF-DDB31D27\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-0b2fb38166dc9c7c396cd7cc0a47adc5"
+  },
+  "doc-66d053e2f2720f7a03bc7a04fbc1ad40": {
+    "content": "Manufacturing Defect: DEF-EBC38BC2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-66d053e2f2720f7a03bc7a04fbc1ad40"
+  },
+  "doc-b84506e3c0dc44b817b55a9cb3518ea3": {
+    "content": "Manufacturing Defect: DEF-3B4BB951\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-b84506e3c0dc44b817b55a9cb3518ea3"
+  },
+  "doc-a6f9e8589e5dd83a802fa93becbe78f1": {
+    "content": "Manufacturing Defect: DEF-C52B3D2C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-a6f9e8589e5dd83a802fa93becbe78f1"
+  },
+  "doc-e16ded3f833ebf4bea4c400be73d92b8": {
+    "content": "Manufacturing Defect: DEF-8F7F3F0A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-e16ded3f833ebf4bea4c400be73d92b8"
+  },
+  "doc-6af65e992ad401851291fef476793a5b": {
+    "content": "Manufacturing Defect: DEF-9031E7B4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-6af65e992ad401851291fef476793a5b"
+  },
+  "doc-76f332ef63c570513fa009237ab869fd": {
+    "content": "Manufacturing Defect: DEF-0F638A36\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180109,
+    "update_time": 1775180109,
+    "_id": "doc-76f332ef63c570513fa009237ab869fd"
+  },
+  "doc-8763ad4561a6c8186e50c9dd778afe34": {
+    "content": "Manufacturing Defect: DEF-5EF31400\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-8763ad4561a6c8186e50c9dd778afe34"
+  },
+  "doc-3f6c5fdea68a005cd31ac0b1ba95c320": {
+    "content": "Manufacturing Defect: DEF-08F6921E\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-3f6c5fdea68a005cd31ac0b1ba95c320"
+  },
+  "doc-c6ae3d0dcd309b2ab3ae31c977150ff7": {
+    "content": "Manufacturing Defect: DEF-1619D994\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-c6ae3d0dcd309b2ab3ae31c977150ff7"
+  },
+  "doc-3b1290fa3a72c59d7944bbdc2c41a0e9": {
+    "content": "Manufacturing Defect: DEF-1D97921A\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-3b1290fa3a72c59d7944bbdc2c41a0e9"
+  },
+  "doc-2b56757e22cab36c1c5ac562534f71fb": {
+    "content": "Manufacturing Defect: DEF-C3511EB9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-2b56757e22cab36c1c5ac562534f71fb"
+  },
+  "doc-eafef744f9ef86b651e223fe6481d761": {
+    "content": "Manufacturing Defect: DEF-B614FC8B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-eafef744f9ef86b651e223fe6481d761"
+  },
+  "doc-db2213f7bf45e6a4ff6fc33e9b5d7cf5": {
+    "content": "Manufacturing Defect: DEF-5B155D9B\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-db2213f7bf45e6a4ff6fc33e9b5d7cf5"
+  },
+  "doc-c7091351bfa58d9a1f3e1d6a61fafa6c": {
+    "content": "Manufacturing Defect: DEF-BC633FF8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-c7091351bfa58d9a1f3e1d6a61fafa6c"
+  },
+  "doc-b99f23a1c526b3d2b95044928be46a29": {
+    "content": "Manufacturing Defect: DEF-8371E602\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-b99f23a1c526b3d2b95044928be46a29"
+  },
+  "doc-f59cd26abda298c133ebc9162cf08eb9": {
+    "content": "Manufacturing Defect: DEF-626E7392\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180216,
+    "update_time": 1775180216,
+    "_id": "doc-f59cd26abda298c133ebc9162cf08eb9"
+  },
+  "doc-5c589b3ffb82935286e67d9c5bfe97dd": {
+    "content": "Manufacturing Defect: DEF-1FEDAC4D\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-5c589b3ffb82935286e67d9c5bfe97dd"
+  },
+  "doc-2e6c618de614c28ea76bc4fd43e61277": {
+    "content": "Manufacturing Defect: DEF-E8D9D0BF\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-2e6c618de614c28ea76bc4fd43e61277"
+  },
+  "doc-45fc320c51e68da5db92e528953e7681": {
+    "content": "Manufacturing Defect: DEF-0B615825\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-45fc320c51e68da5db92e528953e7681"
+  },
+  "doc-d11294f7c045f324c65d2f09753218ca": {
+    "content": "Manufacturing Defect: DEF-90560AA2\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-d11294f7c045f324c65d2f09753218ca"
+  },
+  "doc-cd3a1e280fc3af76b31b6c4050dabd58": {
+    "content": "Manufacturing Defect: DEF-CE4EB4EA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-cd3a1e280fc3af76b31b6c4050dabd58"
+  },
+  "doc-ee4eb312f95e202d69553fdf9328233e": {
+    "content": "Manufacturing Defect: DEF-F09B6697\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-ee4eb312f95e202d69553fdf9328233e"
+  },
+  "doc-fe47ec9cd8a7b3187ddd286b8dae4fa1": {
+    "content": "Manufacturing Defect: DEF-1107BCF4\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-fe47ec9cd8a7b3187ddd286b8dae4fa1"
+  },
+  "doc-c55045045a1ed3fda8d314e3ce247c25": {
+    "content": "Manufacturing Defect: DEF-2FF3FEE9\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-c55045045a1ed3fda8d314e3ce247c25"
+  },
+  "doc-af75977318ab2cff643746072e105fcb": {
+    "content": "Manufacturing Defect: DEF-0B9CAB90\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-af75977318ab2cff643746072e105fcb"
+  },
+  "doc-4b1de2ead2f9834ea9cef7afe8b94765": {
+    "content": "Manufacturing Defect: DEF-C3AB2053\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180319,
+    "update_time": 1775180319,
+    "_id": "doc-4b1de2ead2f9834ea9cef7afe8b94765"
+  },
+  "doc-1fa5507bd272757001753f97c8309ced": {
+    "content": "Manufacturing Defect: DEF-28ABAD14\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-1fa5507bd272757001753f97c8309ced"
+  },
+  "doc-105ad6ee3b65ef816076da3cce5b51bd": {
+    "content": "Manufacturing Defect: DEF-12C3D4D7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-105ad6ee3b65ef816076da3cce5b51bd"
+  },
+  "doc-a4116e8c30c41940d188cc3623f93b09": {
+    "content": "Manufacturing Defect: DEF-27FA9B0F\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-a4116e8c30c41940d188cc3623f93b09"
+  },
+  "doc-a086852b4445d1688c1f03a9b436d5eb": {
+    "content": "Manufacturing Defect: DEF-7C80D943\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-a086852b4445d1688c1f03a9b436d5eb"
+  },
+  "doc-ca1e03fcfd215845840494215143d516": {
+    "content": "Manufacturing Defect: DEF-7EEDE1FF\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-ca1e03fcfd215845840494215143d516"
+  },
+  "doc-4964f3a56a22d584ff7d46019c5fe960": {
+    "content": "Manufacturing Defect: DEF-947C5420\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-4964f3a56a22d584ff7d46019c5fe960"
+  },
+  "doc-7f2cac9259030fe2d0a2b3ffa33423af": {
+    "content": "Manufacturing Defect: DEF-FEBF154B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-7f2cac9259030fe2d0a2b3ffa33423af"
+  },
+  "doc-671e72b16fedebf90c1912af7db25aee": {
+    "content": "Manufacturing Defect: DEF-05344F08\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-671e72b16fedebf90c1912af7db25aee"
+  },
+  "doc-153424002005a0a25ec71a59c9b10582": {
+    "content": "Manufacturing Defect: DEF-C2E76BBB\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-153424002005a0a25ec71a59c9b10582"
+  },
+  "doc-f5fe3b86466caa0c458192dced372915": {
+    "content": "Manufacturing Defect: DEF-CA115883\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180428,
+    "update_time": 1775180428,
+    "_id": "doc-f5fe3b86466caa0c458192dced372915"
+  },
+  "doc-8428ddf60d17104c8de7fe2e63283bda": {
+    "content": "Manufacturing Defect: DEF-77FADE8C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-8428ddf60d17104c8de7fe2e63283bda"
+  },
+  "doc-4f66e185036252cf45cf1e35288f35e0": {
+    "content": "Manufacturing Defect: DEF-399423D5\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-4f66e185036252cf45cf1e35288f35e0"
+  },
+  "doc-d885d7d7d25bde2c22709007bd71fbaa": {
+    "content": "Manufacturing Defect: DEF-67335DDA\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-d885d7d7d25bde2c22709007bd71fbaa"
+  },
+  "doc-65c53f1ebf9aa1c1b11309495581cb6a": {
+    "content": "Manufacturing Defect: DEF-80A774A3\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-65c53f1ebf9aa1c1b11309495581cb6a"
+  },
+  "doc-cb10adf3788b2262575f18a1df7c98a9": {
+    "content": "Manufacturing Defect: DEF-C7C850BC\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-cb10adf3788b2262575f18a1df7c98a9"
+  },
+  "doc-78aaa983b887ddcc69f99df303adfdfb": {
+    "content": "Manufacturing Defect: DEF-3C3E0502\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-78aaa983b887ddcc69f99df303adfdfb"
+  },
+  "doc-465f0e5831f37c0d13a3fca5f135fe75": {
+    "content": "Manufacturing Defect: DEF-031724A4\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-465f0e5831f37c0d13a3fca5f135fe75"
+  },
+  "doc-b72c83a1157006632388691be270db0a": {
+    "content": "Manufacturing Defect: DEF-227396D1\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-b72c83a1157006632388691be270db0a"
+  },
+  "doc-0544f7e06e4dbccd659d212dba9aa63d": {
+    "content": "Manufacturing Defect: DEF-DD621A7A\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-0544f7e06e4dbccd659d212dba9aa63d"
+  },
+  "doc-0a6f6edc238e827fd49c205f60185c1b": {
+    "content": "Manufacturing Defect: DEF-0A346CE8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180527,
+    "update_time": 1775180527,
+    "_id": "doc-0a6f6edc238e827fd49c205f60185c1b"
+  },
+  "doc-7136b5ed83efac866488ea140e63e953": {
+    "content": "Manufacturing Defect: DEF-29697E9A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-7136b5ed83efac866488ea140e63e953"
+  },
+  "doc-6bafcdd84abffb1142d7403fc52e175c": {
+    "content": "Manufacturing Defect: DEF-D4C9C5CB\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-6bafcdd84abffb1142d7403fc52e175c"
+  },
+  "doc-2b614813c6263fd02e0da2d761f2a851": {
+    "content": "Manufacturing Defect: DEF-77D683DC\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-2b614813c6263fd02e0da2d761f2a851"
+  },
+  "doc-e22b1cf6a9e2bbfdcfafc30f0cdb61c4": {
+    "content": "Manufacturing Defect: DEF-959155BF\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-e22b1cf6a9e2bbfdcfafc30f0cdb61c4"
+  },
+  "doc-98f556be2ee352da57928ea8aa04cd3a": {
+    "content": "Manufacturing Defect: DEF-30FF7AA0\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-98f556be2ee352da57928ea8aa04cd3a"
+  },
+  "doc-1a4c4dff9f20f62b3371f1e522801b86": {
+    "content": "Manufacturing Defect: DEF-76279E57\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-1a4c4dff9f20f62b3371f1e522801b86"
+  },
+  "doc-f7d56e4cfa580f17d33289d25eb1b563": {
+    "content": "Manufacturing Defect: DEF-70D6A5FA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-f7d56e4cfa580f17d33289d25eb1b563"
+  },
+  "doc-9049f0fab07643e8629ce1f874d3faf5": {
+    "content": "Manufacturing Defect: DEF-6F25E9B4\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-9049f0fab07643e8629ce1f874d3faf5"
+  },
+  "doc-a794e0dc2d510a8b9a35cea26f5a6162": {
+    "content": "Manufacturing Defect: DEF-A68155B3\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-a794e0dc2d510a8b9a35cea26f5a6162"
+  },
+  "doc-e45b743a255e968002b56b6432401056": {
+    "content": "Manufacturing Defect: DEF-1E0A98EF\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180629,
+    "update_time": 1775180629,
+    "_id": "doc-e45b743a255e968002b56b6432401056"
+  },
+  "doc-abe049e478f929f7ceab2d3c13b92100": {
+    "content": "Manufacturing Defect: DEF-B67C1E43\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-abe049e478f929f7ceab2d3c13b92100"
+  },
+  "doc-70715225f28ada4c6fb878da8a93ac0b": {
+    "content": "Manufacturing Defect: DEF-ECA81745\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-70715225f28ada4c6fb878da8a93ac0b"
+  },
+  "doc-8f981bb9accee095fac98320f81788b7": {
+    "content": "Manufacturing Defect: DEF-B3B4A495\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-8f981bb9accee095fac98320f81788b7"
+  },
+  "doc-3885aef982ea4230991765a698458182": {
+    "content": "Manufacturing Defect: DEF-B6ED6B23\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-3885aef982ea4230991765a698458182"
+  },
+  "doc-455578f7e7ddd42433ca8d7f94ee6b4f": {
+    "content": "Manufacturing Defect: DEF-E84D2C46\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-455578f7e7ddd42433ca8d7f94ee6b4f"
+  },
+  "doc-868eb92433c522838182f00647d6c963": {
+    "content": "Manufacturing Defect: DEF-EEEA4FC5\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-868eb92433c522838182f00647d6c963"
+  },
+  "doc-df36710ffc5fddc714e46207968788e5": {
+    "content": "Manufacturing Defect: DEF-FB855EF0\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-df36710ffc5fddc714e46207968788e5"
+  },
+  "doc-3b29b7d3e4b568a4f0e751ae6c40ed58": {
+    "content": "Manufacturing Defect: DEF-2E6C622D\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-3b29b7d3e4b568a4f0e751ae6c40ed58"
+  },
+  "doc-626a7b4f3e5819c9d41ab9704708c13b": {
+    "content": "Manufacturing Defect: DEF-3ADE2BCA\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-626a7b4f3e5819c9d41ab9704708c13b"
+  },
+  "doc-ba0c43ebef98e4adf1944e2b993cd6f7": {
+    "content": "Manufacturing Defect: DEF-14ECA820\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180736,
+    "update_time": 1775180736,
+    "_id": "doc-ba0c43ebef98e4adf1944e2b993cd6f7"
+  },
+  "doc-a012e855546942867d2397be83787ca1": {
+    "content": "Manufacturing Defect: DEF-D04E2F57\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-a012e855546942867d2397be83787ca1"
+  },
+  "doc-fc2e5c623dc21529e3589a8490e1cb45": {
+    "content": "Manufacturing Defect: DEF-1542B5ED\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-fc2e5c623dc21529e3589a8490e1cb45"
+  },
+  "doc-36c7420c5bbb57b22d64b5c485c0fd94": {
+    "content": "Manufacturing Defect: DEF-AE6EE66C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-36c7420c5bbb57b22d64b5c485c0fd94"
+  },
+  "doc-4d70c231636e3d61ed472f39639a0156": {
+    "content": "Manufacturing Defect: DEF-6BF08268\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-4d70c231636e3d61ed472f39639a0156"
+  },
+  "doc-34e7db109f59586dbceda9533700669b": {
+    "content": "Manufacturing Defect: DEF-FAA5B1E5\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-34e7db109f59586dbceda9533700669b"
+  },
+  "doc-0aaad92142c717c7321321363742ca00": {
+    "content": "Manufacturing Defect: DEF-EC32DEFC\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-0aaad92142c717c7321321363742ca00"
+  },
+  "doc-5dcc20689de29527e0e2dbbec06a51a9": {
+    "content": "Manufacturing Defect: DEF-EE7AA147\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-5dcc20689de29527e0e2dbbec06a51a9"
+  },
+  "doc-30c42aa0bec1de194b7f35d62bd13f50": {
+    "content": "Manufacturing Defect: DEF-D6812899\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-30c42aa0bec1de194b7f35d62bd13f50"
+  },
+  "doc-da2940f3dc0a53e1ba2223a881958ecd": {
+    "content": "Manufacturing Defect: DEF-F6CB6755\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-da2940f3dc0a53e1ba2223a881958ecd"
+  },
+  "doc-35e5114bbad46633a8eb4d95dc916992": {
+    "content": "Manufacturing Defect: DEF-80273FCA\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180852,
+    "update_time": 1775180852,
+    "_id": "doc-35e5114bbad46633a8eb4d95dc916992"
+  },
+  "doc-34e6d4dea688e2d807a77a1cd11a0848": {
+    "content": "Manufacturing Defect: DEF-94BC976B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-34e6d4dea688e2d807a77a1cd11a0848"
+  },
+  "doc-30b329f958f48730a49d96adb42fff6b": {
+    "content": "Manufacturing Defect: DEF-39480F38\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-30b329f958f48730a49d96adb42fff6b"
+  },
+  "doc-8268c68647592c293ef9c96f870a8af6": {
+    "content": "Manufacturing Defect: DEF-1DEAEDBB\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-8268c68647592c293ef9c96f870a8af6"
+  },
+  "doc-94f598726b135ca406915a4a8e3f8d71": {
+    "content": "Manufacturing Defect: DEF-4FB7D7C9\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-94f598726b135ca406915a4a8e3f8d71"
+  },
+  "doc-02bbdcc5a976cf216167a2b5cfae02f9": {
+    "content": "Manufacturing Defect: DEF-BE704511\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-02bbdcc5a976cf216167a2b5cfae02f9"
+  },
+  "doc-426a33b120a4db7162a8d5f44e0159c2": {
+    "content": "Manufacturing Defect: DEF-7483B687\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-426a33b120a4db7162a8d5f44e0159c2"
+  },
+  "doc-3040c3d1f5375729258960152f5e8151": {
+    "content": "Manufacturing Defect: DEF-516D60D2\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-3040c3d1f5375729258960152f5e8151"
+  },
+  "doc-1f970314f020c0adc59774d1bbd47892": {
+    "content": "Manufacturing Defect: DEF-7B21EDF8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-1f970314f020c0adc59774d1bbd47892"
+  },
+  "doc-c0b7e89e97c790f27a8980b1567125bb": {
+    "content": "Manufacturing Defect: DEF-10EF69A0\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-c0b7e89e97c790f27a8980b1567125bb"
+  },
+  "doc-2a4b2b904ebffd8cfeba860cb1759cda": {
+    "content": "Manufacturing Defect: DEF-A57E7C4E\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775180970,
+    "update_time": 1775180970,
+    "_id": "doc-2a4b2b904ebffd8cfeba860cb1759cda"
+  },
+  "doc-6e87928f58e0341d9f14e54d147473d5": {
+    "content": "Manufacturing Defect: DEF-6CACDA74\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-6e87928f58e0341d9f14e54d147473d5"
+  },
+  "doc-9229423288a9133b701bffb6786db6e8": {
+    "content": "Manufacturing Defect: DEF-26C2595A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-9229423288a9133b701bffb6786db6e8"
+  },
+  "doc-40ac56863f610b2457dc6d2041105022": {
+    "content": "Manufacturing Defect: DEF-09DAABFB\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-40ac56863f610b2457dc6d2041105022"
+  },
+  "doc-88797d3b9140c48dd441841df58be348": {
+    "content": "Manufacturing Defect: DEF-FBCCA45C\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-88797d3b9140c48dd441841df58be348"
+  },
+  "doc-937d06b5b82c8667e929fa88f43ae938": {
+    "content": "Manufacturing Defect: DEF-5FF86D28\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-937d06b5b82c8667e929fa88f43ae938"
+  },
+  "doc-9895b929f37c73606db05bb0b78b6975": {
+    "content": "Manufacturing Defect: DEF-F9B17269\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-9895b929f37c73606db05bb0b78b6975"
+  },
+  "doc-a90dfc557f2a36132de53cc95ebdff69": {
+    "content": "Manufacturing Defect: DEF-9B67AEEC\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-a90dfc557f2a36132de53cc95ebdff69"
+  },
+  "doc-2ac8772840dd53442d83e580d27ca592": {
+    "content": "Manufacturing Defect: DEF-EC986593\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-2ac8772840dd53442d83e580d27ca592"
+  },
+  "doc-636410c850110e6bd60900eba2d86f55": {
+    "content": "Manufacturing Defect: DEF-C94E666E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-636410c850110e6bd60900eba2d86f55"
+  },
+  "doc-5b6531631fb0b7e934646e95391502b8": {
+    "content": "Manufacturing Defect: DEF-02284B28\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181086,
+    "update_time": 1775181086,
+    "_id": "doc-5b6531631fb0b7e934646e95391502b8"
+  },
+  "doc-c3264d3e457950b129f81f2e22f763ee": {
+    "content": "Manufacturing Defect: DEF-DC573D82\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-c3264d3e457950b129f81f2e22f763ee"
+  },
+  "doc-c500e38acea7fc364243e9a11aaffd92": {
+    "content": "Manufacturing Defect: DEF-1D768C7D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-c500e38acea7fc364243e9a11aaffd92"
+  },
+  "doc-14b8ad60b14ec98dec5b0b349d7f5891": {
+    "content": "Manufacturing Defect: DEF-29EBB496\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-14b8ad60b14ec98dec5b0b349d7f5891"
+  },
+  "doc-278c83a022267aabe80133e51598adce": {
+    "content": "Manufacturing Defect: DEF-1CABD038\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-278c83a022267aabe80133e51598adce"
+  },
+  "doc-63ab5f6106a717af8671a2f3eaea808c": {
+    "content": "Manufacturing Defect: DEF-C7F415CB\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-63ab5f6106a717af8671a2f3eaea808c"
+  },
+  "doc-5acdaa64d7e48d7b313f6767cd712c18": {
+    "content": "Manufacturing Defect: DEF-BBC56687\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-5acdaa64d7e48d7b313f6767cd712c18"
+  },
+  "doc-321f29e6d7d4cf7283d60488205ede28": {
+    "content": "Manufacturing Defect: DEF-80CE3BFF\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-321f29e6d7d4cf7283d60488205ede28"
+  },
+  "doc-d826a7d5a64210d5e0b28b33f4bf1e25": {
+    "content": "Manufacturing Defect: DEF-14837986\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-d826a7d5a64210d5e0b28b33f4bf1e25"
+  },
+  "doc-e1a2e691d1ed7ff484b594f84b7b3869": {
+    "content": "Manufacturing Defect: DEF-84B6065E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-e1a2e691d1ed7ff484b594f84b7b3869"
+  },
+  "doc-e94e8dfeb31790996614664dd8955b27": {
+    "content": "Manufacturing Defect: DEF-B01232C6\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181204,
+    "update_time": 1775181204,
+    "_id": "doc-e94e8dfeb31790996614664dd8955b27"
+  },
+  "doc-6f22697e3fa3899c8dfab1bb79e9d289": {
+    "content": "Manufacturing Defect: DEF-A190888B\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-6f22697e3fa3899c8dfab1bb79e9d289"
+  },
+  "doc-2b18a1fa78dbfc3b162bac9ddff9e346": {
+    "content": "Manufacturing Defect: DEF-1004C35D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-2b18a1fa78dbfc3b162bac9ddff9e346"
+  },
+  "doc-061961d050509a8589cade78c78303dd": {
+    "content": "Manufacturing Defect: DEF-FC771E1B\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-061961d050509a8589cade78c78303dd"
+  },
+  "doc-8d3b50c8417d3c4335f2c4a349467e01": {
+    "content": "Manufacturing Defect: DEF-178FF6D5\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-8d3b50c8417d3c4335f2c4a349467e01"
+  },
+  "doc-ee54519eb51bf0100fa76f2176e235c5": {
+    "content": "Manufacturing Defect: DEF-30E04E02\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-ee54519eb51bf0100fa76f2176e235c5"
+  },
+  "doc-f2aa648b446ed1634c9f0177e438de04": {
+    "content": "Manufacturing Defect: DEF-94F39258\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-f2aa648b446ed1634c9f0177e438de04"
+  },
+  "doc-4ce398b66640981891b5ac3efe976b8e": {
+    "content": "Manufacturing Defect: DEF-15E3C330\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-4ce398b66640981891b5ac3efe976b8e"
+  },
+  "doc-782107e24dcdc731983aa2e1c36c4bd7": {
+    "content": "Manufacturing Defect: DEF-A986FE48\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-782107e24dcdc731983aa2e1c36c4bd7"
+  },
+  "doc-9a60df5eaf3925ef17dc2507a4191467": {
+    "content": "Manufacturing Defect: DEF-3E258B29\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-9a60df5eaf3925ef17dc2507a4191467"
+  },
+  "doc-1288b7a0a2c6583e92030c3168ac526e": {
+    "content": "Manufacturing Defect: DEF-C2DC1E07\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181325,
+    "update_time": 1775181325,
+    "_id": "doc-1288b7a0a2c6583e92030c3168ac526e"
+  },
+  "doc-24b37993169514aa4402078d99a9fbaa": {
+    "content": "Manufacturing Defect: DEF-BC88DB33\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-24b37993169514aa4402078d99a9fbaa"
+  },
+  "doc-9e981a1c513821b4ce596fbbf253959b": {
+    "content": "Manufacturing Defect: DEF-3E775BE5\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-9e981a1c513821b4ce596fbbf253959b"
+  },
+  "doc-aa285920d32146a50799fdde270b91a4": {
+    "content": "Manufacturing Defect: DEF-27D35BF7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-aa285920d32146a50799fdde270b91a4"
+  },
+  "doc-1f683754f6c4bdf14d9d6c900aa133bd": {
+    "content": "Manufacturing Defect: DEF-BEF9D138\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-1f683754f6c4bdf14d9d6c900aa133bd"
+  },
+  "doc-dec8252dae2d4a9b3fa67a4d93518b8e": {
+    "content": "Manufacturing Defect: DEF-A6EA78E6\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-dec8252dae2d4a9b3fa67a4d93518b8e"
+  },
+  "doc-4da1a2fcf2fc4c4f41c1a30b898f5fe3": {
+    "content": "Manufacturing Defect: DEF-DFA59FA2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-4da1a2fcf2fc4c4f41c1a30b898f5fe3"
+  },
+  "doc-da3ccdabdae5fbd22e55136c3cd0218a": {
+    "content": "Manufacturing Defect: DEF-0C7638B3\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-da3ccdabdae5fbd22e55136c3cd0218a"
+  },
+  "doc-9fbdc60915546fb60354a312565511c9": {
+    "content": "Manufacturing Defect: DEF-C669CC0A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-9fbdc60915546fb60354a312565511c9"
+  },
+  "doc-e45de5dddf687cd09687089d28e86c1f": {
+    "content": "Manufacturing Defect: DEF-9A153150\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-e45de5dddf687cd09687089d28e86c1f"
+  },
+  "doc-34e71b98c2e61de4582ec071a413fd57": {
+    "content": "Manufacturing Defect: DEF-94682F02\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181450,
+    "update_time": 1775181450,
+    "_id": "doc-34e71b98c2e61de4582ec071a413fd57"
+  },
+  "doc-1276881c8c0f3b3552c59e07df78e8f0": {
+    "content": "Manufacturing Defect: DEF-1B62C7C8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-1276881c8c0f3b3552c59e07df78e8f0"
+  },
+  "doc-0ad54792c7480116a23227154ff0ac51": {
+    "content": "Manufacturing Defect: DEF-D5777A47\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-0ad54792c7480116a23227154ff0ac51"
+  },
+  "doc-751624319e0cf09aff65053c697b63c4": {
+    "content": "Manufacturing Defect: DEF-3C9C9604\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-751624319e0cf09aff65053c697b63c4"
+  },
+  "doc-747bb59329cc95298a337bedf9edb344": {
+    "content": "Manufacturing Defect: DEF-5DDB6453\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-747bb59329cc95298a337bedf9edb344"
+  },
+  "doc-1a8f318210bf131e80d5f6ce1d6ab747": {
+    "content": "Manufacturing Defect: DEF-DCEC0EAA\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-1a8f318210bf131e80d5f6ce1d6ab747"
+  },
+  "doc-693247576361b3781549fbceb009ec68": {
+    "content": "Manufacturing Defect: DEF-556FF7C2\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-693247576361b3781549fbceb009ec68"
+  },
+  "doc-f03415f805d757b758032fdb020c6483": {
+    "content": "Manufacturing Defect: DEF-D055A32E\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-f03415f805d757b758032fdb020c6483"
+  },
+  "doc-bb6248410d5188c52cd25cfa7c968c65": {
+    "content": "Manufacturing Defect: DEF-1B7D2FE0\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-bb6248410d5188c52cd25cfa7c968c65"
+  },
+  "doc-945140602f0c8f7f7490c8088da552a7": {
+    "content": "Manufacturing Defect: DEF-3EA2798D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-945140602f0c8f7f7490c8088da552a7"
+  },
+  "doc-930791802f2a75800deb9077c8f2d474": {
+    "content": "Manufacturing Defect: DEF-87ACA946\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181578,
+    "update_time": 1775181578,
+    "_id": "doc-930791802f2a75800deb9077c8f2d474"
+  },
+  "doc-eedb7c76a5084661830650d5d62fd841": {
+    "content": "Manufacturing Defect: DEF-767D9789\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-eedb7c76a5084661830650d5d62fd841"
+  },
+  "doc-a80aa234497dc995c4faf401984320e9": {
+    "content": "Manufacturing Defect: DEF-517B9970\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-a80aa234497dc995c4faf401984320e9"
+  },
+  "doc-0401e5fc5fc4f7fe0d3da499404aab19": {
+    "content": "Manufacturing Defect: DEF-3F164152\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-0401e5fc5fc4f7fe0d3da499404aab19"
+  },
+  "doc-e888ea724a63497bf84c167aea6097bc": {
+    "content": "Manufacturing Defect: DEF-ADF43D20\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-e888ea724a63497bf84c167aea6097bc"
+  },
+  "doc-0712bd2835c0309eca9024fb7a860dad": {
+    "content": "Manufacturing Defect: DEF-0DC0B859\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-0712bd2835c0309eca9024fb7a860dad"
+  },
+  "doc-5379380d5d253eb2bd4ceb1fadc8d5df": {
+    "content": "Manufacturing Defect: DEF-06A158A1\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-5379380d5d253eb2bd4ceb1fadc8d5df"
+  },
+  "doc-49742f7f228889253a45cd2912c07fef": {
+    "content": "Manufacturing Defect: DEF-FB4CE2C4\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-49742f7f228889253a45cd2912c07fef"
+  },
+  "doc-2ba5d5edefe28f207a40fe3be6ddeedf": {
+    "content": "Manufacturing Defect: DEF-D7E1EE8D\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-2ba5d5edefe28f207a40fe3be6ddeedf"
+  },
+  "doc-c52bbfa0b9e16f50e866c2b72b3b5c41": {
+    "content": "Manufacturing Defect: DEF-4A7EAA91\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-c52bbfa0b9e16f50e866c2b72b3b5c41"
+  },
+  "doc-0e7fa16f4837163c72522c0be6e7cdc9": {
+    "content": "Manufacturing Defect: DEF-CF5F939E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181709,
+    "update_time": 1775181709,
+    "_id": "doc-0e7fa16f4837163c72522c0be6e7cdc9"
+  },
+  "doc-15463d861c6ba4cab3d1c286dc2452bf": {
+    "content": "Manufacturing Defect: DEF-90CBDBCD\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-15463d861c6ba4cab3d1c286dc2452bf"
+  },
+  "doc-598515eebd244017767a68f6f7c92148": {
+    "content": "Manufacturing Defect: DEF-8D3B572C\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-598515eebd244017767a68f6f7c92148"
+  },
+  "doc-1065027d852157ebafa390c9bd667826": {
+    "content": "Manufacturing Defect: DEF-EF37A741\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-1065027d852157ebafa390c9bd667826"
+  },
+  "doc-d436b8b489bf13938c28c20065edc043": {
+    "content": "Manufacturing Defect: DEF-29E092A7\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-d436b8b489bf13938c28c20065edc043"
+  },
+  "doc-eb2148fef49353091f4805667d690a9d": {
+    "content": "Manufacturing Defect: DEF-4FE959C3\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-eb2148fef49353091f4805667d690a9d"
+  },
+  "doc-ec9a862d91e8493cc9e502ec3275ee33": {
+    "content": "Manufacturing Defect: DEF-10DCE418\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-ec9a862d91e8493cc9e502ec3275ee33"
+  },
+  "doc-c69dfcf0ec61127ceaa8daba27248a84": {
+    "content": "Manufacturing Defect: DEF-897FEB2D\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-c69dfcf0ec61127ceaa8daba27248a84"
+  },
+  "doc-8475bedf66ebdf66ca39753ed72635da": {
+    "content": "Manufacturing Defect: DEF-CD0DDC77\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-8475bedf66ebdf66ca39753ed72635da"
+  },
+  "doc-8b4fa7ecdae600f14d62d88b0d16db27": {
+    "content": "Manufacturing Defect: DEF-471DED60\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-8b4fa7ecdae600f14d62d88b0d16db27"
+  },
+  "doc-78837dbe47dd448b86cb7ed9f976f9b8": {
+    "content": "Manufacturing Defect: DEF-40BA040A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181841,
+    "update_time": 1775181841,
+    "_id": "doc-78837dbe47dd448b86cb7ed9f976f9b8"
+  },
+  "doc-ee5ce3b19cdb1338028bcdc3f71489b3": {
+    "content": "Manufacturing Defect: DEF-743AC734\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-ee5ce3b19cdb1338028bcdc3f71489b3"
+  },
+  "doc-fe50e1489db6907cbce449bd84490f9a": {
+    "content": "Manufacturing Defect: DEF-00306280\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-fe50e1489db6907cbce449bd84490f9a"
+  },
+  "doc-52e3700d99301c4398542c41173c121a": {
+    "content": "Manufacturing Defect: DEF-9A9ACEAD\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-52e3700d99301c4398542c41173c121a"
+  },
+  "doc-352fdf5e11f24581fa3ba46bf8643ca0": {
+    "content": "Manufacturing Defect: DEF-16477CBE\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-352fdf5e11f24581fa3ba46bf8643ca0"
+  },
+  "doc-8da98162db14a4076535c0570c08659e": {
+    "content": "Manufacturing Defect: DEF-F12319F2\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-8da98162db14a4076535c0570c08659e"
+  },
+  "doc-4741e55b5eb26b9404bd9cd634389261": {
+    "content": "Manufacturing Defect: DEF-4C599932\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-4741e55b5eb26b9404bd9cd634389261"
+  },
+  "doc-98305117bfddfe991d0234538e52be50": {
+    "content": "Manufacturing Defect: DEF-0CA33F0B\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-98305117bfddfe991d0234538e52be50"
+  },
+  "doc-3ae6e33a5b9492b0eaa71418b22d419d": {
+    "content": "Manufacturing Defect: DEF-1319BA3F\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-3ae6e33a5b9492b0eaa71418b22d419d"
+  },
+  "doc-be3a98fc162bb8bd1ef832dc28bcdea2": {
+    "content": "Manufacturing Defect: DEF-B9B661B3\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-be3a98fc162bb8bd1ef832dc28bcdea2"
+  },
+  "doc-af0d5b7198e88921b0026bafa0e4bbdf": {
+    "content": "Manufacturing Defect: DEF-75CDAEA9\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775181970,
+    "update_time": 1775181970,
+    "_id": "doc-af0d5b7198e88921b0026bafa0e4bbdf"
+  },
+  "doc-a1b0758c49b9de77ceceb73b850b52fc": {
+    "content": "Manufacturing Defect: DEF-7DF9805E\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-a1b0758c49b9de77ceceb73b850b52fc"
+  },
+  "doc-cdad1a66b36993e7277716dd99df6e35": {
+    "content": "Manufacturing Defect: DEF-160377A4\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-cdad1a66b36993e7277716dd99df6e35"
+  },
+  "doc-e1cfbb80e68d6375863ee4947fbca761": {
+    "content": "Manufacturing Defect: DEF-19AE860C\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-e1cfbb80e68d6375863ee4947fbca761"
+  },
+  "doc-41571f815024b17dc49e18be06a5b628": {
+    "content": "Manufacturing Defect: DEF-0DEE161A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-41571f815024b17dc49e18be06a5b628"
+  },
+  "doc-89bf333a32057ee024eb6a6d751aa252": {
+    "content": "Manufacturing Defect: DEF-F759A40C\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-89bf333a32057ee024eb6a6d751aa252"
+  },
+  "doc-63f0abba4e175e41282073e4a05538ef": {
+    "content": "Manufacturing Defect: DEF-515FD38E\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-63f0abba4e175e41282073e4a05538ef"
+  },
+  "doc-2e68b80db872781015aaca9ef6a94e81": {
+    "content": "Manufacturing Defect: DEF-056FE754\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-2e68b80db872781015aaca9ef6a94e81"
+  },
+  "doc-f7a3a65e3f3c19b9fd00141fe231f615": {
+    "content": "Manufacturing Defect: DEF-1BF45233\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-f7a3a65e3f3c19b9fd00141fe231f615"
+  },
+  "doc-bd9f791ee5f0b6d5792f37f53b39855a": {
+    "content": "Manufacturing Defect: DEF-DE2331D7\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-bd9f791ee5f0b6d5792f37f53b39855a"
+  },
+  "doc-3d7a352bcce7e49df4667836d3e34d9f": {
+    "content": "Manufacturing Defect: DEF-6B631050\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182111,
+    "update_time": 1775182111,
+    "_id": "doc-3d7a352bcce7e49df4667836d3e34d9f"
+  },
+  "doc-49200e641c38b01c889acb4b32057d59": {
+    "content": "Manufacturing Defect: DEF-F718A255\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-49200e641c38b01c889acb4b32057d59"
+  },
+  "doc-61cd7d241e5174c50c88b136f24067b6": {
+    "content": "Manufacturing Defect: DEF-D7AEB485\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-61cd7d241e5174c50c88b136f24067b6"
+  },
+  "doc-c9a3fd8f0531ce5393baeba7e74c1a75": {
+    "content": "Manufacturing Defect: DEF-2804CFED\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-c9a3fd8f0531ce5393baeba7e74c1a75"
+  },
+  "doc-e3d9230c2f76fcd95db813164ab94338": {
+    "content": "Manufacturing Defect: DEF-AA221E04\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-e3d9230c2f76fcd95db813164ab94338"
+  },
+  "doc-a87b1b4edf3c3fb3b425ead52e0b2f1b": {
+    "content": "Manufacturing Defect: DEF-EA847FD3\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-a87b1b4edf3c3fb3b425ead52e0b2f1b"
+  },
+  "doc-a96b8669823a22b3b53cac68acfb54fd": {
+    "content": "Manufacturing Defect: DEF-BCA40BF6\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-a96b8669823a22b3b53cac68acfb54fd"
+  },
+  "doc-7ea37a60698219caa25e03f6c1654ee2": {
+    "content": "Manufacturing Defect: DEF-FADDCB29\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-7ea37a60698219caa25e03f6c1654ee2"
+  },
+  "doc-5dac805e35cf2d1df4ae74629a84e438": {
+    "content": "Manufacturing Defect: DEF-6E98CD84\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-5dac805e35cf2d1df4ae74629a84e438"
+  },
+  "doc-a6f332776aba23cb0cfa79e8f4b3140e": {
+    "content": "Manufacturing Defect: DEF-209295D8\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-a6f332776aba23cb0cfa79e8f4b3140e"
+  },
+  "doc-48669616cdc286883bf751106a1e8e87": {
+    "content": "Manufacturing Defect: DEF-C9FB23A6\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182246,
+    "update_time": 1775182246,
+    "_id": "doc-48669616cdc286883bf751106a1e8e87"
+  },
+  "doc-6608a89ceb153fcab0f5afc56bd3c3d9": {
+    "content": "Manufacturing Defect: DEF-1E585CFF\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-6608a89ceb153fcab0f5afc56bd3c3d9"
+  },
+  "doc-4829a3dd57d24fc58d92ffd72f1f4df2": {
+    "content": "Manufacturing Defect: DEF-F78D159E\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-4829a3dd57d24fc58d92ffd72f1f4df2"
+  },
+  "doc-e19dffec63c73e98afc43ddcfbf24773": {
+    "content": "Manufacturing Defect: DEF-547E215A\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-e19dffec63c73e98afc43ddcfbf24773"
+  },
+  "doc-fe164f4eab33df7e10aba55bddfa35b5": {
+    "content": "Manufacturing Defect: DEF-EED7E29F\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-fe164f4eab33df7e10aba55bddfa35b5"
+  },
+  "doc-6175b0bc0e517956d40e01fc04283597": {
+    "content": "Manufacturing Defect: DEF-FFEFB609\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-6175b0bc0e517956d40e01fc04283597"
+  },
+  "doc-7025d6092f26117fd621c5194dd1ffd5": {
+    "content": "Manufacturing Defect: DEF-00109134\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-7025d6092f26117fd621c5194dd1ffd5"
+  },
+  "doc-d7e76a068b4dc8a012cff3ff5cbd8f89": {
+    "content": "Manufacturing Defect: DEF-025C60C2\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-d7e76a068b4dc8a012cff3ff5cbd8f89"
+  },
+  "doc-b2c2437ba6bf4327f6253e5d8e7121cc": {
+    "content": "Manufacturing Defect: DEF-00FB6811\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-b2c2437ba6bf4327f6253e5d8e7121cc"
+  },
+  "doc-17c3d8be7506f4fe753fa4fe0cdb67a5": {
+    "content": "Manufacturing Defect: DEF-61F7A14F\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-17c3d8be7506f4fe753fa4fe0cdb67a5"
+  },
+  "doc-69419a57eca19bbd54aaf1a4ac910cb2": {
+    "content": "Manufacturing Defect: DEF-005989E2\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182374,
+    "update_time": 1775182374,
+    "_id": "doc-69419a57eca19bbd54aaf1a4ac910cb2"
+  },
+  "doc-d58d6ae66127fc88d8ee4f8d9a3a97d4": {
+    "content": "Manufacturing Defect: DEF-8B1F0353\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-d58d6ae66127fc88d8ee4f8d9a3a97d4"
+  },
+  "doc-2532aa66cb2c238867a126d7d116577f": {
+    "content": "Manufacturing Defect: DEF-D30C127A\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-2532aa66cb2c238867a126d7d116577f"
+  },
+  "doc-4e5d3b060a450599cf7c334fade935e5": {
+    "content": "Manufacturing Defect: DEF-76791FBE\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-4e5d3b060a450599cf7c334fade935e5"
+  },
+  "doc-9d613bc15bc09161c2c08f4e22a3493b": {
+    "content": "Manufacturing Defect: DEF-2E4DD8B0\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-9d613bc15bc09161c2c08f4e22a3493b"
+  },
+  "doc-3de66ad671044e8580e86ccd6baff2d5": {
+    "content": "Manufacturing Defect: DEF-15BA0C28\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-3de66ad671044e8580e86ccd6baff2d5"
+  },
+  "doc-40260e9fae761a2a94dd90de4a1f66aa": {
+    "content": "Manufacturing Defect: DEF-4BE912A2\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-40260e9fae761a2a94dd90de4a1f66aa"
+  },
+  "doc-eb3b06b020a1670e0d8a4b3fcc7adf56": {
+    "content": "Manufacturing Defect: DEF-0DA6F2DA\nDate: None | Product: None | Plant: None\nType: Structural | Severity: Minor\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-eb3b06b020a1670e0d8a4b3fcc7adf56"
+  },
+  "doc-03853e80788a0fbc50442e1ec8d13b5e": {
+    "content": "Manufacturing Defect: DEF-536E5FC8\nDate: None | Product: None | Plant: None\nType: Cosmetic | Severity: Moderate\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-03853e80788a0fbc50442e1ec8d13b5e"
+  },
+  "doc-d82ee613f1b5cee515c79279e89865e1": {
+    "content": "Manufacturing Defect: DEF-60CB1820\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-d82ee613f1b5cee515c79279e89865e1"
+  },
+  "doc-a782b7945ae04d38cd26550aaef8907f": {
+    "content": "Manufacturing Defect: DEF-888D5227\nDate: None | Product: None | Plant: None\nType: Functional | Severity: Critical\nAction Taken: Pending",
+    "file_path": "unknown_source",
+    "create_time": 1775182513,
+    "update_time": 1775182513,
+    "_id": "doc-a782b7945ae04d38cd26550aaef8907f"
   }
 }

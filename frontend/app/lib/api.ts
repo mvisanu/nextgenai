@@ -493,6 +493,15 @@ export async function getLightRAGGraph(
   return apiFetch<LightRAGGraphData>(`/lightrag/graph/${domain}?max_nodes=${maxNodes}`);
 }
 
+/**
+ * Fetch the Kaggle-ingested knowledge graph from the PostgreSQL graph_node/graph_edge
+ * tables for the given domain. Same response shape as getLightRAGGraph.
+ * Used as an immediate fallback when the LightRAG index has not been built yet.
+ */
+export async function getPreloadedGraph(domain: string): Promise<LightRAGGraphData> {
+  return apiFetch<LightRAGGraphData>(`/graph/preloaded/${domain}`);
+}
+
 export async function queryLightRAG(body: {
   domain: string;
   query: string;
