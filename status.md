@@ -1,6 +1,6 @@
 # NextAgentAI — Project Status
 
-**Date:** 2026-04-06
+**Date:** 2026-04-06 (updated)
 **Branch:** `feature/lightrag-integration`
 **Test suite:** 577 passed, 5 skipped, 0 failed
 
@@ -66,8 +66,9 @@ curl https://nextgenai-5bf8.onrender.com/healthz
 | Item | Priority | Notes |
 |------|----------|-------|
 | Merge `feature/lightrag-integration` → `main` | High | After Render deploy confirms stable |
-| Wave 3 SQL migrations on Neon prod | High | GIN indexes + agent_runs composite index |
+| Wave 3 SQL migrations on Neon prod | Medium | GIN indexes + agent_runs composite — Neon already at head (0006) |
 | `SUPABASE_JWT_SECRET` on Render | Medium | W4-028 operational task |
+| Add `LIGHTRAG_AUTO_INDEX=false` to Render env vars | High | Prevents OOM crash on 512 MB Starter instance |
 | B2 — Async graph BFS (sync executor) | Low | Architectural; deferred |
 | B3 — Parallel BM25 + vector inside hybrid_search | Low | Moderate effort |
 

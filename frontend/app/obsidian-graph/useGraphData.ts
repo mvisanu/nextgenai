@@ -142,56 +142,65 @@ export function useGraphData(): GraphData {
   const preloadedDomainsRef = useRef<Set<string>>(new Set());
 
   // ── fetchAll: load graph data, falling back to PG tables if LightRAG empty ──
+  // Sequential loading strategy: aircraft renders first, medical loaded lazily
+  // after so that a heavy medical preloaded graph never blocks the initial paint.
 
   const fetchAll = useCallback(async () => {
     setLoading(true);
     setError(null);
 
     try {
-      const [lightragAircraft, lightragMedical, aircraftStat, medicalStat] =
-        await Promise.all([
-          getLightRAGGraph("aircraft", 150).catch(() => null),
-          getLightRAGGraph("medical",  150).catch(() => null),
-          getLightRAGStatus("aircraft").catch(() => null),
-          getLightRAGStatus("medical" ).catch(() => null),
-        ]);
-
+      // ── Phase 1: Aircraft (renders immediately) ──────────────────────────
+      const [lightragAircraft, aircraftStat] = await Promise.all([
+        getLightRAGGraph("aircraft", 150).catch(() => null),
+        getLightRAGStatus("aircraft").catch(() => null),
+      ]);
       setAircraftStatus(aircraftStat);
-      setMedicalStatus(medicalStat);
 
       const aircraftEmpty = (lightragAircraft?.node_count ?? 0) === 0;
-      const medicalEmpty  = (lightragMedical?.node_count  ?? 0) === 0;
-
-      // Preloaded PG fallback — only fetched for empty domains
-      const [preloadedAircraft, preloadedMedical] = await Promise.all([
-        aircraftEmpty ? getPreloadedGraph("aircraft").catch(() => null) : Promise.resolve(null),
-        medicalEmpty  ? getPreloadedGraph("medical" ).catch(() => null) : Promise.resolve(null),
-      ]);
-
+      const preloadedAircraft = aircraftEmpty
+        ? await getPreloadedGraph("aircraft", 100).catch(() => null)
+        : null;
       const aircraftGraph = aircraftEmpty ? preloadedAircraft : lightragAircraft;
-      const medicalGraph  = medicalEmpty  ? preloadedMedical  : lightragMedical;
 
-      // Track which domains are using PG preloaded data (so we can upgrade later)
+      // Render aircraft-only graph immediately so the user sees something
+      const { nodes: acNodes, edges: acEdges } = mergeGraphs(aircraftGraph, null);
+      setNodes(acNodes);
+      setEdges(acEdges);
+      setLoading(false);
+
+      // Track preloaded aircraft
       const newPreloaded = new Set<string>();
       if (aircraftEmpty && preloadedAircraft?.node_count) newPreloaded.add("aircraft");
-      if (medicalEmpty  && preloadedMedical?.node_count ) newPreloaded.add("medical");
+
+      // ── Phase 2: Medical (lazy — does not block aircraft render) ─────────
+      const [lightragMedical, medicalStat] = await Promise.all([
+        getLightRAGGraph("medical", 100).catch(() => null),
+        getLightRAGStatus("medical").catch(() => null),
+      ]);
+      setMedicalStatus(medicalStat);
+
+      const medicalEmpty = (lightragMedical?.node_count ?? 0) === 0;
+      const preloadedMedical = medicalEmpty
+        ? await getPreloadedGraph("medical", 100).catch(() => null)
+        : null;
+      const medicalGraph = medicalEmpty ? preloadedMedical : lightragMedical;
+
+      if (medicalEmpty && preloadedMedical?.node_count) newPreloaded.add("medical");
       preloadedDomainsRef.current = newPreloaded;
 
+      // Full merge — aircraft + medical
       const { nodes: n, edges: e } = mergeGraphs(aircraftGraph, medicalGraph);
       setNodes(n);
       setEdges(e);
 
       // ── Auto-trigger LightRAG indexing for empty domains ──────────────────
-      // If LightRAG is not_indexed and the job is idle, kick off background
-      // indexing so that subsequent visits (or the poll below) get full data.
       const toIndex: string[] = [];
       if (aircraftEmpty && aircraftStat?.index_job_status === "idle") toIndex.push("aircraft");
       if (medicalEmpty  && medicalStat?.index_job_status  === "idle") toIndex.push("medical");
 
       if (toIndex.length > 0) {
         // Trigger ONE domain at a time to avoid concurrent OOM on Render (512 MB).
-        // The polling loop re-runs fetchAll() when each domain finishes, which
-        // will pick up and trigger remaining empty domains sequentially.
         const [firstDomain] = toIndex;
         await triggerLightRAGIndex(firstDomain).catch(() => {});
         const newIndexing = new Set<string>([firstDomain]);

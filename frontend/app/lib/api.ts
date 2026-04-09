@@ -498,8 +498,8 @@ export async function getLightRAGGraph(
  * tables for the given domain. Same response shape as getLightRAGGraph.
  * Used as an immediate fallback when the LightRAG index has not been built yet.
  */
-export async function getPreloadedGraph(domain: string): Promise<LightRAGGraphData> {
-  return apiFetch<LightRAGGraphData>(`/graph/preloaded/${domain}`);
+export async function getPreloadedGraph(domain: string, maxNodes: number = 100): Promise<LightRAGGraphData> {
+  return apiFetch<LightRAGGraphData>(`/graph/preloaded/${domain}?max_nodes=${maxNodes}`);
 }
 
 export async function queryLightRAG(body: {
