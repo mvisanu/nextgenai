@@ -117,6 +117,7 @@ python -m backend.src.cli ask "Show defect trends by product for last 90 days"
 | `/medical-examples` | `medical-examples/page.tsx` | 14 pre-built clinical example queries — "Run Query" button bridges to ChatPanel |
 | `/faq` | `faq/page.tsx` | FAQ |
 | `/lightrag` | `lightrag/page.tsx` | LightRAG knowledge graph explorer — two-panel (control + React Flow graph); domain switcher, sample queries, index status, NL query |
+| `/obsidian-graph` | `obsidian-graph/page.tsx` | D3 force-directed knowledge graph merging aircraft + medical domains; SVG path (≤500 nodes) + canvas path (>500 nodes); bridge node connects top-5 hubs from each domain; node click → SidePanel; domain filter toggles |
 
 Key frontend files:
 - `app/layout.tsx` — renders `<AppHeader />` above all `{children}`; provider nesting: `ThemeProvider` → `AuthProvider` → `DomainProvider` → `RunProvider`
@@ -270,3 +271,16 @@ Key frontend files:
 - **`LIGHTRAG_BATCH_SIZE`**: `indexer.py` reads `int(os.getenv("LIGHTRAG_BATCH_SIZE", "10"))` at module level and uses it as the default for all three indexing function signatures. Default is conservative (10 docs/batch) to avoid Haiku rate limits; override to 25–50 for faster local indexing.
 - **LightRAG frontend memoization**: `lightrag/page.tsx` passes `graphNodes` and `graphEdges` as `useMemo` values to `LightRAGGraphViewer` — these must remain memoized. Inline `graphData?.nodes ?? []` expressions create new array references on every render and cause dagre to recompute layout unnecessarily. `connectionCount` is also `useMemo([selectedNode, graphData])`.
 - **LightRAG polling `visibilitychange` guard**: `lightrag/page.tsx` pauses the status-poll interval when the tab is hidden and resumes it (with an immediate tick) when the tab becomes visible. Do not remove this — background polling wastes API calls on inactive tabs.
+
+### ObsidianGraph constraints (`frontend/app/obsidian-graph/`)
+
+- **Files**: `ObsidianGraph.tsx` (D3 component), `useGraphData.ts` (fetch + merge hook), `page.tsx` (dynamic import wrapper)
+- **D3 local copies are mandatory**: The D3 simulation and `.data()` bindings MUST use local copies (`svgNodes`/`svgLinks`) derived from the React memos (`simNodes`/`simLinks`). D3's `forceLink` mutates `source`/`target` from strings to object references in-place; if the React memo arrays are passed directly, subsequent renders see mutated objects that break React's reconciliation and the `ticked()` function reads undefined positions — all edges render at `(0,0)`.
+- **`USE_CANVAS` must be `useMemo`**: `const USE_CANVAS = useMemo(() => simNodes.length > 500, [simNodes.length])`. A plain `const` recalculates every render and flip-flops at the 500-node boundary, alternately tearing down both effects.
+- **SVG effect must guard on `USE_CANVAS`**: Add `if (USE_CANVAS) return;` at the top of the SVG D3 `useEffect`. Without it, both SVG and canvas simulations run simultaneously when node count exceeds 500.
+- **`radiusOf` must NOT be in D3 effect dep arrays**: `radiusOf` is `useCallback([maxDegree])` and `maxDegree` is already in the dep arrays — including `radiusOf` as well causes double effect executions on every `visibleNodes` change.
+- **Canvas `null` check for position**: Use `if (s.x == null || t.x == null) continue` and `if (n.x == null) continue` — NOT `if (!s.x)`. The falsy check skips nodes legitimately positioned at `x = 0`.
+- **Hover must iterate `svgLinks`** (local copy with resolved object refs), not `simLinks` (which retain string IDs before D3 processes them).
+- **Pre-warm capped at 30 ticks**: `for (let i = 0; i < 30; i++) sim.tick()` in both SVG and canvas paths. 300 ticks on 300+ nodes blocks the main thread and freezes the browser. Simulation uses `.alphaDecay(0.04).velocityDecay(0.4)` and `.forceManyBody().theta(0.9)` to settle quickly without heavy pre-warming.
+- **Max nodes per domain**: `getLightRAGGraph(domain, 150)` — capped at 150 per domain (300 total) to keep simulation cost manageable.
+- **`getPreloadedGraph`**: Fallback when LightRAG index is empty — fetches from PostgreSQL `graph_node`/`graph_edge` tables via `GET /graph/preloaded/{domain}`.
