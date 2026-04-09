@@ -320,7 +320,9 @@ export default function ObsidianGraph() {
     [visibleLinks]
   );
 
-  const USE_CANVAS = simNodes.length > 500;
+  // Stabilise mode so a one-node difference at the boundary doesn't cause
+  // both effects to teardown/restart on the same render.
+  const USE_CANVAS = useMemo(() => simNodes.length > 500, [simNodes.length]);
 
   // -------------------------------------------------------------------------
   // Stats
@@ -386,13 +388,16 @@ export default function ObsidianGraph() {
 
     const sim = d3
       .forceSimulation<SimNode>(nodesCopy)
+      .alphaDecay(0.04)
+      .velocityDecay(0.4)
       .force("link", d3.forceLink<SimNode, SimLink>(linksCopy).id((d) => d.id).distance(80).strength(0.4))
-      .force("charge", d3.forceManyBody<SimNode>().strength(-120))
+      .force("charge", d3.forceManyBody<SimNode>().strength(-120).theta(0.9))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collide", d3.forceCollide<SimNode>().radius((d) => radiusOf(d) + 4));
 
+    // Pre-warm: limited ticks to avoid blocking the main thread on large graphs
     sim.stop();
-    for (let i = 0; i < 300; i++) sim.tick();
+    for (let i = 0; i < 30; i++) sim.tick();
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
@@ -403,7 +408,8 @@ export default function ObsidianGraph() {
       for (const l of linksCopy) {
         const s = l.source as SimNode;
         const t = l.target as SimNode;
-        if (!s.x || !t.x) continue;
+        // Use null/undefined check — !s.x is falsy for x=0 (center-left nodes)
+        if (s.x == null || t.x == null) continue;
         const mx = (s.x + t.x) / 2;
         const my = (s.y! + t.y!) / 2 - 30;
         ctx.beginPath();
@@ -418,7 +424,7 @@ export default function ObsidianGraph() {
       // Draw nodes
       ctx.globalAlpha = 1;
       for (const n of nodesCopy) {
-        if (!n.x) continue;
+        if (n.x == null) continue;
         const r = radiusOf(n);
         const color = domainColor(n.domain);
         ctx.shadowBlur = 8;
@@ -439,13 +445,17 @@ export default function ObsidianGraph() {
     draw();
 
     return () => { sim.stop(); };
-  }, [USE_CANVAS, visibleNodes, visibleLinks, maxDegree, radiusOf]);
+    // radiusOf intentionally omitted — changes only when maxDegree changes (already listed).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [USE_CANVAS, visibleNodes, visibleLinks, maxDegree]);
 
   // -------------------------------------------------------------------------
   // D3 force simulation — re-runs when filtered sets or maxDegree change
   // -------------------------------------------------------------------------
 
   useEffect(() => {
+    // Canvas path is active — do not also run the SVG simulation.
+    if (USE_CANVAS) return;
     const svg = d3.select(svgRef.current!);
     const container = containerRef.current;
     if (!container) return;
@@ -502,11 +512,18 @@ export default function ObsidianGraph() {
     // ---- Main group (zoom target) ----
     const g = svg.append("g").attr("class", "zoom-g");
 
+    // Use local copies so that D3's in-place mutation (x/y on nodes,
+    // source/target object replacement on links) does not corrupt the React memos.
+    // These copies are declared here and reused by the simulation below.
+    const svgNodes: SimNode[] = simNodes.map((n) => ({ ...n }));
+    const svgLinks: SimLink[] = simLinks.map((l) => ({ ...l }));
+
     // ---- Links ----
+    // Bind to svgLinks so ticked() reads D3-mutated source/target objects.
     const linkG = g.append("g").attr("class", "links");
     const linkSel = linkG
       .selectAll<SVGPathElement, SimLink>("path")
-      .data(simLinks, (d) => d.id)
+      .data(svgLinks, (d) => d.id)
       .join("path")
       .attr("fill", "none")
       .attr("stroke", (d) => DOMAIN_COLORS[d.domain] ?? "#374151")
@@ -515,10 +532,11 @@ export default function ObsidianGraph() {
       .attr("stroke-linecap", "round");
 
     // ---- Nodes group ----
+    // Bind to svgNodes so ticked() reads D3-mutated x/y values.
     const nodeG = g.append("g").attr("class", "nodes");
     const nodeSel = nodeG
       .selectAll<SVGGElement, SimNode>("g.node")
-      .data(simNodes, (d) => d.id)
+      .data(svgNodes, (d) => d.id)
       .join("g")
       .attr("class", "node")
       .style("cursor", "pointer");
@@ -574,7 +592,8 @@ export default function ObsidianGraph() {
       .on("mouseenter", function (_, d) {
         const hoverId = d.id;
         const connectedIds = new Set<string>();
-        simLinks.forEach((l) => {
+        // Use svgLinks (D3-mutated copies) — source/target may be objects after tick
+        svgLinks.forEach((l) => {
           const src = typeof l.source === "object" ? (l.source as SimNode).id : l.source;
           const tgt = typeof l.target === "object" ? (l.target as SimNode).id : l.target;
           if (src === hoverId) connectedIds.add(tgt);
@@ -602,23 +621,29 @@ export default function ObsidianGraph() {
       });
 
     // ---- Force simulation ----
+    // svgNodes and svgLinks were declared above when binding D3 selections.
+    // Reuse them here — D3 will mutate them in-place (x/y on nodes,
+    // source/target string→object on links) which is expected and safe
+    // because these are local copies, not the React memos.
     const sim = d3
-      .forceSimulation<SimNode, SimLink>(simNodes)
+      .forceSimulation<SimNode, SimLink>(svgNodes)
+      .alphaDecay(0.04)
+      .velocityDecay(0.4)
       .force(
         "link",
         d3
-          .forceLink<SimNode, SimLink>(simLinks)
+          .forceLink<SimNode, SimLink>(svgLinks)
           .id((d) => d.id)
           .distance(60)
           .strength(0.4)
       )
-      .force("charge", d3.forceManyBody<SimNode>().strength(-120))
+      .force("charge", d3.forceManyBody<SimNode>().strength(-120).theta(0.9))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collide", d3.forceCollide<SimNode>().radius((d) => radiusOf(d) + 4));
 
-    // Pre-warm: 300 ticks before first render
+    // Pre-warm: limited ticks to avoid blocking the main thread on large graphs
     sim.stop();
-    for (let i = 0; i < 300; i++) sim.tick();
+    for (let i = 0; i < 30; i++) sim.tick();
 
     // Position elements after pre-warm
     const ticked = () => {
@@ -674,8 +699,12 @@ export default function ObsidianGraph() {
       sim.stop();
       simRef.current = null;
     };
-    // Re-run when filtered node/link sets or maxDegree change (requirement 20)
-  }, [visibleNodes, visibleLinks, maxDegree, radiusOf]);
+    // Re-run when filtered node/link sets or maxDegree change.
+    // radiusOf is intentionally omitted — it only changes when maxDegree changes,
+    // which is already listed; including both would cause a double execution.
+    // USE_CANVAS guards the top of this effect, so it must be in the dep list.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [USE_CANVAS, visibleNodes, visibleLinks, maxDegree]);
 
   // -------------------------------------------------------------------------
   // Pause / resume
@@ -872,26 +901,32 @@ export default function ObsidianGraph() {
           KNOWLEDGE GRAPH EMPTY — INDEX A DOMAIN TO BEGIN
         </p>
         <div style={{ display: "flex", gap: 16 }}>
-          {(["aircraft", "medical"] as const).map((domain) => (
-            <button
-              key={domain}
-              onClick={() => buildIndex(domain)}
-              style={{
-                background: `${DOMAIN_COLORS[domain]}18`,
-                border: `1px solid ${DOMAIN_COLORS[domain]}60`,
-                color: DOMAIN_COLORS[domain],
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                letterSpacing: "0.15em",
-                padding: "10px 24px",
-                borderRadius: 4,
-                cursor: "pointer",
-                textTransform: "uppercase",
-              }}
-            >
-              BUILD INDEX — {domain.toUpperCase()}
-            </button>
-          ))}
+          {(["aircraft", "medical"] as const).map((domain) => {
+            const isIndexing = indexingDomains.has(domain);
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <button
+                key={domain}
+                onClick={() => !disabled && buildIndex(domain)}
+                disabled={disabled}
+                style={{
+                  background: `${DOMAIN_COLORS[domain]}18`,
+                  border: `1px solid ${disabled ? DOMAIN_COLORS[domain] + "30" : DOMAIN_COLORS[domain] + "60"}`,
+                  color: disabled ? DOMAIN_COLORS[domain] + "60" : DOMAIN_COLORS[domain],
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.15em",
+                  padding: "10px 24px",
+                  borderRadius: 4,
+                  cursor: disabled ? "not-allowed" : "pointer",
+                  textTransform: "uppercase",
+                }}
+              >
+                {isIndexing ? `INDEXING ${domain.toUpperCase()}…` : `BUILD INDEX — ${domain.toUpperCase()}`}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -1064,62 +1099,68 @@ export default function ObsidianGraph() {
           gap: 16,
           whiteSpace: "nowrap",
         }}>
-          {aircraftEmpty && (
-            <>
-              <span style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                color: "#f59e0b",
-                letterSpacing: "0.08em",
-              }}>
-                AIRCRAFT INDEX NOT BUILT
-              </span>
-              <button
-                onClick={() => buildIndex("aircraft")}
-                style={{
-                  fontFamily: "Orbitron, monospace",
-                  fontSize: 9,
-                  padding: "3px 12px",
-                  border: "1px solid #f59e0b",
-                  color: "#f59e0b",
-                  background: "transparent",
-                  cursor: "pointer",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase" as const,
-                }}
-              >
-                BUILD INDEX
-              </button>
-            </>
-          )}
-          {medicalEmpty && (
-            <>
-              <span style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                color: "#a855f7",
-                letterSpacing: "0.08em",
-              }}>
-                MEDICAL INDEX NOT BUILT
-              </span>
-              <button
-                onClick={() => buildIndex("medical")}
-                style={{
-                  fontFamily: "Orbitron, monospace",
-                  fontSize: 9,
-                  padding: "3px 12px",
-                  border: "1px solid #a855f7",
-                  color: "#a855f7",
-                  background: "transparent",
-                  cursor: "pointer",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase" as const,
-                }}
-              >
-                BUILD INDEX
-              </button>
-            </>
-          )}
+          {aircraftEmpty && (() => {
+            const isIndexing = indexingDomains.has("aircraft");
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <>
+                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#f59e0b", letterSpacing: "0.08em" }}>
+                  {isIndexing ? "AIRCRAFT INDEXING…" : "AIRCRAFT INDEX NOT BUILT"}
+                </span>
+                {!isIndexing && (
+                  <button
+                    onClick={() => !disabled && buildIndex("aircraft")}
+                    disabled={disabled}
+                    style={{
+                      fontFamily: "Orbitron, monospace",
+                      fontSize: 9,
+                      padding: "3px 12px",
+                      border: `1px solid ${disabled ? "#f59e0b60" : "#f59e0b"}`,
+                      color: disabled ? "#f59e0b60" : "#f59e0b",
+                      background: "transparent",
+                      cursor: disabled ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
+                    BUILD INDEX
+                  </button>
+                )}
+              </>
+            );
+          })()}
+          {medicalEmpty && (() => {
+            const isIndexing = indexingDomains.has("medical");
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <>
+                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#a855f7", letterSpacing: "0.08em" }}>
+                  {isIndexing ? "MEDICAL INDEXING…" : "MEDICAL INDEX NOT BUILT"}
+                </span>
+                {!isIndexing && (
+                  <button
+                    onClick={() => !disabled && buildIndex("medical")}
+                    disabled={disabled}
+                    style={{
+                      fontFamily: "Orbitron, monospace",
+                      fontSize: 9,
+                      padding: "3px 12px",
+                      border: `1px solid ${disabled ? "#a855f760" : "#a855f7"}`,
+                      color: disabled ? "#a855f760" : "#a855f7",
+                      background: "transparent",
+                      cursor: disabled ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
+                    BUILD INDEX
+                  </button>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
     </div>
