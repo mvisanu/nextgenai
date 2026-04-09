@@ -1098,6 +1098,7 @@ export default function ObsidianGraph() {
           alignItems: "center",
           gap: 16,
           whiteSpace: "nowrap",
+          pointerEvents: "none",
         }}>
           {aircraftEmpty && (() => {
             const isIndexing = indexingDomains.has("aircraft");
@@ -1122,6 +1123,7 @@ export default function ObsidianGraph() {
                       cursor: disabled ? "not-allowed" : "pointer",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase" as const,
+                      pointerEvents: "auto",
                     }}
                   >
                     BUILD INDEX
@@ -1153,6 +1155,7 @@ export default function ObsidianGraph() {
                       cursor: disabled ? "not-allowed" : "pointer",
                       letterSpacing: "0.1em",
                       textTransform: "uppercase" as const,
+                      pointerEvents: "auto",
                     }}
                   >
                     BUILD INDEX
