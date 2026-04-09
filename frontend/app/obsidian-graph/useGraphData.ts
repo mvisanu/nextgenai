@@ -150,8 +150,8 @@ export function useGraphData(): GraphData {
     try {
       const [lightragAircraft, lightragMedical, aircraftStat, medicalStat] =
         await Promise.all([
-          getLightRAGGraph("aircraft", 300).catch(() => null),
-          getLightRAGGraph("medical",  300).catch(() => null),
+          getLightRAGGraph("aircraft", 150).catch(() => null),
+          getLightRAGGraph("medical",  150).catch(() => null),
           getLightRAGStatus("aircraft").catch(() => null),
           getLightRAGStatus("medical" ).catch(() => null),
         ]);
@@ -189,9 +189,12 @@ export function useGraphData(): GraphData {
       if (medicalEmpty  && medicalStat?.index_job_status  === "idle") toIndex.push("medical");
 
       if (toIndex.length > 0) {
-        // Fire-and-forget — errors logged but not surfaced
-        await Promise.allSettled(toIndex.map((d) => triggerLightRAGIndex(d)));
-        const newIndexing = new Set<string>(toIndex);
+        // Trigger ONE domain at a time to avoid concurrent OOM on Render (512 MB).
+        // The polling loop re-runs fetchAll() when each domain finishes, which
+        // will pick up and trigger remaining empty domains sequentially.
+        const [firstDomain] = toIndex;
+        await triggerLightRAGIndex(firstDomain).catch(() => {});
+        const newIndexing = new Set<string>([firstDomain]);
         indexingDomainsRef.current = newIndexing;
         setIndexingDomains(new Set(newIndexing));
       }

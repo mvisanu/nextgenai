@@ -386,13 +386,16 @@ export default function ObsidianGraph() {
 
     const sim = d3
       .forceSimulation<SimNode>(nodesCopy)
+      .alphaDecay(0.04)
+      .velocityDecay(0.4)
       .force("link", d3.forceLink<SimNode, SimLink>(linksCopy).id((d) => d.id).distance(80).strength(0.4))
-      .force("charge", d3.forceManyBody<SimNode>().strength(-120))
+      .force("charge", d3.forceManyBody<SimNode>().strength(-120).theta(0.9))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collide", d3.forceCollide<SimNode>().radius((d) => radiusOf(d) + 4));
 
+    // Pre-warm: limited ticks to avoid blocking the main thread on large graphs
     sim.stop();
-    for (let i = 0; i < 300; i++) sim.tick();
+    for (let i = 0; i < 30; i++) sim.tick();
 
     function draw() {
       ctx.clearRect(0, 0, width, height);
@@ -604,6 +607,8 @@ export default function ObsidianGraph() {
     // ---- Force simulation ----
     const sim = d3
       .forceSimulation<SimNode, SimLink>(simNodes)
+      .alphaDecay(0.04)
+      .velocityDecay(0.4)
       .force(
         "link",
         d3
@@ -612,13 +617,13 @@ export default function ObsidianGraph() {
           .distance(60)
           .strength(0.4)
       )
-      .force("charge", d3.forceManyBody<SimNode>().strength(-120))
+      .force("charge", d3.forceManyBody<SimNode>().strength(-120).theta(0.9))
       .force("center", d3.forceCenter(width / 2, height / 2))
       .force("collide", d3.forceCollide<SimNode>().radius((d) => radiusOf(d) + 4));
 
-    // Pre-warm: 300 ticks before first render
+    // Pre-warm: limited ticks to avoid blocking the main thread on large graphs
     sim.stop();
-    for (let i = 0; i < 300; i++) sim.tick();
+    for (let i = 0; i < 30; i++) sim.tick();
 
     // Position elements after pre-warm
     const ticked = () => {
@@ -872,26 +877,32 @@ export default function ObsidianGraph() {
           KNOWLEDGE GRAPH EMPTY — INDEX A DOMAIN TO BEGIN
         </p>
         <div style={{ display: "flex", gap: 16 }}>
-          {(["aircraft", "medical"] as const).map((domain) => (
-            <button
-              key={domain}
-              onClick={() => buildIndex(domain)}
-              style={{
-                background: `${DOMAIN_COLORS[domain]}18`,
-                border: `1px solid ${DOMAIN_COLORS[domain]}60`,
-                color: DOMAIN_COLORS[domain],
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                letterSpacing: "0.15em",
-                padding: "10px 24px",
-                borderRadius: 4,
-                cursor: "pointer",
-                textTransform: "uppercase",
-              }}
-            >
-              BUILD INDEX — {domain.toUpperCase()}
-            </button>
-          ))}
+          {(["aircraft", "medical"] as const).map((domain) => {
+            const isIndexing = indexingDomains.has(domain);
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <button
+                key={domain}
+                onClick={() => !disabled && buildIndex(domain)}
+                disabled={disabled}
+                style={{
+                  background: `${DOMAIN_COLORS[domain]}18`,
+                  border: `1px solid ${disabled ? DOMAIN_COLORS[domain] + "30" : DOMAIN_COLORS[domain] + "60"}`,
+                  color: disabled ? DOMAIN_COLORS[domain] + "60" : DOMAIN_COLORS[domain],
+                  fontFamily: "JetBrains Mono, monospace",
+                  fontSize: 10,
+                  letterSpacing: "0.15em",
+                  padding: "10px 24px",
+                  borderRadius: 4,
+                  cursor: disabled ? "not-allowed" : "pointer",
+                  textTransform: "uppercase",
+                }}
+              >
+                {isIndexing ? `INDEXING ${domain.toUpperCase()}…` : `BUILD INDEX — ${domain.toUpperCase()}`}
+              </button>
+            );
+          })}
         </div>
       </div>
     );
@@ -1064,62 +1075,68 @@ export default function ObsidianGraph() {
           gap: 16,
           whiteSpace: "nowrap",
         }}>
-          {aircraftEmpty && (
-            <>
-              <span style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                color: "#f59e0b",
-                letterSpacing: "0.08em",
-              }}>
-                AIRCRAFT INDEX NOT BUILT
-              </span>
-              <button
-                onClick={() => buildIndex("aircraft")}
-                style={{
-                  fontFamily: "Orbitron, monospace",
-                  fontSize: 9,
-                  padding: "3px 12px",
-                  border: "1px solid #f59e0b",
-                  color: "#f59e0b",
-                  background: "transparent",
-                  cursor: "pointer",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase" as const,
-                }}
-              >
-                BUILD INDEX
-              </button>
-            </>
-          )}
-          {medicalEmpty && (
-            <>
-              <span style={{
-                fontFamily: "JetBrains Mono, monospace",
-                fontSize: 10,
-                color: "#a855f7",
-                letterSpacing: "0.08em",
-              }}>
-                MEDICAL INDEX NOT BUILT
-              </span>
-              <button
-                onClick={() => buildIndex("medical")}
-                style={{
-                  fontFamily: "Orbitron, monospace",
-                  fontSize: 9,
-                  padding: "3px 12px",
-                  border: "1px solid #a855f7",
-                  color: "#a855f7",
-                  background: "transparent",
-                  cursor: "pointer",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase" as const,
-                }}
-              >
-                BUILD INDEX
-              </button>
-            </>
-          )}
+          {aircraftEmpty && (() => {
+            const isIndexing = indexingDomains.has("aircraft");
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <>
+                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#f59e0b", letterSpacing: "0.08em" }}>
+                  {isIndexing ? "AIRCRAFT INDEXING…" : "AIRCRAFT INDEX NOT BUILT"}
+                </span>
+                {!isIndexing && (
+                  <button
+                    onClick={() => !disabled && buildIndex("aircraft")}
+                    disabled={disabled}
+                    style={{
+                      fontFamily: "Orbitron, monospace",
+                      fontSize: 9,
+                      padding: "3px 12px",
+                      border: `1px solid ${disabled ? "#f59e0b60" : "#f59e0b"}`,
+                      color: disabled ? "#f59e0b60" : "#f59e0b",
+                      background: "transparent",
+                      cursor: disabled ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
+                    BUILD INDEX
+                  </button>
+                )}
+              </>
+            );
+          })()}
+          {medicalEmpty && (() => {
+            const isIndexing = indexingDomains.has("medical");
+            const otherIndexing = indexingDomains.size > 0 && !isIndexing;
+            const disabled = isIndexing || otherIndexing;
+            return (
+              <>
+                <span style={{ fontFamily: "JetBrains Mono, monospace", fontSize: 10, color: "#a855f7", letterSpacing: "0.08em" }}>
+                  {isIndexing ? "MEDICAL INDEXING…" : "MEDICAL INDEX NOT BUILT"}
+                </span>
+                {!isIndexing && (
+                  <button
+                    onClick={() => !disabled && buildIndex("medical")}
+                    disabled={disabled}
+                    style={{
+                      fontFamily: "Orbitron, monospace",
+                      fontSize: 9,
+                      padding: "3px 12px",
+                      border: `1px solid ${disabled ? "#a855f760" : "#a855f7"}`,
+                      color: disabled ? "#a855f760" : "#a855f7",
+                      background: "transparent",
+                      cursor: disabled ? "not-allowed" : "pointer",
+                      letterSpacing: "0.1em",
+                      textTransform: "uppercase" as const,
+                    }}
+                  >
+                    BUILD INDEX
+                  </button>
+                )}
+              </>
+            );
+          })()}
         </div>
       )}
     </div>
