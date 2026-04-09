@@ -11,6 +11,7 @@ import os
 from pathlib import Path
 from typing import Any
 
+import anthropic
 import numpy as np
 
 from lightrag import LightRAG, QueryParam
@@ -108,6 +109,16 @@ async def _lightrag_llm_func(
     try:
         response = await client._async_client.messages.create(**create_kwargs)
         return response.content[0].text
+    except anthropic.AuthenticationError as exc:
+        logger.error(
+            "LightRAG LLM call failed: invalid Anthropic API key. "
+            "Check that ANTHROPIC_API_KEY is set correctly on Render. Error: %s",
+            exc,
+        )
+        raise RuntimeError(
+            "LightRAG entity extraction failed: invalid ANTHROPIC_API_KEY. "
+            "Update the key in the Render dashboard and redeploy."
+        ) from exc
     except Exception as exc:
         logger.error("LightRAG LLM call failed: %s", exc)
         raise
