@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Query
 from fastapi.responses import ORJSONResponse
 from sqlalchemy import text
 
@@ -27,7 +27,6 @@ from backend.app.observability.logging import get_logger
 logger = get_logger(__name__)
 router = APIRouter(prefix="/graph")
 
-_MAX_NODES = 600
 _MAX_EDGES = 2000
 
 
@@ -42,7 +41,10 @@ _MAX_EDGES = 2000
         "Same shape as GET /lightrag/graph/{domain}."
     ),
 )
-async def get_preloaded_graph(domain: str) -> dict[str, Any]:
+async def get_preloaded_graph(
+    domain: str,
+    max_nodes: int = Query(default=100, ge=10, le=300),
+) -> dict[str, Any]:
     if domain not in ("aircraft", "medical"):
         return ORJSONResponse(
             status_code=400,
@@ -74,7 +76,7 @@ async def get_preloaded_graph(domain: str) -> dict[str, Any]:
                         LIMIT :max_nodes
                         """
                     ),
-                    {"max_nodes": _MAX_NODES},
+                    {"max_nodes": max_nodes},
                 )
             ).fetchall()
 
@@ -103,7 +105,7 @@ async def get_preloaded_graph(domain: str) -> dict[str, Any]:
                     ),
                     {
                         "chunk_ids": list(chunk_ids),
-                        "max_nodes": _MAX_NODES - len(chunk_ids),
+                        "max_nodes": max(0, max_nodes - len(chunk_ids)),
                     },
                 )
             ).fetchall() if chunk_ids else []

@@ -1,7 +1,10 @@
 """
 LightRAG singleton instances for aircraft and medical domains.
 Uses existing EmbeddingModel (all-MiniLM-L6-v2, 384 dims) and
-Anthropic Haiku client (cheap, fast enough for NER/entity extraction).
+OpenAI client (cheap, fast for NER/entity extraction).
+
+Note: the rest of the system (synthesis, classify/plan) still uses Anthropic;
+only LightRAG's entity extraction is on OpenAI to leverage available credit.
 """
 from __future__ import annotations
 
@@ -11,14 +14,13 @@ import os
 from pathlib import Path
 from typing import Any
 
-import anthropic
 import numpy as np
+from openai import AsyncOpenAI, AuthenticationError as OpenAIAuthError
 
 from lightrag import LightRAG, QueryParam
 from lightrag.utils import EmbeddingFunc
 
 from backend.app.rag.embeddings import EmbeddingModel
-from backend.app.llm.client import get_async_fast_llm_client
 
 logger = logging.getLogger(__name__)
 
@@ -73,7 +75,22 @@ def _make_embedding_func() -> EmbeddingFunc:
         model_name="sentence-transformers/all-MiniLM-L6-v2",
     )
 
-# ── LLM adapter (wraps Anthropic Haiku async client) ──────────────────────────
+# ── OpenAI client singleton ────────────────────────────────────────────────────
+_openai_client: AsyncOpenAI | None = None
+
+def _get_openai_client() -> AsyncOpenAI:
+    global _openai_client
+    if _openai_client is None:
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            raise RuntimeError(
+                "LightRAG requires OPENAI_API_KEY to be set for entity extraction. "
+                "Add it in the Render dashboard and redeploy."
+            )
+        _openai_client = AsyncOpenAI(api_key=api_key, max_retries=3)
+    return _openai_client
+
+# ── LLM adapter (wraps OpenAI async client) ───────────────────────────────────
 async def _lightrag_llm_func(
     prompt: str,
     system_prompt: str | None = None,
@@ -82,41 +99,35 @@ async def _lightrag_llm_func(
 ) -> str:
     """
     Adapter: LightRAG calls this for entity/relation extraction.
-    Uses Haiku (fast, cheap) — NOT Sonnet (reserved for agent synthesis).
+    Model is configurable via LIGHTRAG_OPENAI_MODEL (default: gpt-4o-mini).
     """
-    client = get_async_fast_llm_client()
+    client = _get_openai_client()
+    model = os.getenv("LIGHTRAG_OPENAI_MODEL", "gpt-4o-mini")
     history_messages = history_messages or []
 
     messages: list[dict] = []
+    if system_prompt:
+        messages.append({"role": "system", "content": system_prompt})
     if history_messages:
         messages.extend(history_messages)
-
-    # LightRAG sends the extraction prompt as the final user turn.
-    # system_prompt must be passed as the Anthropic `system` parameter —
-    # NOT as a user message — to avoid consecutive user messages (API error).
     messages.append({"role": "user", "content": prompt})
 
     max_tokens = kwargs.get("max_tokens", 1024)
 
-    create_kwargs: dict[str, Any] = dict(
-        model=client.model,
-        max_tokens=max_tokens,
-        messages=messages,
-    )
-    if system_prompt:
-        create_kwargs["system"] = system_prompt
-
     try:
-        response = await client._async_client.messages.create(**create_kwargs)
-        return response.content[0].text
-    except anthropic.AuthenticationError as exc:
+        response = await client.chat.completions.create(
+            model=model,
+            max_tokens=max_tokens,
+            messages=messages,
+        )
+        return response.choices[0].message.content or ""
+    except OpenAIAuthError as exc:
         logger.error(
-            "LightRAG LLM call failed: invalid Anthropic API key. "
-            "Check that ANTHROPIC_API_KEY is set correctly on Render. Error: %s",
+            "LightRAG LLM call failed: invalid OPENAI_API_KEY. Error: %s",
             exc,
         )
         raise RuntimeError(
-            "LightRAG entity extraction failed: invalid ANTHROPIC_API_KEY. "
+            "LightRAG entity extraction failed: invalid OPENAI_API_KEY. "
             "Update the key in the Render dashboard and redeploy."
         ) from exc
     except Exception as exc:

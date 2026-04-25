@@ -2,6 +2,31 @@
 
 ---
 
+## 2026-04-06 — Production 502 / CORS Diagnosis + Local Dev Fixes (continued)
+
+### Issues resolved
+
+| # | Issue | Root cause | Fix |
+|---|-------|-----------|-----|
+| 1 | `alembic upgrade head` → `driver://` error (again) | `load_dotenv` silently failed — `.env` has UTF-8 em dash (`—`) in comments, causing parse failure with default encoding | Added `encoding="utf-8"` to `load_dotenv()` in both `migrations/env.py` and `main.py` |
+| 2 | `PG_DSN` still `None` after encoding fix | Lines 12–13 in `.env` are commented out (`#PG_DSN=...`) | User must uncomment and set port 5433 manually |
+| 3 | Neon migration check | — | `alembic current` confirmed Neon is already at `0006_add_user_id` (head) — no action needed |
+| 4 | Production 502 + false "CORS blocked" errors | 502 from Render proxy during backend restart emits no CORS headers → browser reports CORS error | Diagnosed as Render OOM crash during LightRAG auto-indexing (512 MB limit). Fix: set `LIGHTRAG_AUTO_INDEX=false` in Render env vars. Verified preflight returns 200 when backend is healthy. |
+| 5 | Render Health Check not configured | — | Instructed user to set Health Check Path to `/healthz` in Render Settings → Health Checks |
+
+### Key finding — `.env` encoding issue
+`load_dotenv` uses the system default encoding on Windows (often `cp1252`). The `.env` has `—` (U+2014, UTF-8 `\xe2\x80\x94`) in comments. This silently fails to parse, leaving all vars unset. **Fix:** always pass `encoding="utf-8"` to `load_dotenv`.
+
+### Files modified
+- `backend/app/db/migrations/env.py` — `load_dotenv(..., encoding="utf-8")`
+- `backend/app/main.py` — `load_dotenv(..., encoding="utf-8")`
+
+### Render actions required
+- Add env var `LIGHTRAG_AUTO_INDEX=false` (prevents OOM on 512 MB)
+- Set Health Check Path to `/healthz`
+
+---
+
 ## 2026-04-05 (evening) — Local Dev Setup & Bug Fixes
 
 ### Context

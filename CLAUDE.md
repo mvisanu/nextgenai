@@ -38,6 +38,8 @@ cd backend
 # ── CLI (runs inside container or with venv activated) ─────────────────────────
 python -m backend.src.cli ingest --config backend/config.yaml
 python -m backend.src.cli ask "Show defect trends by product for last 90 days"
+python -m backend.src.cli build-graph --domain medical               # full medical KG
+python -m backend.src.cli build-graph --domain medical --limit 620   # partial / smoke build
 ```
 
 **Important:** Always run pytest via `.venv/Scripts/python -m pytest` (not bare `pytest`) to avoid `ModuleNotFoundError` for `pgvector`, `psycopg2`, `asyncpg`.
@@ -214,6 +216,8 @@ Key frontend files:
 | `SUPABASE_JWT_SECRET` | `.env` / Render dashboard | JWT secret from Supabase dashboard → Settings → API → JWT Settings — backend-only, never in frontend |
 | `LIGHTRAG_BASE_DIR` | `.env` / Render dashboard | Base directory for LightRAG file storage (default: `backend/data/lightrag`); each domain gets its own subdirectory |
 | `LIGHTRAG_BATCH_SIZE` | `.env` / Render dashboard | Number of docs per `ainsert` batch during indexing (default: `10`); increase to `25–50` for faster indexing on capable hardware |
+| `OPENAI_API_KEY` | `.env` / Render dashboard | OpenAI API key — required for LightRAG entity extraction (must be `sk-...` format) |
+| `LIGHTRAG_OPENAI_MODEL` | `.env` / Render dashboard | OpenAI model used for LightRAG entity/relation extraction (default: `gpt-4o-mini`) |
 
 ## Test Suite
 
@@ -256,6 +260,8 @@ Key frontend files:
 - **`demo/lightrag_docs/`** — 10 aircraft NCR docs (`ncr_001–010.md`) + 10 medical case docs (`case_001–010.md`)
 - **`backend/data/lightrag/{aircraft,medical}/`** — runtime file storage (gitignored; `.gitkeep` files tracked)
 - **Auto-indexing**: `main.py` lifespan fires `_auto_index_lightrag()` as a background task on startup — indexes from DB if not already indexed; does not block startup
+- **LLM provider for entity extraction**: LightRAG uses **OpenAI** (`gpt-4o-mini` default) — NOT Anthropic. Configured via `OPENAI_API_KEY` and `LIGHTRAG_OPENAI_MODEL` env vars in `rag_instance.py:_lightrag_llm_func`. The rest of the agent (synthesis on Sonnet, classify/plan/verify on Haiku) still uses Anthropic.
+- **Graph builder perf**: `backend/app/graph/builder.py:build_graph()` accepts an optional `limit` parameter for partial builds, batches all node/edge INSERTs via SQLAlchemy `executemany` (flush every 500 rows), and runs spaCy NER through `nlp.pipe()` in a single pass — ~10–20× faster against remote Neon than the original per-row loop. Idempotent (`ON CONFLICT DO NOTHING`). Invokable via `python -m backend.src.cli build-graph --domain {aircraft,medical} [--limit N]`.
 
 ### Key LightRAG constraints
 
@@ -282,5 +288,6 @@ Key frontend files:
 - **Canvas `null` check for position**: Use `if (s.x == null || t.x == null) continue` and `if (n.x == null) continue` — NOT `if (!s.x)`. The falsy check skips nodes legitimately positioned at `x = 0`.
 - **Hover must iterate `svgLinks`** (local copy with resolved object refs), not `simLinks` (which retain string IDs before D3 processes them).
 - **Pre-warm capped at 30 ticks**: `for (let i = 0; i < 30; i++) sim.tick()` in both SVG and canvas paths. 300 ticks on 300+ nodes blocks the main thread and freezes the browser. Simulation uses `.alphaDecay(0.04).velocityDecay(0.4)` and `.forceManyBody().theta(0.9)` to settle quickly without heavy pre-warming.
-- **Max nodes per domain**: `getLightRAGGraph(domain, 150)` — capped at 150 per domain (300 total) to keep simulation cost manageable.
-- **`getPreloadedGraph`**: Fallback when LightRAG index is empty — fetches from PostgreSQL `graph_node`/`graph_edge` tables via `GET /graph/preloaded/{domain}`.
+- **Max nodes per domain**: `getLightRAGGraph("aircraft", 150)` (150 nodes) and `getLightRAGGraph("medical", 100)` (100 nodes) — different caps because medical preloaded fallback also uses 100; total ≤ 250 nodes keeps sim under the 500-node canvas threshold.
+- **`getPreloadedGraph`**: Fallback when LightRAG index is empty — fetches from PostgreSQL `graph_node`/`graph_edge` tables via `GET /graph/preloaded/{domain}?max_nodes=100`. Backend `graph_data.py` accepts `max_nodes` query param (default 100, max 300, was 600 — the old 600 caused page freeze on Vercel). Always pass `maxNodes=100` from the frontend.
+- **Sequential loading in `useGraphData.ts`**: Aircraft is fetched first → `setNodes`/`setEdges` called → `setLoading(false)` before medical is fetched. Medical loads lazily in Phase 2 and merges in after paint. Do NOT revert to a single `Promise.all` for both domains — that restores the hang.
