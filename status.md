@@ -1,7 +1,7 @@
 # NextAgentAI — Project Status
 
 **Date:** 2026-04-25 (updated)
-**Branch:** `feature/lightrag-integration`
+**Branch:** `main` (merged via `bd13d6e`)
 **Test suite:** 577 passed, 5 skipped, 0 failed
 
 ---
@@ -37,6 +37,7 @@
 1. **Neon plan upgraded** (paid Launch tier) → DB resumed → Render entrypoint passed → backend live
 2. **LightRAG LLM provider swapped to OpenAI** (`baa5537`) — `OPENAI_API_KEY` + `LIGHTRAG_OPENAI_MODEL` env vars, default `gpt-4o-mini`
 3. **Graph builder rewritten for speed** (`4e50c34`) — batched executemany INSERTs, spaCy `nlp.pipe`, optional `--limit` for partial builds, plus `python -m src.cli build-graph` subcommand
+4. **Merged `feature/lightrag-integration` → `main`** (`bd13d6e`) — production deploy of all fixes; brought 7 commits into `main`
 
 **Verify backend is up:**
 ```bash
@@ -96,10 +97,10 @@ curl https://nextgenai-5bf8.onrender.com/healthz
 
 | Item | Priority | Notes |
 |------|----------|-------|
-| Set `OPENAI_API_KEY` + `LIGHTRAG_OPENAI_MODEL` on Render | **High** | Required by new `_lightrag_llm_func`; without it indexing will raise `RuntimeError: requires OPENAI_API_KEY` |
-| Wipe + reindex LightRAG (`aircraft`, `medical`) on Render | **High** | `rm -rf backend/data/lightrag/{aircraft,medical}/*` then `POST /lightrag/index/{domain}` — needed to populate `entity_count` / `relation_count` |
-| Run `build-graph --domain medical` on Render shell | **High** | Populates PG `graph_node`/`graph_edge` for medical so `/obsidian-graph` draws medical half |
-| Merge `feature/lightrag-integration` → `main` | High | After OpenAI reindex + medical graph build verified |
+| Trigger Render manual deploy of `main@bd13d6e` | **Highest** | Auto-deploy did not fire on push; running container still serves old CLI (`build-graph` not recognised). Render dashboard → service → **Manual Deploy** → **Deploy latest commit** |
+| `OPENAI_API_KEY` on Render | **High** | User confirmed added (2026-04-25); becomes effective after the new container deploys |
+| Wipe + reindex LightRAG (`aircraft`, `medical`) | **High** | After deploy: `rm -rf backend/data/lightrag/{aircraft,medical}/*` then `POST /lightrag/index/{domain}` |
+| Run `build-graph --domain medical` on Render shell | **High** | After deploy: `python -m backend.src.cli build-graph --domain medical [--limit 200]` — populates PG `graph_node`/`graph_edge` for medical |
 | Wave 3 SQL migrations on Neon prod | Medium | GIN indexes + agent_runs composite — Neon already at head (0006) |
 | `SUPABASE_JWT_SECRET` on Render | Medium | W4-028 operational task |
 | Vercel middleware timeout guard | Medium | Wrap `supabase.auth.getUser()` in `Promise.race` with ~3s timeout to prevent middleware-invocation 504s when Supabase is cold |
@@ -115,4 +116,4 @@ curl https://nextgenai-5bf8.onrender.com/healthz
 - **Local frontend:** http://localhost:3005 (`npm run dev -- --webpack`)
 - **Local API:** http://localhost:8000 (Docker or uvicorn)
 - **Tests:** `cd backend && .venv/Scripts/python -m pytest tests/`
-- **Render branch:** `feature/lightrag-integration` (configured in Render dashboard)
+- **Render branch:** `main` (merged 2026-04-25; previously `feature/lightrag-integration`)
