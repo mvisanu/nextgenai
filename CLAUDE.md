@@ -214,6 +214,8 @@ Key frontend files:
 | `SUPABASE_JWT_SECRET` | `.env` / Render dashboard | JWT secret from Supabase dashboard → Settings → API → JWT Settings — backend-only, never in frontend |
 | `LIGHTRAG_BASE_DIR` | `.env` / Render dashboard | Base directory for LightRAG file storage (default: `backend/data/lightrag`); each domain gets its own subdirectory |
 | `LIGHTRAG_BATCH_SIZE` | `.env` / Render dashboard | Number of docs per `ainsert` batch during indexing (default: `10`); increase to `25–50` for faster indexing on capable hardware |
+| `OPENAI_API_KEY` | `.env` / Render dashboard | OpenAI API key — required for LightRAG entity extraction (must be `sk-...` format) |
+| `LIGHTRAG_OPENAI_MODEL` | `.env` / Render dashboard | OpenAI model used for LightRAG entity/relation extraction (default: `gpt-4o-mini`) |
 
 ## Test Suite
 
@@ -256,6 +258,7 @@ Key frontend files:
 - **`demo/lightrag_docs/`** — 10 aircraft NCR docs (`ncr_001–010.md`) + 10 medical case docs (`case_001–010.md`)
 - **`backend/data/lightrag/{aircraft,medical}/`** — runtime file storage (gitignored; `.gitkeep` files tracked)
 - **Auto-indexing**: `main.py` lifespan fires `_auto_index_lightrag()` as a background task on startup — indexes from DB if not already indexed; does not block startup
+- **LLM provider for entity extraction**: LightRAG uses **OpenAI** (`gpt-4o-mini` default) — NOT Anthropic. Configured via `OPENAI_API_KEY` and `LIGHTRAG_OPENAI_MODEL` env vars in `rag_instance.py:_lightrag_llm_func`. The rest of the agent (synthesis on Sonnet, classify/plan/verify on Haiku) still uses Anthropic.
 
 ### Key LightRAG constraints
 
