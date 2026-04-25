@@ -5,6 +5,8 @@ Usage:
     python -m src.cli ingest --config config.yaml
     python -m src.cli ask "Find similar incidents to: hydraulic actuator crack on Line 1"
     python -m src.cli ask "Show defect trends by product for last 90 days"
+    python -m src.cli build-graph --domain medical               # full medical graph
+    python -m src.cli build-graph --domain medical --limit 620   # half (partial build)
 """
 from __future__ import annotations
 
@@ -123,6 +125,28 @@ def cmd_ask(args: argparse.Namespace) -> None:
         print(json.dumps(result.to_dict(), indent=2, default=str))
 
 
+def cmd_build_graph(args: argparse.Namespace) -> None:
+    """Build (or partially build) the knowledge graph for a domain."""
+    _load_env()
+
+    domain = args.domain
+    limit = args.limit
+    if domain not in {"aircraft", "medical"}:
+        print(f"[cli] ERROR: --domain must be 'aircraft' or 'medical' (got '{domain}')")
+        sys.exit(1)
+
+    print(f"[cli] Building knowledge graph for domain={domain} limit={limit or 'ALL'}")
+    from backend.app.db.session import get_sync_session
+    from backend.app.graph.builder import build_graph
+    try:
+        with get_sync_session() as session:
+            result = build_graph(session, domain=domain, limit=limit)
+        print(f"[cli] Done. nodes={result['nodes']:,} edges={result['edges']:,}")
+    except Exception as exc:
+        print(f"[cli] ERROR: {exc}")
+        sys.exit(1)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(
         prog="python -m src.cli",
@@ -143,12 +167,32 @@ def main() -> None:
     ask_parser.add_argument("query", help="Natural language question")
     ask_parser.add_argument("--json", action="store_true", help="Also print full JSON output")
 
+    # build-graph subcommand
+    bg_parser = subparsers.add_parser(
+        "build-graph",
+        help="Build the knowledge graph (graph_node + graph_edge) from existing embeddings",
+    )
+    bg_parser.add_argument(
+        "--domain",
+        required=True,
+        choices=["aircraft", "medical"],
+        help="Source domain to build the graph for",
+    )
+    bg_parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Optional cap on chunks processed (e.g. 620 to build half of medical)",
+    )
+
     args = parser.parse_args()
 
     if args.command == "ingest":
         cmd_ingest(args)
     elif args.command == "ask":
         cmd_ask(args)
+    elif args.command == "build-graph":
+        cmd_build_graph(args)
 
 
 if __name__ == "__main__":
