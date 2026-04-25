@@ -38,6 +38,8 @@ cd backend
 # ── CLI (runs inside container or with venv activated) ─────────────────────────
 python -m backend.src.cli ingest --config backend/config.yaml
 python -m backend.src.cli ask "Show defect trends by product for last 90 days"
+python -m backend.src.cli build-graph --domain medical               # full medical KG
+python -m backend.src.cli build-graph --domain medical --limit 620   # partial / smoke build
 ```
 
 **Important:** Always run pytest via `.venv/Scripts/python -m pytest` (not bare `pytest`) to avoid `ModuleNotFoundError` for `pgvector`, `psycopg2`, `asyncpg`.
@@ -259,6 +261,7 @@ Key frontend files:
 - **`backend/data/lightrag/{aircraft,medical}/`** — runtime file storage (gitignored; `.gitkeep` files tracked)
 - **Auto-indexing**: `main.py` lifespan fires `_auto_index_lightrag()` as a background task on startup — indexes from DB if not already indexed; does not block startup
 - **LLM provider for entity extraction**: LightRAG uses **OpenAI** (`gpt-4o-mini` default) — NOT Anthropic. Configured via `OPENAI_API_KEY` and `LIGHTRAG_OPENAI_MODEL` env vars in `rag_instance.py:_lightrag_llm_func`. The rest of the agent (synthesis on Sonnet, classify/plan/verify on Haiku) still uses Anthropic.
+- **Graph builder perf**: `backend/app/graph/builder.py:build_graph()` accepts an optional `limit` parameter for partial builds, batches all node/edge INSERTs via SQLAlchemy `executemany` (flush every 500 rows), and runs spaCy NER through `nlp.pipe()` in a single pass — ~10–20× faster against remote Neon than the original per-row loop. Idempotent (`ON CONFLICT DO NOTHING`). Invokable via `python -m backend.src.cli build-graph --domain {aircraft,medical} [--limit N]`.
 
 ### Key LightRAG constraints
 
