@@ -1,0 +1,6 @@
+# Shell scripts must always be LF — CRLF breaks the Docker entrypoint
+# ("env: 'bash\r': No such file or directory", exit 127) when the image is
+# built from a Windows checkout.
+*.sh text eol=lf
+Dockerfile text eol=lf
+docker-compose.yml text eol=lf

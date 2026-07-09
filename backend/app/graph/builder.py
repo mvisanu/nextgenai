@@ -5,8 +5,9 @@ Phase 2: Graph node/edge construction from embedded chunks.
 """
 from __future__ import annotations
 
+import hashlib
+import json
 import re
-import uuid
 from typing import Any
 
 import numpy as np
@@ -154,6 +155,11 @@ _EDGE_INSERT_SQL = text(
 )
 
 
+def _stable_hash(key: str) -> str:
+    """Deterministic 16-hex-char digest for graph node/edge IDs."""
+    return hashlib.md5(key.encode("utf-8")).hexdigest()[:16]
+
+
 def _flush(session, sql, rows: list[dict], batch_size: int = 500) -> None:
     """executemany flush: send `rows` in chunks of `batch_size`."""
     for i in range(0, len(rows), batch_size):
@@ -239,14 +245,15 @@ def build_graph(
             "id": chunk_node_id,
             "type": "chunk",
             "label": chunk_text_str[:100],
-            "properties": f'{{"embed_id": "{embed_id}", "incident_id": "{row.incident_id}"}}',
+            "properties": json.dumps(
+                {"embed_id": str(embed_id), "incident_id": str(row.incident_id)}
+            ),
         })
 
         embedding_raw = row.embedding
         if embedding_raw:
             try:
                 if isinstance(embedding_raw, str):
-                    import json
                     vec = json.loads(embedding_raw)
                 elif hasattr(embedding_raw, "__iter__"):
                     vec = list(embedding_raw)
@@ -262,39 +269,52 @@ def build_graph(
     all_entities = _batch_extract_entities(chunk_texts)
 
     # Phase C: build entity nodes + mentions + co_occurrence
+    seen_edge_ids: set[str] = set()
     for (embed_id, chunk_node_id, _incident_id), entities in zip(chunk_meta, all_entities):
         entity_node_ids: list[str] = []
         for entity in entities:
             entity_key = f"{entity['type']}:{entity['label'].lower()}"
             if entity_key not in entity_label_to_id:
-                entity_node_id = f"entity:{str(uuid.uuid4())[:8]}"
+                # Deterministic ID from the dedup key: idempotent across rebuilds
+                # (random uuid IDs used to duplicate every entity node on re-run)
+                # and collision-safe (16 hex chars vs the old 8).
+                entity_node_id = f"entity:{_stable_hash(entity_key)}"
                 entity_label_to_id[entity_key] = entity_node_id
                 node_rows.append({
                     "id": entity_node_id,
                     "type": "entity",
                     "label": entity["label"],
-                    "properties": f'{{"entity_type": "{entity["type"]}"}}',
+                    "properties": json.dumps({"entity_type": entity["type"]}),
                 })
 
             entity_node_id = entity_label_to_id[entity_key]
-            entity_node_ids.append(entity_node_id)
 
-            edge_rows.append({
-                "id": f"mentions:{embed_id}:{entity_key[:20]}",
-                "from_node": chunk_node_id,
-                "to_node": entity_node_id,
-                "type": "mentions",
-                "weight": 1.0,
-            })
+            mention_id = f"mentions:{embed_id}:{_stable_hash(entity_key)}"
+            if mention_id not in seen_edge_ids:
+                seen_edge_ids.add(mention_id)
+                entity_node_ids.append(entity_node_id)
+                edge_rows.append({
+                    "id": mention_id,
+                    "from_node": chunk_node_id,
+                    "to_node": entity_node_id,
+                    "type": "mentions",
+                    "weight": 1.0,
+                })
 
         for i, eid_a in enumerate(entity_node_ids):
             for eid_b in entity_node_ids[i + 1:]:
                 if eid_a == eid_b:
                     continue
+                # Canonical pair order so (A,B) and (B,A) map to one edge.
+                lo, hi = sorted((eid_a, eid_b))
+                cooc_id = f"cooc:{lo.removeprefix('entity:')}:{hi.removeprefix('entity:')}"
+                if cooc_id in seen_edge_ids:
+                    continue
+                seen_edge_ids.add(cooc_id)
                 edge_rows.append({
-                    "id": f"cooc:{eid_a[-8:]}:{eid_b[-8:]}",
-                    "from_node": eid_a,
-                    "to_node": eid_b,
+                    "id": cooc_id,
+                    "from_node": lo,
+                    "to_node": hi,
                     "type": "co_occurrence",
                     "weight": 0.5,
                 })
@@ -336,25 +356,32 @@ def _build_similarity_edges(
     norms[norms == 0] = 1.0
     matrix = matrix / norms
 
-    # Batch dot-product for cosine similarity, then bulk-insert edges
+    # Batch dot-product for cosine similarity, then bulk-insert edges.
+    # np.argwhere on the thresholded upper triangle replaces the old nested
+    # Python loop (~4M iterations at the 2000-chunk cap).
     sim_rows: list[dict] = []
     batch_size = 200
     for i in range(0, len(chunk_ids), batch_size):
         batch_vecs = matrix[i: i + batch_size]
-        sims = np.dot(batch_vecs, matrix.T)
-        for bi, sim_row in enumerate(sims):
-            global_i = i + bi
-            for j, sim in enumerate(sim_row):
-                if j <= global_i:
-                    continue
-                if sim >= threshold:
-                    sim_rows.append({
-                        "id": f"sim:{chunk_ids[global_i][-8:]}:{chunk_ids[j][-8:]}",
-                        "from_node": chunk_ids[global_i],
-                        "to_node": chunk_ids[j],
-                        "type": "similarity",
-                        "weight": float(sim),
-                    })
+        sims = batch_vecs @ matrix.T
+        # Mask lower triangle + diagonal: only pairs with j > global_i
+        cols = np.arange(sims.shape[1])
+        rows_global = np.arange(i, i + sims.shape[0])[:, None]
+        sims[cols[None, :] <= rows_global] = -1.0
+        for bi, j in np.argwhere(sims >= threshold):
+            global_i = i + int(bi)
+            j = int(j)
+            # Full embed-ids in the edge id — the old [-8:] uuid-suffix
+            # truncation silently dropped edges on hash collisions.
+            id_a = chunk_ids[global_i].removeprefix("chunk:")
+            id_b = chunk_ids[j].removeprefix("chunk:")
+            sim_rows.append({
+                "id": f"sim:{id_a}:{id_b}",
+                "from_node": chunk_ids[global_i],
+                "to_node": chunk_ids[j],
+                "type": "similarity",
+                "weight": float(sims[bi, j]),
+            })
 
     _flush(session, _EDGE_INSERT_SQL, sim_rows)
     session.commit()

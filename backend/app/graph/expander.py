@@ -52,7 +52,9 @@ def expand_graph(
         return {"nodes": [], "edges": []}
 
     visited_node_ids: set[str] = set(seed_ids)
-    collected_edges: list[dict[str, Any]] = []
+    # Dedup during collection: the same edge is returned by multiple frontier
+    # batches (both endpoints queried separately) and by successive hops.
+    edges_by_id: dict[str, dict[str, Any]] = {}
     frontier: set[str] = set(seed_ids)
 
     for hop in range(k):
@@ -66,16 +68,16 @@ def expand_graph(
         CHUNK = 100
         new_frontier: set[str] = set()
 
+        # Edge type list for parameterized ANY binding.
+        # Hop 0: include similarity edges to broaden initial expansion.
+        # Subsequent hops: structural edges only (avoids runaway expansion).
+        if hop == 0:
+            edge_types = ["mentions", "co_occurrence", "similarity"]
+        else:
+            edge_types = ["mentions", "co_occurrence"]
+
         for chunk_start in range(0, len(frontier_list), CHUNK):
             chunk = frontier_list[chunk_start: chunk_start + CHUNK]
-
-            # Build edge type list for parameterized ANY binding.
-            # Hop 0: include similarity edges to broaden initial expansion.
-            # Subsequent hops: structural edges only (avoids runaway expansion).
-            if hop == 0:
-                edge_types = ["mentions", "co_occurrence", "similarity"]
-            else:
-                edge_types = ["mentions", "co_occurrence"]
 
             # Single merged query: outgoing OR incoming edges in one round-trip.
             # Uses parameterized ANY(:ids) instead of f-string interpolation to
@@ -90,14 +92,14 @@ def expand_graph(
                 {"node_ids": chunk, "edge_types": edge_types},
             )
             for row in result.fetchall():
-                edge_dict = {
-                    "id": row.id,
-                    "from_node": row.from_node,
-                    "to_node": row.to_node,
-                    "type": row.type,
-                    "weight": row.weight,
-                }
-                collected_edges.append(edge_dict)
+                if row.id not in edges_by_id:
+                    edges_by_id[row.id] = {
+                        "id": row.id,
+                        "from_node": row.from_node,
+                        "to_node": row.to_node,
+                        "type": row.type,
+                        "weight": row.weight,
+                    }
                 # Expand frontier in both directions
                 if row.to_node not in visited_node_ids:
                     new_frontier.add(row.to_node)
@@ -116,13 +118,7 @@ def expand_graph(
             )
             break
 
-    # Deduplicate edges
-    seen_edge_ids: set[str] = set()
-    unique_edges = []
-    for edge in collected_edges:
-        if edge["id"] not in seen_edge_ids:
-            seen_edge_ids.add(edge["id"])
-            unique_edges.append(edge)
+    unique_edges = list(edges_by_id.values())
 
     # Fetch all visited node metadata in one query
     nodes: list[dict[str, Any]] = []

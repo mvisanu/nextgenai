@@ -510,9 +510,15 @@ class AgentOrchestrator:
                 graph_edges=graph_edges,
                 top_k=8,
             )
+            # Skip ranked chunk items already present as direct vector hits —
+            # a plain `item not in all_evidence` never matches because ranked
+            # items and vector hits have different dict shapes.
+            hit_chunk_ids = {h["chunk_id"] for h in vector_hits}
             for item in ranked:
-                if item not in all_evidence:
-                    all_evidence.append(item)
+                node_id = item.get("node_id", "")
+                if node_id.replace("chunk:", "") in hit_chunk_ids:
+                    continue
+                all_evidence.append(item)
 
         # ---------------------------------------------------------- SYNTHESISE
         logger.info("State: SYNTHESISE", extra={"run_id": run_id})
@@ -642,10 +648,7 @@ class AgentOrchestrator:
                 "vector_hits": vector_hits,
                 "sql_rows": sql_rows,
             },
-            graph_path={
-                "nodes": graph_nodes[:40],
-                "edges": graph_edges[:80],
-            },
+            graph_path=_truncate_graph_path(graph_nodes, graph_edges, vector_hits),
             run_summary={
                 "intent": intent,
                 "plan_text": plan_text,
@@ -956,9 +959,15 @@ def _run_sync_impl(
             graph_edges=graph_edges,
             top_k=8,
         )
+        # Skip ranked chunk items already present as direct vector hits —
+        # a plain `item not in all_evidence` never matches because ranked
+        # items and vector hits have different dict shapes.
+        hit_chunk_ids = {h["chunk_id"] for h in vector_hits}
         for item in ranked:
-            if item not in all_evidence:
-                all_evidence.append(item)
+            node_id = item.get("node_id", "")
+            if node_id.replace("chunk:", "") in hit_chunk_ids:
+                continue
+            all_evidence.append(item)
 
     # SYNTHESISE
     evidence_for_synthesis = _build_evidence_context(vector_hits, sql_rows)
@@ -1027,10 +1036,7 @@ def _run_sync_impl(
             "vector_hits": vector_hits,
             "sql_rows": sql_rows,
         },
-        graph_path={
-            "nodes": graph_nodes[:40],
-            "edges": graph_edges[:80],
-        },
+        graph_path=_truncate_graph_path(graph_nodes, graph_edges, vector_hits),
         run_summary={
             "intent": intent,
             "plan_text": plan_text,
@@ -1120,6 +1126,48 @@ async def _check_query_cache(query: str, ttl_seconds: int = 300) -> dict[str, An
         # Cache miss on any DB error — don't block the request
         logger.warning("Query cache check failed", extra={"error": str(exc)})
         return None
+
+
+def _truncate_graph_path(
+    graph_nodes: list[dict[str, Any]],
+    graph_edges: list[dict[str, Any]],
+    vector_hits: list[dict[str, Any]],
+    max_nodes: int = 40,
+    max_edges: int = 80,
+) -> dict[str, list[dict[str, Any]]]:
+    """
+    Truncate the expanded graph for the response payload without breaking it.
+
+    A blind `nodes[:40]` slices in arbitrary DB-fetch order — it can drop the
+    vector-hit seed chunks themselves and leave edges pointing at nodes that
+    were cut (React Flow silently discards those). Instead:
+      1. Keep seed chunk nodes (direct vector hits) first.
+      2. Fill the remaining budget with the highest-degree nodes.
+      3. Keep only edges whose BOTH endpoints survived.
+    """
+    if len(graph_nodes) <= max_nodes and len(graph_edges) <= max_edges:
+        return {"nodes": graph_nodes, "edges": graph_edges}
+
+    degree: dict[str, int] = {}
+    for edge in graph_edges:
+        for nid in (edge.get("from_node"), edge.get("to_node")):
+            if nid:
+                degree[nid] = degree.get(nid, 0) + 1
+
+    seed_ids = {f"chunk:{h['chunk_id']}" for h in vector_hits}
+    ordered = sorted(
+        graph_nodes,
+        key=lambda n: (n["id"] not in seed_ids, -degree.get(n["id"], 0)),
+    )
+    kept_nodes = ordered[:max_nodes]
+    kept_ids = {n["id"] for n in kept_nodes}
+
+    kept_edges = [
+        e for e in graph_edges
+        if e.get("from_node") in kept_ids and e.get("to_node") in kept_ids
+    ][:max_edges]
+
+    return {"nodes": kept_nodes, "edges": kept_edges}
 
 
 def _build_evidence_context(

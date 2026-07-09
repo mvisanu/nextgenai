@@ -40,6 +40,9 @@ services:
     volumes:
       - ./data:/workspace/backend/data
       - ./demo:/workspace/backend/demo
+      # kaggle_loader.py resolves seed CSVs from the repo root (/workspace/demo)
+      # while the LightRAG demo indexer uses /workspace/backend/demo — mount both.
+      - ./demo:/workspace/demo
       - ./config.yaml:/workspace/backend/config.yaml
       - ./backend/data/lightrag:/app/data/lightrag
     command: ["./entrypoint.sh"]

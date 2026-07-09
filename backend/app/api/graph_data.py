@@ -55,6 +55,10 @@ async def get_preloaded_graph(
         "incident_embeddings" if domain == "aircraft" else "medical_embeddings"
     )
 
+    # Split the node budget so chunks can never starve entities out of the
+    # response (the old `max_nodes - len(chunk_ids)` computed to 0 whenever
+    # the chunk query filled the whole budget → no entities, no edges).
+    chunk_budget = max(10, (max_nodes * 3) // 5)   # ~60% chunks
     try:
         async with get_session() as session:
             # ── Step 1: fetch chunk nodes that belong to this domain ──────────
@@ -73,25 +77,28 @@ async def get_preloaded_graph(
                         JOIN {embed_table} e
                           ON e.embed_id = (n.properties->>'embed_id')
                         WHERE n.type = 'chunk'
-                        LIMIT :max_nodes
+                        ORDER BY n.id
+                        LIMIT :chunk_budget
                         """
                     ),
-                    {"max_nodes": max_nodes},
+                    {"chunk_budget": chunk_budget},
                 )
             ).fetchall()
 
             chunk_ids: set[str] = {r.id for r in chunk_rows}
 
             # ── Step 2: fetch entity nodes connected to those chunks ──────────
+            # Most-connected entities first — they carry the graph structure.
             entity_rows = (
                 await session.execute(
                     text(
                         """
-                        SELECT DISTINCT
+                        SELECT
                             n.id,
                             n.label,
                             n.type,
-                            n.properties
+                            n.properties,
+                            COUNT(e.id) AS degree
                         FROM graph_node n
                         JOIN graph_edge e
                           ON (e.from_node = n.id OR e.to_node = n.id)
@@ -100,12 +107,14 @@ async def get_preloaded_graph(
                             e.from_node = ANY(:chunk_ids)
                             OR e.to_node  = ANY(:chunk_ids)
                           )
-                        LIMIT :max_nodes
+                        GROUP BY n.id, n.label, n.type, n.properties
+                        ORDER BY degree DESC, n.id
+                        LIMIT :entity_budget
                         """
                     ),
                     {
                         "chunk_ids": list(chunk_ids),
-                        "max_nodes": max(0, max_nodes - len(chunk_ids)),
+                        "entity_budget": max(10, max_nodes - len(chunk_ids)),
                     },
                 )
             ).fetchall() if chunk_ids else []

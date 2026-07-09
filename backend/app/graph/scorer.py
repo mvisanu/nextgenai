@@ -85,6 +85,29 @@ def rank_evidence(
             if node_id:
                 node_max_weight[node_id] = max(node_max_weight.get(node_id, 0.0), float(w))
 
+    # Map chunk node → source incident (from vector hits or node properties),
+    # then propagate to entities via 'mentions' edges (chunk → entity). Without
+    # this, entities never carry an incident id and conflict detection is inert.
+    chunk_incident: dict[str, str] = {}
+    for node in graph_nodes:
+        if node.get("type") != "chunk":
+            continue
+        nid = node["id"]
+        hit = hit_by_chunk.get(nid.replace("chunk:", ""))
+        props = node.get("properties") or {}
+        inc = (hit or {}).get("incident_id") or (
+            props.get("incident_id") if isinstance(props, dict) else None
+        )
+        if inc:
+            chunk_incident[nid] = str(inc)
+
+    entity_incidents: dict[str, set[str]] = {}
+    for edge in graph_edges:
+        if edge.get("type") == "mentions":
+            inc = chunk_incident.get(edge.get("from_node"))
+            if inc:
+                entity_incidents.setdefault(edge.get("to_node"), set()).add(inc)
+
     # Score each node
     evidence_items: list[dict[str, Any]] = []
     for node in graph_nodes:
@@ -113,8 +136,11 @@ def rank_evidence(
                     incident_id = properties.get("incident_id")
                 event_date_str = None
         else:
-            # Entity node
+            # Entity node — attribute an incident when exactly one chunk mentions it
             event_date_str = None
+            incs = entity_incidents.get(node_id)
+            if incs and len(incs) == 1:
+                incident_id = next(iter(incs))
 
         edge_weight = node_max_weight.get(node_id, 0.5)
         rec_score = recency_score(event_date_str if node_type == "chunk" else None)
@@ -133,18 +159,11 @@ def rank_evidence(
     # Sort descending by composite score
     evidence_items.sort(key=lambda x: x["composite_score"], reverse=True)
 
-    # Detect conflicting sources: same entity label, different incident IDs
-    entity_to_incidents: dict[str, set[str]] = {}
+    # Detect conflicting sources: same entity mentioned by chunks from
+    # different incidents (via the mentions-edge attribution built above).
     for item in evidence_items:
         if item["type"] == "entity":
-            label_key = item["text_excerpt"].lower()[:50]
-            inc_id = item.get("source_incident_id") or "unknown"
-            entity_to_incidents.setdefault(label_key, set()).add(inc_id)
-
-    for item in evidence_items:
-        if item["type"] == "entity":
-            label_key = item["text_excerpt"].lower()[:50]
-            if len(entity_to_incidents.get(label_key, set())) > 1:
+            if len(entity_incidents.get(item["node_id"], set())) > 1:
                 item["conflict"] = True
 
     ceiling = top_k * 2
